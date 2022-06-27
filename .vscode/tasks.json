@@ -1,0 +1,20 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build (Debug)",
+            "type": "shell",
+            "command": "bazel build :tarrash -c dbg",
+            "windows": {
+                "command": "bazel build :tarrash -c dbg"
+            },
+            "osx": {
+              "command": "bazel build :tarrash -c dbg --spawn_strategy=standalone",
+            },
+            "group": {
+              "kind": "build",
+              "isDefault": true
+            },
+          }
+    ]
+}
