@@ -1,0 +1,42 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [ {
+        "name": "Example",
+        "type": "cppvsdbg",
+        "request": "launch",
+        "args": [],
+        "stopAtEntry": false,
+        "preLaunchTask": "Build (Debug)",
+        "cwd": "${workspaceFolder}",
+        "program": "${workspaceFolder}/bazel-out/x64_windows-dbg/bin/tarrash.exe",
+        "externalConsole": false,
+        "windows": {
+          "type": "cppvsdbg",
+          "cwd": "${workspaceFolder}",
+          "program": "${workspaceFolder}/bazel-out/x64_windows-dbg/bin/tarrash.exe",
+          "sourceFileMap": {
+            "C:/Users/shane/_bazel_shane/rimt6fvp/execroot/__main__/": "${workspaceFolder}",
+          },
+        },
+        "osx": {
+          "type": "cppdbg",
+          "MIMode": "lldb",
+          "program": "${workspaceFolder}/bazel-out/darwin-dbg/bin/tarrash",
+          "cwd": "${workspaceFolder}",
+          "sourceFileMap": {
+            "/var/tmp/_bazel_shanee/50aa63f545057969f77c2d16ce9f31a9/execroot/__main__/": "${workspaceFolder}",
+          },
+        },
+        "linux": {
+          "type": "cppdbg",
+          "MIMode": "gdb",
+          "program": "${workspaceFolder}/bazel-out/local_linux-dbg/bin/tarrash",
+          "cwd": "${workspaceFolder}",
+        },
+      }],
+  
+    
+}
