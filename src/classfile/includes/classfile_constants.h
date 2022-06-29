@@ -38,7 +38,7 @@ extern "C" {
 
 /* Flags */
 
-enum {
+enum AccessModifiers {
     JVM_ACC_PUBLIC        = 0x0001,
     JVM_ACC_PRIVATE       = 0x0002,
     JVM_ACC_PROTECTED     = 0x0004,
@@ -145,7 +145,7 @@ enum {
 
 /* Type signatures */
 
-enum {
+enum SignatureTypes {
     JVM_SIGNATURE_SLASH         = '/',
     JVM_SIGNATURE_DOT           = '.',
     JVM_SIGNATURE_SPECIAL       = '<',

@@ -2,122 +2,106 @@
 #ifndef TARRASH_CLASSFILESTRUCTURE_H
 #define TARRASH_CLASSFILESTRUCTURE_H
 
+
+#include "StringUtils.h"
+
 #pragma pack(push, 1)
+
+
+
+namespace org { namespace kapa { namespace tarrash {
 
 typedef uint8_t u1;
 typedef uint16_t u2;
 typedef uint32_t u4;
 
 struct ClassFileHeader {
-    unsigned int magic;
-    unsigned short minorVersion;
-    unsigned short majorVersion;
-
+    u4 magic;
+    u2 minorVersion;
+    u2 majorVersion;
 };
 
-struct CPInfo {
-    ConstantPoolTag tag;
-    unsigned char info[];
-};
-
-struct ConstPool {
-    unsigned short constantPoolCount;
-    CPInfo *cpInfo;
-};
-
-
-struct Interfaces {
-    unsigned short interfacesCount;
-    unsigned short interfaces[];
-};
 
 struct ClassFileMid {
-    unsigned short accessFlags;
-    unsigned short thisClass;
-    unsigned short superClass;
-    unsigned short interfacesCount;
+    u2 accessFlags;
+    u2 thisClass;
+    u2 superClass;
 };
 
 struct AttributeInfo {
-    unsigned short attributeNameIndex;
-    unsigned int attributeLength;
-    unsigned char *info;
+    u2 nameIndex;
+    u4 length;
+    vector <u1> info;
 };
 
 struct FieldInfo {
-    unsigned short accessFlags;
-    unsigned short nameIndex;
-    unsigned short descriptorIndex;
-    unsigned short attributesCount;
-    AttributeInfo *attributes;
-};
-
-struct Fields {
-    unsigned short fields_count;
-    FieldInfo *fields;
+    u2 accessFlags;
+    u2 nameIndex;
+    u2 descriptorIndex;
+    u2 attributesCount;
+    vector <AttributeInfo> attributes;
 };
 
 struct MethodInfo {
-    unsigned short accessFlags;
-    unsigned short nameIndex;
-    unsigned short descriptorIndex;
-    unsigned short attributesCount;
-    AttributeInfo *attributes;
+    u2 accessFlags;
+    u2 nameIndex;
+    u2 descriptorIndex;
+    u2 attributesCount;
+    vector <AttributeInfo> attributes;
 };
 
 
-struct Methods {
-    unsigned short methodsCount;
-    MethodInfo *methods;
-};
-
-
-struct ConstPoolStruct {
+struct ConstPoolBase {
     ConstantPoolTag tag;
 };
 
 
-struct MemberInfo : ConstPoolStruct {
+struct MemberInfo : ConstPoolBase {
     u2 classIndex;
     u2 nameAndTypeIndex;
 };
 
-struct CONSTANT_Fieldref_info : MemberInfo {
+struct Fieldref_info : MemberInfo {
 };
-struct CONSTANT_Methodref_info : MemberInfo {
+struct Methodref_info : MemberInfo {
 };
-struct CONSTANT_InterfaceMethodref_info : MemberInfo {
+struct InterfaceMethodref_info : MemberInfo {
 };
 
-struct CONSTANT_Utf8_info : ConstPoolStruct {
+struct Utf8_info : ConstPoolBase {
     u2 length;
     u1 bytes[1];
+
+    wstring getValue() {
+        auto result = utf82wstring((char *) bytes);
+        return result;
+    }
 };
 
-struct CONSTANT_Class_info : ConstPoolStruct {
+struct Class_info : ConstPoolBase {
     u2 nameIndex;
 };
 
 
-struct CONSTANT_String_info : ConstPoolStruct {
+struct String_info : ConstPoolBase {
     u2 stringIndex;
 };
 
 
-struct CONSTANT_MethodType_info : ConstPoolStruct {
+struct MethodType_info : ConstPoolBase {
     u2 descriptorIndex;
 };
 
 
-struct CONSTANT_Integer_info : ConstPoolStruct {
+struct Integer_info : ConstPoolBase {
     int value;
 };
 
-struct CONSTANT_Float_info : ConstPoolStruct {
+struct Float_info : ConstPoolBase {
     float value;
 };
 
-struct CONSTANT_Long_info : ConstPoolStruct {
+struct Long_info : ConstPoolBase {
     union {
         struct {
             u4 highBytes;
@@ -127,38 +111,84 @@ struct CONSTANT_Long_info : ConstPoolStruct {
     };
 };
 
-struct CONSTANT_Double_info : ConstPoolStruct {
+struct Double_info : ConstPoolBase {
     double value;
 };
 
-struct CONSTANT_MethodHandle_info : ConstPoolStruct {
+struct MethodHandle_info : ConstPoolBase {
     u1 referenceKind;
     u2 referenceIndex;
 };
 
-struct CONSTANT_InvokeDynamic_info : ConstPoolStruct {
+struct InvokeDynamic_info : ConstPoolBase {
     u2 bootstrapMethodAttrIndex;
     u2 nameAndTypeIndex;
 };
 
 struct ConstantPoolRecord {
     union {
-        CONSTANT_Utf8_info utf8Info;
-        CONSTANT_Class_info classInfo;
-        CONSTANT_Fieldref_info fieldrefInfo;
-        CONSTANT_Methodref_info methodrefInfo;
-        CONSTANT_InterfaceMethodref_info interfaceMethodrefInfo;
-        CONSTANT_MethodType_info methodTypeInfo;
-        CONSTANT_String_info stringInfo;
-        CONSTANT_Float_info floatInfo;
-        CONSTANT_Integer_info integerInfo;
-        CONSTANT_Double_info doubleInfo;
-        CONSTANT_Long_info longInfo;
-        CONSTANT_MethodHandle_info methodHandleInfo;
-        CONSTANT_InvokeDynamic_info invokeDynamicInfo;
+        Utf8_info utf8Info;
+        Class_info classInfo;
+        Fieldref_info fieldrefInfo;
+        Methodref_info methodrefInfo;
+        InterfaceMethodref_info interfaceMethodrefInfo;
+        MethodType_info methodTypeInfo;
+        String_info stringInfo;
+        Float_info floatInfo;
+        Integer_info integerInfo;
+        Double_info doubleInfo;
+        Long_info longInfo;
+        MethodHandle_info methodHandleInfo;
+        InvokeDynamic_info invokeDynamicInfo;
     };
 };
 
+
+struct Descriptor {
+    bool isArray;
+    bool isClass;
+    int dimensions;
+    wstring type;
+
+    Descriptor() :
+        isArray(false),
+        isClass(false),
+        dimensions(0),
+        type(L"") {}
+
+    wstring toString() const {
+        wstring result( type );
+
+        for ( int i = 0; i< dimensions; i++) {
+            result += L"[]";
+        }
+
+        return result;
+    }
+
+};
+
+struct MethodDescriptor {
+    vector<Descriptor> arguments;
+    Descriptor returnType;
+
+
+    wstring argumentsToString() const {
+        vector<wstring> parts;
+
+        for( auto& descriptor: arguments ) {
+            parts.push_back( descriptor.toString() );
+        }
+
+        wstring result = L"(" + join<wstring>( parts, L", " ) + L")";
+
+        return result;
+    }
+};
+
+
+}}}
 #pragma pack(pop)
 
 #endif //TARRASH_CLASSFILESTRUCTURE_H
+
