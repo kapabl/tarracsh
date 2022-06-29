@@ -12,6 +12,8 @@
 
 #include "ClassFileStructure.h"
 
+namespace org { namespace kapa { namespace tarrash {
+
 class ConstantPool {
 
 private:
@@ -34,7 +36,15 @@ public:
         }
     }
 
-    int getCount() { return _count; }
+    ConstantPoolRecord& operator[] ( u2 index ) {
+        auto result = getEntry( index );
+        return *result;
+    };
+
+    ConstantPoolRecord* getEntry(int index) {
+        assert(index - 1 < _constantPoolIndex.size());
+        return _constantPoolIndex[index - 1];
+    }
 
     void setCount(u2 count) { _count = count; }
 
@@ -42,12 +52,12 @@ public:
     void add(T &data, int size) {
 
         auto reservedSpace = size;
-        while( reservedSpace > 0 ) {
-            _buffer.push_back( 0 );
+        while (reservedSpace > 0) {
+            _buffer.push_back(0);
             --reservedSpace;
         }
         auto start = &*(_buffer.end() - size);
-        memcpy( start, &data, size );
+        memcpy(start, &data, size);
 
     }
 
@@ -59,42 +69,12 @@ public:
     }
 
     template<typename T>
-    void addRecord(T &data, int size ) {
+    void addRecord(T &data, int size) {
         _constantPoolIndex.push_back(reinterpret_cast<ConstantPoolRecord *>(_buffer.size()));
         add(data, size);
     }
 
-
-    template<typename T>
-    void add2(T &data) {
-        u1 *byte = reinterpret_cast<u1 *>( &data );
-        _buffer.insert(_buffer.end(), byte, byte + 2);
-//        _buffer.push_back(byte[1]);
-//        _buffer.push_back(byte[0]);
-    }
-
-    template<typename T>
-    void add4(T &data) {
-        u1 *byte = reinterpret_cast<u1 *>( &data );
-        _buffer.insert(_buffer.end(), byte, byte + 4);
-//        _buffer.push_back(byte[0]);
-//        _buffer.push_back(byte[1]);
-//        _buffer.push_back(byte[2]);
-//        _buffer.push_back(byte[3]);
-    }
-
-    template<typename T>
-    void addN(T &data, int count) {
-        u1 *byte = reinterpret_cast<u1 *>( &data );
-        while (count > 0) {
-            _buffer.push_back(byte[0]);
-            byte++;
-            count--;
-        }
-    }
-
-
 };
 
-
+}}}
 #endif //TARRASH_CONSTANTPOOL_H
