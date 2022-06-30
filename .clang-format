@@ -1,9 +1,16 @@
 ﻿---
-CompactNamespaces: 'true'
-IndentWidth: '4'
+Language: Cpp
+CompactNamespaces: false
+IndentWidth: 4
 UseTab: Never
-IndentAccessModifiers: true
+IndentAccessModifiers: false
 IndentCaseLabels: true
 ColumnLimit: 120
+NamespaceIndentation: None
+AccessModifierOffset: -4
+SortUsingDeclarations: true
+FixNamespaceComments: true
+SortIncludes: Never
+ConstructorInitializerIndentWidth: 0
 
 ...

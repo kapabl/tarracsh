@@ -131,7 +131,7 @@ enum {
 
 /* StackMapTable type item numbers */
 
-enum {
+enum StackMapTableTypes {
     JVM_ITEM_Top                = 0,
     JVM_ITEM_Integer            = 1,
     JVM_ITEM_Float              = 2,

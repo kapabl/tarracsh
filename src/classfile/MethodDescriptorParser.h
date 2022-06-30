@@ -13,17 +13,17 @@ namespace org { namespace kapa { namespace tarrash {
 
 class MethodDescriptorParser {
     public:
-        MethodDescriptorParser(const wstring &fieldDescriptor) : _scanner(fieldDescriptor) { parse(); }
+        MethodDescriptorParser(const wstring &fieldDescriptor) : _scanner( new DescriptorScanner(fieldDescriptor)) { parse(); }
 
         const MethodDescriptor &getDescriptor() { return _methodDescriptor; }
 
     private:
-        DescriptorScanner _scanner;
+        shared_ptr<DescriptorScanner> _scanner;
         MethodDescriptor _methodDescriptor;
 
         void parse() {
 
-            auto character = _scanner.getNextChar();
+            auto character = _scanner->getNextChar();
 
             while (character != 0) {
                 switch (character) {
@@ -36,20 +36,20 @@ class MethodDescriptorParser {
                         assert(false);
                         break;
                 }
-                character = _scanner.getNextChar();
+                character = _scanner->getNextChar();
             }
         }
 
         void parseParameters() {
-            _scanner.step();
-            while (_scanner.currentChar() != JVM_SIGNATURE_ENDFUNC) {
+            _scanner->step();
+            while (_scanner->currentChar() != JVM_SIGNATURE_ENDFUNC) {
                 DescriptorParser parser(_scanner);
                 _methodDescriptor.arguments.push_back(parser.getDescriptor());
             }
         }
 
         void parseReturnType() {
-            _scanner.step();
+            _scanner->step();
             DescriptorParser parser(_scanner);
             _methodDescriptor.returnType = parser.getDescriptor();
         }
