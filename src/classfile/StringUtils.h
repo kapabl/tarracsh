@@ -28,6 +28,14 @@ string toLower( const string& data ) {
     return result;
 }
 
+wstring toLower( const wstring& data ) {
+    wstring result;
+    for( auto& element: data ) {
+        result.push_back( towlower( element ) );
+    }
+    return result;
+}
+
 wstring u162wstring(const std::u16string &str) {
     wstring_convert<std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>,
                     wchar_t>
