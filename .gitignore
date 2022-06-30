@@ -3,3 +3,7 @@
 /bazel-tarrash/
 /bazel-testlogs/
 /x64/
+/.vs/
+/tarrash.vcxproj.filters
+/tarrash.sln.DotSettings.user
+/tarrash.vcxproj.user
