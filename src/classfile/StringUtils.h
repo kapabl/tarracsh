@@ -55,6 +55,10 @@ inline wstring utf82wstring(const char *source) {
     return result;
 }
 
+inline wstring utf82wstring(const unsigned char *source) {
+    return utf82wstring(reinterpret_cast<const char *>(source));
+}
+
 inline string join(const vector<std::string> &strings, string delim) {
     if (strings.empty()) {
         return std::string();

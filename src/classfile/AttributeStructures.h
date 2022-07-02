@@ -12,11 +12,9 @@
 using namespace org::kapa::tarrash::common;
 using namespace org::kapa::tarrash::stack;
 
-namespace org {
-namespace kapa {
-namespace tarrash {
-namespace attributes {
+namespace org::kapa::tarrash::attributes {
 
+struct AnnotationValuePair;
 
 
 struct AttributeBase {
@@ -25,10 +23,10 @@ struct AttributeBase {
 };
 
 
-struct ConstantValue: AttributeBase {
+struct ConstantValue : AttributeBase {
     u2 constantValueIndex;
 
-    struct {
+    struct Value {
         union {
             long long longValue;
             float floatValue;
@@ -38,13 +36,9 @@ struct ConstantValue: AttributeBase {
             char charValue;
             short shortValue;
             byte byteValue;
-            wstring string;
         };
+        wstring string;
     } value;
-
-    ~ConstantValue() {
-
-    }
 };
 
 struct ExceptionTable {
@@ -104,7 +98,8 @@ struct Signature : AttributeBase {
     u2 signature_index;
 };
 
-struct SourceFile : AttributeBase {;
+struct SourceFile : AttributeBase {
+    ;
     u2 sourceFileIndex;
 };
 
@@ -165,93 +160,120 @@ struct Annotation;
 
 struct ElementValue {
 
-    ElementValue()
-        : value() {
-    }
+    ElementValue() = default;
+    ElementValue(const ElementValue &value) = default;
+    ElementValue(ElementValue &&value) = default;
 
-    ~ElementValue() {
-    }
+    ~ElementValue() = default;
 
-    SignatureTypes tag;
+    ElementValue &operator=(const ElementValue &right) = default;
+    ElementValue &operator=(ElementValue &&right) = default;
 
-    union Value {
+    SignatureTypes tag = SignatureTypes::JVM_SIGNATURE_VOID;
+    
 
-        //TODO move and copy contructors
-        Value() {
-        }
-
-        ~Value() {
-        }
-
-        u2 constValueIndex;
+    struct Value {
+      
+        u2 constValueIndex = 0;
 
         struct {
-            u2 typeNameIndex;
-            u2 constNameIndex;
+            u2 typeNameIndex = 0;
+            u2 constNameIndex = 0;
         } enumConstValue;
 
-        u2 classInfoIndex;
+        u2 classInfoIndex = 0;
 
         std::shared_ptr<Annotation> annotationValue;
 
-        struct {
-            u2 count;
+        struct ArrayValues {
+            ArrayValues() = default;
+            ArrayValues(const ArrayValues &value) = default;
+            ArrayValues(ArrayValues &&value) = default;
+
+            ~ArrayValues() = default;
+
+            ArrayValues &operator=(const ArrayValues &right) = default;
+            ArrayValues &operator=(ArrayValues &&right) = default;
+
+            u2 count = 0;
             vector<std::shared_ptr<ElementValue>> values;
         } arrayValues;
+
+        Value() = default;
+        Value(const Value &value) = default;
+        Value(Value &&value) = default;
+
+        ~Value() = default;
+
+        Value &operator=(const Value &right) = default;
+        Value &operator=(Value &&right) = default;
+
     } value;
+
 };
 
 struct AnnotationValuePair {
-    u2 nameIndex;
+    u2 nameIndex = 0;
     ElementValue value;
 
-    AnnotationValuePair() {
-        
+    AnnotationValuePair() = default;
+
+    AnnotationValuePair(const AnnotationValuePair &right) {
+        nameIndex = right.nameIndex;
+        value = right.value;
     }
 
-    ~AnnotationValuePair() {
-
+    AnnotationValuePair(AnnotationValuePair &&right) noexcept {
+        nameIndex = right.nameIndex;
+        value = right.value;
     }
+
+    AnnotationValuePair &operator=(const AnnotationValuePair &right) = default;
+    AnnotationValuePair &operator=(AnnotationValuePair &&right) = default;
+
+
+    ~AnnotationValuePair() = default;
 
 };
 
 struct Annotation {
-    u2 typeIndex;
-    u2 count;
+    u2 typeIndex = 0;
+    u2 count = 0;
     vector<AnnotationValuePair> values;
 };
 
 struct RuntimeAnnotations : AttributeBase {
     u2 count;
-    vector<Annotation> annotations;
+    vector<Annotation> items;
 };
 
-struct RuntimeVisibleAnnotations : RuntimeAnnotations {};
+struct RuntimeVisibleAnnotations : RuntimeAnnotations {
+};
 
-struct RuntimeInvisibleAnnotations : RuntimeAnnotations {};
+struct RuntimeInvisibleAnnotations : RuntimeAnnotations {
+};
 
 
 struct ParameterAnnotation {
-    u2 count;
-    vector<Annotation> annotations;
+    u2 count = 0;
+    vector<Annotation> items;
 };
 
 struct RuntimeParameterAnnotations : AttributeBase {
-    u1 parameterCount;
-    vector<ParameterAnnotation> parameterAnnotations;
+    u1 parameterCount = 0;
+    vector<ParameterAnnotation> items;
 
 };
 
-struct RuntimeVisibleParameterAnnotations : RuntimeParameterAnnotations {};
+struct RuntimeVisibleParameterAnnotations : RuntimeParameterAnnotations {
+};
 
-struct RuntimeInvisibleParameterAnnotations : RuntimeParameterAnnotations {};
+struct RuntimeInvisibleParameterAnnotations : RuntimeParameterAnnotations {
+};
 
 struct AnnotationDefault : AttributeBase {
     ElementValue defaultValue;
 };
 
-} // namespace attributes
-} // namespace tarrash
-} // namespace kapa
-} // namespace org
+}
 #endif // ATTRIBUTE_STRUCTURES_H

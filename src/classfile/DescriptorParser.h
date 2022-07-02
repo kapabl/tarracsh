@@ -10,16 +10,14 @@
 
 using namespace std;
 
-namespace org {
-namespace kapa {
-namespace tarrash {
+namespace org::kapa::tarrash {
 
 class DescriptorParser {
 public:
-    DescriptorParser(shared_ptr<DescriptorScanner> scanner)
+    explicit DescriptorParser(shared_ptr<DescriptorScanner> scanner)
         : _scanner(std::move(scanner)) { parse(); }
 
-    DescriptorParser(const wstring &value)
+    explicit DescriptorParser(const wstring &value)
         : _scanner(new DescriptorScanner(value)) {
         _scanner->step();
         parse();
@@ -42,14 +40,18 @@ private:
                     _descriptor.dimensions++;
                     break;
                 }
+
                 case JVM_SIGNATURE_CLASS: {
                     _descriptor.isClass = true;
                     getFQNClassname();
                     break;
                 }
 
+                case JVM_SIGNATURE_FUNC:
+                case JVM_SIGNATURE_ENDFUNC:
                 case JVM_SIGNATURE_SLASH:
                 case JVM_SIGNATURE_DOT:
+                case JVM_SIGNATURE_ENUM:
                 case JVM_SIGNATURE_SPECIAL:
                 case JVM_SIGNATURE_ENDSPECIAL: {
                     break;
@@ -63,9 +65,6 @@ private:
                     _descriptor.type = L"char";
                     break;
 
-                case JVM_SIGNATURE_ENUM:
-                    break;
-
                 case JVM_SIGNATURE_FLOAT:
                     _descriptor.type = L"float";
                     break;
@@ -76,12 +75,6 @@ private:
 
                 case JVM_SIGNATURE_DOUBLE:
                     _descriptor.type = L"double";
-                    break;
-
-                case JVM_SIGNATURE_FUNC:
-                    break;
-
-                case JVM_SIGNATURE_ENDFUNC:
                     break;
 
                 case JVM_SIGNATURE_INT:
@@ -101,7 +94,7 @@ private:
                     break;
 
                 default:
-                    assert(false);
+                    _descriptor.type = _scanner->getFieldDescriptor();
                     break;
             }
             character = _scanner->getNextChar();
@@ -117,7 +110,6 @@ private:
     }
 };
 
-} // namespace tarrash
-} // namespace kapa
-} // namespace org
+}
+
 #endif // TARRASH_DESCRIPTORPARSER_H
