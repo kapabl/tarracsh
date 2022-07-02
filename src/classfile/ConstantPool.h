@@ -114,6 +114,7 @@ public:
 
             case JVM_CONSTANT_Float:
                 result = to_wstring(constantPoolRecord.floatInfo.value);
+                //auto x = L"\u00a7";
                 break;
 
             case JVM_CONSTANT_Long:
@@ -125,7 +126,7 @@ public:
                 break;
 
             case JVM_CONSTANT_Utf8:
-                result = constantPoolRecord.utf8Info.getValue();
+                result = L"\"" + constantPoolRecord.utf8Info.getValue(true) + L"\"";
                 break;
 
             case JVM_CONSTANT_String:
