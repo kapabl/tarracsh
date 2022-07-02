@@ -5,12 +5,9 @@
 #ifndef TARRASH_CLASSFILEPARSER_H
 #define TARRASH_CLASSFILEPARSER_H
 
-#include <bit>
 #include <cassert>
-// #include <cstdint>
 #include <filesystem>
 #include <fstream>
-// #include <cinttypes>
 #include <iomanip>
 #include <iostream>
 #include <string>
@@ -25,22 +22,22 @@
 #include "AccessModifiers.h"
 #include "StringUtils.h"
 
-using namespace std;
 
-namespace org {
-namespace kapa {
-namespace tarrash {
+namespace org::kapa::tarrash {
 
-class ClassFileParser {
+class ClassFileParser final {
 
 public:
-    ClassFileParser(string fileName)
-        : _attributesManager(_constantPool, _isBigEndian),
-          _fileName(std::move(fileName)),
-          _bytesRead(0) {
+    explicit ClassFileParser(std::string fileName)
+        : _attributesManager(_constantPool), _fileName(std::move(fileName)) {
 
         processFile();
     }
+
+    ClassFileParser(const ClassFileParser &) = delete;
+    ClassFileParser(const ClassFileParser &&) = delete;
+    ClassFileParser &operator=(const ClassFileParser &) = delete;
+    ClassFileParser &operator=(const ClassFileParser &&) = delete;
 
     void output() {
         outputClass();
@@ -49,8 +46,7 @@ public:
         outputInterfaces();
     }
 
-
-    bool isValid() { return _isValid; }
+    [[nodiscard]] bool isValid() const { return _isValid; }
 
     ~ClassFileParser() = default;
 
@@ -74,7 +70,7 @@ private:
 
         const vector parts{attributesString, accessModifiers, returnType, name + arguments};
 
-        wcout << join<wstring>(parts, L" ") << L";";
+        wcout << stringUtils::join<wstring>(parts, L" ") << L";";
         cout << endl;
     }
 
@@ -89,9 +85,9 @@ private:
         cout << endl;
     }
 
-    wstring getClassInfoName(const u2 index) const {
-        const Class_info &classInfo = _constantPool[index].classInfo;
-        auto &classname = _constantPool[classInfo.nameIndex].utf8Info;
+    [[nodiscard]] std::wstring getClassInfoName(const u2 index) const {
+        const ClassInfo &classInfo = _constantPool[index].classInfo;
+        const auto &classname = _constantPool[classInfo.nameIndex].utf8Info;
         auto result = classname.getValueAsClassname();
         return result;
     }
@@ -129,7 +125,7 @@ private:
             parts.push_back(_attributesManager.toString(attribute));
         }
 
-        auto result = join<wstring>(parts, L"\n\n");
+        auto result = stringUtils::join<wstring>(parts, L"\n\n");
         if (!result.empty()) {
             result = L"/*\n" + result + L"\n*/\n";
         }
@@ -146,8 +142,7 @@ private:
 
         const vector parts{attributeString, accessModifiers, descriptor.toString(), name};
 
-        wcout << join<wstring>(parts, L" ") << ";";
-
+        wcout << stringUtils::join<wstring>(parts, L" ") << ";";
     }
 
     void outputFields() {
@@ -165,7 +160,6 @@ private:
         // TODO
     }
 
-
     template <typename T> void readRaw(T &buffer, unsigned int byteCount) {
 
         assert(_bytesRead + byteCount <= _fileSize);
@@ -177,25 +171,23 @@ private:
     }
 
     template <typename T> void readRaw(T &buffer) { readRaw(buffer, sizeof(buffer)); }
+    //template <typename T> void read(T &buffer) { readRaw(buffer, sizeof(T)); }
 
-    template <typename T> void read(T &buffer, unsigned int byteCount) {
-
-        readRaw(buffer, byteCount);
+    template < typename T = u2>
+    void read(u2 &buffer) {
+        readRaw(buffer, 2);
         if (!_isBigEndian) {
-            switch (byteCount) {
-                case 2:
-                    buffer = swapShort(buffer);
-                    break;
-                case 4:
-                    buffer = swapLong(buffer);
-                    break;
-                default:
-                    break;
-            }
+            buffer = stringUtils::swapShort(buffer);
         }
     }
 
-    template <typename T> void read(T &buffer) { read(buffer, sizeof(T)); }
+    template <typename T = u4>
+    void read(u4 &buffer) {
+        readRaw(buffer, 4);
+        if (!_isBigEndian) {
+            buffer = stringUtils::swapLong(buffer);
+        }
+    }
 
     u2 readU2() {
         u2 result;
@@ -203,19 +195,26 @@ private:
         return result;
     }
 
+    u4 readU4() {
+        u4 result;
+        read(result);
+        return result;
+    }
+
     u1 readU1() {
         u1 result;
-        read(result);
+        readRaw(result);
         return result;
     }
 
     bool readHeader() {
         readRaw(_header, sizeof(ClassFileHeader));
         _isBigEndian = _header.magic == 0x0cafebabe;
-        if (!_isBigEndian && _header.magic != swapLong(0x0cafebabe)) {
+        if (!_isBigEndian && _header.magic != stringUtils::swapLong(0x0cafebabe)) {
             cout << "Invalid class file " << _fileName << endl;
             _isValid = false;
         }
+        _attributesManager.setBigEndian(_isBigEndian);
 
         return _isValid;
     }
@@ -228,14 +227,14 @@ private:
             case JVM_CONSTANT_Utf8: {
                 u2 length;
                 read(length);
-                const auto recordSize = sizeof(Utf8_info) + length + 1;
-                Utf8_info &utf8Info = *static_cast<Utf8_info *>(malloc(recordSize));
+                const auto recordSize = 1 + length + sizeof(Utf8Info);
+                Utf8Info &utf8Info = *static_cast<Utf8Info *>(malloc(recordSize));
                 utf8Info.tag = tag;
                 utf8Info.length = length;
                 const auto data = reinterpret_cast<u1 *>(utf8Info.bytes);
                 readRaw(*data, utf8Info.length);
                 utf8Info.bytes[length] = 0;
-                _constantPool.addRecord(utf8Info, recordSize);
+                _constantPool.addRecord(utf8Info, static_cast<int>(recordSize));
 
                 free(&utf8Info);
 
@@ -244,16 +243,14 @@ private:
 
             case JVM_CONSTANT_Float:
             case JVM_CONSTANT_Integer: {
-                Integer_info integerInfo{{tag}};
-                read(integerInfo.value);
+                IntegerInfo integerInfo{{tag}, static_cast<int>(readU4())};
                 _constantPool.addRecord(integerInfo);
                 break;
             }
 
             case JVM_CONSTANT_Long:
             case JVM_CONSTANT_Double: {
-                Long_info longInfo{tag};
-                read(longInfo.value);
+                LongInfo longInfo{{tag}, {{readU4(), readU4()}}};
                 _constantPool.addRecord(longInfo);
                 break;
             }
@@ -261,7 +258,7 @@ private:
             case JVM_CONSTANT_String:
             case JVM_CONSTANT_MethodType:
             case JVM_CONSTANT_Class: {
-                Class_info classInfo{tag};
+                ClassInfo classInfo{{tag}, 0};
                 read(classInfo.nameIndex);
                 _constantPool.addRecord(classInfo);
                 break;
@@ -271,25 +268,19 @@ private:
             case JVM_CONSTANT_Methodref:
             case JVM_CONSTANT_Fieldref:
             case JVM_CONSTANT_InterfaceMethodref: {
-                MemberInfo memberInfo{tag};
-                read(memberInfo.classIndex);
-                read(memberInfo.nameAndTypeIndex);
+                MemberInfo memberInfo{{tag}, readU2(), readU2()};
                 _constantPool.addRecord(memberInfo);
                 break;
             }
 
             case JVM_CONSTANT_MethodHandle: {
-                MethodHandle_info methodHandleInfo{tag};
-                read(methodHandleInfo.referenceKind);
-                read(methodHandleInfo.referenceIndex);
+                MethodHandleInfo methodHandleInfo{{tag}, readU1(), readU2()};
                 _constantPool.addRecord(methodHandleInfo);
                 break;
             }
 
             case JVM_CONSTANT_InvokeDynamic: {
-                InvokeDynamic_info invokeDynamicInfo{tag};
-                read(invokeDynamicInfo.bootstrapMethodAttrIndex);
-                read(invokeDynamicInfo.nameAndTypeIndex);
+                InvokeDynamicInfo invokeDynamicInfo{{tag}, readU2(), readU2()};
                 _constantPool.addRecord(invokeDynamicInfo);
                 break;
             }
@@ -302,7 +293,7 @@ private:
                 // TODO newer java version
                 break;
 
-            default:
+            default: // NOLINT(clang-diagnostic-covered-switch-default)
                 assert(false);
                 break;
         }
@@ -320,7 +311,7 @@ private:
         _constantPool.relocate();
     }
 
-    void readClassInfo() {
+    void readMainClassInfo() {
         read(_mainClassInfo.accessFlags);
         read(_mainClassInfo.thisClass);
         read(_mainClassInfo.superClass);
@@ -362,7 +353,7 @@ private:
     }
 
     void readMethods() {
-        const auto count = readU2();;
+        const auto count = readU2();
         for (auto i = 0; i < count; ++i) {
             MethodInfo methodInfo;
             read(methodInfo.accessFlags);
@@ -388,7 +379,7 @@ private:
 
         if (readHeader()) {
             readConstantsPool();
-            readClassInfo();
+            readMainClassInfo();
             readInterfaces();
             readFields();
             readMethods();
@@ -399,24 +390,21 @@ private:
     }
 
     std::string _fileName;
-    bool _isBigEndian;
+    bool _isBigEndian{true};
 
-    ClassFileHeader _header;
+    ClassFileHeader _header{};
     ConstantPool _constantPool;
-    ClassInfo _mainClassInfo;
+    MainClassInfo _mainClassInfo{};
     vector<u2> _interfaces;
     vector<FieldInfo> _fields;
     vector<MethodInfo> _methods;
     vector<AttributeInfo> _attributes;
 
-    unsigned int _fileSize;
-    unsigned int _bytesRead;
+    uint64_t _fileSize{};
+    unsigned int _bytesRead{};
 
     ifstream _file;
     bool _isValid = true;
 };
-} // namespace tarrash
-} // namespace kapa
-} // namespace org
-
+} // namespace org::kapa::tarrash
 #endif // TARRASH_CLASSFILEPARSER_H

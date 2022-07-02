@@ -5,30 +5,33 @@
 #ifndef ATTRIBUTE_STRUCTURES_H
 #define ATTRIBUTE_STRUCTURES_H
 
+#include <vector>
 #include "StructsCommon.h"
 #include "StackFrame.h"
-#include <vector>
 
-using namespace org::kapa::tarrash::common;
-using namespace org::kapa::tarrash::stack;
 
 namespace org::kapa::tarrash::attributes {
 
 struct AnnotationValuePair;
 
+using common::u1;
+using common::u2;
+using common::u4;
+
 
 struct AttributeBase {
-    u2 nameIndex;
-    u4 length;
+    u2 nameIndex{};
+    u4 length{};
 };
 
 
 struct ConstantValue : AttributeBase {
-    u2 constantValueIndex;
+
+    u2 constantValueIndex{};
 
     struct Value {
         union {
-            long long longValue;
+            long long longValue{};
             float floatValue;
             double doubleValue;
             int intValue;
@@ -54,7 +57,7 @@ struct Attribute {
 
 struct StackMapTable : AttributeBase {
     u2 entryCount;
-    vector<StackMapFrame> entries;
+    vector<stack::StackMapFrame> entries;
 };
 
 struct Code : AttributeBase {
@@ -87,20 +90,19 @@ struct InnerClasses : AttributeBase {
 
 struct EnclosingMethod : AttributeBase {
 
-    u2 class_index;
-    u2 method_index;
+    u2 class_index{};
+    u2 method_index{};
 };
 
 struct Synthetic : AttributeBase {
 };
 
 struct Signature : AttributeBase {
-    u2 signature_index;
+    u2 signature_index{};
 };
 
 struct SourceFile : AttributeBase {
-    ;
-    u2 sourceFileIndex;
+    u2 sourceFileIndex{};
 };
 
 struct SourceDebugExtension : AttributeBase {
@@ -243,7 +245,7 @@ struct Annotation {
 };
 
 struct RuntimeAnnotations : AttributeBase {
-    u2 count;
+    u2 count{};
     vector<Annotation> items;
 };
 

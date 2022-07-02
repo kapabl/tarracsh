@@ -8,24 +8,24 @@
 #include "StringUtils.h"
 #include "StructsCommon.h"
 
-using namespace org::kapa::tarrash::common;
-using namespace org::kapa::tarrash::stringUtils;
-
 namespace org::kapa::tarrash::accessModifiers {
+
+using common::u1;
+using common::u2;
+using common::u4;
 
 class AccessModifiers {
 public:
-
-    std::wstring toString(const u2 accessFlags) const {
-        u2 bit = 1;
+    [[nodiscard]] std::wstring toString(const u2 accessFlags) const {
+        u4 bit = 1;
         std::vector<std::wstring> presentAccessModifiers;
         for (auto &accessModifier : _accessModifiers) {
             if ((accessFlags & bit) != 0) {
-                presentAccessModifiers.push_back(toLower(accessModifier));
+                presentAccessModifiers.push_back(stringUtils::toLower(accessModifier));
             }
             bit = bit << 1;
         }
-        auto result = join<wstring>(presentAccessModifiers, L" ");
+        auto result = stringUtils::join<std::wstring>(presentAccessModifiers, L" ");
         return result;
     }
 
