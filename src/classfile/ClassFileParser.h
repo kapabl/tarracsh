@@ -6,13 +6,26 @@
 #define TARRASH_CLASSFILEPARSER_H
 
 #include <bit>
+#include <cassert>
+// #include <cstdint>
+#include <filesystem>
+#include <fstream>
+// #include <cinttypes>
+#include <iomanip>
+#include <iostream>
+#include <string>
+#include <vector>
 
 #include "includes/classfile_constants.h"
-#include "ClassFileStructure.h"
+#include "ClassFileStructures.h"
 #include "ConstantPool.h"
 #include "DescriptorParser.h"
 #include "MethodDescriptorParser.h"
+#include "AttributesManager.h"
+#include "AccessModifiers.h"
 #include "StringUtils.h"
+
+using namespace std;
 
 namespace org {
 namespace kapa {
@@ -22,59 +35,33 @@ class ClassFileParser {
 
 public:
     ClassFileParser(string fileName)
-        : _fileName(fileName), _bytesRead(0) { processFile(); }
+        : _attributesManager(_constantPool, _isBigEndian),
+          _fileName(std::move(fileName)),
+          _bytesRead(0) {
+
+        processFile();
+    }
 
     void output() {
         outputClass();
         outputMethods();
         outputFields();
         outputInterfaces();
-        outputAttributes();
     }
 
-    virtual ~ClassFileParser() {
-    }
+
+    bool isValid() { return _isValid; }
+
+    ~ClassFileParser() = default;
 
 private:
-    // clang-format off
-    vector<wstring> _accessModifiers{
-        L"PUBLIC",
-        L"PRIVATE",
-        L"PROTECTED",
-        L"STATIC",
-        L"FINAL",
-        L"SYNCHRONIZED",
-        L"SUPER",
-        L"VOLATILE",
-        L"BRIDGE",
-        L"TRANSIENT",
-        L"VARARGS",
-        L"NATIVE",
-        L"INTERFACE",
-        L"ABSTRACT",
-        L"STRICT",
-        L"SYNTHETIC",
-        L"ANNOTATION",
-        L"ENUM",
-        L"MODULE"};
+    attributes::AttributesManager _attributesManager;
+    accessModifiers::AccessModifiers _accessModifiers;
 
-    void outputAccessModifiers(u2 accessFlags) { wcout << accessModifiersToString(accessFlags) << " "; }
+    void outputAccessModifiers(const u2 accessFlags) const { wcout << _accessModifiers.toString(accessFlags) << " "; }
 
-    wstring accessModifiersToString(u2 accessFlags) {
-        u2 bit = 1;
-        vector<wstring> presentAccessModifiers;
-        for (auto &accessModifier : _accessModifiers) {
-            if ((accessFlags & bit) != 0) {
-                presentAccessModifiers.push_back(toLower(accessModifier));
-            }
-            bit = bit << 1;
-        }
-        auto result = join<wstring>(presentAccessModifiers, L" ");
-        return result;
-    }
-
-    void outputMethod(const MethodInfo &methodInfo) {
-        const auto accessModifiers = accessModifiersToString(methodInfo.accessFlags);
+    void outputMethod(MethodInfo &methodInfo) {
+        const auto accessModifiers = _accessModifiers.toString(methodInfo.accessFlags);
         const auto name = _constantPool[methodInfo.nameIndex].utf8Info.getValue();
         auto &utf8DDesc = _constantPool[methodInfo.descriptorIndex].utf8Info;
 
@@ -102,8 +89,8 @@ private:
         cout << endl;
     }
 
-    wstring getClassInfoName(int constantPoolIndex) {
-        Class_info &classInfo = _constantPool[constantPoolIndex].classInfo;
+    wstring getClassInfoName(const u2 index) const {
+        const Class_info &classInfo = _constantPool[index].classInfo;
         auto &classname = _constantPool[classInfo.nameIndex].utf8Info;
         auto result = classname.getValueAsClassname();
         return result;
@@ -113,11 +100,12 @@ private:
         cout << endl;
         cout << "//Class " << endl;
         cout << "//------------------------------------" << endl;
-        const auto accessModifiers = accessModifiersToString(_mainClassInfo.accessFlags);
+        const auto accessModifiers = _accessModifiers.toString(_mainClassInfo.accessFlags);
 
         const auto attributesString = attributesToString(_attributes);
 
-        wcout << attributesString << accessModifiers << type << L" " << getClassInfoName(_mainClassInfo.thisClass);
+        wcout << attributesString << accessModifiers << L" " << type << L" "
+            << getClassInfoName(_mainClassInfo.thisClass);
 
         if (_mainClassInfo.superClass != 0) {
             wcout << L" extends " << getClassInfoName(_mainClassInfo.superClass);
@@ -129,34 +117,27 @@ private:
     void outputClass() {
 
         outputClass(_mainClassInfo.isInterface() ? L"interface" : L"class");
-
         cout << endl;
     }
 
-    wstring attributeToString(const AttributeInfo &attributes) {
-
-        vector<wstring> parts;
-        auto result = L" attribute TODO ";
-        return result;
-    }
-
-    wstring attributesToString(const vector<AttributeInfo> &attributes) {
+    wstring attributesToString(vector<AttributeInfo> &attributes) {
 
         vector<wstring> parts;
 
+        parts.reserve(attributes.size());
         for (auto &attribute : attributes) {
-            parts.push_back(attributeToString(attribute));
+            parts.push_back(_attributesManager.toString(attribute));
         }
 
-        auto result = join<wstring>(parts, L"\n");
+        auto result = join<wstring>(parts, L"\n\n");
         if (!result.empty()) {
             result = L"/*\n" + result + L"\n*/\n";
         }
         return result;
     }
 
-    void outputField(const FieldInfo &fieldInfo) {
-        const auto accessModifiers = accessModifiersToString(fieldInfo.accessFlags);
+    void outputField(FieldInfo &fieldInfo) {
+        const auto accessModifiers = _accessModifiers.toString(fieldInfo.accessFlags);
         const auto name = _constantPool[fieldInfo.nameIndex].utf8Info.getValue();
         const auto descriptorString = _constantPool[fieldInfo.descriptorIndex].utf8Info.getValue();
         const auto descriptor = DescriptorParser(descriptorString).getDescriptor();
@@ -165,7 +146,7 @@ private:
 
         const vector parts{attributeString, accessModifiers, descriptor.toString(), name};
 
-        wcout << join<wstring>(parts, L" ") << ";" << endl;
+        wcout << join<wstring>(parts, L" ") << ";";
 
     }
 
@@ -175,6 +156,7 @@ private:
         cout << "//------------------------------------" << endl;
         for (auto &fieldInfo : _fields) {
             outputField(fieldInfo);
+            cout << endl << endl;
         }
         cout << endl;
     }
@@ -183,24 +165,11 @@ private:
         // TODO
     }
 
-    void outputAttributes() {
-        // TODO
-    }
-
-    u2 swapShort(u2 value) {
-        const u2 result = value >> 8 | value << 8;
-        return result;
-    }
-
-    u4 swapLong(u4 value) {
-        const u4 result = value >> 24 | (value << 8 & 0x00FF0000) | (value >> 8 & 0x0000FF00) | value << 24;
-        return result;
-    }
 
     template <typename T> void readRaw(T &buffer, unsigned int byteCount) {
 
         assert(_bytesRead + byteCount <= _fileSize);
-        char *charBuffer = reinterpret_cast<char *>(&buffer);
+        const auto charBuffer = reinterpret_cast<char *>(&buffer);
 
         _file.read(charBuffer, byteCount);
 
@@ -234,13 +203,21 @@ private:
         return result;
     }
 
-    void readHeader() {
+    u1 readU1() {
+        u1 result;
+        read(result);
+        return result;
+    }
+
+    bool readHeader() {
         readRaw(_header, sizeof(ClassFileHeader));
         _isBigEndian = _header.magic == 0x0cafebabe;
         if (!_isBigEndian && _header.magic != swapLong(0x0cafebabe)) {
             cout << "Invalid class file " << _fileName << endl;
-            exit(1);
+            _isValid = false;
         }
+
+        return _isValid;
     }
 
     void readConstPoolRecord() {
@@ -251,8 +228,8 @@ private:
             case JVM_CONSTANT_Utf8: {
                 u2 length;
                 read(length);
-                auto recordSize = sizeof(Utf8_info) + length + 1;
-                Utf8_info &utf8Info = *reinterpret_cast<Utf8_info *>(malloc(recordSize));
+                const auto recordSize = sizeof(Utf8_info) + length + 1;
+                Utf8_info &utf8Info = *static_cast<Utf8_info *>(malloc(recordSize));
                 utf8Info.tag = tag;
                 utf8Info.length = length;
                 const auto data = reinterpret_cast<u1 *>(utf8Info.bytes);
@@ -350,8 +327,7 @@ private:
     }
 
     void readInterfaces() {
-        u2 count;
-        read(count);
+        const auto count = readU2();
         _interfaces.resize(count);
         for (auto i = 0; i < count; ++i) {
             read(_interfaces[i]);
@@ -359,29 +335,26 @@ private:
     }
 
     void readFields() {
-        u2 count;
-        read(count);
+        const auto count = readU2();
 
         for (auto i = 0; i < count; ++i) {
             FieldInfo fieldInfo;
             read(fieldInfo.accessFlags);
             read(fieldInfo.nameIndex);
             read(fieldInfo.descriptorIndex);
-            u2 count;
-            read(count);
-            readAttributesSection(fieldInfo.attributes, count);
+            const auto attributeCount = readU2();
+            readAttributesSection(fieldInfo.attributes, attributeCount);
             _fields.push_back(fieldInfo);
         }
     }
 
-    void readAttributesSection(vector<AttributeInfo> &attributes, int count) {
+    void readAttributesSection(vector<AttributeInfo> &attributes, const int count) {
         for (auto i = 0; i < count; ++i) {
             AttributeInfo attributeInfo;
             read(attributeInfo.nameIndex);
             read(attributeInfo.length);
-            for (auto length = 0; length < attributeInfo.length; ++length) {
-                u1 byte;
-                read(byte);
+            for (auto length = 0u; length < attributeInfo.length; ++length) {
+                const auto byte = readU1();
                 attributeInfo.info.push_back(byte);
             }
             attributes.push_back(attributeInfo);
@@ -412,13 +385,15 @@ private:
         _fileSize = file_size(_fileName);
 
         _file.open(_fileName, ifstream::binary);
-        readHeader();
-        readConstantsPool();
-        readClassInfo();
-        readInterfaces();
-        readFields();
-        readMethods();
-        readAttributes();
+
+        if (readHeader()) {
+            readConstantsPool();
+            readClassInfo();
+            readInterfaces();
+            readFields();
+            readMethods();
+            readAttributes();
+        }
 
         _file.close();
     }
@@ -438,6 +413,7 @@ private:
     unsigned int _bytesRead;
 
     ifstream _file;
+    bool _isValid = true;
 };
 } // namespace tarrash
 } // namespace kapa
