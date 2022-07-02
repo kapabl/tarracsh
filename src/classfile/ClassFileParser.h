@@ -63,7 +63,7 @@ private:
     void outputMethod(MethodInfo &methodInfo) {
         const auto accessModifiers = _accessModifiers.toString(methodInfo.accessFlags);
         const auto name = _constantPool[methodInfo.nameIndex].utf8Info.getValue();
-        auto &utf8DDesc = _constantPool[methodInfo.descriptorIndex].utf8Info;
+        const auto &utf8DDesc = _constantPool[methodInfo.descriptorIndex].utf8Info;
 
         MethodDescriptorParser methodDescriptorParser(utf8DDesc.getValue());
         auto &methodDescriptor = methodDescriptorParser.getDescriptor();

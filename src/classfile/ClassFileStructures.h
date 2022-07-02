@@ -65,13 +65,13 @@ struct Utf8_info : ConstPoolBase {
     u2 length;
     u1 bytes[1];
 
-    wstring getValue() const {
-        auto result = stringUtils::utf82wstring(bytes);
+    wstring getValue( bool withEscaped = false ) const {
+        auto result = stringUtils::utf82wstring(bytes, withEscaped);
         return result;
     }
 
-    wstring getValueAsClassname() const {
-        auto result = getValue();
+    wstring getValueAsClassname(bool withEscaped = false) const {
+        auto result = getValue( withEscaped);
         for (auto &wchar : result) {
             if (wchar == L'/') {
                 wchar = L'.';

@@ -471,7 +471,7 @@ private:
     wstring annotationValuePairToString(const AnnotationValuePair &annotationValuePair) const {
         const auto name = _constantPool.getString(annotationValuePair.nameIndex);
         const auto value = elementValueToString(annotationValuePair.value);
-        wstring result = name + L"=" + value;
+        wstring result = name + L"=(" + value + L")";
         return result;
     }
 
