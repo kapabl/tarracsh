@@ -9,51 +9,53 @@
 #include "DescriptorScanner.h"
 #include "includes/classfile_constants.h"
 
-namespace org { namespace kapa { namespace tarrash {
+namespace org::kapa::tarrash {
 
 class MethodDescriptorParser {
-    public:
-        MethodDescriptorParser(const wstring &fieldDescriptor) : _scanner( new DescriptorScanner(fieldDescriptor)) { parse(); }
+public:
+    MethodDescriptorParser(const wstring &fieldDescriptor) : _scanner( new DescriptorScanner(fieldDescriptor)) { parse(); }
 
-        const MethodDescriptor &getDescriptor() { return _methodDescriptor; }
+    const MethodDescriptor &getDescriptor() { return _methodDescriptor; }
 
-    private:
-        shared_ptr<DescriptorScanner> _scanner;
-        MethodDescriptor _methodDescriptor;
+private:
+    shared_ptr<DescriptorScanner> _scanner;
+    MethodDescriptor _methodDescriptor;
 
-        void parse() {
+    void parse() {
 
-            auto character = _scanner->getNextChar();
+        auto character = _scanner->getNextChar();
 
-            while (character != 0) {
-                switch (character) {
-                    case JVM_SIGNATURE_FUNC: {
-                        parseParameters();
-                        parseReturnType();
-                        break;
-                    }
-                    default:
-                        assert(false);
-                        break;
+        while (character != 0) {
+            switch (character) {
+                case JVM_SIGNATURE_FUNC: {
+                    parseParameters();
+                    parseReturnType();
+                    break;
                 }
-                character = _scanner->getNextChar();
+                default:
+                    assert(false);
+                    break;
             }
+            character = _scanner->getNextChar();
         }
+    }
 
-        void parseParameters() {
-            _scanner->step();
-            while (_scanner->currentChar() != JVM_SIGNATURE_ENDFUNC) {
-                DescriptorParser parser(_scanner);
-                _methodDescriptor.arguments.push_back(parser.getDescriptor());
-            }
-        }
-
-        void parseReturnType() {
-            _scanner->step();
+    void parseParameters() {
+        _scanner->step();
+        while (_scanner->currentChar() != JVM_SIGNATURE_ENDFUNC) {
             DescriptorParser parser(_scanner);
-            _methodDescriptor.returnType = parser.getDescriptor();
+            _methodDescriptor.arguments.push_back(parser.getDescriptor());
         }
+    }
+
+    void parseReturnType() {
+        _scanner->step();
+        DescriptorParser parser(_scanner);
+        _methodDescriptor.returnType = parser.getDescriptor();
+    }
 };
 
-}}}    // namespace org::kapa::tarrash
+}
+
+// namespace org::kapa::tarrash
 #endif // TARRASH_METHODDESCRIPTORPARSER_H

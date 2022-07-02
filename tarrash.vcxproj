@@ -107,14 +107,21 @@
     <ClCompile Include="src\classfile\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\classfile\Attributes.h" />
+    <ClInclude Include="src\classfile\AccessModifiers.h" />
+    <ClInclude Include="src\classfile\AttributesManager.h" />
+    <ClInclude Include="src\classfile\AttributeStructures.h" />
     <ClInclude Include="src\classfile\ClassFileParser.h" />
-    <ClInclude Include="src\classfile\ClassFileStructure.h" />
+    <ClInclude Include="src\classfile\ClassFileStructures.h" />
     <ClInclude Include="src\classfile\ConstantPool.h" />
     <ClInclude Include="src\classfile\DescriptorParser.h" />
     <ClInclude Include="src\classfile\DescriptorScanner.h" />
+    <ClInclude Include="src\classfile\includes\AttributeTags.h" />
     <ClInclude Include="src\classfile\includes\classfile_constants.h" />
+    <ClInclude Include="src\classfile\includes\vmSymbols.hpp" />
     <ClInclude Include="src\classfile\MethodDescriptorParser.h" />
+    <ClInclude Include="src\classfile\includes\classfile_constants.h" />
+    <ClInclude Include="src\classfile\openjdk\vmIntrinsics.hpp" />
+    <ClInclude Include="src\classfile\openjdk\vmSymbols.hpp" />
     <ClInclude Include="src\classfile\StackFrame.h" />
     <ClInclude Include="src\classfile\StringUtils.h" />
     <ClInclude Include="src\classfile\StructsCommon.h" />
