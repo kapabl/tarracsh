@@ -106,7 +106,25 @@ private:
             }
         }
 
+        template <typename T> void readReversed(T &buffer, unsigned int byteCount) {
+
+            readRaw(buffer, byteCount);
+            if (!isBigEndian) {
+                switch (byteCount) {
+                    case 2:
+                        buffer = swapShort(buffer);
+                        break;
+                    case 4:
+                        buffer = swapLong(buffer);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         template <typename T> void read(T &buffer) { read(buffer, sizeof(T)); }
+        template <typename T> void readReversed(T &buffer) { readReversed(buffer, sizeof(T)); }
 
         u1 readU1() {
             u1 result;
@@ -120,9 +138,22 @@ private:
             return result;
         }
 
+
         u4 readU4() {
             u4 result;
             read(result);
+            return result;
+        }
+
+        u4 readU4Reversed() {
+            u4 result;
+            readReversed(result);
+            return result;
+        }
+
+        u2 readU2Reversed() {
+            u2 result;
+            readReversed(result);
             return result;
         }
     };
@@ -134,38 +165,46 @@ private:
         // auto &constantValue = reinterpret_cast<ConstantValue &>(attribute);
         result += L": ";
 
-        ConstantValue constantValue{attribute.nameIndex, attribute.length};
-        constantValue.constantValueIndex = reader.readU2();
+        ConstantValue constantValue{attribute.nameIndex, attribute.length, reader.readU2()};
+        // constantValue.nameIndex = attribute.nameIndex;
+        // constantValue.length = attribute.length;
+        // constantValue.constantValueIndex = reader.readU2();
 
         auto &constantValueEntry = _constantPool[constantValue.constantValueIndex].base;
 
         switch (constantValueEntry.tag) {
 
-            case JVM_CONSTANT_Integer:
+            case JVM_CONSTANT_Integer: {
                 constantValue.value.intValue = static_cast<Integer_info &>(constantValueEntry).value;
                 result += to_wstring(constantValue.value.intValue);
                 break;
+            }
 
-            case JVM_CONSTANT_Float:
+            case JVM_CONSTANT_Float: {
+
                 constantValue.value.floatValue = static_cast<Float_info &>(constantValueEntry).value;
                 result += to_wstring(constantValue.value.floatValue);
                 break;
+            }
 
-            case JVM_CONSTANT_Long:
+            case JVM_CONSTANT_Long: {
                 constantValue.value.longValue = static_cast<Long_info &>(constantValueEntry).value;
                 result += to_wstring(constantValue.value.longValue);
                 break;
+            }
 
-            case JVM_CONSTANT_Double:
+            case JVM_CONSTANT_Double: {
                 constantValue.value.doubleValue = static_cast<Double_info &>(constantValueEntry).value;
                 result += to_wstring(constantValue.value.doubleValue);
                 break;
+            }
 
-            case JVM_CONSTANT_String:
+            case JVM_CONSTANT_String: {
                 auto &stringInfo = static_cast<String_info &>(constantValueEntry);
                 constantValue.value.string = _constantPool.getString(stringInfo.stringIndex);
                 result += to_wstring(constantValue.value.doubleValue);
                 break;
+            }
 
             default:
                 assert(false);
@@ -274,7 +313,7 @@ private:
     END_ATTR_TO_STRING()
 
 
-    void readAnnotationValue(ElementValue &elementValue, VectorReader &reader) {
+    void readElementValue(ElementValue &elementValue, VectorReader &reader) {
         elementValue.tag = static_cast<SignatureTypes>(reader.readU1());
         wstring result;
         switch (elementValue.tag) {
@@ -283,10 +322,10 @@ private:
                 elementValue.value.arrayValues.count = reader.readU2();
                 for (auto i = 0u; i < elementValue.value.arrayValues.count; i++) {
                     std::shared_ptr<ElementValue> childElementValue(new ElementValue());
-                    readAnnotationValue(*childElementValue, reader);
+                    readElementValue(*childElementValue, reader);
                     elementValue.value.arrayValues.values.push_back(childElementValue);
                 }
-                
+
                 break;
 
             case JVM_SIGNATURE_INT:
@@ -320,22 +359,20 @@ private:
 
             default:
                 assert(false);
-                cout << "Invalid Annotation";
+                cout << "Invalid Element Value Annotation";
                 break;
         }
 
     }
-    
+
     void readAnnotationValues(Annotation &annotations, VectorReader &reader) {
         for (auto i = 0u; i < annotations.count; ++i) {
             AnnotationValuePair annotationValuePair;
             annotationValuePair.nameIndex = reader.readU2();
 
-            // TODO convert to string
-            auto valueTypeString = _constantPool.getTypeString(annotationValuePair.nameIndex);
+            //auto valueTypeString = _constantPool.getTypeString(annotationValuePair.nameIndex);
 
-
-            readAnnotationValue(annotationValuePair.value, reader);
+            readElementValue(annotationValuePair.value, reader);
             annotations.values.push_back(annotationValuePair);
 
         }
@@ -350,9 +387,8 @@ private:
     void readRuntimeAnnotations(RuntimeAnnotations &annotations, VectorReader &reader) {
         for (auto i = 0u; i < annotations.count; ++i) {
             Annotation annotation;
-            readAnnotation(annotation, reader );
-            auto typeString = _constantPool.getTypeString(annotation.typeIndex);
-            annotations.annotations.push_back(annotation);
+            readAnnotation(annotation, reader);
+            annotations.items.push_back(annotation);
         }
     }
 
@@ -362,9 +398,9 @@ private:
         for (auto i = 0u; i < parameterAnnotation.count; i++) {
             Annotation annotation;
             readAnnotation(annotation, reader);
-            parameterAnnotation.annotations.push_back(annotation);
+            parameterAnnotation.items.push_back(annotation);
         }
-     }
+    }
 
 
     void readRuntimeParameterAnnotations(RuntimeParameterAnnotations &annotations, VectorReader &reader) {
@@ -372,33 +408,123 @@ private:
             ParameterAnnotation annotation;
             readParameterAnnotation(annotation, reader);
             // auto typeString = _constantPool.getTypeString(annotation.typeIndex);
-            // annotations.annotations.push_back(annotation);
-            annotations.parameterAnnotations.push_back(annotation);
+            // items.items.push_back(annotation);
+            annotations.items.push_back(annotation);
         }
     }
 
+    wstring elementValueToString(const ElementValue &elementValue) const {
+        wstring result;
+        const auto &[
+            constValueIndex,
+            enumConstValue,
+            classInfoIndex,
+            annotationValue,
+            arrayValues] = elementValue.value;
+
+        switch (elementValue.tag) {
+            case JVM_SIGNATURE_ARRAY: {
+                vector<wstring> parts;
+                for (auto &child : arrayValues.values) {
+                    parts.push_back(elementValueToString(*child));
+                }
+                result = join<wstring>(parts, L",");
+                break;
+            }
+
+            case JVM_SIGNATURE_INT:
+            case JVM_SIGNATURE_LONG:
+            case JVM_SIGNATURE_SHORT:
+            case JVM_SIGNATURE_BOOLEAN:
+            case JVM_SIGNATURE_CHAR:
+            case JVM_SIGNATURE_BYTE:
+            case JVM_SIGNATURE_FLOAT:
+            case JVM_SIGNATURE_DOUBLE:
+            case JVM_SIGNATURE_STRING:
+                result = _constantPool.getConstantValueString(constValueIndex);
+                break;
+
+            case JVM_SIGNATURE_CLASS2:
+                result = _constantPool.getClassname(classInfoIndex);
+                break;
+
+            case JVM_SIGNATURE_ANNOTATION: {
+                result = annotationToString(*annotationValue);
+                break;
+            }
+
+            case JVM_SIGNATURE_ENUM2: {
+                const auto name = _constantPool.getString(enumConstValue.typeNameIndex);
+                const auto valueString = _constantPool.getConstantValueString(enumConstValue.constNameIndex);
+                result = name + L"=" + valueString;
+                break;
+            }
+
+            default:
+                assert(false);
+                cout << "Invalid Element Value Annotation";
+                break;
+        }
+        return result;
+    }
+
+    wstring annotationValuePairToString(const AnnotationValuePair &annotationValuePair) const {
+        const auto name = _constantPool.getString(annotationValuePair.nameIndex);
+        const auto value = elementValueToString(annotationValuePair.value);
+        wstring result = name + L"=" + value;
+        return result;
+    }
+
+    wstring annotationToString(const Annotation &annotation) const {
+        auto typeString = _constantPool.getTypeString(annotation.typeIndex);
+        vector<wstring> valuePairs;
+
+        for (auto &annotationValuePair : annotation.values) {
+            valuePairs.push_back(annotationValuePairToString(annotationValuePair));
+        }
+        wstring result = typeString + L": " + join<wstring>(valuePairs, L", ");
+
+        return result;
+    }
+
+    wstring runtimeAnnotationsToString(const RuntimeAnnotations &annotations) {
+
+        vector<wstring> parts;
+        for (auto &annotation : annotations.items) {
+            parts.push_back(annotationToString(annotation));
+        }
+        auto result = join<wstring>(parts, L", ");
+        return result;
+    }
+
     START_ATTR_TO_STRING(RuntimeVisibleAnnotations)
-        RuntimeVisibleAnnotations runtimeVisibleAnnotations{reader.readU2(), reader.readU4(), reader.readU2()};
-        readRuntimeAnnotations(runtimeVisibleAnnotations, reader);
+        RuntimeVisibleAnnotations annotations{attribute.nameIndex, attribute.length, reader.readU2()};
+        readRuntimeAnnotations(annotations, reader);
+        result += L" " + runtimeAnnotationsToString(annotations);
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeInvisibleAnnotations)
-        RuntimeInvisibleAnnotations runtimeVisibleAnnotations{reader.readU2(), reader.readU4(), reader.readU2()};
-        readRuntimeAnnotations(runtimeVisibleAnnotations, reader);
+        RuntimeInvisibleAnnotations annotations{attribute.nameIndex, attribute.length, reader.readU2()};
+        readRuntimeAnnotations(annotations, reader);
+        result += L" " + runtimeAnnotationsToString(annotations);
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeVisibleParameterAnnotations)
-        RuntimeVisibleParameterAnnotations annotations{reader.readU2(), reader.readU4(), reader.readU1()};
+        RuntimeVisibleParameterAnnotations annotations{attribute.nameIndex, attribute.length, reader.readU1()};
         readRuntimeParameterAnnotations(annotations, reader);
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeInvisibleParameterAnnotations)
-        RuntimeInvisibleParameterAnnotations annotations{reader.readU2(), reader.readU4(), reader.readU1()};
+        RuntimeInvisibleParameterAnnotations annotations{attribute.nameIndex, attribute.length, reader.readU1()};
         readRuntimeParameterAnnotations(annotations, reader);
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(AnnotationDefault)
-        // TODO
+        AnnotationDefault annotation;
+        annotation.nameIndex = reader.readU2();
+        annotation.length = reader.readU2();
+        readElementValue(annotation.defaultValue, reader);
+        //TODO convert to string
 
     END_ATTR_TO_STRING()
 

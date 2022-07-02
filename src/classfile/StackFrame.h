@@ -148,7 +148,7 @@ struct FullFrame {
 
 struct StackMapFrame {
     union {
-        SameFrame sameFrame;
+        SameFrame sameFrame{0};
         SameLocals1StackItemFrame sameLocals1StackItemFrame;
         SameLocals1StackItemFrameExtended sameLocals1StackItemFrameExtended;
         ChopFrame chopFrame;
@@ -157,6 +157,8 @@ struct StackMapFrame {
         FullFrame fullFrame;
     };
 
+    StackMapFrame() = delete;
+    ~StackMapFrame() = delete;
 };
 
 } // namespace stack

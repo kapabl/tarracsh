@@ -94,7 +94,7 @@ public:
     wstring getTypeString(const u2 stringIndex) const {
 
         const auto type = getString(stringIndex);
-        
+
         DescriptorParser descriptorParser(type);
         auto &descriptor = descriptorParser.getDescriptor();
         auto result = descriptor.toString();
@@ -102,8 +102,8 @@ public:
     }
 
 
-    wstring getConstantValueString( const u2 constantIndex ) {
-        auto& constantPoolRecord = getEntry(constantIndex);
+    wstring getConstantValueString(const u2 constantIndex) const {
+        const auto &constantPoolRecord = getEntry(constantIndex);
         wstring result;
 
         switch (constantPoolRecord.base.tag) {
@@ -124,6 +124,10 @@ public:
                 result = to_wstring(constantPoolRecord.doubleInfo.value);
                 break;
 
+            case JVM_CONSTANT_Utf8:
+                result = constantPoolRecord.utf8Info.getValue();
+                break;
+
             case JVM_CONSTANT_String:
                 result = getString(constantPoolRecord.stringInfo.stringIndex);
                 break;
@@ -135,6 +139,7 @@ public:
 
         return result;
     }
+
 
 };
 

@@ -119,7 +119,6 @@
     <ClInclude Include="src\classfile\includes\classfile_constants.h" />
     <ClInclude Include="src\classfile\includes\vmSymbols.hpp" />
     <ClInclude Include="src\classfile\MethodDescriptorParser.h" />
-    <ClInclude Include="src\classfile\includes\classfile_constants.h" />
     <ClInclude Include="src\classfile\openjdk\vmIntrinsics.hpp" />
     <ClInclude Include="src\classfile\openjdk\vmSymbols.hpp" />
     <ClInclude Include="src\classfile\StackFrame.h" />

@@ -36,6 +36,8 @@ public:
         return result;
     }
 
+    wstring getFieldDescriptor() { return _fieldDescriptor; }
+
 private:
     const wstring &_fieldDescriptor;
     int _position = -1;
