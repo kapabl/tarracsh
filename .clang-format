@@ -12,5 +12,6 @@ SortUsingDeclarations: true
 FixNamespaceComments: true
 SortIncludes: Never
 ConstructorInitializerIndentWidth: 0
+AllowShortIfStatementsOnASingleLine: Always
 
 ...

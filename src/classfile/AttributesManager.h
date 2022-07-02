@@ -7,7 +7,6 @@
 #include <unordered_map>
 #include "includes/AttributeTags.h"
 #include "AttributeStructures.h"
-#include "DescriptorParser.h"
 #include "AccessModifiers.h"
 
 
@@ -16,23 +15,30 @@ namespace org::kapa::tarrash::attributes {
 
 #define ATTR_TO_STRING_FUNC_NAME(AttributeName) toString##AttributeName
 
-#define TAG_TO_STRING_FUNC_ENTRY( AttributeName ) \
+#define TAG_TO_STRING_FUNC( AttributeName ) \
     _tags2ToStringFunc[AttributeTag::AttributeName##Tag] = &AttributesManager::ATTR_TO_STRING_FUNC_NAME( AttributeName );
 
 #define START_ATTR_TO_STRING(AttributeName) \
-    wstring ATTR_TO_STRING_FUNC_NAME(AttributeName)(AttributeInfo & attribute) { \
-        wstring result = L"Attr - "#AttributeName; \
+    std::wstring ATTR_TO_STRING_FUNC_NAME(AttributeName)(AttributeInfo & attribute) { \
+        std::wstring result = L"Attr - "#AttributeName; \
         VectorReader reader(attribute.info, _isBigEndian);
 #define END_ATTR_TO_STRING() \
         return result;\
     }
 
-class AttributesManager {
+
+using common::u1;
+using common::u2;
+using common::u4;
+
+class AttributesManager final {
 public:
-    AttributesManager(const ConstantPool &constantPool, const bool isBigEndian)
-        : _constantPool(constantPool), _isBigEndian(isBigEndian) {
+    AttributesManager(const ConstantPool &constantPool)
+        : _constantPool(constantPool), _isBigEndian(true) {
         init();
     }
+
+    void setBigEndian(bool value) { _isBigEndian = value; }
 
     AttributeTag getTag(const std::wstring &stringTag) const {
         const auto it = _tagsMap.find(stringTag);
@@ -42,21 +48,21 @@ public:
         return AttributeTag::InvalidTag;
     }
 
-    wstring toString(AttributeInfo &attribute) {
+    std::wstring toString(AttributeInfo &attribute) {
 
         const auto tagName = _constantPool[attribute.nameIndex].utf8Info.getValue();
 
         const auto tag = getTag(tagName);
         const auto it = _tags2ToStringFunc.find(tag);
-        wstring result = (it != _tags2ToStringFunc.end())
-                             ? (this->*(it->second))(attribute)
-                             : (L"Invalid Attribute: " + tagName);
+        std::wstring result = (it != _tags2ToStringFunc.end())
+                                  ? (this->*(it->second))(attribute)
+                                  : (L"Invalid Attribute: " + tagName);
 
         return result;
     }
 
 private:
-    typedef wstring (AttributesManager::*AttrToStringFunc)(AttributeInfo &);
+    typedef std::wstring (AttributesManager::*AttrToStringFunc)(AttributeInfo &);
 
     accessModifiers::AccessModifiers _accessModifiers;
 
@@ -66,11 +72,11 @@ private:
     bool _isBigEndian;
 
     struct VectorReader {
-        explicit VectorReader(const vector<u1> &buffer, const bool isBigEndianArg)
+        explicit VectorReader(const std::vector<u1> &buffer, const bool isBigEndianArg)
             : bytesVector(buffer), isBigEndian(isBigEndianArg) {
         }
 
-        const vector<u1> &bytesVector;
+        const std::vector<u1> &bytesVector;
         int position{0};
         bool isBigEndian;
 
@@ -95,10 +101,10 @@ private:
             if (isBigEndian) {
                 switch (byteCount) {
                     case 2:
-                        buffer = swapShort(buffer);
+                        buffer = stringUtils::swapShort(buffer);
                         break;
                     case 4:
-                        buffer = swapLong(buffer);
+                        buffer = stringUtils::swapLong(buffer);
                         break;
                     default:
                         break;
@@ -106,107 +112,95 @@ private:
             }
         }
 
-        template <typename T> void readReversed(T &buffer, unsigned int byteCount) {
-
-            readRaw(buffer, byteCount);
-            if (!isBigEndian) {
-                switch (byteCount) {
-                    case 2:
-                        buffer = swapShort(buffer);
-                        break;
-                    case 4:
-                        buffer = swapLong(buffer);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
 
         template <typename T> void read(T &buffer) { read(buffer, sizeof(T)); }
         template <typename T> void readReversed(T &buffer) { readReversed(buffer, sizeof(T)); }
 
         u1 readU1() {
             u1 result;
-            read(result);
+            readRaw(result, 1);
             return result;
         }
 
         u2 readU2() {
             u2 result;
-            read(result);
+            readRaw(result, 2);
+            if (isBigEndian) {
+                result = stringUtils::swapShort(result);
+            }
             return result;
         }
 
 
         u4 readU4() {
             u4 result;
-            read(result);
+            readRaw(result, 4);
+            if (isBigEndian) {
+                result = stringUtils::swapLong(result);
+            }
             return result;
         }
 
-        u4 readU4Reversed() {
-            u4 result;
-            readReversed(result);
-            return result;
-        }
 
-        u2 readU2Reversed() {
-            u2 result;
-            readReversed(result);
-            return result;
-        }
     };
 
     /**
          * TODO consider saving the constant string inside the attribute in the future
          */
     START_ATTR_TO_STRING(ConstantValue)
-        // auto &constantValue = reinterpret_cast<ConstantValue &>(attribute);
         result += L": ";
 
-        ConstantValue constantValue{attribute.nameIndex, attribute.length, reader.readU2()};
-        // constantValue.nameIndex = attribute.nameIndex;
-        // constantValue.length = attribute.length;
-        // constantValue.constantValueIndex = reader.readU2();
+        ConstantValue constantValue{{attribute.nameIndex, attribute.length}, reader.readU2(), {}};
 
         auto &constantValueEntry = _constantPool[constantValue.constantValueIndex].base;
 
         switch (constantValueEntry.tag) {
 
             case JVM_CONSTANT_Integer: {
-                constantValue.value.intValue = static_cast<Integer_info &>(constantValueEntry).value;
+                constantValue.value.intValue = static_cast<IntegerInfo &>(constantValueEntry).value;
                 result += to_wstring(constantValue.value.intValue);
                 break;
             }
 
             case JVM_CONSTANT_Float: {
 
-                constantValue.value.floatValue = static_cast<Float_info &>(constantValueEntry).value;
+                constantValue.value.floatValue = static_cast<FloatInfo &>(constantValueEntry).value;
                 result += to_wstring(constantValue.value.floatValue);
                 break;
             }
 
             case JVM_CONSTANT_Long: {
-                constantValue.value.longValue = static_cast<Long_info &>(constantValueEntry).value;
+                constantValue.value.longValue = static_cast<LongInfo &>(constantValueEntry).valueUnion.value;
                 result += to_wstring(constantValue.value.longValue);
                 break;
             }
 
             case JVM_CONSTANT_Double: {
-                constantValue.value.doubleValue = static_cast<Double_info &>(constantValueEntry).value;
+                constantValue.value.doubleValue = static_cast<DoubleInfo &>(constantValueEntry).value;
                 result += to_wstring(constantValue.value.doubleValue);
                 break;
             }
 
             case JVM_CONSTANT_String: {
-                auto &stringInfo = static_cast<String_info &>(constantValueEntry);
+                auto &stringInfo = static_cast<StringInfo &>(constantValueEntry);
                 constantValue.value.string = _constantPool.getString(stringInfo.stringIndex);
                 result += to_wstring(constantValue.value.doubleValue);
                 break;
             }
 
-            default:
+            case JVM_CONSTANT_Utf8:
+            case JVM_CONSTANT_Unicode:
+            case JVM_CONSTANT_Class:
+            case JVM_CONSTANT_Fieldref:
+            case JVM_CONSTANT_Methodref:
+            case JVM_CONSTANT_InterfaceMethodref:
+            case JVM_CONSTANT_NameAndType:
+            case JVM_CONSTANT_MethodHandle:
+            case JVM_CONSTANT_MethodType:
+            case JVM_CONSTANT_Dynamic:
+            case JVM_CONSTANT_InvokeDynamic:
+            case JVM_CONSTANT_Module:
+            case JVM_CONSTANT_Package:
                 assert(false);
                 break;
         }
@@ -214,29 +208,25 @@ private:
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(SourceFile)
-        SourceFile sourceFile{attribute.nameIndex, attribute.length};
-        sourceFile.sourceFileIndex = reader.readU2();
+        const SourceFile sourceFile{{attribute.nameIndex, attribute.length}, reader.readU2()};
         result += L": " + _constantPool[sourceFile.sourceFileIndex].utf8Info.getValue();
     END_ATTR_TO_STRING()
 
-    wstring innerClassToString(InnerClasses &innerClasses, VectorReader &reader,
-                               u4 index) const {
+    std::wstring innerClassToString(InnerClasses &innerClasses, VectorReader &reader,
+                                    u4 index) const {
 
         const InnerClass innerClass{
             reader.readU2(),
             reader.readU2(),
             reader.readU2(),
             reader.readU2()};
-        const auto innerClassname = innerClass.innerClassInfoIndex != 0
-                                        ? _constantPool.getClassInfoName(innerClass.innerClassInfoIndex)
-                                        : L"";
 
-        const auto outerClassname = innerClass.outerClassInfoIndex != 0
-                                        ? _constantPool.getClassInfoName(innerClass.outerClassInfoIndex)
-                                        : L"<none>";
+        const auto innerClassname = _constantPool.getClassInfoName(innerClass.innerClassInfoIndex);
+        const auto outerClassname = _constantPool.getClassInfoName(innerClass.outerClassInfoIndex);
         const auto name = _constantPool.getClassInfoName(innerClass.innerNameIndex);
+
         const auto accessModifier = _accessModifiers.toString(innerClass.innerClassAccessFlags);
-        wstring result =
+        std::wstring result =
             accessModifier +
             L" class: " + name +
             L", outer class: " + outerClassname +
@@ -246,14 +236,13 @@ private:
     }
 
     START_ATTR_TO_STRING(InnerClasses)
-        InnerClasses innerClasses{attribute.nameIndex, attribute.length};
-        innerClasses.numberOfClasses = reader.readU2();
-        vector<wstring> parts;
+        InnerClasses innerClasses{{attribute.nameIndex, attribute.length}, reader.readU2(), {}};
+        std::vector<std::wstring> parts;
         parts.reserve(innerClasses.numberOfClasses);
         for (auto i = 0u; i < innerClasses.numberOfClasses; ++i) {
             parts.push_back(innerClassToString(innerClasses, reader, i));
         }
-        result += L"\n" + join<wstring>(parts, L"\n");
+        result += L"\n" + stringUtils::join<std::wstring>(parts, L"\n");
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(NestMembers)
@@ -312,10 +301,20 @@ private:
         // TODO
     END_ATTR_TO_STRING()
 
+    std::wstring runtimeAnnotationsToString(const RuntimeAnnotations &annotations) const {
 
-    void readElementValue(ElementValue &elementValue, VectorReader &reader) {
+        std::vector<std::wstring> parts;
+        for (auto &annotation : annotations.items) {
+            parts.push_back(annotationToString(annotation));
+        }
+        auto result = stringUtils::join<std::wstring>(parts, L", ");
+        return result;
+    }
+
+
+    void readElementValue(ElementValue &elementValue, VectorReader &reader) const {
         elementValue.tag = static_cast<SignatureTypes>(reader.readU1());
-        wstring result;
+        std::wstring result;
         switch (elementValue.tag) {
 
             case JVM_SIGNATURE_ARRAY:
@@ -357,7 +356,16 @@ private:
                 elementValue.value.enumConstValue.constNameIndex = reader.readU2();
                 break;
 
-            default:
+            case JVM_SIGNATURE_SLASH:
+            case JVM_SIGNATURE_DOT:
+            case JVM_SIGNATURE_SPECIAL:
+            case JVM_SIGNATURE_ENDSPECIAL:
+            case JVM_SIGNATURE_CLASS:
+            case JVM_SIGNATURE_ENDCLASS:
+            case JVM_SIGNATURE_ENUM:
+            case JVM_SIGNATURE_FUNC:
+            case JVM_SIGNATURE_ENDFUNC:
+            case JVM_SIGNATURE_VOID:
                 assert(false);
                 cout << "Invalid Element Value Annotation";
                 break;
@@ -365,7 +373,7 @@ private:
 
     }
 
-    void readAnnotationValues(Annotation &annotations, VectorReader &reader) {
+    void readAnnotationValues(Annotation &annotations, VectorReader &reader) const {
         for (auto i = 0u; i < annotations.count; ++i) {
             AnnotationValuePair annotationValuePair;
             annotationValuePair.nameIndex = reader.readU2();
@@ -378,13 +386,13 @@ private:
         }
     }
 
-    void readAnnotation(Annotation &annotation, VectorReader &reader) {
+    void readAnnotation(Annotation &annotation, VectorReader &reader) const {
         annotation.typeIndex = reader.readU2();
         annotation.count = reader.readU2();
         readAnnotationValues(annotation, reader);
     }
 
-    void readRuntimeAnnotations(RuntimeAnnotations &annotations, VectorReader &reader) {
+    void readRuntimeAnnotations(RuntimeAnnotations &annotations, VectorReader &reader) const {
         for (auto i = 0u; i < annotations.count; ++i) {
             Annotation annotation;
             readAnnotation(annotation, reader);
@@ -393,7 +401,7 @@ private:
     }
 
 
-    void readParameterAnnotation(ParameterAnnotation &parameterAnnotation, VectorReader &reader) {
+    void readParameterAnnotation(ParameterAnnotation &parameterAnnotation, VectorReader &reader) const {
         parameterAnnotation.count = reader.readU2();
         for (auto i = 0u; i < parameterAnnotation.count; i++) {
             Annotation annotation;
@@ -413,8 +421,8 @@ private:
         }
     }
 
-    wstring elementValueToString(const ElementValue &elementValue) const {
-        wstring result;
+    std::wstring elementValueToString(const ElementValue &elementValue) const {
+        std::wstring result;
         const auto &[
             constValueIndex,
             enumConstValue,
@@ -424,11 +432,11 @@ private:
 
         switch (elementValue.tag) {
             case JVM_SIGNATURE_ARRAY: {
-                vector<wstring> parts;
+                std::vector<std::wstring> parts;
                 for (auto &child : arrayValues.values) {
                     parts.push_back(elementValueToString(*child));
                 }
-                result = join<wstring>(parts, L",");
+                result = stringUtils::join<std::wstring>(parts, L",");
                 break;
             }
 
@@ -460,62 +468,75 @@ private:
                 break;
             }
 
-            default:
+            case JVM_SIGNATURE_SLASH:
+            case JVM_SIGNATURE_DOT:
+            case JVM_SIGNATURE_SPECIAL:
+            case JVM_SIGNATURE_ENDSPECIAL:
+            case JVM_SIGNATURE_CLASS:
+            case JVM_SIGNATURE_ENDCLASS:
+            case JVM_SIGNATURE_ENUM:
+            case JVM_SIGNATURE_FUNC:
+            case JVM_SIGNATURE_ENDFUNC:
+            case JVM_SIGNATURE_VOID:
                 assert(false);
                 cout << "Invalid Element Value Annotation";
                 break;
+
         }
         return result;
     }
 
-    wstring annotationValuePairToString(const AnnotationValuePair &annotationValuePair) const {
+    std::wstring annotationValuePairToString(const AnnotationValuePair &annotationValuePair) const {
         const auto name = _constantPool.getString(annotationValuePair.nameIndex);
         const auto value = elementValueToString(annotationValuePair.value);
-        wstring result = name + L"=(" + value + L")";
+        std::wstring result = name + L"=(" + value + L")";
         return result;
     }
 
-    wstring annotationToString(const Annotation &annotation) const {
+    std::wstring annotationToString(const Annotation &annotation) const {
         auto typeString = _constantPool.getTypeString(annotation.typeIndex);
-        vector<wstring> valuePairs;
+        std::vector<std::wstring> valuePairs;
 
         for (auto &annotationValuePair : annotation.values) {
             valuePairs.push_back(annotationValuePairToString(annotationValuePair));
         }
-        wstring result = typeString + L": " + join<wstring>(valuePairs, L", ");
+        std::wstring result = typeString + L": " + stringUtils::join<std::wstring>(valuePairs, L", ");
 
         return result;
     }
 
-    wstring runtimeAnnotationsToString(const RuntimeAnnotations &annotations) {
-
-        vector<wstring> parts;
-        for (auto &annotation : annotations.items) {
-            parts.push_back(annotationToString(annotation));
-        }
-        auto result = join<wstring>(parts, L", ");
-        return result;
-    }
 
     START_ATTR_TO_STRING(RuntimeVisibleAnnotations)
-        RuntimeVisibleAnnotations annotations{attribute.nameIndex, attribute.length, reader.readU2()};
+        RuntimeVisibleAnnotations annotations;
+        annotations.nameIndex = attribute.nameIndex;
+        annotations.length = attribute.length;
+        annotations.count = reader.readU2();
         readRuntimeAnnotations(annotations, reader);
         result += L" " + runtimeAnnotationsToString(annotations);
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeInvisibleAnnotations)
-        RuntimeInvisibleAnnotations annotations{attribute.nameIndex, attribute.length, reader.readU2()};
+        RuntimeInvisibleAnnotations annotations;
+        annotations.nameIndex = attribute.nameIndex;
+        annotations.length = attribute.length;
+        annotations.count = reader.readU2();
         readRuntimeAnnotations(annotations, reader);
         result += L" " + runtimeAnnotationsToString(annotations);
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeVisibleParameterAnnotations)
-        RuntimeVisibleParameterAnnotations annotations{attribute.nameIndex, attribute.length, reader.readU1()};
+        RuntimeVisibleParameterAnnotations annotations;
+        annotations.nameIndex = attribute.nameIndex;
+        annotations.length = attribute.length;
+        annotations.parameterCount = reader.readU1();
         readRuntimeParameterAnnotations(annotations, reader);
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeInvisibleParameterAnnotations)
-        RuntimeInvisibleParameterAnnotations annotations{attribute.nameIndex, attribute.length, reader.readU1()};
+        RuntimeInvisibleParameterAnnotations annotations;
+        annotations.nameIndex = attribute.nameIndex;
+        annotations.length = attribute.length;
+        annotations.parameterCount = reader.readU1();
         readRuntimeParameterAnnotations(annotations, reader);
     END_ATTR_TO_STRING()
 
@@ -578,40 +599,42 @@ private:
         _tagsMap[BOOTSTRAP_METHODS] = AttributeTag::BootstrapMethodsTag;
         _tagsMap[PERMITTED_SUBCLASSES] = AttributeTag::PermittedSubclassesTag;
 
-        TAG_TO_STRING_FUNC_ENTRY(SourceFile)
-        TAG_TO_STRING_FUNC_ENTRY(InnerClasses)
-        TAG_TO_STRING_FUNC_ENTRY(NestMembers)
-        TAG_TO_STRING_FUNC_ENTRY(NestHost)
-        TAG_TO_STRING_FUNC_ENTRY(ConstantValue)
-        TAG_TO_STRING_FUNC_ENTRY(Code)
-        TAG_TO_STRING_FUNC_ENTRY(Exceptions)
-        TAG_TO_STRING_FUNC_ENTRY(LineNumberTable)
-        TAG_TO_STRING_FUNC_ENTRY(LocalVariableTable)
-        TAG_TO_STRING_FUNC_ENTRY(LocalVariableTypeTable)
-        TAG_TO_STRING_FUNC_ENTRY(MethodParameters)
-        TAG_TO_STRING_FUNC_ENTRY(StackMapTable)
-        TAG_TO_STRING_FUNC_ENTRY(Synthetic)
-        TAG_TO_STRING_FUNC_ENTRY(Deprecated)
-        TAG_TO_STRING_FUNC_ENTRY(SourceDebugExtension)
-        TAG_TO_STRING_FUNC_ENTRY(Signature)
-        TAG_TO_STRING_FUNC_ENTRY(Record)
-        TAG_TO_STRING_FUNC_ENTRY(RuntimeVisibleAnnotations)
-        TAG_TO_STRING_FUNC_ENTRY(RuntimeInvisibleAnnotations)
-        TAG_TO_STRING_FUNC_ENTRY(RuntimeVisibleParameterAnnotations)
-        TAG_TO_STRING_FUNC_ENTRY(RuntimeInvisibleParameterAnnotations)
-        TAG_TO_STRING_FUNC_ENTRY(AnnotationDefault)
-        TAG_TO_STRING_FUNC_ENTRY(RuntimeInvisibleTypeAnnotations)
-        TAG_TO_STRING_FUNC_ENTRY(RuntimeInvisibleTypeAnnotations)
-        TAG_TO_STRING_FUNC_ENTRY(EnclosingMethod)
-        TAG_TO_STRING_FUNC_ENTRY(BootstrapMethods)
-        TAG_TO_STRING_FUNC_ENTRY(PermittedSubclasses)
+        TAG_TO_STRING_FUNC(SourceFile)
+        TAG_TO_STRING_FUNC(InnerClasses)
+        TAG_TO_STRING_FUNC(NestMembers)
+        TAG_TO_STRING_FUNC(NestHost)
+        TAG_TO_STRING_FUNC(ConstantValue)
+        TAG_TO_STRING_FUNC(Code)
+        TAG_TO_STRING_FUNC(Exceptions)
+        TAG_TO_STRING_FUNC(LineNumberTable)
+        TAG_TO_STRING_FUNC(LocalVariableTable)
+        TAG_TO_STRING_FUNC(LocalVariableTypeTable)
+        TAG_TO_STRING_FUNC(MethodParameters)
+        TAG_TO_STRING_FUNC(StackMapTable)
+        TAG_TO_STRING_FUNC(Synthetic)
+        TAG_TO_STRING_FUNC(Deprecated)
+        TAG_TO_STRING_FUNC(SourceDebugExtension)
+        TAG_TO_STRING_FUNC(Signature)
+        TAG_TO_STRING_FUNC(Record)
+        TAG_TO_STRING_FUNC(RuntimeVisibleAnnotations)
+        TAG_TO_STRING_FUNC(RuntimeInvisibleAnnotations)
+        TAG_TO_STRING_FUNC(RuntimeVisibleParameterAnnotations)
+        TAG_TO_STRING_FUNC(RuntimeInvisibleParameterAnnotations)
+        TAG_TO_STRING_FUNC(AnnotationDefault)
+        TAG_TO_STRING_FUNC(RuntimeInvisibleTypeAnnotations)
+        TAG_TO_STRING_FUNC(RuntimeInvisibleTypeAnnotations)
+        TAG_TO_STRING_FUNC(EnclosingMethod)
+        TAG_TO_STRING_FUNC(BootstrapMethods)
+        TAG_TO_STRING_FUNC(PermittedSubclasses)
 
     }
 };
 
-} // namespace org::kapa::tarrash::attributes
+}
 
-
-#undef ATTRIBUTE_TO_STRING
+#undef ATTR_TO_STRING_FUNC_NAME
+#undef TAG_TO_STRING_FUNC
+#undef START_ATTR_TO_STRING
+#undef END_ATTR_TO_STRING
 
 #endif

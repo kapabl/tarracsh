@@ -10,15 +10,14 @@ namespace org::kapa::tarrash {
 class DescriptorScanner {
 
 public:
-    DescriptorScanner(const wstring &fieldDescriptor) : _fieldDescriptor(fieldDescriptor) {}
+    explicit DescriptorScanner(const wstring &fieldDescriptor) : _fieldDescriptor(fieldDescriptor) {}
 
     wchar_t getNextChar() {
-        if (_position + 1 >= _fieldDescriptor.size())
-            return wchar_t(0);
+        if (_position + 1 >= _fieldDescriptor.size()) return 0;
 
         _position++;
 
-        auto result = _fieldDescriptor[_position];
+        const auto result = _fieldDescriptor[_position];
 
         return result;
     }
@@ -29,18 +28,17 @@ public:
         _position++;
     }
 
-    wchar_t currentChar() {
-        if (_position >= _fieldDescriptor.size())
-            return wchar_t(0);
-        auto result = _fieldDescriptor[_position];
+    wchar_t currentChar() const {
+        if (_position >= _fieldDescriptor.size()) return 0;
+        const auto result = _fieldDescriptor[_position];
         return result;
     }
 
-    wstring getFieldDescriptor() { return _fieldDescriptor; }
+    wstring getFieldDescriptor() const { return _fieldDescriptor; }
 
 private:
     const wstring &_fieldDescriptor;
-    int _position = -1;
+    unsigned int _position = 0x0ffffffff;
 };
 
 }

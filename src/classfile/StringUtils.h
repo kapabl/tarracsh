@@ -7,12 +7,9 @@
 
 #include <string>
 #include <numeric>
-#include <algorithm>
 #include <locale>
 #include <codecvt>
 #include <format>
-
-using namespace std;
 
 /**
  *
@@ -24,7 +21,7 @@ namespace org::kapa::tarrash::stringUtils {
 inline string toLower(const string &data) {
     string result;
     for (auto &element : data) {
-        result.push_back(tolower(element));
+        result.push_back(static_cast<char>(std::tolower(element)));
     }
     return result;
 }
@@ -38,7 +35,11 @@ inline wstring toLower(const wstring &data) {
 }
 
 inline wstring u162wstring(const u16string &str) {
-    wstring_convert<codecvt_utf16<wchar_t, 0x10ffff, little_endian>, wchar_t> conv;
+
+
+    using CodeCvt = codecvt_utf16<wchar_t, 0x10ffff, little_endian>;  // NOLINT(clang-diagnostic-deprecated-declarations)
+
+    wstring_convert<CodeCvt, wchar_t> conv;  // NOLINT(clang-diagnostic-deprecated-declarations)
 
     wstring result = conv.from_bytes(reinterpret_cast<const char *>(&str[0]),
                                      reinterpret_cast<const char *>(&str[0] + str.size()));
@@ -46,9 +47,11 @@ inline wstring u162wstring(const u16string &str) {
     return result;
 }
 
-inline wstring utf82wstring(const char *source, bool withEscape = false) {
-    wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t> convert;
-    u16string u16s = convert.from_bytes(source);
+inline wstring utf82wstring(const char *source, const bool withEscape = false) {
+
+    wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t> convert;  // NOLINT(clang-diagnostic-deprecated-declarations)
+
+    const u16string u16s = convert.from_bytes(source);
     wstring result = u162wstring(u16s);
 
     if (withEscape) {
@@ -73,7 +76,7 @@ inline wstring utf82wstring(const unsigned char *source, bool withEscape = false
 
 inline string join(const vector<std::string> &strings, string delim) {
     if (strings.empty()) {
-        return std::string();
+        return {};
     }
 
     auto result =
@@ -92,12 +95,12 @@ template <typename T> T join(const vector<T> &parts, T delim) {
     return result;
 }
 
-inline unsigned short swapShort(unsigned short value) {
-    const unsigned short result = value >> 8 | value << 8;
+inline unsigned short swapShort(const unsigned short value) {
+    const unsigned short result = value >> 8 | value << 8;  // NOLINT(clang-diagnostic-implicit-int-conversion)
     return result;
 }
 
-inline unsigned int swapLong(unsigned int value) {
+inline unsigned int swapLong(const unsigned int value) {
     const unsigned int result = value >> 24 | (value << 8 & 0x00FF0000) | (value >> 8 & 0x0000FF00) | value << 24;
     return result;
 }

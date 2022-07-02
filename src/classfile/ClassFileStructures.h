@@ -9,9 +9,11 @@
 
 #pragma pack(push, 1)
 
-namespace org {
-namespace kapa {
-namespace tarrash {
+namespace org::kapa::tarrash {
+
+using common::u1;
+using common::u2;
+using common::u4;
 
 struct ClassFileHeader {
     u4 magic;
@@ -19,7 +21,7 @@ struct ClassFileHeader {
     u2 majorVersion;
 };
 
-struct ClassInfo {
+struct MainClassInfo {
     u2 accessFlags;
     u2 thisClass;
     u2 superClass;
@@ -31,20 +33,19 @@ struct AttributeInfo {
     u2 nameIndex{};
     u4 length{};
     vector<u1> info;
-
 };
 
 struct FieldInfo {
-    u2 accessFlags;
-    u2 nameIndex;
-    u2 descriptorIndex;
+    u2 accessFlags{};
+    u2 nameIndex{};
+    u2 descriptorIndex{};
     vector<AttributeInfo> attributes;
 };
 
 struct MethodInfo {
-    u2 accessFlags;
-    u2 nameIndex;
-    u2 descriptorIndex;
+    u2 accessFlags{};
+    u2 nameIndex{};
+    u2 descriptorIndex{};
     vector<AttributeInfo> attributes;
 };
 
@@ -57,21 +58,21 @@ struct MemberInfo : ConstPoolBase {
     u2 nameAndTypeIndex;
 };
 
-struct Fieldref_info : MemberInfo {};
-struct Methodref_info : MemberInfo {};
-struct InterfaceMethodref_info : MemberInfo {};
+struct FieldrefInfo : MemberInfo {};
+struct MethodrefInfo : MemberInfo {};
+struct InterfaceMethodrefInfo : MemberInfo {};
 
-struct Utf8_info : ConstPoolBase {
+struct Utf8Info : ConstPoolBase {
     u2 length;
     u1 bytes[1];
 
-    wstring getValue( bool withEscaped = false ) const {
+    std::wstring getValue(bool withEscaped = false) const {
         auto result = stringUtils::utf82wstring(bytes, withEscaped);
         return result;
     }
 
-    wstring getValueAsClassname(bool withEscaped = false) const {
-        auto result = getValue( withEscaped);
+    std::wstring getValueAsClassname(bool withEscaped = false) const {
+        auto result = getValue(withEscaped);
         for (auto &wchar : result) {
             if (wchar == L'/') {
                 wchar = L'.';
@@ -81,46 +82,47 @@ struct Utf8_info : ConstPoolBase {
     }
 };
 
-struct Class_info : ConstPoolBase {
+struct ClassInfo : ConstPoolBase {
     u2 nameIndex;
 };
 
-struct String_info : ConstPoolBase {
+struct StringInfo : ConstPoolBase {
     u2 stringIndex;
 };
 
-struct MethodType_info : ConstPoolBase {
+struct MethodTypeInfo : ConstPoolBase {
     u2 descriptorIndex;
 };
 
-struct Integer_info : ConstPoolBase {
+struct IntegerInfo : ConstPoolBase {
     int value;
 };
 
-struct Float_info : ConstPoolBase {
+struct FloatInfo : ConstPoolBase {
     float value;
 };
 
-struct Long_info : ConstPoolBase {
+struct LongInfo : ConstPoolBase {
     union {
-        struct {
+        struct ValueParts {
             u4 highBytes;
             u4 lowBytes;
-        };
+        } valueParts;
         long long value;
-    };
+    } valueUnion;
+
 };
 
-struct Double_info : ConstPoolBase {
+struct DoubleInfo : ConstPoolBase {
     double value;
 };
 
-struct MethodHandle_info : ConstPoolBase {
+struct MethodHandleInfo : ConstPoolBase {
     u1 referenceKind;
     u2 referenceIndex;
 };
 
-struct InvokeDynamic_info : ConstPoolBase {
+struct InvokeDynamicInfo : ConstPoolBase {
     u2 bootstrapMethodAttrIndex;
     u2 nameAndTypeIndex;
 };
@@ -128,19 +130,19 @@ struct InvokeDynamic_info : ConstPoolBase {
 struct ConstantPoolRecord {
     union {
         ConstPoolBase base;
-        Utf8_info utf8Info;
-        Class_info classInfo;
-        Fieldref_info fieldrefInfo;
-        Methodref_info methodrefInfo;
-        InterfaceMethodref_info interfaceMethodrefInfo;
-        MethodType_info methodTypeInfo;
-        String_info stringInfo;
-        Float_info floatInfo;
-        Integer_info integerInfo;
-        Double_info doubleInfo;
-        Long_info longInfo;
-        MethodHandle_info methodHandleInfo;
-        InvokeDynamic_info invokeDynamicInfo;
+        Utf8Info utf8Info;
+        ClassInfo classInfo;
+        FieldrefInfo fieldrefInfo;
+        MethodrefInfo methodrefInfo;
+        InterfaceMethodrefInfo interfaceMethodrefInfo;
+        MethodTypeInfo methodTypeInfo;
+        StringInfo stringInfo;
+        FloatInfo floatInfo;
+        IntegerInfo integerInfo;
+        DoubleInfo doubleInfo;
+        LongInfo longInfo;
+        MethodHandleInfo methodHandleInfo;
+        InvokeDynamicInfo invokeDynamicInfo;
     };
 };
 
@@ -148,12 +150,12 @@ struct Descriptor {
     bool isArray;
     bool isClass;
     int dimensions;
-    wstring type;
+    std::wstring type;
 
     Descriptor() : isArray(false), isClass(false), dimensions(0) {}
 
-    wstring toString() const {
-        wstring result(type);
+    std::wstring toString() const {
+        std::wstring result(type);
 
         for (int i = 0; i < dimensions; i++) {
             result += L"[]";
@@ -167,22 +169,20 @@ struct MethodDescriptor {
     vector<Descriptor> arguments;
     Descriptor returnType;
 
-    wstring argumentsToString() const {
-        vector<wstring> parts;
+    std::wstring argumentsToString() const {
+        vector<std::wstring> parts;
 
         for (auto &descriptor : arguments) {
             parts.push_back(descriptor.toString());
         }
 
-        wstring result = L"(" + stringUtils::join<wstring>(parts, L", ") + L")";
+        std::wstring result = L"(" + stringUtils::join<std::wstring>(parts, L", ") + L")";
 
         return result;
     }
 };
 
-} // namespace tarrash
-} // namespace kapa
-} // namespace org
+}
 #pragma pack(pop)
 
 #endif // TARRASH_CLASSFILESTRUCTURE_H

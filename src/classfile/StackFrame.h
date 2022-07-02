@@ -8,12 +8,10 @@
 #include "includes/classfile_constants.h"
 #include "StructsCommon.h"
 
-using namespace org::kapa::tarrash::common;
+namespace org::kapa::tarrash::stack {
 
-namespace org {
-namespace kapa {
-namespace tarrash {
-namespace stack {
+using common::u1;
+using common::u2;
 
 
 struct SameFrame {
@@ -161,8 +159,6 @@ struct StackMapFrame {
     ~StackMapFrame() = delete;
 };
 
-} // namespace stack
-} // namespace tarrash
-} // namespace kapa
-} // namespace org
+}
+
 #endif // TARRASH_STACKFRAME_H

@@ -6,7 +6,6 @@
 #define TARRASH_CONSTANTPOOL_H
 
 
-#include <utility>
 #include <cstring>
 
 #include "DescriptorParser.h"
@@ -18,9 +17,9 @@ class ConstantPool {
 
 private:
     u2 _count{};
-    vector<u1> _buffer;
+    std::vector<u1> _buffer;
 
-    vector<ConstantPoolRecord *> _constantPoolIndex;
+    std::vector<ConstantPoolRecord *> _constantPoolIndex;
 
     ConstantPoolRecord &getEntry(const u2 index) const {
         assert(index - 1 < _constantPoolIndex.size());
@@ -30,7 +29,7 @@ private:
 
 public:
     ConstantPool() {
-        _buffer.reserve(1024 * 1024);
+        _buffer.reserve(1048576);
     }
 
     void relocate() {
@@ -63,35 +62,36 @@ public:
 
     template <typename T>
     void addRecord(T &data) {
-        _constantPoolIndex.push_back(reinterpret_cast<ConstantPoolRecord *>(_buffer.size()));
-        add(data, sizeof(data));
+        addRecord(data, sizeof(data));
     }
 
     template <typename T>
     void addRecord(T &data, int size) {
-        _constantPoolIndex.push_back(reinterpret_cast<ConstantPoolRecord *>(_buffer.size()));
+        _constantPoolIndex.push_back(
+            reinterpret_cast<ConstantPoolRecord *>(_buffer.size()) // NOLINT(performance-no-int-to-ptr)
+            );
         add(data, size);
     }
 
-    wstring getClassInfoName(const u2 classInfoIndex) const {
+    std::wstring getClassInfoName(const u2 classInfoIndex) const {
+        if (classInfoIndex == 0) return L"";
         const auto &classInfo = getEntry(classInfoIndex).classInfo;
         auto name = getEntry(classInfo.nameIndex).utf8Info.getValueAsClassname();
         return name;
     }
 
-    wstring getClassname(const u2 nameIndex) const {
-        if (nameIndex == 0)
-            return L"<anonymous>";
+    std::wstring getClassname(const u2 nameIndex) const {
+        if (nameIndex == 0) return L"<anonymous>";
         auto name = getEntry(nameIndex).utf8Info.getValueAsClassname();
         return name;
     }
 
-    wstring getString(const u2 stringIndex) const {
+    std::wstring getString(const u2 stringIndex) const {
         auto name = getEntry(stringIndex).utf8Info.getValue();
         return name;
     }
 
-    wstring getTypeString(const u2 stringIndex) const {
+    std::wstring getTypeString(const u2 stringIndex) const {
 
         const auto type = getString(stringIndex);
 
@@ -102,9 +102,9 @@ public:
     }
 
 
-    wstring getConstantValueString(const u2 constantIndex) const {
+    std::wstring getConstantValueString(const u2 constantIndex) const {
         const auto &constantPoolRecord = getEntry(constantIndex);
-        wstring result;
+        std::wstring result;
 
         switch (constantPoolRecord.base.tag) {
 
@@ -114,11 +114,11 @@ public:
 
             case JVM_CONSTANT_Float:
                 result = to_wstring(constantPoolRecord.floatInfo.value);
-                //auto x = L"\u00a7";
+            //auto x = L"\u00a7";
                 break;
 
             case JVM_CONSTANT_Long:
-                result = to_wstring(constantPoolRecord.longInfo.value);
+                result = to_wstring(constantPoolRecord.longInfo.valueUnion.value);
                 break;
 
             case JVM_CONSTANT_Double:
@@ -133,7 +133,19 @@ public:
                 result = getString(constantPoolRecord.stringInfo.stringIndex);
                 break;
 
-            default:
+
+            case JVM_CONSTANT_Unicode:
+            case JVM_CONSTANT_Class:
+            case JVM_CONSTANT_Fieldref:
+            case JVM_CONSTANT_Methodref:
+            case JVM_CONSTANT_InterfaceMethodref:
+            case JVM_CONSTANT_NameAndType:
+            case JVM_CONSTANT_MethodHandle:
+            case JVM_CONSTANT_MethodType:
+            case JVM_CONSTANT_Dynamic:
+            case JVM_CONSTANT_InvokeDynamic:
+            case JVM_CONSTANT_Module:
+            case JVM_CONSTANT_Package:
                 assert(false);
                 break;
         }

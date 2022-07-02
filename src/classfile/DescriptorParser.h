@@ -8,7 +8,6 @@
 #include "DescriptorScanner.h"
 #include <memory>
 
-using namespace std;
 
 namespace org::kapa::tarrash {
 
