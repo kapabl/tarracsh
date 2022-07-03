@@ -1,12 +1,17 @@
+#include <iostream>
 #include "ClassFileParser.h"
+
+#include "MethodDescriptorParser.h"
 
 
 using namespace org::kapa::tarrash;
 using namespace attributes;
 using namespace std;
 
-ClassFileParser::ClassFileParser(string fileName)
-    : _fileName(move(fileName)), _attributesManager(_constantPool) {
+ClassFileParser::ClassFileParser(string fileName, string classPath)
+    : _fileName(move(fileName)),
+      _classPath(move(classPath)),
+      _attributesManager(_constantPool) {
 
     processFile();
 }
@@ -16,6 +21,10 @@ void ClassFileParser::output() {
     outputMethods();
     outputFields();
     outputInterfaces();
+}
+
+void ClassFileParser::run() {
+    //TODO
 }
 
 void ClassFileParser::outputAccessModifiers(const u2 accessFlags) const {
