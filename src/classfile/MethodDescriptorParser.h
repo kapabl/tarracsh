@@ -2,8 +2,8 @@
 // Created by xman on 6/28/2022.
 //
 
-#ifndef TARRASH_METHODDESCRIPTORPARSER_H
-#define TARRASH_METHODDESCRIPTORPARSER_H
+#ifndef METHODDESCRIPTORPARSER_H
+#define METHODDESCRIPTORPARSER_H
 
 #include "DescriptorParser.h"
 #include "DescriptorScanner.h"
@@ -13,12 +13,12 @@ namespace org::kapa::tarrash {
 
 class MethodDescriptorParser {
 public:
-    MethodDescriptorParser(const wstring &fieldDescriptor) : _scanner( new DescriptorScanner(fieldDescriptor)) { parse(); }
+    MethodDescriptorParser(const std::wstring &fieldDescriptor) : _scanner( new DescriptorScanner(fieldDescriptor)) { parse(); }
 
     const MethodDescriptor &getDescriptor() { return _methodDescriptor; }
 
 private:
-    shared_ptr<DescriptorScanner> _scanner;
+    std::shared_ptr<DescriptorScanner> _scanner;
     MethodDescriptor _methodDescriptor;
 
     void parse() {
@@ -57,5 +57,4 @@ private:
 
 }
 
-// namespace org::kapa::tarrash
-#endif // TARRASH_METHODDESCRIPTORPARSER_H
+#endif

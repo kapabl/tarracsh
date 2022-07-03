@@ -10,7 +10,7 @@ namespace org::kapa::tarrash {
 class DescriptorScanner {
 
 public:
-    explicit DescriptorScanner(const wstring &fieldDescriptor) : _fieldDescriptor(fieldDescriptor) {}
+    explicit DescriptorScanner(const std::wstring &fieldDescriptor) : _fieldDescriptor(fieldDescriptor) {}
 
     wchar_t getNextChar() {
         if (_position + 1 >= _fieldDescriptor.size()) return 0;
@@ -23,8 +23,7 @@ public:
     }
 
     void step() {
-        if (_position + 1 >= _fieldDescriptor.size())
-            return;
+        if (_position + 1 >= _fieldDescriptor.size()) return;
         _position++;
     }
 
@@ -34,10 +33,10 @@ public:
         return result;
     }
 
-    wstring getFieldDescriptor() const { return _fieldDescriptor; }
+    std::wstring getFieldDescriptor() const { return _fieldDescriptor; }
 
 private:
-    const wstring &_fieldDescriptor;
+    const std::wstring &_fieldDescriptor;
     unsigned int _position = 0x0ffffffff;
 };
 

@@ -5,10 +5,13 @@
 #ifndef ATTRIBUTE_STRUCTURES_H
 #define ATTRIBUTE_STRUCTURES_H
 
+#include <memory>
+#include <string>
 #include <vector>
 #include "StructsCommon.h"
 #include "StackFrame.h"
 
+#pragma pack(push,1)
 
 namespace org::kapa::tarrash::attributes {
 
@@ -18,12 +21,17 @@ using common::u1;
 using common::u2;
 using common::u4;
 
+enum AttributeOwner { ClassFile, Method, Field };
 
 struct AttributeBase {
     u2 nameIndex{};
     u4 length{};
 };
 
+struct AttributeInfo : AttributeBase {
+    std::vector<u1> info;
+    AttributeOwner owner;
+};
 
 struct ConstantValue : AttributeBase {
 
@@ -38,9 +46,10 @@ struct ConstantValue : AttributeBase {
             bool boolValue;
             char charValue;
             short shortValue;
-            byte byteValue;
+            std::byte byteValue;
         };
-        wstring string;
+
+        std::wstring string;
     } value;
 };
 
@@ -57,23 +66,23 @@ struct Attribute {
 
 struct StackMapTable : AttributeBase {
     u2 entryCount;
-    vector<stack::StackMapFrame> entries;
+    std::vector<stack::StackMapFrame> entries;
 };
 
 struct Code : AttributeBase {
     u2 maxStack;
     u2 maxLocals;
     u4 codeLength;
-    vector<u1> code;
+    std::vector<u1> code;
     u2 exceptionTableLength;
-    vector<ExceptionTable> exceptionTable;
+    std::vector<ExceptionTable> exceptionTable;
     u2 attributesCount;
-    vector<Attribute> attributes;
+    std::vector<Attribute> attributes;
 };
 
 struct Exceptions : AttributeBase {
     u2 number_of_exceptions;
-    vector<u2> exceptionIndexTable;
+    std::vector<u2> exceptionIndexTable;
 };
 
 struct InnerClass {
@@ -85,7 +94,7 @@ struct InnerClass {
 
 struct InnerClasses : AttributeBase {
     u2 numberOfClasses;
-    vector<InnerClass> classes;
+    std::vector<InnerClass> classes;
 };
 
 struct EnclosingMethod : AttributeBase {
@@ -98,7 +107,7 @@ struct Synthetic : AttributeBase {
 };
 
 struct Signature : AttributeBase {
-    u2 signature_index{};
+    u2 signatureIndex{};
 };
 
 struct SourceFile : AttributeBase {
@@ -106,7 +115,7 @@ struct SourceFile : AttributeBase {
 };
 
 struct SourceDebugExtension : AttributeBase {
-    vector<u1> debugExtensions;
+    std::vector<u1> debugExtensions;
 };
 
 struct LineNumber {
@@ -118,7 +127,7 @@ struct LineNumberTable {
     u2 attribute_name_index;
     u4 attribute_length;
     u2 line_number_table_length;
-    vector<LineNumber> lineNumbers;
+    std::vector<LineNumber> lineNumbers;
 };
 
 struct LocalVariable {
@@ -131,7 +140,7 @@ struct LocalVariable {
 
 struct LocalVariableTable : AttributeBase {
     u2 local_variable_table_length;
-    vector<LocalVariable> variables;
+    std::vector<LocalVariable> variables;
 };
 
 struct LocalVariableType {
@@ -143,7 +152,7 @@ struct LocalVariableType {
 };
 
 struct LocalVariableTypeTable : AttributeBase {
-    vector<LocalVariableType> types;
+    std::vector<LocalVariableType> types;
 };
 
 struct Deprecated {
@@ -172,10 +181,10 @@ struct ElementValue {
     ElementValue &operator=(ElementValue &&right) = default;
 
     SignatureTypes tag = SignatureTypes::JVM_SIGNATURE_VOID;
-    
+
 
     struct Value {
-      
+
         u2 constValueIndex = 0;
 
         struct {
@@ -198,7 +207,7 @@ struct ElementValue {
             ArrayValues &operator=(ArrayValues &&right) = default;
 
             u2 count = 0;
-            vector<std::shared_ptr<ElementValue>> values;
+            std::vector<std::shared_ptr<ElementValue>> values;
         } arrayValues;
 
         Value() = default;
@@ -241,12 +250,12 @@ struct AnnotationValuePair {
 struct Annotation {
     u2 typeIndex = 0;
     u2 count = 0;
-    vector<AnnotationValuePair> values;
+    std::vector<AnnotationValuePair> values;
 };
 
 struct RuntimeAnnotations : AttributeBase {
     u2 count{};
-    vector<Annotation> items;
+    std::vector<Annotation> items;
 };
 
 struct RuntimeVisibleAnnotations : RuntimeAnnotations {
@@ -258,12 +267,12 @@ struct RuntimeInvisibleAnnotations : RuntimeAnnotations {
 
 struct ParameterAnnotation {
     u2 count = 0;
-    vector<Annotation> items;
+    std::vector<Annotation> items;
 };
 
 struct RuntimeParameterAnnotations : AttributeBase {
     u1 parameterCount = 0;
-    vector<ParameterAnnotation> items;
+    std::vector<ParameterAnnotation> items;
 
 };
 
@@ -276,6 +285,8 @@ struct RuntimeInvisibleParameterAnnotations : RuntimeParameterAnnotations {
 struct AnnotationDefault : AttributeBase {
     ElementValue defaultValue;
 };
+
+#pragma pack(pop)
 
 }
 #endif // ATTRIBUTE_STRUCTURES_H

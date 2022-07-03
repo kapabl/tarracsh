@@ -26,27 +26,21 @@ struct MainClassInfo {
     u2 thisClass;
     u2 superClass;
 
-    bool isInterface() { return (accessFlags & JVM_ACC_INTERFACE) != 0; }
-};
-
-struct AttributeInfo {
-    u2 nameIndex{};
-    u4 length{};
-    vector<u1> info;
+    bool isInterface() const { return (accessFlags & JVM_ACC_INTERFACE) != 0; }
 };
 
 struct FieldInfo {
     u2 accessFlags{};
     u2 nameIndex{};
     u2 descriptorIndex{};
-    vector<AttributeInfo> attributes;
+    std::vector<attributes::AttributeInfo> attributes;
 };
 
 struct MethodInfo {
     u2 accessFlags{};
     u2 nameIndex{};
     u2 descriptorIndex{};
-    vector<AttributeInfo> attributes;
+    std::vector<attributes::AttributeInfo> attributes;
 };
 
 struct ConstPoolBase {
@@ -166,11 +160,11 @@ struct Descriptor {
 };
 
 struct MethodDescriptor {
-    vector<Descriptor> arguments;
+    std::vector<Descriptor> arguments;
     Descriptor returnType;
 
     std::wstring argumentsToString() const {
-        vector<std::wstring> parts;
+        std::vector<std::wstring> parts;
 
         for (auto &descriptor : arguments) {
             parts.push_back(descriptor.toString());

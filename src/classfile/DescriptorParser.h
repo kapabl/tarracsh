@@ -6,6 +6,7 @@
 #define TARRASH_DESCRIPTORPARSER_H
 
 #include "DescriptorScanner.h"
+#include "ClassFileStructures.h"
 #include <memory>
 
 
@@ -13,10 +14,10 @@ namespace org::kapa::tarrash {
 
 class DescriptorParser {
 public:
-    explicit DescriptorParser(shared_ptr<DescriptorScanner> scanner)
+    explicit DescriptorParser(std::shared_ptr<DescriptorScanner> scanner)
         : _scanner(std::move(scanner)) { parse(); }
 
-    explicit DescriptorParser(const wstring &value)
+    explicit DescriptorParser(const std::wstring &value)
         : _scanner(new DescriptorScanner(value)) {
         _scanner->step();
         parse();
@@ -26,7 +27,7 @@ public:
 
 private:
     Descriptor _descriptor;
-    shared_ptr<DescriptorScanner> _scanner;
+    std::shared_ptr<DescriptorScanner> _scanner;
 
     void parse() {
 
@@ -42,7 +43,7 @@ private:
 
                 case JVM_SIGNATURE_CLASS: {
                     _descriptor.isClass = true;
-                    getFQNClassname();
+                    getFQClassname();
                     break;
                 }
 
@@ -100,7 +101,7 @@ private:
         }
     }
 
-    void getFQNClassname() {
+    void getFQClassname() {
         auto character = _scanner->getNextChar();
         while (character != JVM_SIGNATURE_ENDCLASS) {
             _descriptor.type.push_back(character != L'/' ? character : L'.');

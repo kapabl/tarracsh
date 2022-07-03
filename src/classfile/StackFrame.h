@@ -100,7 +100,7 @@ struct AppendFrame {
     //    u1 frame_type = APPEND; /* 252-254 */
     u1 frame_type;
     u2 offset_delta;
-    vector<VerificationTypeInfo> verificationTypeInfos;
+    std::vector<VerificationTypeInfo> verificationTypeInfos;
     //verification_type_info locals[frame_type - 251];
     /**
 
@@ -124,10 +124,10 @@ struct FullFrame {
     u2 offset_delta;
     u2 number_of_locals;
     // verification_type_info locals[number_of_locals];
-    vector<VerificationTypeInfo> verificationTypeInfoLocals;
+    std::vector<VerificationTypeInfo> verificationTypeInfoLocals;
     u2 number_of_stack_items;
     // verification_type_info stack[number_of_stack_items];
-    vector<VerificationTypeInfo> verificationTypeInfos;
+    std::vector<VerificationTypeInfo> verificationTypeInfos;
     /**
     The 0th entry in locals represents the type of local variable 0. If locals[M] represents local variable N, then
     locals[M+1] represents local variable N+1 if locals[M] is one of:
