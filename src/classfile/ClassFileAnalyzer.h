@@ -20,21 +20,21 @@
 
 namespace org::kapa::tarrash {
 
-class ClassFileParser final {
+class ClassFileAnalyzer final {
 
 public:
-    explicit ClassFileParser(std::string fileName, std::string classPath);
+    explicit ClassFileAnalyzer(std::string fileName, std::string classPath);
 
-    ClassFileParser(const ClassFileParser &) = delete;
-    ClassFileParser(const ClassFileParser &&) = delete;
-    ClassFileParser &operator=(const ClassFileParser &) = delete;
-    ClassFileParser &operator=(const ClassFileParser &&) = delete;
+    ClassFileAnalyzer(const ClassFileAnalyzer &) = delete;
+    ClassFileAnalyzer(const ClassFileAnalyzer &&) = delete;
+    ClassFileAnalyzer &operator=(const ClassFileAnalyzer &) = delete;
+    ClassFileAnalyzer &operator=(const ClassFileAnalyzer &&) = delete;
 
     void output();
 
     [[nodiscard]] bool isValid() const { return _isValid; }
 
-    ~ClassFileParser() = default;
+    ~ClassFileAnalyzer() = default;
     void run();
 
 private:

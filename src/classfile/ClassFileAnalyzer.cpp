@@ -1,5 +1,5 @@
 #include <iostream>
-#include "ClassFileParser.h"
+#include "ClassFileAnalyzer.h"
 
 #include "MethodDescriptorParser.h"
 
@@ -8,7 +8,7 @@ using namespace org::kapa::tarrash;
 using namespace attributes;
 using namespace std;
 
-ClassFileParser::ClassFileParser(string fileName, string classPath)
+ClassFileAnalyzer::ClassFileAnalyzer(string fileName, string classPath)
     : _fileName(move(fileName)),
       _classPath(move(classPath)),
       _attributesManager(_constantPool) {
@@ -16,22 +16,22 @@ ClassFileParser::ClassFileParser(string fileName, string classPath)
     processFile();
 }
 
-void ClassFileParser::output() {
+void ClassFileAnalyzer::output() {
     outputClass();
     outputMethods();
     outputFields();
     outputInterfaces();
 }
 
-void ClassFileParser::run() {
+void ClassFileAnalyzer::run() {
     //TODO
 }
 
-void ClassFileParser::outputAccessModifiers(const u2 accessFlags) const {
+void ClassFileAnalyzer::outputAccessModifiers(const u2 accessFlags) const {
     wcout << _accessModifiers.toString(accessFlags) << " ";
 }
 
-void ClassFileParser::outputMethod(MethodInfo &methodInfo) {
+void ClassFileAnalyzer::outputMethod(MethodInfo &methodInfo) {
     const auto accessModifiers = _accessModifiers.toString(methodInfo.accessFlags);
     const auto name = _constantPool[methodInfo.nameIndex].utf8Info.getValue();
     const auto &utf8DDesc = _constantPool[methodInfo.descriptorIndex].utf8Info;
@@ -49,7 +49,7 @@ void ClassFileParser::outputMethod(MethodInfo &methodInfo) {
     cout << endl;
 }
 
-void ClassFileParser::outputMethods() {
+void ClassFileAnalyzer::outputMethods() {
     cout << endl;
     cout << "//Methods: " << _methods.size() << endl;
     cout << "//-----------------------------------" << endl;
@@ -60,14 +60,14 @@ void ClassFileParser::outputMethods() {
     cout << endl;
 }
 
-wstring ClassFileParser::getClassInfoName(const u2 index) const {
+wstring ClassFileAnalyzer::getClassInfoName(const u2 index) const {
     const ClassInfo &classInfo = _constantPool[index].classInfo;
     const auto &classname = _constantPool[classInfo.nameIndex].utf8Info;
     auto result = classname.getValueAsClassname();
     return result;
 }
 
-void ClassFileParser::outputClass(const wstring &type) {
+void ClassFileAnalyzer::outputClass(const wstring &type) {
     cout << endl;
     cout << "//Class " << endl;
     cout << "//------------------------------------" << endl;
@@ -85,13 +85,13 @@ void ClassFileParser::outputClass(const wstring &type) {
     // TODO implemented interfaces
 }
 
-void ClassFileParser::outputClass() {
+void ClassFileAnalyzer::outputClass() {
 
     outputClass(_mainClassInfo.isInterface() ? L"interface" : L"class");
     cout << endl;
 }
 
-wstring ClassFileParser::attributesToString(vector<AttributeInfo> &attributes) {
+wstring ClassFileAnalyzer::attributesToString(vector<AttributeInfo> &attributes) {
 
     vector<wstring> parts;
 
@@ -107,7 +107,7 @@ wstring ClassFileParser::attributesToString(vector<AttributeInfo> &attributes) {
     return result;
 }
 
-void ClassFileParser::outputField(FieldInfo &fieldInfo) {
+void ClassFileAnalyzer::outputField(FieldInfo &fieldInfo) {
     const auto accessModifiers = _accessModifiers.toString(fieldInfo.accessFlags);
     const auto name = _constantPool[fieldInfo.nameIndex].utf8Info.getValue();
     const auto descriptorString = _constantPool[fieldInfo.descriptorIndex].utf8Info.getValue();
@@ -120,7 +120,7 @@ void ClassFileParser::outputField(FieldInfo &fieldInfo) {
     wcout << stringUtils::join<wstring>(parts, L" ") << ";";
 }
 
-void ClassFileParser::outputFields() {
+void ClassFileAnalyzer::outputFields() {
     cout << endl;
     cout << "//Fields: " << _fields.size() << endl;
     cout << "//------------------------------------" << endl;
@@ -131,29 +131,29 @@ void ClassFileParser::outputFields() {
     cout << endl;
 }
 
-void ClassFileParser::outputInterfaces() {
+void ClassFileAnalyzer::outputInterfaces() {
     // TODO
 }
 
-u2 ClassFileParser::readU2() {
+u2 ClassFileAnalyzer::readU2() {
     u2 result;
     read(result);
     return result;
 }
 
-u4 ClassFileParser::readU4() {
+u4 ClassFileAnalyzer::readU4() {
     u4 result;
     read(result);
     return result;
 }
 
-u1 ClassFileParser::readU1() {
+u1 ClassFileAnalyzer::readU1() {
     u1 result;
     readRaw(result);
     return result;
 }
 
-bool ClassFileParser::readHeader() {
+bool ClassFileAnalyzer::readHeader() {
     readRaw(_header, sizeof(ClassFileHeader));
     _isBigEndian = _header.magic == 0x0cafebabe;
     if (!_isBigEndian && _header.magic != stringUtils::swapLong(0x0cafebabe)) {
@@ -165,7 +165,7 @@ bool ClassFileParser::readHeader() {
     return _isValid;
 }
 
-void ClassFileParser::readConstPoolRecord() {
+void ClassFileAnalyzer::readConstPoolRecord() {
     ConstantPoolTag tag;
     readRaw(tag);
 
@@ -245,7 +245,7 @@ void ClassFileParser::readConstPoolRecord() {
     }
 }
 
-void ClassFileParser::readConstantsPool() {
+void ClassFileAnalyzer::readConstantsPool() {
     u2 count;
     read(count);
     _constantPool.setCount(count);
@@ -257,13 +257,13 @@ void ClassFileParser::readConstantsPool() {
     _constantPool.relocate();
 }
 
-void ClassFileParser::readMainClassInfo() {
+void ClassFileAnalyzer::readMainClassInfo() {
     read(_mainClassInfo.accessFlags);
     read(_mainClassInfo.thisClass);
     read(_mainClassInfo.superClass);
 }
 
-void ClassFileParser::readInterfaces() {
+void ClassFileAnalyzer::readInterfaces() {
     const auto count = readU2();
     _interfaces.resize(count);
     for (auto i = 0; i < count; ++i) {
@@ -271,7 +271,7 @@ void ClassFileParser::readInterfaces() {
     }
 }
 
-void ClassFileParser::readFields() {
+void ClassFileAnalyzer::readFields() {
     const auto count = readU2();
 
     for (auto i = 0; i < count; ++i) {
@@ -285,7 +285,7 @@ void ClassFileParser::readFields() {
     }
 }
 
-void ClassFileParser::readAttributesSection(vector<AttributeInfo> &attributes, const int count,
+void ClassFileAnalyzer::readAttributesSection(vector<AttributeInfo> &attributes, const int count,
                                             const AttributeOwner owner) {
     for (auto i = 0; i < count; ++i) {
         AttributeInfo attributeInfo;
@@ -300,7 +300,7 @@ void ClassFileParser::readAttributesSection(vector<AttributeInfo> &attributes, c
     }
 }
 
-void ClassFileParser::readMethods() {
+void ClassFileAnalyzer::readMethods() {
     const auto count = readU2();
     for (auto i = 0; i < count; ++i) {
         MethodInfo methodInfo;
@@ -314,12 +314,12 @@ void ClassFileParser::readMethods() {
     }
 }
 
-void ClassFileParser::readAttributes() {
+void ClassFileAnalyzer::readAttributes() {
     const auto count = readU2();
     readAttributesSection(_attributes, count, AttributeOwner::ClassFile);
 }
 
-void ClassFileParser::processFile() {
+void ClassFileAnalyzer::processFile() {
 
     _fileSize = filesystem::file_size(_fileName);
 
