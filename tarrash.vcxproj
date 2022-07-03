@@ -104,6 +104,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\classfile\JarParser.cpp" />
     <ClCompile Include="src\classfile\ClassFileParser.cpp" />
     <ClCompile Include="src\classfile\SignatureParser.cpp" />
     <ClCompile Include="src\classfile\AnnotationsParser.cpp" />
@@ -111,6 +112,8 @@
     <ClCompile Include="src\classfile\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\classfile\JarParser.h" />
+    <ClInclude Include="src\classfile\includes\CLI11.hpp" />
     <ClInclude Include="src\classfile\SignatureStructures.h" />
     <ClInclude Include="src\classfile\SignatureParser.h" />
     <ClInclude Include="src\classfile\AccessModifiers.h" />
@@ -127,6 +130,7 @@
     <ClInclude Include="src\classfile\StackFrame.h" />
     <ClInclude Include="src\classfile\StringUtils.h" />
     <ClInclude Include="src\classfile\StructsCommon.h" />
+    <ClInclude Include="src\classfile\tarrash.h" />
     <ClInclude Include="src\classfile\VectorReader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

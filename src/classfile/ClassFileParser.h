@@ -8,16 +8,11 @@
 #include <cassert>
 #include <filesystem>
 #include <fstream>
-#include <iomanip>
-#include <iostream>
 #include <string>
 #include <vector>
 
-#include "includes/classfile_constants.h"
 #include "ClassFileStructures.h"
 #include "ConstantPool.h"
-#include "DescriptorParser.h"
-#include "MethodDescriptorParser.h"
 #include "AttributesManager.h"
 #include "AccessModifiers.h"
 #include "StringUtils.h"
@@ -28,7 +23,7 @@ namespace org::kapa::tarrash {
 class ClassFileParser final {
 
 public:
-    explicit ClassFileParser(std::string fileName);
+    explicit ClassFileParser(std::string fileName, std::string classPath);
 
     ClassFileParser(const ClassFileParser &) = delete;
     ClassFileParser(const ClassFileParser &&) = delete;
@@ -40,9 +35,11 @@ public:
     [[nodiscard]] bool isValid() const { return _isValid; }
 
     ~ClassFileParser() = default;
+    void run();
 
 private:
     std::string _fileName;
+    std::string _classPath;
     bool _isBigEndian{true};
 
     ClassFileHeader _header{};
@@ -85,7 +82,6 @@ private:
     }
 
     template <typename T> void readRaw(T &buffer) { readRaw(buffer, sizeof(buffer)); }
-    //template <typename T> void read(T &buffer) { readRaw(buffer, sizeof(T)); }
 
     template <typename T = u2>
     void read(u2 &buffer) {
@@ -119,5 +115,5 @@ private:
     void processFile();
 
 };
-} // namespace org::kapa::tarrash
-#endif // TARRASH_CLASSFILEPARSER_H
+}
+#endif 
