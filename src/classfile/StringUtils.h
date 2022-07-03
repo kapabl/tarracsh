@@ -18,49 +18,50 @@
 
 namespace org::kapa::tarrash::stringUtils {
 
-inline string toLower(const string &data) {
-    string result;
+inline std::string toLower(const std::string &data) {
+    std::string result;
     for (auto &element : data) {
         result.push_back(static_cast<char>(std::tolower(element)));
     }
     return result;
 }
 
-inline wstring toLower(const wstring &data) {
-    wstring result;
+inline std::wstring toLower(const std::wstring &data) {
+    std::wstring result;
     for (auto &element : data) {
         result.push_back(towlower(element));
     }
     return result;
 }
 
-inline wstring u162wstring(const u16string &str) {
+inline std::wstring u162wstring(const std::u16string &str) {
 
 
-    using CodeCvt = codecvt_utf16<wchar_t, 0x10ffff, little_endian>;  // NOLINT(clang-diagnostic-deprecated-declarations)
+    using CodeCvt = std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>;  // NOLINT(clang-diagnostic-deprecated-declarations)
 
-    wstring_convert<CodeCvt, wchar_t> conv;  // NOLINT(clang-diagnostic-deprecated-declarations)
+    std::wstring_convert<CodeCvt, wchar_t> conv;  // NOLINT(clang-diagnostic-deprecated-declarations)
 
-    wstring result = conv.from_bytes(reinterpret_cast<const char *>(&str[0]),
+    std::wstring result = conv.from_bytes(reinterpret_cast<const char *>(&str[0]),
                                      reinterpret_cast<const char *>(&str[0] + str.size()));
 
     return result;
 }
 
-inline wstring utf82wstring(const char *source, const bool withEscape = false) {
+inline std::wstring utf82wstring(const char *source, const bool withEscape = false) {
 
-    wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t> convert;  // NOLINT(clang-diagnostic-deprecated-declarations)
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>
+        convert; // NOLINT(clang-diagnostic-deprecated-declarations)
 
-    const u16string u16s = convert.from_bytes(source);
-    wstring result = u162wstring(u16s);
+    const std::u16string u16s = convert.from_bytes(source);
+    std::wstring result = u162wstring(u16s);
 
     if (withEscape) {
-        wstring escapedResult;
+        std::wstring escapedResult;
         for (const auto wchar : result) {
             if (isgraph(wchar)) {
                 escapedResult.push_back(wchar);
             } else {
-                auto formatted = format(L"{:#06x}", static_cast<int>(wchar));
+                auto formatted = std::format(L"{:#06x}", static_cast<int>(wchar));
                 formatted.erase(0, 2);
                 escapedResult += L"\\u" + formatted;
             }
@@ -70,27 +71,27 @@ inline wstring utf82wstring(const char *source, const bool withEscape = false) {
     return result;
 }
 
-inline wstring utf82wstring(const unsigned char *source, bool withEscape = false) {
+inline std::wstring utf82wstring(const unsigned char *source, bool withEscape = false) {
     return utf82wstring(reinterpret_cast<const char *>(source), withEscape);
 }
 
-inline string join(const vector<std::string> &strings, string delim) {
+inline std::string join(const std::vector<std::string> &strings, std::string delim) {
     if (strings.empty()) {
         return {};
     }
 
     auto result =
         accumulate(strings.begin() + 1, strings.end(), strings[0],
-                   [&delim](const string &x, const string &y) { return x + delim + y; });
+                   [&delim](const std::string &x, const std::string &y) { return x + delim + y; });
     return result;
 }
 
-template <typename T> T join(const vector<T> &parts, T delim) {
+template <typename T> T join(const std::vector<T> &parts, T delim) {
     if (parts.empty()) {
         return T();
     }
 
-    auto result = accumulate(parts.begin() + 1, parts.end(), parts[0],
+    auto result = std::accumulate(parts.begin() + 1, parts.end(), parts[0],
                              [&delim](const T &x, const T &y) { return x + delim + y; });
     return result;
 }

@@ -8,6 +8,9 @@
 #include "includes/AttributeTags.h"
 #include "AttributeStructures.h"
 #include "AccessModifiers.h"
+#include "VectorReader.h"
+#include "AnnotationsParser.h"
+#include "SignatureParser.h"
 
 
 namespace org::kapa::tarrash::attributes {
@@ -21,7 +24,7 @@ namespace org::kapa::tarrash::attributes {
 #define START_ATTR_TO_STRING(AttributeName) \
     std::wstring ATTR_TO_STRING_FUNC_NAME(AttributeName)(AttributeInfo & attribute) { \
         std::wstring result = L"Attr - "#AttributeName; \
-        VectorReader reader(attribute.info, _isBigEndian);
+        readers::VectorReader reader(attribute.info, _isBigEndian);
 #define END_ATTR_TO_STRING() \
         return result;\
     }
@@ -71,78 +74,6 @@ private:
     const ConstantPool &_constantPool;
     bool _isBigEndian;
 
-    struct VectorReader {
-        explicit VectorReader(const std::vector<u1> &buffer, const bool isBigEndianArg)
-            : bytesVector(buffer), isBigEndian(isBigEndianArg) {
-        }
-
-        const std::vector<u1> &bytesVector;
-        int position{0};
-        bool isBigEndian;
-
-        template <typename T> void readRaw(T &buffer, unsigned int byteCount) {
-
-            assert(position + byteCount <= bytesVector.size());
-
-            const auto charBuffer = reinterpret_cast<u1 *>(&buffer);
-
-            for (auto i = 0u; i < byteCount; ++i) {
-                charBuffer[i] = bytesVector[position];
-                position++;
-            }
-
-        }
-
-        template <typename T> void readRaw(T &buffer) { readRaw(buffer, sizeof(buffer)); }
-
-        template <typename T> void read(T &buffer, unsigned int byteCount) {
-
-            readRaw(buffer, byteCount);
-            if (isBigEndian) {
-                switch (byteCount) {
-                    case 2:
-                        buffer = stringUtils::swapShort(buffer);
-                        break;
-                    case 4:
-                        buffer = stringUtils::swapLong(buffer);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-
-        template <typename T> void read(T &buffer) { read(buffer, sizeof(T)); }
-        template <typename T> void readReversed(T &buffer) { readReversed(buffer, sizeof(T)); }
-
-        u1 readU1() {
-            u1 result;
-            readRaw(result, 1);
-            return result;
-        }
-
-        u2 readU2() {
-            u2 result;
-            readRaw(result, 2);
-            if (isBigEndian) {
-                result = stringUtils::swapShort(result);
-            }
-            return result;
-        }
-
-
-        u4 readU4() {
-            u4 result;
-            readRaw(result, 4);
-            if (isBigEndian) {
-                result = stringUtils::swapLong(result);
-            }
-            return result;
-        }
-
-
-    };
 
     /**
          * TODO consider saving the constant string inside the attribute in the future
@@ -158,33 +89,33 @@ private:
 
             case JVM_CONSTANT_Integer: {
                 constantValue.value.intValue = static_cast<IntegerInfo &>(constantValueEntry).value;
-                result += to_wstring(constantValue.value.intValue);
+                result += std::to_wstring(constantValue.value.intValue);
                 break;
             }
 
             case JVM_CONSTANT_Float: {
 
                 constantValue.value.floatValue = static_cast<FloatInfo &>(constantValueEntry).value;
-                result += to_wstring(constantValue.value.floatValue);
+                result += std::to_wstring(constantValue.value.floatValue);
                 break;
             }
 
             case JVM_CONSTANT_Long: {
                 constantValue.value.longValue = static_cast<LongInfo &>(constantValueEntry).valueUnion.value;
-                result += to_wstring(constantValue.value.longValue);
+                result += std::to_wstring(constantValue.value.longValue);
                 break;
             }
 
             case JVM_CONSTANT_Double: {
                 constantValue.value.doubleValue = static_cast<DoubleInfo &>(constantValueEntry).value;
-                result += to_wstring(constantValue.value.doubleValue);
+                result += std::to_wstring(constantValue.value.doubleValue);
                 break;
             }
 
             case JVM_CONSTANT_String: {
                 auto &stringInfo = static_cast<StringInfo &>(constantValueEntry);
                 constantValue.value.string = _constantPool.getString(stringInfo.stringIndex);
-                result += to_wstring(constantValue.value.doubleValue);
+                result += std::to_wstring(constantValue.value.doubleValue);
                 break;
             }
 
@@ -212,7 +143,7 @@ private:
         result += L": " + _constantPool[sourceFile.sourceFileIndex].utf8Info.getValue();
     END_ATTR_TO_STRING()
 
-    std::wstring innerClassToString(InnerClasses &innerClasses, VectorReader &reader,
+    std::wstring innerClassToString(InnerClasses &innerClasses, readers::VectorReader &reader,
                                     u4 index) const {
 
         const InnerClass innerClass{
@@ -236,7 +167,11 @@ private:
     }
 
     START_ATTR_TO_STRING(InnerClasses)
-        InnerClasses innerClasses{{attribute.nameIndex, attribute.length}, reader.readU2(), {}};
+        InnerClasses innerClasses;
+        innerClasses.nameIndex = attribute.nameIndex;
+        innerClasses.length = attribute.length;
+        innerClasses.numberOfClasses = reader.readU2();
+
         std::vector<std::wstring> parts;
         parts.reserve(innerClasses.numberOfClasses);
         for (auto i = 0u; i < innerClasses.numberOfClasses; ++i) {
@@ -294,258 +229,38 @@ private:
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(Signature)
-        // TODO
+        signatures::SignatureParser signatureParser(_constantPool, attribute, reader);
+        result += L" " + signatureParser.toString();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(Record)
         // TODO
     END_ATTR_TO_STRING()
 
-    std::wstring runtimeAnnotationsToString(const RuntimeAnnotations &annotations) const {
-
-        std::vector<std::wstring> parts;
-        for (auto &annotation : annotations.items) {
-            parts.push_back(annotationToString(annotation));
-        }
-        auto result = stringUtils::join<std::wstring>(parts, L", ");
-        return result;
-    }
-
-
-    void readElementValue(ElementValue &elementValue, VectorReader &reader) const {
-        elementValue.tag = static_cast<SignatureTypes>(reader.readU1());
-        std::wstring result;
-        switch (elementValue.tag) {
-
-            case JVM_SIGNATURE_ARRAY:
-                elementValue.value.arrayValues.count = reader.readU2();
-                for (auto i = 0u; i < elementValue.value.arrayValues.count; i++) {
-                    std::shared_ptr<ElementValue> childElementValue(new ElementValue());
-                    readElementValue(*childElementValue, reader);
-                    elementValue.value.arrayValues.values.push_back(childElementValue);
-                }
-
-                break;
-
-            case JVM_SIGNATURE_INT:
-            case JVM_SIGNATURE_LONG:
-            case JVM_SIGNATURE_SHORT:
-            case JVM_SIGNATURE_BOOLEAN:
-            case JVM_SIGNATURE_CHAR:
-            case JVM_SIGNATURE_BYTE:
-            case JVM_SIGNATURE_FLOAT:
-            case JVM_SIGNATURE_DOUBLE:
-            case JVM_SIGNATURE_STRING:
-                elementValue.value.constValueIndex = reader.readU2();
-                break;
-
-            case JVM_SIGNATURE_CLASS2:
-                elementValue.value.classInfoIndex = reader.readU2();
-
-                break;
-
-            case JVM_SIGNATURE_ANNOTATION: {
-                const std::shared_ptr<Annotation> childAnnotation(new Annotation());
-                readAnnotation(*childAnnotation, reader);
-                elementValue.value.annotationValue = childAnnotation;
-                break;
-            }
-
-            case JVM_SIGNATURE_ENUM2:
-                elementValue.value.enumConstValue.typeNameIndex = reader.readU2();
-                elementValue.value.enumConstValue.constNameIndex = reader.readU2();
-                break;
-
-            case JVM_SIGNATURE_SLASH:
-            case JVM_SIGNATURE_DOT:
-            case JVM_SIGNATURE_SPECIAL:
-            case JVM_SIGNATURE_ENDSPECIAL:
-            case JVM_SIGNATURE_CLASS:
-            case JVM_SIGNATURE_ENDCLASS:
-            case JVM_SIGNATURE_ENUM:
-            case JVM_SIGNATURE_FUNC:
-            case JVM_SIGNATURE_ENDFUNC:
-            case JVM_SIGNATURE_VOID:
-                assert(false);
-                cout << "Invalid Element Value Annotation";
-                break;
-        }
-
-    }
-
-    void readAnnotationValues(Annotation &annotations, VectorReader &reader) const {
-        for (auto i = 0u; i < annotations.count; ++i) {
-            AnnotationValuePair annotationValuePair;
-            annotationValuePair.nameIndex = reader.readU2();
-
-            //auto valueTypeString = _constantPool.getTypeString(annotationValuePair.nameIndex);
-
-            readElementValue(annotationValuePair.value, reader);
-            annotations.values.push_back(annotationValuePair);
-
-        }
-    }
-
-    void readAnnotation(Annotation &annotation, VectorReader &reader) const {
-        annotation.typeIndex = reader.readU2();
-        annotation.count = reader.readU2();
-        readAnnotationValues(annotation, reader);
-    }
-
-    void readRuntimeAnnotations(RuntimeAnnotations &annotations, VectorReader &reader) const {
-        for (auto i = 0u; i < annotations.count; ++i) {
-            Annotation annotation;
-            readAnnotation(annotation, reader);
-            annotations.items.push_back(annotation);
-        }
-    }
-
-
-    void readParameterAnnotation(ParameterAnnotation &parameterAnnotation, VectorReader &reader) const {
-        parameterAnnotation.count = reader.readU2();
-        for (auto i = 0u; i < parameterAnnotation.count; i++) {
-            Annotation annotation;
-            readAnnotation(annotation, reader);
-            parameterAnnotation.items.push_back(annotation);
-        }
-    }
-
-
-    void readRuntimeParameterAnnotations(RuntimeParameterAnnotations &annotations, VectorReader &reader) {
-        for (auto i = 0u; i < annotations.parameterCount; ++i) {
-            ParameterAnnotation annotation;
-            readParameterAnnotation(annotation, reader);
-            // auto typeString = _constantPool.getTypeString(annotation.typeIndex);
-            // items.items.push_back(annotation);
-            annotations.items.push_back(annotation);
-        }
-    }
-
-    std::wstring elementValueToString(const ElementValue &elementValue) const {
-        std::wstring result;
-        const auto &[
-            constValueIndex,
-            enumConstValue,
-            classInfoIndex,
-            annotationValue,
-            arrayValues] = elementValue.value;
-
-        switch (elementValue.tag) {
-            case JVM_SIGNATURE_ARRAY: {
-                std::vector<std::wstring> parts;
-                for (auto &child : arrayValues.values) {
-                    parts.push_back(elementValueToString(*child));
-                }
-                result = stringUtils::join<std::wstring>(parts, L",");
-                break;
-            }
-
-            case JVM_SIGNATURE_INT:
-            case JVM_SIGNATURE_LONG:
-            case JVM_SIGNATURE_SHORT:
-            case JVM_SIGNATURE_BOOLEAN:
-            case JVM_SIGNATURE_CHAR:
-            case JVM_SIGNATURE_BYTE:
-            case JVM_SIGNATURE_FLOAT:
-            case JVM_SIGNATURE_DOUBLE:
-            case JVM_SIGNATURE_STRING:
-                result = _constantPool.getConstantValueString(constValueIndex);
-                break;
-
-            case JVM_SIGNATURE_CLASS2:
-                result = _constantPool.getClassname(classInfoIndex);
-                break;
-
-            case JVM_SIGNATURE_ANNOTATION: {
-                result = annotationToString(*annotationValue);
-                break;
-            }
-
-            case JVM_SIGNATURE_ENUM2: {
-                const auto name = _constantPool.getString(enumConstValue.typeNameIndex);
-                const auto valueString = _constantPool.getConstantValueString(enumConstValue.constNameIndex);
-                result = name + L"=" + valueString;
-                break;
-            }
-
-            case JVM_SIGNATURE_SLASH:
-            case JVM_SIGNATURE_DOT:
-            case JVM_SIGNATURE_SPECIAL:
-            case JVM_SIGNATURE_ENDSPECIAL:
-            case JVM_SIGNATURE_CLASS:
-            case JVM_SIGNATURE_ENDCLASS:
-            case JVM_SIGNATURE_ENUM:
-            case JVM_SIGNATURE_FUNC:
-            case JVM_SIGNATURE_ENDFUNC:
-            case JVM_SIGNATURE_VOID:
-                assert(false);
-                cout << "Invalid Element Value Annotation";
-                break;
-
-        }
-        return result;
-    }
-
-    std::wstring annotationValuePairToString(const AnnotationValuePair &annotationValuePair) const {
-        const auto name = _constantPool.getString(annotationValuePair.nameIndex);
-        const auto value = elementValueToString(annotationValuePair.value);
-        std::wstring result = name + L"=(" + value + L")";
-        return result;
-    }
-
-    std::wstring annotationToString(const Annotation &annotation) const {
-        auto typeString = _constantPool.getTypeString(annotation.typeIndex);
-        std::vector<std::wstring> valuePairs;
-
-        for (auto &annotationValuePair : annotation.values) {
-            valuePairs.push_back(annotationValuePairToString(annotationValuePair));
-        }
-        std::wstring result = typeString + L": " + stringUtils::join<std::wstring>(valuePairs, L", ");
-
-        return result;
-    }
-
 
     START_ATTR_TO_STRING(RuntimeVisibleAnnotations)
-        RuntimeVisibleAnnotations annotations;
-        annotations.nameIndex = attribute.nameIndex;
-        annotations.length = attribute.length;
-        annotations.count = reader.readU2();
-        readRuntimeAnnotations(annotations, reader);
-        result += L" " + runtimeAnnotationsToString(annotations);
+        const annotations::AnnotationsParser annotationsParser(_constantPool, attribute, reader);
+        result += L" " + annotationsParser.toStringRuntimeAnnotations();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeInvisibleAnnotations)
-        RuntimeInvisibleAnnotations annotations;
-        annotations.nameIndex = attribute.nameIndex;
-        annotations.length = attribute.length;
-        annotations.count = reader.readU2();
-        readRuntimeAnnotations(annotations, reader);
-        result += L" " + runtimeAnnotationsToString(annotations);
+        const annotations::AnnotationsParser annotationsParser(_constantPool, attribute, reader);
+        result += L" " + annotationsParser.toStringRuntimeAnnotations();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeVisibleParameterAnnotations)
-        RuntimeVisibleParameterAnnotations annotations;
-        annotations.nameIndex = attribute.nameIndex;
-        annotations.length = attribute.length;
-        annotations.parameterCount = reader.readU1();
-        readRuntimeParameterAnnotations(annotations, reader);
+        const annotations::AnnotationsParser annotationsParser(_constantPool, attribute, reader);
+        result += L" " + annotationsParser.toStringRuntimeParameterAnnotations();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeInvisibleParameterAnnotations)
-        RuntimeInvisibleParameterAnnotations annotations;
-        annotations.nameIndex = attribute.nameIndex;
-        annotations.length = attribute.length;
-        annotations.parameterCount = reader.readU1();
-        readRuntimeParameterAnnotations(annotations, reader);
+        const annotations::AnnotationsParser annotationsParser(_constantPool, attribute, reader);
+        result += L" " + annotationsParser.toStringRuntimeParameterAnnotations();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(AnnotationDefault)
-        AnnotationDefault annotation;
-        annotation.nameIndex = reader.readU2();
-        annotation.length = reader.readU2();
-        readElementValue(annotation.defaultValue, reader);
-        //TODO convert to string
+        const annotations::AnnotationsParser annotationsParser(_constantPool, attribute, reader);
+        result += L" " + annotationsParser.toStringAnnotationDefault();
 
     END_ATTR_TO_STRING()
 

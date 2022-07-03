@@ -109,20 +109,20 @@ public:
         switch (constantPoolRecord.base.tag) {
 
             case JVM_CONSTANT_Integer:
-                result = to_wstring(constantPoolRecord.integerInfo.value);
+                result = std::to_wstring(constantPoolRecord.integerInfo.value);
                 break;
 
             case JVM_CONSTANT_Float:
-                result = to_wstring(constantPoolRecord.floatInfo.value);
+                result = std::to_wstring(constantPoolRecord.floatInfo.value);
             //auto x = L"\u00a7";
                 break;
 
             case JVM_CONSTANT_Long:
-                result = to_wstring(constantPoolRecord.longInfo.valueUnion.value);
+                result = std::to_wstring(constantPoolRecord.longInfo.valueUnion.value);
                 break;
 
             case JVM_CONSTANT_Double:
-                result = to_wstring(constantPoolRecord.doubleInfo.value);
+                result = std::to_wstring(constantPoolRecord.doubleInfo.value);
                 break;
 
             case JVM_CONSTANT_Utf8:

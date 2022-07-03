@@ -104,9 +104,15 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\classfile\ClassFileParser.cpp" />
+    <ClCompile Include="src\classfile\SignatureParser.cpp" />
+    <ClCompile Include="src\classfile\AnnotationsParser.cpp" />
+    <ClCompile Include="src\classfile\AnnotationsParser.h" />
     <ClCompile Include="src\classfile\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\classfile\SignatureStructures.h" />
+    <ClInclude Include="src\classfile\SignatureParser.h" />
     <ClInclude Include="src\classfile\AccessModifiers.h" />
     <ClInclude Include="src\classfile\AttributesManager.h" />
     <ClInclude Include="src\classfile\AttributeStructures.h" />
@@ -117,13 +123,11 @@
     <ClInclude Include="src\classfile\DescriptorScanner.h" />
     <ClInclude Include="src\classfile\includes\AttributeTags.h" />
     <ClInclude Include="src\classfile\includes\classfile_constants.h" />
-    <ClInclude Include="src\classfile\includes\vmSymbols.hpp" />
     <ClInclude Include="src\classfile\MethodDescriptorParser.h" />
-    <ClInclude Include="src\classfile\openjdk\vmIntrinsics.hpp" />
-    <ClInclude Include="src\classfile\openjdk\vmSymbols.hpp" />
     <ClInclude Include="src\classfile\StackFrame.h" />
     <ClInclude Include="src\classfile\StringUtils.h" />
     <ClInclude Include="src\classfile\StructsCommon.h" />
+    <ClInclude Include="src\classfile\VectorReader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

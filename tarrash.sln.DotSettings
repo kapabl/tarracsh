@@ -1,4 +1,5 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppClangTidyClangDiagnosticCpp20Compat/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/Environment/InlayHints/CppOtherInlayHintsOptions/ShowDirectiveHints/@EntryValue">PushToShowHints</s:String>
 	<s:String x:Key="/Default/Environment/InlayHints/CppOtherInlayHintsOptions/ShowNamespaceNameHints/@EntryValue">PushToShowHints</s:String>
 	<s:String x:Key="/Default/Environment/InlayHints/CppOtherInlayHintsOptions/ShowReferenceHints/@EntryValue">PushToShowHints</s:String>
@@ -11,6 +12,7 @@
 	<s:String x:Key="/Default/Environment/InlayHints/CppTypeNameHintsOptions/ShowTypeNameHintsForLambdaReturnTypes/@EntryValue">PushToShowHints</s:String>
 	<s:String x:Key="/Default/Environment/InlayHints/GeneralInlayHintsOptions/DefaultMode/@EntryValue">PushToShowHints</s:String>
 	<s:Boolean x:Key="/Default/Environment/InlayHints/GeneralInlayHintsOptions/EnablePushToHint/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EFeature_002EServices_002ECpp_002EDaemon_002EInlayHints_002ECppOtherInlayHintsOptionsMigration/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=classfile/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=CLASSFILEPARSER/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=CLASSFILESTRUCTURE/@EntryIndexedValue">True</s:Boolean>
@@ -23,4 +25,5 @@
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=ORPARSER_005F/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=SER_005FH/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=SER_005FH_000D_000AORPARSER_005F/@EntryIndexedValue">False</s:Boolean>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=STRINGUTILS/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=STRINGUTILS/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=STRUCTSCOMMON/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
