@@ -1,16 +1,16 @@
-#include "JarParser.h"
+#include "JarAnalyzer.h"
 
 #include <utility>
 
 using namespace org::kapa::tarrash::jar;
 using namespace std;
 
-JarParser::JarParser(string fileName, string classPath)
+JarAnalyzer::JarAnalyzer(string fileName, string classPath)
     : _fileName(move(fileName)), _classPath(move(classPath)) {
 
     //TODO unzip and process each file
 }
 
-void JarParser::run() {
+void JarAnalyzer::run() {
     //TODO
 }

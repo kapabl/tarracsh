@@ -1,8 +1,8 @@
 #include <fstream>
 #include <iostream>
 
-#include "JarParser.h"
-#include "ClassFileParser.h"
+#include "JarAnalyzer.h"
+#include "ClassFileAnalyzer.h"
 #include "tarrash.h"
 #include "includes/CLI11.hpp"
 
@@ -13,7 +13,6 @@ using namespace org::kapa::tarrash;
 int main(int argc, char *argv[]) {
 
     CLI::App app("Tarrash");
-
 
     app.set_version_flag("-v,--version", "version " TARRASH_VERSION);
 
@@ -35,19 +34,13 @@ int main(int argc, char *argv[]) {
     } catch (const CLI::ParseError &e) {
         return app.exit(e);
     }
-    
-
-    cout << endl;
-    cout << endl;
 
     if (!classfileOption->empty()) {
-
-        ClassFileParser classFileParser(classFile, classPath);
+        ClassFileAnalyzer classFileParser(classFile, classPath);
         classFileParser.run();
         classFileParser.output();
-
     } else if (!jarOption->empty()) {
-        jar::JarParser jarParser(jarFile, classPath);
+        jar::JarAnalyzer jarParser(jarFile, classPath);
         jarParser.run();
      }
 

@@ -104,22 +104,22 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\classfile\JarParser.cpp" />
-    <ClCompile Include="src\classfile\ClassFileParser.cpp" />
+    <ClCompile Include="src\classfile\JarAnalyzer.cpp" />
+    <ClCompile Include="src\classfile\ClassFileAnalyzer.cpp" />
     <ClCompile Include="src\classfile\SignatureParser.cpp" />
     <ClCompile Include="src\classfile\AnnotationsParser.cpp" />
     <ClCompile Include="src\classfile\AnnotationsParser.h" />
     <ClCompile Include="src\classfile\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\classfile\JarParser.h" />
+    <ClInclude Include="src\classfile\JarAnalyzer.h" />
     <ClInclude Include="src\classfile\includes\CLI11.hpp" />
     <ClInclude Include="src\classfile\SignatureStructures.h" />
     <ClInclude Include="src\classfile\SignatureParser.h" />
     <ClInclude Include="src\classfile\AccessModifiers.h" />
     <ClInclude Include="src\classfile\AttributesManager.h" />
     <ClInclude Include="src\classfile\AttributeStructures.h" />
-    <ClInclude Include="src\classfile\ClassFileParser.h" />
+    <ClInclude Include="src\classfile\ClassFileAnalyzer.h" />
     <ClInclude Include="src\classfile\ClassFileStructures.h" />
     <ClInclude Include="src\classfile\ConstantPool.h" />
     <ClInclude Include="src\classfile\DescriptorParser.h" />
