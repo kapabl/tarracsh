@@ -5,7 +5,7 @@
 #ifndef TARRASH_DESCRIPTORPARSER_H
 #define TARRASH_DESCRIPTORPARSER_H
 
-#include "DescriptorScanner.h"
+#include "signatures/SignatureScanner.h"
 #include "ClassFileStructures.h"
 #include <memory>
 
@@ -14,11 +14,11 @@ namespace org::kapa::tarrash {
 
 class DescriptorParser {
 public:
-    explicit DescriptorParser(std::shared_ptr<DescriptorScanner> scanner)
+    explicit DescriptorParser(std::shared_ptr<signatures::SignatureScanner> scanner)
         : _scanner(std::move(scanner)) { parse(); }
 
     explicit DescriptorParser(const std::wstring &value)
-        : _scanner(new DescriptorScanner(value)) {
+        : _scanner(new signatures::SignatureScanner(value)) {
         _scanner->step();
         parse();
     }
@@ -27,7 +27,7 @@ public:
 
 private:
     Descriptor _descriptor;
-    std::shared_ptr<DescriptorScanner> _scanner;
+    std::shared_ptr<signatures::SignatureScanner> _scanner;
 
     void parse() {
 

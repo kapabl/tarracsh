@@ -2,7 +2,7 @@
 #define SIGNATURE_STRUCTURES_H
 
 #include <vector>
-#include "StructsCommon.h"
+#include "../StructsCommon.h"
 
 namespace org::kapa::tarrash::signatures {
 

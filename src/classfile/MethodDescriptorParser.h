@@ -6,19 +6,19 @@
 #define METHODDESCRIPTORPARSER_H
 
 #include "DescriptorParser.h"
-#include "DescriptorScanner.h"
+#include "signatures/SignatureScanner.h"
 #include "includes/classfile_constants.h"
 
 namespace org::kapa::tarrash {
 
 class MethodDescriptorParser {
 public:
-    MethodDescriptorParser(const std::wstring &fieldDescriptor) : _scanner( new DescriptorScanner(fieldDescriptor)) { parse(); }
+    MethodDescriptorParser(const std::wstring &fieldDescriptor) : _scanner( new signatures::SignatureScanner(fieldDescriptor)) { parse(); }
 
     const MethodDescriptor &getDescriptor() { return _methodDescriptor; }
 
 private:
-    std::shared_ptr<DescriptorScanner> _scanner;
+    std::shared_ptr<signatures::SignatureScanner> _scanner;
     MethodDescriptor _methodDescriptor;
 
     void parse() {

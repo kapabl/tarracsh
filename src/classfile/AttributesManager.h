@@ -10,7 +10,7 @@
 #include "AccessModifiers.h"
 #include "VectorReader.h"
 #include "AnnotationsParser.h"
-#include "SignatureParser.h"
+#include "signatures/SignatureParser.h"
 
 
 namespace org::kapa::tarrash::attributes {
@@ -229,7 +229,7 @@ private:
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(Signature)
-        signatures::SignatureParser signatureParser(_constantPool, attribute, reader);
+        const signatures::SignatureParser signatureParser(_constantPool, attribute, reader);
         result += L" " + signatureParser.toString();
     END_ATTR_TO_STRING()
 

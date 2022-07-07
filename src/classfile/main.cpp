@@ -36,12 +36,12 @@ int main(int argc, char *argv[]) {
     }
 
     if (!classfileOption->empty()) {
-        ClassFileAnalyzer classFileParser(classFile, classPath);
-        classFileParser.run();
-        classFileParser.output();
+        ClassFileAnalyzer classFileAnalyzer(classFile, classPath);
+        classFileAnalyzer.run();
+        classFileAnalyzer.output();
     } else if (!jarOption->empty()) {
-        jar::JarAnalyzer jarParser(jarFile, classPath);
-        jarParser.run();
+        jar::JarAnalyzer jarAnalyzer(jarFile, classPath);
+        jarAnalyzer.run();
      }
 
 #ifdef _DEBUG
