@@ -36,13 +36,13 @@ inline std::wstring toLower(const std::wstring &data) {
 
 inline std::wstring u162wstring(const std::u16string &str) {
 
+    using CodeCvt = std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>;
+    // NOLINT(clang-diagnostic-deprecated-declarations)
 
-    using CodeCvt = std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>;  // NOLINT(clang-diagnostic-deprecated-declarations)
-
-    std::wstring_convert<CodeCvt, wchar_t> conv;  // NOLINT(clang-diagnostic-deprecated-declarations)
+    std::wstring_convert<CodeCvt, wchar_t> conv; // NOLINT(clang-diagnostic-deprecated-declarations)
 
     std::wstring result = conv.from_bytes(reinterpret_cast<const char *>(&str[0]),
-                                     reinterpret_cast<const char *>(&str[0] + str.size()));
+                                          reinterpret_cast<const char *>(&str[0] + str.size()));
 
     return result;
 }
@@ -71,6 +71,19 @@ inline std::wstring utf82wstring(const char *source, const bool withEscape = fal
     return result;
 }
 
+inline wchar_t char2wchar(const char source) {
+
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>
+        convert; // NOLINT(clang-diagnostic-deprecated-declarations)
+
+    const char sourceCString[]{source, 0};
+
+    const std::u16string u16s = convert.from_bytes(sourceCString);
+    const std::wstring outString = u162wstring(u16s);
+
+    return outString[0];
+}
+
 inline std::wstring utf82wstring(const unsigned char *source, bool withEscape = false) {
     return utf82wstring(reinterpret_cast<const char *>(source), withEscape);
 }
@@ -92,12 +105,12 @@ template <typename T> T join(const std::vector<T> &parts, T delim) {
     }
 
     auto result = std::accumulate(parts.begin() + 1, parts.end(), parts[0],
-                             [&delim](const T &x, const T &y) { return x + delim + y; });
+                                  [&delim](const T &x, const T &y) { return x + delim + y; });
     return result;
 }
 
 inline unsigned short swapShort(const unsigned short value) {
-    const unsigned short result = value >> 8 | value << 8;  // NOLINT(clang-diagnostic-implicit-int-conversion)
+    const unsigned short result = value >> 8 | value << 8; // NOLINT(clang-diagnostic-implicit-int-conversion)
     return result;
 }
 

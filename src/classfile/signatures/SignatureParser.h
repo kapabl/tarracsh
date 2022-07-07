@@ -3,8 +3,8 @@
 #define SIGNATURE_PARSER_H
 
 #include <string>
-#include "VectorReader.h"
-#include "ConstantPool.h"
+#include "../VectorReader.h"
+#include "../ConstantPool.h"
 #include "SignatureStructures.h"
 
 namespace org::kapa::tarrash::signatures {
