@@ -14,19 +14,6 @@
 namespace org::kapa::tarrash {
 
 class ConstantPool {
-
-private:
-    u2 _count{};
-    std::vector<u1> _buffer;
-
-    std::vector<ConstantPoolRecord *> _constantPoolIndex;
-
-    ConstantPoolRecord &getEntry(const u2 index) const {
-        assert(index - 1 < _constantPoolIndex.size());
-        auto &result = *_constantPoolIndex[index - 1];
-        return result;
-    }
-
 public:
     ConstantPool() {
         _buffer.reserve(1048576);
@@ -73,25 +60,25 @@ public:
         add(data, size);
     }
 
-    std::wstring getClassInfoName(const u2 classInfoIndex) const {
+    [[nodiscard]] std::wstring getClassInfoName(const u2 classInfoIndex) const {
         if (classInfoIndex == 0) return L"";
         const auto &classInfo = getEntry(classInfoIndex).classInfo;
         auto name = getEntry(classInfo.nameIndex).utf8Info.getValueAsClassname();
         return name;
     }
 
-    std::wstring getClassname(const u2 nameIndex) const {
+    [[nodiscard]] std::wstring getClassname(const u2 nameIndex) const {
         if (nameIndex == 0) return L"<anonymous>";
         auto name = getEntry(nameIndex).utf8Info.getValueAsClassname();
         return name;
     }
 
-    std::wstring getString(const u2 stringIndex) const {
+    [[nodiscard]] std::wstring getString(const u2 stringIndex) const {
         auto name = getEntry(stringIndex).utf8Info.getValue();
         return name;
     }
 
-    std::wstring getTypeString(const u2 stringIndex) const {
+    [[nodiscard]] std::wstring getTypeString(const u2 stringIndex) const {
 
         const auto type = getString(stringIndex);
 
@@ -102,7 +89,7 @@ public:
     }
 
 
-    std::wstring getConstantValueString(const u2 constantIndex) const {
+    [[nodiscard]] std::wstring getConstantValueString(const u2 constantIndex) const {
         const auto &constantPoolRecord = getEntry(constantIndex);
         std::wstring result;
 
@@ -114,7 +101,6 @@ public:
 
             case JVM_CONSTANT_Float:
                 result = std::to_wstring(constantPoolRecord.floatInfo.value);
-            //auto x = L"\u00a7";
                 break;
 
             case JVM_CONSTANT_Long:
@@ -152,7 +138,17 @@ public:
 
         return result;
     }
+private:
+    [[maybe_unused]] u2 _count{};
+    std::vector<u1> _buffer;
 
+    std::vector<ConstantPoolRecord *> _constantPoolIndex;
+
+    [[nodiscard]] ConstantPoolRecord &getEntry(const u2 index) const {
+        assert(index - 1 < _constantPoolIndex.size());
+        auto &result = *_constantPoolIndex[index - 1];
+        return result;
+    }
 
 };
 

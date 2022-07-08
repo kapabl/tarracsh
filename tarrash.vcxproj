@@ -104,23 +104,18 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\classfile\signatures\rules\Or.cpp" />
-    <ClCompile Include="src\classfile\signatures\rules\Optional.cpp" />
     <ClCompile Include="src\classfile\JarAnalyzer.cpp" />
     <ClCompile Include="src\classfile\ClassFileAnalyzer.cpp" />
+    <ClCompile Include="src\classfile\SignatureParser.cpp" />
     <ClCompile Include="src\classfile\AnnotationsParser.cpp" />
     <ClCompile Include="src\classfile\AnnotationsParser.h" />
     <ClCompile Include="src\classfile\main.cpp" />
-    <ClCompile Include="src\classfile\signatures\rules\Kleene.cpp" />
-    <ClCompile Include="src\classfile\signatures\rules\Rule.cpp" />
-    <ClCompile Include="src\classfile\signatures\SignatureParser.cpp" />
-    <ClCompile Include="src\classfile\signatures\rules\Terminal.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\classfile\signatures\rules\Or.h" />
-    <ClInclude Include="src\classfile\signatures\rules\Optional.h" />
     <ClInclude Include="src\classfile\JarAnalyzer.h" />
     <ClInclude Include="src\classfile\includes\CLI11.hpp" />
+    <ClInclude Include="src\classfile\SignatureStructures.h" />
+    <ClInclude Include="src\classfile\SignatureParser.h" />
     <ClInclude Include="src\classfile\AccessModifiers.h" />
     <ClInclude Include="src\classfile\AttributesManager.h" />
     <ClInclude Include="src\classfile\AttributeStructures.h" />
@@ -128,21 +123,15 @@
     <ClInclude Include="src\classfile\ClassFileStructures.h" />
     <ClInclude Include="src\classfile\ConstantPool.h" />
     <ClInclude Include="src\classfile\DescriptorParser.h" />
-    <ClInclude Include="src\classfile\SignatureScanner.h" />
+    <ClInclude Include="src\classfile\DescriptorScanner.h" />
     <ClInclude Include="src\classfile\includes\AttributeTags.h" />
     <ClInclude Include="src\classfile\includes\classfile_constants.h" />
     <ClInclude Include="src\classfile\MethodDescriptorParser.h" />
-    <ClInclude Include="src\classfile\signatures\rules\Kleene.h" />
-    <ClInclude Include="src\classfile\signatures\SignatureParser.h" />
-    <ClInclude Include="src\classfile\signatures\rules\Rule.h" />
-    <ClInclude Include="src\classfile\signatures\SignatureScanner.h" />
-    <ClInclude Include="src\classfile\signatures\SignatureStructures.h" />
     <ClInclude Include="src\classfile\StackFrame.h" />
     <ClInclude Include="src\classfile\StringUtils.h" />
     <ClInclude Include="src\classfile\StructsCommon.h" />
     <ClInclude Include="src\classfile\tarrash.h" />
     <ClInclude Include="src\classfile\VectorReader.h" />
-    <ClInclude Include="src\classfile\signatures\rules\Terminal.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
