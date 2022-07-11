@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "../StructsCommon.h"
+#include "visit_struct/visit_struct_intrusive.hpp"
 
 namespace org::kapa::tarrash::signatures {
 
@@ -22,6 +23,7 @@ struct FieldSignature : SignatureBase {
 struct Identifier {
     std::wstring value;
 };
+
 
 struct FieldTypeSignature;
 struct TypeArgument;
@@ -116,8 +118,8 @@ struct FormalTypeParameters {
 
 struct ClassSignatureNode {
     FormalTypeParameters formalTypeParameters;
-    SuperclassSignature superclassSignature;
-    std::vector<SuperinterfaceSignature> interfaces;
+    ClassTypeSignature superclassSignature;
+    std::vector<ClassTypeSignature> interfaces;
 };
 
 struct ReturnType {
@@ -139,5 +141,20 @@ struct MethodSignatureNode {
 };
 
 }
+
+VISITABLE_STRUCT(org::kapa::tarrash::signatures::Identifier, value);
+VISITABLE_STRUCT(org::kapa::tarrash::signatures::ClassSignatureNode, formalTypeParameters, superclassSignature, interfaces);
+VISITABLE_STRUCT(org::kapa::tarrash::signatures::FormalTypeParameters, parameters);
+VISITABLE_STRUCT(org::kapa::tarrash::signatures::ReturnType, typeSignature, voidDescriptor);
+VISITABLE_STRUCT(org::kapa::tarrash::signatures::ThrowsSignature, classTypeSignature, typeVariableSignature);
+// VISITABLE_STRUCT(org::kapa::tarrash::signatures::SuperclassSignature);
+// VISITABLE_STRUCT(org::kapa::tarrash::signatures::SuperinterfaceSignature);
+VISITABLE_STRUCT(org::kapa::tarrash::signatures::ClassTypeSignature, packageSpecifier, simpleClassTypeSignature, classTypeSignatureSuffixes);
+
+// struct ClassTypeSignature {
+//     PackageSpecifier packageSpecifier;
+//     SimpleClassTypeSignature simpleClassTypeSignature;
+//     std::vector<ClassTypeSignatureSuffix> classTypeSignatureSuffixes;
+// };
 
 #endif

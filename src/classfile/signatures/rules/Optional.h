@@ -6,7 +6,7 @@
 namespace org::kapa::tarrash::signatures {
 class Optional final : public Rule {
 public:
-    Optional(const Rule &rule, SignatureScanner &scanner);
+    Optional(const Rule &rule);
 
     Optional(const Optional &other);
 
@@ -15,6 +15,9 @@ public:
     Optional & operator=(const Optional &other);
 
     Optional & operator=(Optional &&other) noexcept;
+    ~Optional() override = default;
+
+     // bool match(SignatureScanner &scanner) override;
 
 private:
     Rule _rule;

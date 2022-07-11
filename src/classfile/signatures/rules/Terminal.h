@@ -8,12 +8,16 @@ namespace org::kapa::tarrash::signatures {
 
 class Terminal final : public Rule {
 public:
-    explicit Terminal(const std::wstring value, SignatureScanner &scanner);
+    explicit Terminal(std::wstring value);
+    explicit Terminal(const wchar_t* value);
     Terminal(const Terminal &other);
     Terminal(Terminal &&other) noexcept;
     Terminal &operator=(const Terminal &other);
     Terminal &operator=(Terminal &&other) noexcept;
-    bool match() override;
+    // bool match (SignatureScanner &scanner) override;
+    ~Terminal() override = default;
+
+    std::wstring getValue();
 
 private:
     std::wstring _value;

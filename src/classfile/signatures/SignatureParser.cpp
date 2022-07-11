@@ -1,11 +1,7 @@
 #include "SignatureParser.h"
 
 #include <iostream>
-
-#include "rules/Rule.h"
-#include "rules/Kleene.h"
-#include "rules/Optional.h"
-#include "rules/Terminal.h"
+#include "rules/ParsingRules.h"
 
 using namespace org::kapa::tarrash::signatures;
 using namespace org::kapa::tarrash::attributes;
@@ -31,91 +27,46 @@ using namespace std;
  *  )V
  */
 
-void SignatureParser::readSignature(ClassSignature &classSignature) const {
+ClassSignatureNode SignatureParser::readSignature(ClassSignature &classSignature) const {
+
+    ClassSignatureNode result;
     classSignature.nameIndex = _attribute.nameIndex;
     classSignature.length = _attribute.length;
     classSignature.signatureIndex = _reader.readU2();
     const auto signatureString = _constantPool.getString(classSignature.signatureIndex);
     SignatureScanner scanner(signatureString);
 
-    //auto classSignatureRule = make_shared<Rule>(scanner);
-    auto formalTypeParameter = make_shared<Rule>(scanner);
-    auto superclassSignature = make_shared<Rule>(scanner);
-    auto superinterfaceSignature = make_shared<Rule>(scanner);
+    const auto classRule = ParsingRules::getInstance().getClassRule();
+    classRule->match(scanner, result );
 
-    //TODO identifier is a special rule like a lexeme/regex
-    //we can do it manually
-    auto identifier = make_shared<Rule>(scanner);
-    auto classBound = make_shared<Rule>(scanner);
-    auto interfaceBound = make_shared<Rule>(scanner);
-    auto fieldTypeSignature = make_shared<Rule>(scanner);
+    // TODO get structure
 
-    auto classTypeSignature = make_shared<Rule>(scanner);
-    auto arrayTypeSignature = make_shared<Rule>(scanner);
-    auto typeVariableSignature = make_shared<Rule>(scanner);
-
-    auto packageSpecifier = make_shared<Rule>(scanner);
-    auto simpleClassTypeSignature = make_shared<Rule>(scanner);
-    auto classTypeSignatureSuffix = make_shared<Rule>(scanner);
-    auto typeArgument = make_shared<Rule>(scanner);
-    auto typeArguments = make_shared<Rule>(scanner);
-    auto wildcardIndicator = make_shared<Rule>(scanner);
-    auto typeSignature = make_shared<Rule>(scanner);
-    auto baseType = make_shared<Rule>(scanner);
-
-    auto plusTerminal = make_shared<Terminal>(L"+",scanner);
-
-    
-    auto classSignatureRule = 
-            'L'
-         >> !(+formalTypeParameter)
-         >> superclassSignature
-         >> *superinterfaceSignature;
-
-    formalTypeParameter >> identifier >> classBound >> *interfaceBound;
-
-    classBound >> ':' >> !fieldTypeSignature;
-    interfaceBound >> ':' >> fieldTypeSignature;
-
-    superclassSignature = classTypeSignature;
-    superinterfaceSignature >> classTypeSignature;
-
-    fieldTypeSignature >> classTypeSignature | arrayTypeSignature | typeVariableSignature;
-
-    classTypeSignature >> 'L' >> !packageSpecifier >> simpleClassTypeSignature >> *classTypeSignatureSuffix;
-
-    packageSpecifier >> identifier >> '/' >> *packageSpecifier;
-
-    simpleClassTypeSignature >> identifier >> !typeArguments;
-
-    typeArguments >> +typeArgument;
-
-    wildcardIndicator >> plusTerminal | '-';
-
-    typeArgument >> (wildcardIndicator >> fieldTypeSignature) | '*';
-
-    classTypeSignatureSuffix >> '.' >> simpleClassTypeSignature;
-
-    typeVariableSignature >> 'T' >> identifier;
-
-    arrayTypeSignature >> '[' >> typeSignature;
-
-    typeSignature >> fieldTypeSignature | baseType;
-
-    //TODO make all the rules
-
-    classSignatureRule->parse();
-
-    //wcout << signatureString;
+    return result;
 
 }
 
 void SignatureParser::readSignature(MethodSignature &signature) const {
-    //TODO
+    signature.nameIndex = _attribute.nameIndex;
+    signature.length = _attribute.length;
+    signature.signatureIndex = _reader.readU2();
+    const auto signatureString = _constantPool.getString(signature.signatureIndex);
+    SignatureScanner scanner(signatureString);
+
+    const auto methodRule = ParsingRules::getInstance().getMethodRule();
+    // methodRule->match(scanner);
+    // TODO get structure
 }
 
 void SignatureParser::readSignature(FieldSignature &signature) const {
-    //TODO
+    signature.nameIndex = _attribute.nameIndex;
+    signature.length = _attribute.length;
+    signature.signatureIndex = _reader.readU2();
+    const auto signatureString = _constantPool.getString(signature.signatureIndex);
+    SignatureScanner scanner(signatureString);
+
+    const auto fieldRule = ParsingRules::getInstance().getFieldRule();
+    // fieldRule->match(scanner);
+    //TODO get structure
 }
 
 wstring SignatureParser::toString(const ClassSignature &signature) const {
