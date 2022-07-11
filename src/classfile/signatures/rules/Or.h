@@ -8,7 +8,7 @@ namespace org::kapa::tarrash::signatures {
 class Or final : public Rule {
 public:
     explicit Or(const RulePtr &left);
-    explicit Or(SignatureScanner &scanner);
+    explicit Or();
 
     Or(const Or &other);
     Or(Or &&other) noexcept;
@@ -16,7 +16,7 @@ public:
     Or &operator=(Or &&other) noexcept;
     ~Or() override = default;
 
-    bool match() override;
+    // bool match(SignatureScanner &scanner) override;
     void add(const RulePtr & rule);
 
 private:

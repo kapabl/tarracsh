@@ -1,11 +1,17 @@
 #include "Terminal.h"
 
 using namespace org::kapa::tarrash::signatures;
+using namespace std;
 
 
-Terminal::Terminal(const std::wstring value, SignatureScanner &scanner)
-    : Rule(scanner), _value(value) {
+Terminal::Terminal(wstring value)
+    : Rule(), _value(std::move(value)) {
 }
+
+Terminal::Terminal(const wchar_t *value)
+    : Rule(), _value(value) {
+}
+
 
 Terminal::Terminal(const Terminal &other) = default;
 
@@ -32,8 +38,19 @@ Terminal &Terminal::operator=(Terminal &&other) noexcept {
     return *this;
 }
 
-bool Terminal::match() {
-    auto result = true;
-    //TODO
-    return result;
-}
+// bool Terminal::match(SignatureScanner &scanner) {
+//
+//     const auto scannerPosition = scanner.getPosition();
+//     auto position = 0u;
+//     while (position < _value.length() && !scanner.isEOF()) {
+//         if (_value[position] != scanner.getNextChar()) break;
+//         position++;
+//     }
+//     const auto result = position == _value.length();
+//     if (!result) {
+//         scanner.reset(scannerPosition);
+//     }
+//     return false;
+// }
+
+std::wstring Terminal::getValue() { return _value; }

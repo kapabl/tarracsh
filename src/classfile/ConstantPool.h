@@ -145,7 +145,7 @@ private:
     std::vector<ConstantPoolRecord *> _constantPoolIndex;
 
     [[nodiscard]] ConstantPoolRecord &getEntry(const u2 index) const {
-        assert(index - 1 < _constantPoolIndex.size());
+        assert(index - 1u < _constantPoolIndex.size());
         auto &result = *_constantPoolIndex[index - 1];
         return result;
     }

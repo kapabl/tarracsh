@@ -8,12 +8,3 @@
 /tarrash.sln.DotSettings.user
 /tarrash.vcxproj.user
 /Debug/
-/cmake-build-debug/
-/bazel-tarrash/external/
-/bazel-tarrash/external/bazel_tools/
-/bazel-tarrash/external/intellij_aspect/
-/bazel-tarrash/external/local_config_cc/
-/bazel-tarrash/external/platforms/
-/bazel-tarrash/external/remote_java_tools/
-/bazel-tarrash/external/remote_java_tools_windows/
-/bazel-tarrash/external/remotejdk11_win/

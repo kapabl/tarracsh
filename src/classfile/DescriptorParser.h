@@ -94,7 +94,7 @@ private:
                     break;
 
                 default:
-                    _descriptor.type = _scanner->getFieldDescriptor();
+                    _descriptor.type = _scanner->getSignatureString();
                     break;
             }
             character = _scanner->getNextChar();

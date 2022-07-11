@@ -7,7 +7,7 @@
 
 #include "DescriptorParser.h"
 #include "signatures/SignatureScanner.h"
-#include "includes/classfile_constants.h"
+#include "classfile_constants.h"
 
 namespace org::kapa::tarrash {
 

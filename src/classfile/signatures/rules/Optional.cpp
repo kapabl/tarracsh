@@ -5,8 +5,8 @@
 
 using namespace org::kapa::tarrash::signatures;
 
-Optional::Optional(const Rule &rule, SignatureScanner &scanner)
-    : Rule(scanner),
+Optional::Optional(const Rule &rule)
+    : Rule(),
       _rule(rule) {
 }
 
@@ -35,4 +35,9 @@ Optional &Optional::operator=(Optional &&other) noexcept {
     _rule = std::move(other._rule);
     return *this;
 }
+
+// bool Optional::match(SignatureScanner &scanner) {
+//     auto innerRuleMatched = _rule.match(scanner);
+//     return true;
+// }
 

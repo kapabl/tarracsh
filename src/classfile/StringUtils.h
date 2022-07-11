@@ -33,7 +33,8 @@ inline std::wstring toLower(const std::wstring &data) {
     }
     return result;
 }
-
+#pragma warning( push )
+#pragma warning( disable: 4996 )
 inline std::wstring u162wstring(const std::u16string &str) {
 
     using CodeCvt = std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>;
@@ -84,6 +85,7 @@ inline wchar_t char2wchar(const char source) {
     return outString[0];
 }
 
+#pragma warning( pop )
 inline std::wstring utf82wstring(const unsigned char *source, bool withEscape = false) {
     return utf82wstring(reinterpret_cast<const char *>(source), withEscape);
 }

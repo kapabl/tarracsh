@@ -3,8 +3,8 @@
 
 using namespace org::kapa::tarrash::signatures;
 
-Kleene::Kleene(Rule &rule, SignatureScanner &scanner, const int minimum)
-    : Rule(scanner),
+Kleene::Kleene(Rule &rule, const int minimum)
+    : Rule(),
       _rule(rule),
       _minimum(minimum) {
 }
@@ -34,8 +34,15 @@ Kleene &Kleene::operator=(Kleene &&other) noexcept {
     return *this;
 }
 
-bool Kleene::match() {
-    //TODO
-    return true;
-}
+// bool Kleene::match(SignatureScanner &scanner) {
+//     auto matchedCount = 0;
+//     while (_rule.match(scanner)) {
+//         matchedCount++;
+//     }
+//
+//     auto result = matchedCount >= _minimum;
+//
+//     return true;
+// }
+
 

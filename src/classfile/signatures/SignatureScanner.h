@@ -12,22 +12,22 @@ namespace org::kapa::tarrash::signatures {
 class SignatureScanner {
 
 public:
-    explicit SignatureScanner(std::wstring fieldDescriptor) : _fieldDescriptor(std::move(fieldDescriptor)) {}
+    explicit SignatureScanner(std::wstring signatureString) : _signatureString(std::move(signatureString)) {}
 
-    SignatureScanner(const SignatureScanner &other)
-        : _fieldDescriptor(other._fieldDescriptor),
+    explicit SignatureScanner(const SignatureScanner &other)
+        : _signatureString(other._signatureString),
           _position(other._position) {
     }
 
     SignatureScanner(SignatureScanner &&other) noexcept
-        : _fieldDescriptor(other._fieldDescriptor),
+        : _signatureString(other._signatureString),
           _position(other._position) {
     }
 
     SignatureScanner & operator=(const SignatureScanner &other) {
         if (this == &other)
             return *this;
-        _fieldDescriptor = other._fieldDescriptor;
+        _signatureString = other._signatureString;
         _position = other._position;
         return *this;
     }
@@ -35,36 +35,41 @@ public:
     SignatureScanner & operator=(SignatureScanner &&other) noexcept {
         if (this == &other)
             return *this;
-        _fieldDescriptor = other._fieldDescriptor;
+        _signatureString = other._signatureString;
         _position = other._position;
         return *this;
     }
 
     wchar_t getNextChar() {
-        if (_position + 1 >= _fieldDescriptor.size()) return 0;
+        if (_position + 1 >= _signatureString.size()) return 0;
 
         _position++;
 
-        const auto result = _fieldDescriptor[_position];
+        const auto result = _signatureString[_position];
 
         return result;
     }
 
     void step() {
-        if (_position + 1 >= _fieldDescriptor.size()) return;
+        if (_position + 1 >= _signatureString.size()) return;
         _position++;
     }
 
-    wchar_t currentChar() const {
-        if (_position >= _fieldDescriptor.size()) return 0;
-        const auto result = _fieldDescriptor[_position];
+    [[nodiscard]] wchar_t currentChar() const {
+        if (_position >= _signatureString.size()) return 0;
+        const auto result = _signatureString[_position];
         return result;
     }
 
-    std::wstring getFieldDescriptor() const { return _fieldDescriptor; }
+    [[nodiscard]] std::wstring getSignatureString() const { return _signatureString; }
+
+    [[nodiscard]] bool isEOF() const { return _position >= _signatureString.size(); }
+
+    [[nodiscard]] unsigned int getPosition() const { return _position; }
+    void reset(const unsigned int position ) { _position = position; }
 
 private:
-    std::wstring _fieldDescriptor;
+    std::wstring _signatureString;
     unsigned int _position = 0x0ffffffff;
 };
 
