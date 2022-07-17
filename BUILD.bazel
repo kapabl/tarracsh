@@ -2,7 +2,7 @@ load("@rules_cc//cc:defs.bzl", "cc_binary")
 
 
 cc_binary(
-    name = "tarrash",
+    name = "tarracsh",
     srcs = glob(["src/**/*.cpp"]),
     includes = ["src", "src/classfile", "src/includes"],
     copts = ["/std:c++20"],
