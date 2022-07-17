@@ -7,8 +7,14 @@
 
 namespace org::kapa::tarrash::signatures {
 
+// class Kleene;
+
+// template <typename T>
+// bool invokeMatch(Rule::RuleVariant &ruleVariant, SignatureScanner &scanner, T &node);
+
 class Kleene final : public Rule {
 public:
+    Kleene();
     Kleene(Rule &rule, int minimum);
 
     Kleene(const Kleene &other);
@@ -19,38 +25,44 @@ public:
 
     Kleene &operator=(Kleene &&other) noexcept;
 
-    // bool match(SignatureScanner &scanner) override;
+    template <typename T>
+    bool match(SignatureScanner &scanner, T &node) {
+        return false;
+    }
 
-    template<typename TVisitable>
-    bool match(SignatureScanner &scanner, std::vector<TVisitable>& visitables);
+    template <typename T>
+    bool match(SignatureScanner &scanner, std::vector<T> &list) {
+        //TODO
+        // auto matchedCount = 0;
+        // T item;
+        // // while (_rule.match(scanner, item)) {
+        // while (invokeMatch<T>(_rule, scanner, item)) {
+        //     list.push_back(item);
+        //     matchedCount++;
+        // }
+        //
+        // auto result = matchedCount >= _minimum;
+
+        return true;
+    }
+
+    template <>
+    bool match<std::wstring>(SignatureScanner &scanner, std::wstring &value) {
+        return false;
+    }
+
 
     ~Kleene() override = default;
 
 
 private:
     Rule _rule;
+    // RuleVariant _rule;
     int _minimum = 0;
 };
 
-template<typename TVisitable>
-bool Kleene::match(SignatureScanner& scanner, std::vector<TVisitable>& visitables) {
-    auto matchedCount = 0;
-    //auto index = 0u;
-
-    auto visitable = TVisitable();
-    while (_rule.match(scanner, visitable)) {
-        visitables.push_back(visitable);
-        visitable = TVisitable();
-        matchedCount++;
-    }
-
-    const auto result = matchedCount >= _minimum;
-    if ( !result ) {
-        visitables.clear();
-    }
-
-    return true;
-}
 
 }
+
+
 #endif

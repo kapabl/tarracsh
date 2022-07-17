@@ -14,62 +14,18 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fcc1f7de-c9bd-46dd-a3b2-571107d49846" name="Changes" comment="Adding CMAKE build">
+    <list default="true" id="fcc1f7de-c9bd-46dd-a3b2-571107d49846" name="Changes" comment="Fixing....">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarrash/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarrash/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/AttributesManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/AttributesManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/ConstantPool.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/ConstantPool.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/DescriptorParser.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/DescriptorParser.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/MethodDescriptorParser.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/MethodDescriptorParser.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/StackFrame.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/StackFrame.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/StringUtils.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/StringUtils.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/includes/AttributeTags.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/includes/CLI11.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/includes/classfile_constants.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/SignatureParser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/SignatureParser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/SignatureParser.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/SignatureParser.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/SignatureScanner.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/SignatureScanner.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/StructsCommon.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/StructsCommon.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/SignatureStructures.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/SignatureStructures.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Kleene.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Kleene.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Kleene.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Kleene.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Optional.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Optional.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Optional.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Optional.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Or.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Or.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Or.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Or.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Rule.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Rule.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Rule.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Rule.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Terminal.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Terminal.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Terminal.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/src/classfile/signatures/rules/Terminal.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/tarrash.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/tarrash.sln.DotSettings" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarrash/tarrash.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarrash/tarrash.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/AttributesManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/AttributesManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/ConstantPool.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/ConstantPool.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/DescriptorParser.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/DescriptorParser.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/MethodDescriptorParser.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/MethodDescriptorParser.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/StackFrame.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/StackFrame.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/StringUtils.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/StringUtils.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/includes/AttributeTags.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/includes/CLI11.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/includes/classfile_constants.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/signatures/SignatureParser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/signatures/SignatureParser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/signatures/SignatureParser.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/signatures/SignatureParser.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/signatures/SignatureScanner.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/signatures/SignatureScanner.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classfile/StructsCommon.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/StructsCommon.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classfile/signatures/SignatureStructures.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/signatures/SignatureStructures.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/signatures/rules/Kleene.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/signatures/rules/Kleene.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classfile/signatures/rules/Kleene.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/signatures/rules/Kleene.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/signatures/rules/Optional.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/signatures/rules/Optional.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/signatures/rules/Optional.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/signatures/rules/Optional.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/signatures/rules/Or.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/signatures/rules/Or.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/signatures/rules/Or.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/signatures/rules/Or.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/signatures/rules/Rule.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/signatures/rules/Rule.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classfile/signatures/rules/Rule.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/signatures/rules/Rule.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/signatures/rules/Terminal.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/signatures/rules/Terminal.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classfile/signatures/rules/Terminal.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/classfile/signatures/rules/Terminal.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tarrash.sln" beforeDir="false" afterPath="$PROJECT_DIR$/tarrash.sln" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tarrash.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/tarrash.sln.DotSettings" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tarrash.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/tarrash.vcxproj" afterDir="false" />
@@ -149,6 +105,11 @@
   }
 }</component>
   <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="tarrash" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tarrash" TARGET_NAME="tarrash" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="tarrash" RUN_TARGET_NAME="tarrash">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -173,7 +134,8 @@
       <workItem from="1657425720349" duration="2839000" />
       <workItem from="1657496582474" duration="1450000" />
       <workItem from="1657501497928" duration="2562000" />
-      <workItem from="1657520141479" duration="1000" />
+      <workItem from="1657520141479" duration="104000" />
+      <workItem from="1657939717228" duration="604000" />
     </task>
     <task id="LOCAL-00001" summary="Adding CMAKE build">
       <created>1657267051727</created>
@@ -189,7 +151,21 @@
       <option name="project" value="LOCAL" />
       <updated>1657267318543</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Adding CMAKE build">
+      <created>1657520166308</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1657520166308</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Fixing....">
+      <created>1657520227516</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1657520227516</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -208,6 +184,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Adding CMAKE build" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adding CMAKE build" />
+    <MESSAGE value="Fixing...." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixing...." />
   </component>
 </project>

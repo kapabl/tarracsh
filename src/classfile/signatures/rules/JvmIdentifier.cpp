@@ -1,5 +1,5 @@
 #include "JvmIdentifier.h"
-#include "JvmIdentifier.h"
+#include "RuleFuncs.h"
 
 using namespace org::kapa::tarrash::signatures;
 using namespace std;
@@ -28,40 +28,6 @@ void JvmIdentifier::initJvmIdentifierChar() {
     for( auto& character: invalidChars) {
         validJvmIdentifierChars[character] = false;
     }
-}
-
-// bool JvmIdentifier::match(SignatureScanner &scanner) {
-//
-//     const auto scannerPosition = scanner.getPosition();
-//     auto length = 0u;
-//     while (!scanner.isEOF()) {
-//         const auto character = scanner.getNextChar();
-//         if (!isValidJvmIdentifierChar(character)) break;
-//         ++length;
-//     }
-//     const auto result = length > 0;
-//     if (!result) {
-//         scanner.reset(scannerPosition);
-//     }
-//     return false;
-// }
-
-bool JvmIdentifier::match(SignatureScanner& scanner, std::wstring& identifier) {
-
-    const auto scannerPosition = scanner.getPosition();
-    auto length = 0u;
-    while (!scanner.isEOF()) {
-        const auto character = scanner.getNextChar();
-        if (!isValidJvmIdentifierChar(character)) break;
-        identifier.push_back(character);
-        ++length;
-    }
-    const auto result = length > 0;
-    if (!result) {
-        scanner.reset(scannerPosition);
-        identifier.clear();
-    }
-    return false;
 }
 
 std::wstring JvmIdentifier::getValue() { return _value; }

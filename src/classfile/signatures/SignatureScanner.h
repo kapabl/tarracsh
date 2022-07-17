@@ -12,36 +12,43 @@ namespace org::kapa::tarrash::signatures {
 class SignatureScanner {
 
 public:
-    explicit SignatureScanner(std::wstring signatureString) : _signatureString(std::move(signatureString)) {}
+    explicit SignatureScanner(std::wstring signatureString)
+        : _signatureString(std::move(signatureString)),
+          _size(static_cast<int>(_signatureString.size())) {
+    }
 
-    explicit SignatureScanner(const SignatureScanner &other)
+    explicit SignatureScanner(const SignatureScanner& other)
         : _signatureString(other._signatureString),
-          _position(other._position) {
+          _position(other._position),
+          _size(other._size) {
     }
 
     SignatureScanner(SignatureScanner &&other) noexcept
         : _signatureString(other._signatureString),
-          _position(other._position) {
+          _position(other._position),
+        _size(other._size) {
     }
 
-    SignatureScanner & operator=(const SignatureScanner &other) {
+    SignatureScanner &operator=(const SignatureScanner &other) {
         if (this == &other)
             return *this;
         _signatureString = other._signatureString;
         _position = other._position;
+        _size = other._size;
         return *this;
     }
 
-    SignatureScanner & operator=(SignatureScanner &&other) noexcept {
+    SignatureScanner &operator=(SignatureScanner &&other) noexcept {
         if (this == &other)
             return *this;
         _signatureString = other._signatureString;
         _position = other._position;
+        _size = other._size;
         return *this;
     }
 
     wchar_t getNextChar() {
-        if (_position + 1 >= _signatureString.size()) return 0;
+        if (_position + 1 >= _size) return 0;
 
         _position++;
 
@@ -51,30 +58,29 @@ public:
     }
 
     void step() {
-        if (_position + 1 >= _signatureString.size()) return;
+        if (_position + 1 >= _size) return;
         _position++;
     }
 
     [[nodiscard]] wchar_t currentChar() const {
-        if (_position >= _signatureString.size()) return 0;
+        if (_position >= _size) return 0;
         const auto result = _signatureString[_position];
         return result;
     }
 
     [[nodiscard]] std::wstring getSignatureString() const { return _signatureString; }
 
-    [[nodiscard]] bool isEOF() const { return _position >= _signatureString.size(); }
+    [[nodiscard]] bool isEOF() const { return _position >= _size; }
 
     [[nodiscard]] unsigned int getPosition() const { return _position; }
-    void reset(const unsigned int position ) { _position = position; }
+    void reset(const int position) { _position = position; }
 
 private:
     std::wstring _signatureString;
-    unsigned int _position = 0x0ffffffff;
+    int _position{-1};
+    int _size{0};
 };
 
 }
 
-// namespace org::kapa::tarrash
-
-#endif // TARRASH_DESCRIPTORSCANNER_H
+#endif

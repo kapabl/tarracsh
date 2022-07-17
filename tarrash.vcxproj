@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug1|Win32">
+      <Configuration>Debug1</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug1|x64">
+      <Configuration>Debug1</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -30,12 +38,22 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug1|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug1|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -53,10 +71,10 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug1|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -65,11 +83,40 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug1|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug1|x64'">
+    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug1|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -103,19 +150,33 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug1|x64'">
+    <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\classfile\signatures\rules\Or.cpp" />
+    <ClCompile Include="src\classfile\signatures\rules\Optional.cpp" />
     <ClCompile Include="src\classfile\JarAnalyzer.cpp" />
     <ClCompile Include="src\classfile\ClassFileAnalyzer.cpp" />
-    <ClCompile Include="src\classfile\SignatureParser.cpp" />
     <ClCompile Include="src\classfile\AnnotationsParser.cpp" />
     <ClCompile Include="src\classfile\AnnotationsParser.h" />
     <ClCompile Include="src\classfile\main.cpp" />
+    <ClCompile Include="src\classfile\signatures\rules\Kleene.cpp" />
+    <ClCompile Include="src\classfile\signatures\rules\ParsingRules.cpp" />
+    <ClCompile Include="src\classfile\signatures\rules\Rule.cpp" />
+    <ClCompile Include="src\classfile\signatures\SignatureParser.cpp" />
+    <ClCompile Include="src\classfile\signatures\rules\Terminal.cpp" />
+    <ClCompile Include="src\classfile\signatures\rules\JvmIdentifier.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\classfile\signatures\rules\RuleFuncs.h" />
+    <ClInclude Include="src\classfile\signatures\rules\ParsingRules.h" />
+    <ClInclude Include="src\classfile\signatures\rules\Or.h" />
+    <ClInclude Include="src\classfile\signatures\rules\Optional.h" />
     <ClInclude Include="src\classfile\JarAnalyzer.h" />
-    <ClInclude Include="src\classfile\includes\CLI11.hpp" />
-    <ClInclude Include="src\classfile\SignatureStructures.h" />
-    <ClInclude Include="src\classfile\SignatureParser.h" />
+    <ClInclude Include="src\includes\CLI11.hpp" />
     <ClInclude Include="src\classfile\AccessModifiers.h" />
     <ClInclude Include="src\classfile\AttributesManager.h" />
     <ClInclude Include="src\classfile\AttributeStructures.h" />
@@ -123,15 +184,26 @@
     <ClInclude Include="src\classfile\ClassFileStructures.h" />
     <ClInclude Include="src\classfile\ConstantPool.h" />
     <ClInclude Include="src\classfile\DescriptorParser.h" />
-    <ClInclude Include="src\classfile\DescriptorScanner.h" />
-    <ClInclude Include="src\classfile\includes\AttributeTags.h" />
-    <ClInclude Include="src\classfile\includes\classfile_constants.h" />
+    <ClInclude Include="src\classfile\SignatureScanner.h" />
+    <ClInclude Include="src\includes\AttributeTags.h" />
+    <ClInclude Include="src\includes\classfile_constants.h" />
     <ClInclude Include="src\classfile\MethodDescriptorParser.h" />
+    <ClInclude Include="src\classfile\signatures\rules\Kleene.h" />
+    <ClInclude Include="src\classfile\signatures\SignatureParser.h" />
+    <ClInclude Include="src\classfile\signatures\rules\Rule.h" />
+    <ClInclude Include="src\classfile\signatures\SignatureScanner.h" />
+    <ClInclude Include="src\classfile\signatures\SignatureStructures.h" />
+    <ClInclude Include="src\classfile\signatures\rules\JvmIdentifier.h" />
     <ClInclude Include="src\classfile\StackFrame.h" />
     <ClInclude Include="src\classfile\StringUtils.h" />
     <ClInclude Include="src\classfile\StructsCommon.h" />
     <ClInclude Include="src\classfile\tarrash.h" />
     <ClInclude Include="src\classfile\VectorReader.h" />
+    <ClInclude Include="src\classfile\signatures\rules\Terminal.h" />
+    <ClInclude Include="src\includes\visit_struct\visit_struct.hpp" />
+    <ClInclude Include="src\includes\visit_struct\visit_struct_boost_fusion.hpp" />
+    <ClInclude Include="src\includes\visit_struct\visit_struct_boost_hana.hpp" />
+    <ClInclude Include="src\includes\visit_struct\visit_struct_intrusive.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

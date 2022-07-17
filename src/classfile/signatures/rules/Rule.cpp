@@ -2,8 +2,11 @@
 #include "Kleene.h"
 #include "Optional.h"
 #include "Terminal.h"
+#include "JvmIdentifier.h"
 #include "Or.h"
+#include "RuleFuncs.h"
 #include "../../StringUtils.h"
+
 
 
 using namespace org::kapa::tarrash::signatures;
@@ -49,77 +52,104 @@ void Rule::parse(SignatureScanner &scanner) {
 }
 
 
-RulePtr Rule::optional() {
-    RulePtr rule(new Optional(*this));
-    return rule;
+Optional Rule::optional() {
+    Optional result(*this);
+    return result;
 }
 
-KleenePtr Rule::kleenePlus() {
-    KleenePtr result(new Kleene(*this, 1));
+Kleene Rule::kleenePlus() {
+    Kleene result(*this, 1);
+    return result;
+}
+
+Kleene Rule::kleeneStar() {
+    Kleene result(*this, 0);
+    return result;
+}
+
+/*
+OptionalPtr Rule::optional()  {
+    OptionalPtr result(new Optional(*this));
+    return result;
+}
+
+KleenePtr Rule::kleenePlus()  {
+    KleenePtr result( new Kleene(*this, 1) );
     return result;
 }
 
 KleenePtr Rule::kleeneStar() {
     KleenePtr result(new Kleene(*this, 0));
     return result;
-}
+}*/
 
 namespace org::kapa::tarrash::signatures {
 
-const RulePtr &operator>>(const RulePtr &left, const std::wstring &right) {
-    const auto rule = make_shared<Terminal>(right);
-    left->followBy(rule);
+Rule &operator>>(Rule &left, const std::wstring &right) {
+    const auto rule = Terminal(right);
+    // left.followBy(rule);
+    followBy(left, rule);
     return left;
 }
 
-const RulePtr &operator>>(const RulePtr &left, const wchar_t *right) {
+Rule &operator>>(Rule &left, const wchar_t *right) {
     const std::wstring value(right);
-    const auto rule = make_shared<Terminal>(value);
-    left->followBy(rule);
+    Terminal rule(value);
+    // left.followBy(rule);
+    followBy(left, rule);
     return left;
 }
 
-const RulePtr &operator>>(const RulePtr &left, const char right) {
+Rule &operator>>(Rule &left, const char right) {
     const auto terminalWChar = char2wchar(right);
     const std::wstring value{terminalWChar};
-    const auto rule = make_shared<Terminal>(value);
-    left->followBy(rule);
+    Terminal rule(value);
+    // left.followBy(rule);
+    followBy(left, rule);
     return left;
 }
 
-RulePtr operator>>(const char left, const RulePtr &right) {
+Terminal operator>>(const char left, const Rule &right) {
     const auto terminalWChar = char2wchar(left);
     const std::wstring value{terminalWChar};
-    const auto rule = make_shared<Terminal>(value);
-    rule->followBy(right);
-    return rule;
+    auto result = Terminal(value);
+    // result.followBy(right);
+    followBy(result, right);
+    return result;
 }
 
-const RulePtr &operator>>(const RulePtr &left, const RulePtr &right) {
-    left->followBy(right);
+Rule &operator>>(Rule &left, const Rule &right) {
+    // left.followBy(right);
+    followBy(left, right);
     return left;
 }
 
-// RulePtr operator>>(const RulePtr &left, const TerminalPtr &right) { return left->followBy(right); }
-RulePtr operator+(const RulePtr &right) { return right->kleenePlus(); }
-RulePtr operator*(const RulePtr &right) { return right->kleeneStar(); }
-RulePtr operator!(const RulePtr &right) { return right->optional(); }
+// Rule operator>>(const Rule &left, const Terminal &right) { return left->followBy(right); }
+Kleene operator+(Rule &right) { return right.kleenePlus(); }
+Kleene operator*(Rule &right) { return right.kleeneStar(); }
+Optional operator!(Rule &right) { return right.optional(); }
 
 
-OrPtr operator|(const RulePtr &left, const char right) {
+Or operator|(Rule &left, const char right) {
     const auto terminalWChar = char2wchar(right);
     const std::wstring value{terminalWChar};
-    const auto rule = make_shared<Terminal>(value);
+    Terminal rule(value);
     return left | rule;
 }
 
-OrPtr operator|(const RulePtr &left, const RulePtr &right) {
-    const auto orRule = make_shared<Or>(left);
+Or operator|(Rule &left, const Rule &right) {
+    auto orRule = Or();
     return orRule | left;
 }
 
-OrPtr operator|(const OrPtr &left, const RulePtr &right) {
-    left->add(right);
+Or operator|(Or left, const Terminal& right) {
+    left.add(right);
     return left;
 }
+
+Or operator|(Or left, const Rule &right) {
+    left.add(right);
+    return left;
+}
+
 }

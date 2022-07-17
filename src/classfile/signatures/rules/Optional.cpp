@@ -2,18 +2,18 @@
 #include "Rule.h"
 #include "Optional.h"
 #include "Kleene.h"
+#include "RuleFuncs.h"
 
 using namespace org::kapa::tarrash::signatures;
 
-Optional::Optional(const Rule &rule)
+Optional::Optional() = default;
+
+Optional::Optional(Rule rule)
     : Rule(),
-      _rule(rule) {
+      _rule(std::move(rule)) {
 }
 
-Optional::Optional(const Optional &other)
-    : Rule(other),
-      _rule(other._rule) {
-}
+Optional::Optional(const Optional &other) = default;
 
 Optional::Optional(Optional &&other) noexcept
     : Rule(std::move(other)),

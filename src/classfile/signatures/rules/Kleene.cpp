@@ -1,7 +1,13 @@
-#include "Rule.h"
 #include "Kleene.h"
+#include "RuleFuncs.h"
+
 
 using namespace org::kapa::tarrash::signatures;
+
+Kleene::Kleene()
+    : Rule(),
+    _minimum(0) {
+}
 
 Kleene::Kleene(Rule &rule, const int minimum)
     : Rule(),

@@ -3,12 +3,14 @@
 
 #include <vector>
 #include "../StructsCommon.h"
+#include "../AttributeStructures.h"
 #include "visit_struct/visit_struct_intrusive.hpp"
 
 namespace org::kapa::tarrash::signatures {
 
+
 struct SignatureBase : attributes::AttributeBase {
-    u2 signatureIndex{};
+    common::u2 signatureIndex{};
 };
 
 struct ClassSignature : SignatureBase {
@@ -21,140 +23,170 @@ struct FieldSignature : SignatureBase {
 };
 
 struct Identifier {
-    std::wstring value;
+    BEGIN_VISITABLES(Identifier);
+    VISITABLE(std::wstring, value);
+    END_VISITABLES;
 };
 
 
 struct FieldTypeSignature;
 struct TypeArgument;
-
 struct TypeArguments {
-    std::vector<TypeArgument> arguments;
+    BEGIN_VISITABLES(TypeArguments);
+    VISITABLE(std::vector<TypeArgument>, arguments);
+    END_VISITABLES;
 };
 
 struct PackageSpecifier {
-    std::vector<Identifier> parts;
+    BEGIN_VISITABLES(PackageSpecifier);
+    VISITABLE(Identifier, identifier);
+    VISITABLE(std::wstring, packateSeparatorTerminal);
+    VISITABLE(std::vector<std::shared_ptr<PackageSpecifier>>, next);
+    END_VISITABLES;
 };
 
 struct SimpleClassTypeSignature {
-    Identifier identifier;
-    TypeArguments typeArgumentOpt;
+    BEGIN_VISITABLES(SimpleClassTypeSignature);
+    VISITABLE(Identifier, identifier);
+    VISITABLE(TypeArguments, typeArgumentOpt);
+    END_VISITABLES;
 };
 
-struct ClassTypeSignatureSuffix {
-    SimpleClassTypeSignature suffix;
+struct ClassTypeSuffix {
+    BEGIN_VISITABLES(ClassTypeSuffix);
+    VISITABLE(std::wstring, dotTerminal);
+    VISITABLE(SimpleClassTypeSignature, suffix);
+    END_VISITABLES;
 };
 
-struct ClassTypeSignature {
-    PackageSpecifier packageSpecifier;
-    SimpleClassTypeSignature simpleClassTypeSignature;
-    std::vector<ClassTypeSignatureSuffix> classTypeSignatureSuffixes;
+struct ClassType {
+    BEGIN_VISITABLES(ClassType);
+    VISITABLE(std::wstring, classTerminal);
+    VISITABLE(PackageSpecifier, packageSpecifier);
+    VISITABLE(SimpleClassTypeSignature, simpleClassTypeSignature);
+    VISITABLE(std::vector<ClassTypeSuffix>, classTypeSignatureSuffixes);
+    END_VISITABLES;
 };
 
 struct BaseType {
-    std::string type;
+    BEGIN_VISITABLES(BaseType);
+    VISITABLE(std::wstring, type);
+    END_VISITABLES;
 };
 
 
-struct TypeVariableSignature {
-    Identifier identifier;
+struct TypeVariable {
+    BEGIN_VISITABLES(TypeVariable);
+    VISITABLE(std::wstring, typeTerminal);
+    VISITABLE(Identifier, identifier);
+    END_VISITABLES;
 };
 
 struct TypeSignature;
 
-struct ArrayTypeSignature {
-    std::shared_ptr<TypeSignature> typeSignature;
+struct ArrayType {
+    BEGIN_VISITABLES(ArrayType);
+    VISITABLE(std::wstring, arrayTypeTerminal);
+    VISITABLE(std::shared_ptr<TypeSignature>, typeSignature);
+    END_VISITABLES;
 };
 
 struct FieldTypeSignature {
-    ClassTypeSignature classTypeSignature;
-    ArrayTypeSignature arrayTypeSignature;
-    TypeVariableSignature typeVariableSignature;
+    BEGIN_VISITABLES(FieldTypeSignature);
+    VISITABLE(ClassType, classTypeSignature);
+    VISITABLE(ArrayType, arrayTypeSignature);
+    VISITABLE(TypeVariable, typeVariableSignature);
+    END_VISITABLES;
 };
-
-struct TypeArgument {
-    // wildCharIndicator -> '+', '-' or ''
-    wchar_t wildCharIndicator{};
-    FieldTypeSignature fieldTypeSignature;
-};
-
 
 struct TypeSignature {
-    FieldTypeSignature fieldTypeSignature;
-    BaseType baseType;
+    BEGIN_VISITABLES(TypeSignature);
+    VISITABLE(FieldTypeSignature, fieldTypeSignature);
+    VISITABLE(BaseType, baseType);
+    END_VISITABLES;
 };
 
 struct FieldTypeSignatureOpt {
-    FieldTypeSignature fieldTypeSignature;
+    BEGIN_VISITABLES(FieldTypeSignatureOpt);
+    VISITABLE(FieldTypeSignature, fieldTypeSignature);
+    END_VISITABLES;
 };
 
 
-struct SuperclassSignature : ClassTypeSignature {
 
-};
 
-struct SuperinterfaceSignature : ClassTypeSignature {
-
+struct TypeArgument {
+    BEGIN_VISITABLES(TypeArgument);
+    VISITABLE(std::wstring, wildCharIndicator);
+    VISITABLE(FieldTypeSignature, fieldTypeSignature);
+    VISITABLE(std::wstring, starTerminal);
+    END_VISITABLES;
 };
 
 
 struct ClassBound {
-    FieldTypeSignatureOpt fieldTypeSignatureOpt;
+    BEGIN_VISITABLES(ClassBound);
+    VISITABLE(std::wstring, colon);
+    VISITABLE(FieldTypeSignatureOpt, fieldTypeSignatureOpt);
+    END_VISITABLES;
 };
 
 struct InterfaceBound {
-    FieldTypeSignature fieldTypeSignature;
+    BEGIN_VISITABLES(InterfaceBound);
+    VISITABLE(std::wstring, colon);
+    VISITABLE(FieldTypeSignature, fieldTypeSignature);
+    END_VISITABLES;
 };
 
+
 struct FormalTypeParameter {
-    std::wstring identifier;
-    ClassBound classBound;
-    std::vector<InterfaceBound> interfaces;
+    BEGIN_VISITABLES(FormalTypeParameter);
+    VISITABLE(std::wstring, identifier);
+    VISITABLE(ClassBound, classBound);
+    VISITABLE(std::vector<InterfaceBound>, interfaces);
+    END_VISITABLES;
 };
 
 struct FormalTypeParameters {
-    std::vector<FormalTypeParameter> parameters;
+    BEGIN_VISITABLES(FormalTypeParameters);
+    VISITABLE(std::vector<FormalTypeParameter>, parameters);
+    END_VISITABLES;
 };
 
 struct ClassSignatureNode {
-    FormalTypeParameters formalTypeParameters;
-    ClassTypeSignature superclassSignature;
-    std::vector<ClassTypeSignature> interfaces;
+    BEGIN_VISITABLES(ClassSignatureNode);
+    VISITABLE(std::wstring, classTerminal);
+    VISITABLE(FormalTypeParameters, formalTypeParameters);
+    VISITABLE(ClassType, superclassSignature);
+    VISITABLE(std::vector<ClassType>, interfaces);
+    END_VISITABLES;
 };
 
 struct ReturnType {
-    TypeSignature typeSignature;
-    wchar_t voidDescriptor{'V'};
+    BEGIN_VISITABLES(ReturnType);
+    VISITABLE(TypeSignature, typeSignature);
+    VISITABLE(std::wstring, voidDescriptor);
+    END_VISITABLES;
 };
 
 struct ThrowsSignature {
-    ClassTypeSignature classTypeSignature;
-    TypeVariableSignature typeVariableSignature{};
+    BEGIN_VISITABLES(ThrowsSignature);
+    VISITABLE(ClassType, classTypeSignature);
+    VISITABLE(TypeVariable, typeVariableSignature);
+    END_VISITABLES;
 };
 
 
 struct MethodSignatureNode {
-    FormalTypeParameters formalTypeParameters;
-    std::vector<TypeSignature> signatures;
-    ReturnType returnType;
-    std::vector<ThrowsSignature> throwsSignatures;
+    BEGIN_VISITABLES(MethodSignatureNode);
+    VISITABLE(FormalTypeParameters, formalTypeParameters);
+    VISITABLE(std::vector<TypeSignature>, signatures);
+    VISITABLE(ReturnType, returnType);
+    VISITABLE(std::vector<ThrowsSignature>, throwsSignatures);
+    END_VISITABLES;
 };
 
 }
 
-VISITABLE_STRUCT(org::kapa::tarrash::signatures::Identifier, value);
-VISITABLE_STRUCT(org::kapa::tarrash::signatures::ClassSignatureNode, formalTypeParameters, superclassSignature, interfaces);
-VISITABLE_STRUCT(org::kapa::tarrash::signatures::FormalTypeParameters, parameters);
-VISITABLE_STRUCT(org::kapa::tarrash::signatures::ReturnType, typeSignature, voidDescriptor);
-VISITABLE_STRUCT(org::kapa::tarrash::signatures::ThrowsSignature, classTypeSignature, typeVariableSignature);
-// VISITABLE_STRUCT(org::kapa::tarrash::signatures::SuperclassSignature);
-// VISITABLE_STRUCT(org::kapa::tarrash::signatures::SuperinterfaceSignature);
-VISITABLE_STRUCT(org::kapa::tarrash::signatures::ClassTypeSignature, packageSpecifier, simpleClassTypeSignature, classTypeSignatureSuffixes);
-
-// struct ClassTypeSignature {
-//     PackageSpecifier packageSpecifier;
-//     SimpleClassTypeSignature simpleClassTypeSignature;
-//     std::vector<ClassTypeSignatureSuffix> classTypeSignatureSuffixes;
-// };
 
 #endif

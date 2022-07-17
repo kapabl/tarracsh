@@ -13,7 +13,7 @@ namespace org::kapa::tarrash {
 
 class MethodDescriptorParser {
 public:
-    MethodDescriptorParser(const std::wstring &fieldDescriptor) : _scanner( new signatures::SignatureScanner(fieldDescriptor)) { parse(); }
+    MethodDescriptorParser(const std::wstring &descriptorString) : _scanner( new signatures::SignatureScanner(descriptorString)) { parse(); }
 
     const MethodDescriptor &getDescriptor() { return _methodDescriptor; }
 
