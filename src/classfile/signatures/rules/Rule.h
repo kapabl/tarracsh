@@ -2,7 +2,6 @@
 #define SIGNATURE_RULE_H
 #include <memory>
 #include <vector>
-#include <concepts>
 #include <variant>
 
 #include "../SignatureScanner.h"
@@ -11,17 +10,30 @@
 namespace org::kapa::tarrash::signatures {
 
 class Rule;
+class Or;
 class Kleene;
 class Optional;
 class Rule;
 class Terminal;
-class Or;
+class JvmIdentifier;
 
-using RulePtr = std::shared_ptr<Rule>;
-using OptionalPtr = std::shared_ptr<Optional>;
-using KleenePtr = std::shared_ptr<Kleene>;
-using TerminalPtr = std::shared_ptr<Terminal>;
-using OrPtr = std::shared_ptr<Or>;
+
+#ifdef _DEBUG
+#define SET_RULE_NAME( rule ) rule.setName( #rule );
+#define GET_RULE_NAME( rule ) rule.getName();
+#elif
+#define SET_RULE_NAME( rule )
+#define GET_RULE_NAME( rule )
+#endif
+
+typedef std::variant<
+    Rule,
+    Kleene,
+    Terminal,
+    JvmIdentifier,
+    Optional,
+    Or>
+RuleVariant;
 
 
 class Rule {
@@ -32,84 +44,79 @@ public:
     Rule &operator=(const Rule &other);
     Rule &operator=(Rule &&other) noexcept;
     virtual ~Rule();
-    // virtual bool match(SignatureScanner &scanner);
 
-    template <typename TVisitable>
-    bool match(SignatureScanner &scanner, TVisitable &output);
+
+    template <typename T>
+    bool match(SignatureScanner &scanner, T &node) {
+
+        auto index = 0u;
+        bool result = true;
+
+        visit_struct::for_each(node, [this, &index, &result, &scanner](const char *name, auto &value) {
+            if (!result) return;
+            auto &rule = _followBy[index];
+            result = !invokeMatch(rule, scanner, value);
+            index++;
+        });
+        return result;
+    }
+
+    template <typename T>
+    bool match(SignatureScanner &scanner, std::shared_ptr<T> &node) {
+        node.reset(new T());
+        auto result = match(scanner, *node);
+        return result;
+    }
+
+    template <>
+    bool match<std::wstring>(SignatureScanner &scanner, std::wstring &value) {
+        return false;
+    }
+
+
+    template <typename T>
+    bool match(SignatureScanner &scanner, std::vector<T> &list) {
+        return false;
+    }
+
 
     void parse(SignatureScanner &scanner);
 
+    // template <typename T>
+    // void followBy(const T rule) {
+    //     RuleVariant ruleVariant;
+    //     ruleVariant = rule;
+    //     _followBy.push_back(ruleVariant);
+    // }
+
     template <typename T>
-    void followBy(const std::shared_ptr<T> rule) {
-        _followBy.push_back(rule);
+    void followByRuleVariant(const T& ruleVariant) {
+        _followBy.push_back(ruleVariant);
     }
 
-    RulePtr optional();
-    KleenePtr kleenePlus();
-    KleenePtr kleeneStar();
+    Optional optional();
+    Kleene kleenePlus();
+    Kleene kleeneStar();
 
-    typedef std::variant<
-        RulePtr,
-        KleenePtr,
-        OrPtr,
-        TerminalPtr,
-        OptionalPtr>
-    RuleVariants;
+#ifdef _DEBUG
+    void setName(const std::string &name) {
+        _name = name;
+    }
+
+    std::string getName() const { return _name; }
+#endif
 
 
 protected:
-    // std::vector<RulePtr> _followBy;
-    std::vector<RuleVariants> _followBy;
+    std::vector<RuleVariant> _followBy;
+#ifdef _DEBUG
+    std::string _name;
+#endif
 
 
 };
 
-
-
-
-const RulePtr &operator>>(const RulePtr &left, const std::wstring &right);
-const RulePtr &operator>>(const RulePtr &left, const wchar_t *right);
-const RulePtr &operator>>(const RulePtr &left, char right);
-RulePtr operator>>(char left, const RulePtr &right);
-const RulePtr &operator>>(const RulePtr &left, const RulePtr &right);
-RulePtr operator+(const RulePtr &right);
-RulePtr operator!(const RulePtr &right);
-RulePtr operator*(const RulePtr &right);
-OrPtr operator|(const RulePtr &left, const RulePtr &right);
-OrPtr operator|(const RulePtr &left, char right);
-OrPtr operator|(const OrPtr &left, const RulePtr &right);
-
 }
 
-#include "Kleene.h"
-#include "Or.h"
-#include "Terminal.h"
-#include "Optional.h"
-template <typename TVisitable> bool org::kapa::tarrash::signatures::Rule::match(SignatureScanner &scanner, TVisitable &output) {
-    bool result = true;
 
-    auto index = 0u;
-
-    visit_struct::for_each(output, [this, &index,&result, &scanner](const char *name, const auto &value) {
-        const auto &rule = _followBy[index];
-        //rule.get()
-        //result = rule->match(scanner, value );
-        if (std::holds_alternative<KleenePtr>(rule)) {
-            std::get<KleenePtr>(rule)->match(scanner, value);
-        } else if (std::holds_alternative<RulePtr>(rule)) {
-            std::get<RulePtr>(rule)->match(scanner, value);
-        }
-        else if (std::holds_alternative<OrPtr>(rule)) {
-            std::get<OrPtr>(rule)->match(scanner, value);
-        }
-        else if (std::holds_alternative<TerminalPtr>(rule)) {
-            std::get<TerminalPtr>(rule)->match(scanner, value);
-        }
-        else if (std::holds_alternative<OptionalPtr>(rule)) {
-            std::get<OptionalPtr>(rule)->match(scanner, value);
-        }
-        index++;
-    });
-    return result;
-}
 #endif

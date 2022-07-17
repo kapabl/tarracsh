@@ -1,6 +1,13 @@
+#include "rules/Rule.h"
+#include "rules/Kleene.h"
+#include "rules/Or.h"
+#include "rules/Terminal.h"
+#include "rules/Optional.h"
+#include "rules/JvmIdentifier.h"
+#include "rules/RuleFuncs.h"
+
 #include "SignatureParser.h"
 
-#include <iostream>
 #include "rules/ParsingRules.h"
 
 using namespace org::kapa::tarrash::signatures;
@@ -36,10 +43,9 @@ ClassSignatureNode SignatureParser::readSignature(ClassSignature &classSignature
     const auto signatureString = _constantPool.getString(classSignature.signatureIndex);
     SignatureScanner scanner(signatureString);
 
-    const auto classRule = ParsingRules::getInstance().getClassRule();
-    classRule->match(scanner, result );
+    auto& classRule = ParsingRules::getInstance().getClassRule();
+    classRule.match(scanner, result);
 
-    // TODO get structure
 
     return result;
 
@@ -52,9 +58,10 @@ void SignatureParser::readSignature(MethodSignature &signature) const {
     const auto signatureString = _constantPool.getString(signature.signatureIndex);
     SignatureScanner scanner(signatureString);
 
-    const auto methodRule = ParsingRules::getInstance().getMethodRule();
-    // methodRule->match(scanner);
-    // TODO get structure
+    auto& methodRule = ParsingRules::getInstance().getMethodRule();
+
+    MethodSignatureNode result;
+    methodRule.match(scanner, result);
 }
 
 void SignatureParser::readSignature(FieldSignature &signature) const {
@@ -64,7 +71,7 @@ void SignatureParser::readSignature(FieldSignature &signature) const {
     const auto signatureString = _constantPool.getString(signature.signatureIndex);
     SignatureScanner scanner(signatureString);
 
-    const auto fieldRule = ParsingRules::getInstance().getFieldRule();
+    auto& fieldRule = ParsingRules::getInstance().getFieldRule();
     // fieldRule->match(scanner);
     //TODO get structure
 }
@@ -96,7 +103,7 @@ wstring SignatureParser::toString() const {
             break;
         }
         case AttributeOwner::Method: {
-            ClassSignature signature;
+            MethodSignature signature;
             readSignature(signature);
             result = toString(signature);
             break;

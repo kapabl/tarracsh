@@ -1,7 +1,12 @@
 #include "Terminal.h"
+#include "RuleFuncs.h"
 
 using namespace org::kapa::tarrash::signatures;
 using namespace std;
+
+Terminal::Terminal()
+    : Rule() {
+}
 
 
 Terminal::Terminal(wstring value)

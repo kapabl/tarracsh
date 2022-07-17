@@ -22,38 +22,40 @@ public:
 
     static ParsingRules &getInstance();
 
-    RulePtr getClassRule() { return _class; }
-    RulePtr getMethodRule() { return _methodType; }
-    RulePtr getFieldRule() { return _fieldType; }
+    Rule& getClassRule() { return _class; }
+    Rule& getMethodRule() { return _methodType; }
+    Rule& getFieldRule() { return _fieldType; }
 
 private:
     void initRules();
-    JvmIdentifierPtr _jvmIdentifier = std::make_shared<JvmIdentifier>();
-    RulePtr _class = std::make_shared<Rule>();
-    RulePtr _formalTypeParameter = std::make_shared<Rule>();
-    RulePtr _superclass = std::make_shared<Rule>();
-    RulePtr _superinterface = std::make_shared<Rule>();
-    RulePtr _classBound = std::make_shared<Rule>();
-    RulePtr _interfaceBound = std::make_shared<Rule>();
-    RulePtr _fieldType = std::make_shared<Rule>();
-    RulePtr _classType = std::make_shared<Rule>();
-    RulePtr _arrayType = std::make_shared<Rule>();
-    RulePtr _typeVariable = std::make_shared<Rule>();
-    RulePtr _packageSpecifier = std::make_shared<Rule>();
-    RulePtr _simpleClassType = std::make_shared<Rule>();
-    RulePtr _classTypeSuffix = std::make_shared<Rule>();
-    RulePtr _typeArgument = std::make_shared<Rule>();
-    RulePtr _typeArguments = std::make_shared<Rule>();
-    RulePtr _wildcardIndicator = std::make_shared<Rule>();
-    RulePtr _type = std::make_shared<Rule>();
-    RulePtr _baseType = std::make_shared<Rule>();
+    void setRuleNames();
 
-    TerminalPtr _plusTerminal = std::make_shared<Terminal>(L"+");
-    TerminalPtr _voidDescriptor = std::make_shared<Terminal>(L"V");
+    JvmIdentifier _jvmIdentifier;
+    Rule _class;
+    Rule _formalTypeParameter;
+    Rule _superclass;
+    Rule _superinterface;
+    Rule _classBound;
+    Rule _interfaceBound;
+    Rule _fieldType;
+    Rule _classType;
+    Rule _arrayType;
+    Rule _typeVariable;
+    Rule _packageSpecifier;
+    Rule _simpleClassType;
+    Rule _classTypeSuffix;
+    Rule _typeArgument;
+    Rule _typeArguments;
+    Rule _wildcardIndicator;
+    Rule _type;
+    Rule _baseType;
 
-    RulePtr _methodType = std::make_shared<Rule>();
-    RulePtr _returnType = std::make_shared<Rule>();
-    RulePtr _throw = std::make_shared<Rule>();
+    Terminal _plusTerminal;
+    Terminal _voidDescriptor;
+
+    Rule _methodType;
+    Rule _returnType;
+    Rule _throw;
 };
 
 

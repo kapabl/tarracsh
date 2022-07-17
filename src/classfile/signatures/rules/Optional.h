@@ -6,7 +6,8 @@
 namespace org::kapa::tarrash::signatures {
 class Optional final : public Rule {
 public:
-    Optional(const Rule &rule);
+    Optional();
+    Optional(Rule rule);
 
     Optional(const Optional &other);
 
@@ -17,7 +18,21 @@ public:
     Optional & operator=(Optional &&other) noexcept;
     ~Optional() override = default;
 
-     // bool match(SignatureScanner &scanner) override;
+    template <typename T>
+    bool match(SignatureScanner& scanner, T& node) {
+        auto innerRuleMatched = _rule.match(scanner, node);
+        return true;
+    }
+
+    template <typename T>
+    bool match(SignatureScanner& scanner, std::vector<T>& list) {
+        return false;
+    }
+
+    template <>
+    bool match<std::wstring>(SignatureScanner& scanner, std::wstring& value) {
+        return false;
+    }
 
 private:
     Rule _rule;

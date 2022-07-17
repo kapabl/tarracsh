@@ -13,7 +13,6 @@ public:
     SignatureParser(const ConstantPool &constantPool, const attributes::AttributeInfo &attribute, readers::VectorReader &reader)
     : _constantPool(constantPool), _attribute(attribute), _reader(reader) {}
 
-    void defineParserRules();
     ClassSignatureNode readSignature(ClassSignature &signature) const;
     void readSignature(MethodSignature &signature) const;
     void readSignature(FieldSignature &signature) const;
