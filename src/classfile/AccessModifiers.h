@@ -8,7 +8,7 @@
 #include "StringUtils.h"
 #include "StructsCommon.h"
 
-namespace org::kapa::tarrash::accessModifiers {
+namespace org::kapa::tarracsh::accessModifiers {
 
 using common::u1;
 using common::u2;

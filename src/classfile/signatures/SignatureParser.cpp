@@ -10,8 +10,8 @@
 
 #include "rules/ParsingRules.h"
 
-using namespace org::kapa::tarrash::signatures;
-using namespace org::kapa::tarrash::attributes;
+using namespace org::kapa::tarracsh::signatures;
+using namespace org::kapa::tarracsh::attributes;
 using namespace std;
 
 /**

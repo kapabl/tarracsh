@@ -9,7 +9,7 @@
  */
 
 
-namespace org::kapa::tarrash::attributes {
+namespace org::kapa::tarracsh::attributes {
 
 #define SOURCE_FILE L"SourceFile"
 #define INNER_CLASSES L"InnerClasses"
@@ -71,6 +71,6 @@ enum AttributeTag {
 };
 
 
-} // namespace org::kapa::tarrash::attributes
+} // namespace org::kapa::tarracsh::attributes
 
 #endif

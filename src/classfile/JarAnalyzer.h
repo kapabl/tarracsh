@@ -3,7 +3,7 @@
 #define JARPARSER_H
 
 #include <string>
-namespace org::kapa::tarrash::jar {
+namespace org::kapa::tarracsh::jar {
 class JarAnalyzer {
 public:
     explicit JarAnalyzer(std::string fileName, std::string classPath);

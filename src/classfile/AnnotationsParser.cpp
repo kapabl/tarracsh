@@ -5,10 +5,10 @@
 #include <iostream>
 #include <format>
 
-using namespace org::kapa::tarrash::annotations;
-using namespace org::kapa::tarrash::readers;
-using namespace org::kapa::tarrash::attributes;
-using namespace org::kapa::tarrash::stringUtils;
+using namespace org::kapa::tarracsh::annotations;
+using namespace org::kapa::tarracsh::readers;
+using namespace org::kapa::tarracsh::attributes;
+using namespace org::kapa::tarracsh::stringUtils;
 using namespace std;
 
 wstring AnnotationsParser::toStringRuntimeAnnotations() const {

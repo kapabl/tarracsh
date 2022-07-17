@@ -18,7 +18,7 @@
 #include "StringUtils.h"
 
 
-namespace org::kapa::tarrash {
+namespace org::kapa::tarracsh {
 
 class ClassFileAnalyzer final {
 

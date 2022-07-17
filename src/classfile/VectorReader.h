@@ -8,7 +8,7 @@
 
 #include "StringUtils.h"
 
-namespace org::kapa::tarrash::readers {
+namespace org::kapa::tarracsh::readers {
 
 using common::u1;
 using common::u2;

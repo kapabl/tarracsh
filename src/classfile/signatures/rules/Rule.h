@@ -7,7 +7,7 @@
 #include "../SignatureScanner.h"
 #include "visit_struct/visit_struct.hpp"
 
-namespace org::kapa::tarrash::signatures {
+namespace org::kapa::tarracsh::signatures {
 
 class Rule;
 class Or;

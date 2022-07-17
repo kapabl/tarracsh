@@ -10,7 +10,7 @@
 #include <memory>
 
 
-namespace org::kapa::tarrash {
+namespace org::kapa::tarracsh {
 
 class DescriptorParser {
 public:

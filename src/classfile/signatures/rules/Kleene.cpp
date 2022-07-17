@@ -2,7 +2,7 @@
 #include "RuleFuncs.h"
 
 
-using namespace org::kapa::tarrash::signatures;
+using namespace org::kapa::tarracsh::signatures;
 
 Kleene::Kleene()
     : Rule(),

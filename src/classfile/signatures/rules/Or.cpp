@@ -1,7 +1,7 @@
 #include "Rule.h"
 #include "Or.h"
 #include "RuleFuncs.h"
-using namespace org::kapa::tarrash::signatures;
+using namespace org::kapa::tarracsh::signatures;
 
 
 Or::Or() = default;

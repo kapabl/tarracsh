@@ -7,7 +7,7 @@
 
 #include <string>
 
-namespace org::kapa::tarrash::signatures {
+namespace org::kapa::tarracsh::signatures {
 
 class SignatureScanner {
 

@@ -9,7 +9,7 @@
 #include "signatures/SignatureScanner.h"
 #include "classfile_constants.h"
 
-namespace org::kapa::tarrash {
+namespace org::kapa::tarracsh {
 
 class MethodDescriptorParser {
 public:

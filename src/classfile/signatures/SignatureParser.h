@@ -7,7 +7,7 @@
 #include "../ConstantPool.h"
 #include "SignatureStructures.h"
 
-namespace org::kapa::tarrash::signatures {
+namespace org::kapa::tarracsh::signatures {
 class SignatureParser {
 public:
     SignatureParser(const ConstantPool &constantPool, const attributes::AttributeInfo &attribute, readers::VectorReader &reader)

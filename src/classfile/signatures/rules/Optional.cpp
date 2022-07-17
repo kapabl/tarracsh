@@ -4,7 +4,7 @@
 #include "Kleene.h"
 #include "RuleFuncs.h"
 
-using namespace org::kapa::tarrash::signatures;
+using namespace org::kapa::tarracsh::signatures;
 
 Optional::Optional() = default;
 

@@ -9,7 +9,7 @@
 
 #pragma pack(push, 1)
 
-namespace org::kapa::tarrash {
+namespace org::kapa::tarracsh {
 
 using common::u1;
 using common::u2;

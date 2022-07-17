@@ -6,7 +6,7 @@
 #include "JvmIdentifier.h"
 #include <memory>
 
-namespace org::kapa::tarrash::signatures {
+namespace org::kapa::tarracsh::signatures {
 
 class ParsingRules {
 
