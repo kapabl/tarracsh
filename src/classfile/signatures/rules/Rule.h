@@ -21,9 +21,9 @@ class JvmIdentifier;
 #ifdef _DEBUG
 #define SET_RULE_NAME( rule ) rule.setName( #rule );
 #define GET_RULE_NAME( rule ) rule.getName();
-#elif
-#define SET_RULE_NAME( rule )
-#define GET_RULE_NAME( rule )
+#else
+#define SET_RULE_NAME
+#define GET_RULE_NAME
 #endif
 
 typedef std::variant<
