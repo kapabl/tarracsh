@@ -6,7 +6,7 @@
 #include "../AttributeStructures.h"
 #include "visit_struct/visit_struct_intrusive.hpp"
 
-namespace org::kapa::tarrash::signatures {
+namespace org::kapa::tarracsh::signatures {
 
 
 struct SignatureBase : attributes::AttributeBase {

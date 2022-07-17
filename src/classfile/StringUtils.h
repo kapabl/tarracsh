@@ -16,7 +16,7 @@
  * TODO use ICU library
  */
 
-namespace org::kapa::tarrash::stringUtils {
+namespace org::kapa::tarracsh::stringUtils {
 
 inline std::string toLower(const std::string &data) {
     std::string result;

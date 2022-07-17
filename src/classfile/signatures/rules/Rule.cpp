@@ -9,8 +9,8 @@
 
 
 
-using namespace org::kapa::tarrash::signatures;
-using namespace org::kapa::tarrash::stringUtils;
+using namespace org::kapa::tarracsh::signatures;
+using namespace org::kapa::tarracsh::stringUtils;
 using namespace std;
 
 Rule::Rule() = default;
@@ -83,7 +83,7 @@ KleenePtr Rule::kleeneStar() {
     return result;
 }*/
 
-namespace org::kapa::tarrash::signatures {
+namespace org::kapa::tarracsh::signatures {
 
 Rule &operator>>(Rule &left, const std::wstring &right) {
     const auto rule = Terminal(right);

@@ -3,18 +3,18 @@
 
 #include "JarAnalyzer.h"
 #include "ClassFileAnalyzer.h"
-#include "tarrash.h"
+#include "tarracsh.h"
 #include "CLI11.hpp"
 
 using namespace std;
 using namespace std::filesystem;
-using namespace org::kapa::tarrash;
+using namespace org::kapa::tarracsh;
 
 int main(int argc, char *argv[]) {
 
     CLI::App app("Tarrash");
 
-    app.set_version_flag("-v,--version", "version " TARRASH_VERSION);
+    app.set_version_flag("-v,--version", "version " TARRACSH_VERSION);
 
     std::string classFile;
     const auto classfileOption = app.add_option("--classfile", classFile, " Input class file");

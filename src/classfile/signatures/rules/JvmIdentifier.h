@@ -4,7 +4,7 @@
 #include <string>
 #include "Rule.h"
 
-namespace org::kapa::tarrash::signatures {
+namespace org::kapa::tarracsh::signatures {
 
 class JvmIdentifier final : public Rule {
 public:

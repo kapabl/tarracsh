@@ -11,7 +11,7 @@
 #include "DescriptorParser.h"
 #include "ClassFileStructures.h"
 
-namespace org::kapa::tarrash {
+namespace org::kapa::tarracsh {
 
 class ConstantPool {
 public:

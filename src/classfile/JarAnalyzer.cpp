@@ -2,7 +2,7 @@
 
 #include <utility>
 
-using namespace org::kapa::tarrash::jar;
+using namespace org::kapa::tarracsh::jar;
 using namespace std;
 
 JarAnalyzer::JarAnalyzer(string fileName, string classPath)

@@ -5,7 +5,7 @@
 #include "../SignatureScanner.h"
 
 
-namespace org::kapa::tarrash::signatures {
+namespace org::kapa::tarracsh::signatures {
 
 // class Kleene;
 

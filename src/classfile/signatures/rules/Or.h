@@ -3,7 +3,7 @@
 #include "Rule.h"
 
 
-namespace org::kapa::tarrash::signatures {
+namespace org::kapa::tarracsh::signatures {
 
 // template <typename T>
 // bool invokeMatch(RuleVariant& ruleVariant, SignatureScanner& scanner, T& node);

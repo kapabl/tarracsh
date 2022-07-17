@@ -3,7 +3,7 @@
 #include "Rule.h"
 
 
-namespace org::kapa::tarrash::signatures {
+namespace org::kapa::tarracsh::signatures {
 class Optional final : public Rule {
 public:
     Optional();
@@ -38,5 +38,5 @@ private:
     Rule _rule;
 
 };
-} // namespace org::kapa::tarrash::signatures
+} // namespace org::kapa::tarracsh::signatures
 #endif

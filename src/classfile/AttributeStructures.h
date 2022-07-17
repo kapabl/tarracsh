@@ -13,7 +13,7 @@
 
 #pragma pack(push,1)
 
-namespace org::kapa::tarrash::attributes {
+namespace org::kapa::tarracsh::attributes {
 
 struct AnnotationValuePair;
 

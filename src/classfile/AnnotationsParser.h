@@ -5,7 +5,7 @@
 #include "VectorReader.h"
 #include "ConstantPool.h"
 
-namespace org::kapa::tarrash::annotations {
+namespace org::kapa::tarracsh::annotations {
 class AnnotationsParser {
 public:
     AnnotationsParser(const ConstantPool &constantPool, const attributes::AttributeInfo &attribute, readers::VectorReader &reader)

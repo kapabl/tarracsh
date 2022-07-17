@@ -13,7 +13,7 @@
 #include "signatures/SignatureParser.h"
 
 
-namespace org::kapa::tarrash::attributes {
+namespace org::kapa::tarracsh::attributes {
 
 
 #define ATTR_TO_STRING_FUNC_NAME(AttributeName) toString##AttributeName

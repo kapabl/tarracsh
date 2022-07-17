@@ -8,7 +8,7 @@
 #include "classfile_constants.h"
 #include "StructsCommon.h"
 
-namespace org::kapa::tarrash::stack {
+namespace org::kapa::tarracsh::stack {
 
 using common::u1;
 using common::u2;

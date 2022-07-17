@@ -4,7 +4,7 @@
 #include "MethodDescriptorParser.h"
 
 
-using namespace org::kapa::tarrash;
+using namespace org::kapa::tarracsh;
 using namespace attributes;
 using namespace std;
 
