@@ -2,6 +2,7 @@
 #define TARRASCH_PARSING_RULES_H
 
 #include "Rule.h"
+#include "Or.h"
 #include "Terminal.h"
 #include "JvmIdentifier.h"
 #include <memory>
@@ -22,40 +23,17 @@ public:
 
     static ParsingRules &getInstance();
 
-    Rule& getClassRule() { return _class; }
-    Rule& getMethodRule() { return _methodType; }
-    Rule& getFieldRule() { return _fieldType; }
+    RulePtr &getClassRule() { return _class; }
+    RulePtr &getMethodRule() { return _methodType; }
+    OrPtr &getFieldRule() { return _fieldType; }
 
 private:
     void initRules();
-    void setRuleNames();
 
-    JvmIdentifier _jvmIdentifier;
-    Rule _class;
-    Rule _formalTypeParameter;
-    Rule _superclass;
-    Rule _superinterface;
-    Rule _classBound;
-    Rule _interfaceBound;
-    Rule _fieldType;
-    Rule _classType;
-    Rule _arrayType;
-    Rule _typeVariable;
-    Rule _packageSpecifier;
-    Rule _simpleClassType;
-    Rule _classTypeSuffix;
-    Rule _typeArgument;
-    Rule _typeArguments;
-    Rule _wildcardIndicator;
-    Rule _type;
-    Rule _baseType;
+    RulePtr _class = std::make_shared<Rule>();
+    OrPtr _fieldType = std::make_shared<Or>();
+    RulePtr _methodType = std::make_shared<Rule>();
 
-    Terminal _plusTerminal;
-    Terminal _voidDescriptor;
-
-    Rule _methodType;
-    Rule _returnType;
-    Rule _throw;
 };
 
 

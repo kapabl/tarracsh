@@ -6,8 +6,13 @@ using namespace org::kapa::tarracsh::signatures;
 
 Or::Or() = default;
 Or::Or(const Or &other) = default;
-Or::Or(const Rule &left) : Rule() { _rules.emplace_back(left); }
+Or::Or(const RulePtr &left) : Rule() {
+    SET_RULE_NAME2(this, L"or");
+    _rules.emplace_back(left);
+}
 
+
+Or::Or(const bool isAnchor): Rule( isAnchor ) {}
 
 Or::Or(Or &&other) noexcept: Rule(std::move(other)) {
 }
@@ -26,4 +31,4 @@ Or & Or::operator=(Or &&other) noexcept {
     return *this;
 }
 
-void Or::add(const Rule &rule) { _rules.emplace_back(rule); }
+void Or::addToOr(RuleVariant ruleVariant) { _rules.emplace_back(ruleVariant); }

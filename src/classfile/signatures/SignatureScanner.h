@@ -72,7 +72,7 @@ public:
 
     [[nodiscard]] bool isEOF() const { return _position >= _size; }
 
-    [[nodiscard]] unsigned int getPosition() const { return _position; }
+    [[nodiscard]] int getPosition() const { return _position; }
     void reset(const int position) { _position = position; }
 
 private:

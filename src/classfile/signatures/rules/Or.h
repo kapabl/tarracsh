@@ -8,43 +8,50 @@ namespace org::kapa::tarracsh::signatures {
 // template <typename T>
 // bool invokeMatch(RuleVariant& ruleVariant, SignatureScanner& scanner, T& node);
 
-class Or final :  Rule {
+class Or final: public Rule {
 public:
     Or();
+    explicit Or(const bool isAnchor);
 
-
-    explicit Or(const Rule& left);
+    explicit Or(const RulePtr &left);
     Or(const Or &other);
     Or(Or &&other) noexcept;
     Or &operator=(const Or &other);
     Or &operator=(Or &&other) noexcept;
     ~Or() override = default;
-    
-    void add(const Rule &rule);
+
+    void addToOr(RuleVariant ruleVariant);
 
     template <typename T>
     bool match(SignatureScanner &scanner, T &node) {
         auto result = false;
+        DEBUG_RULE(this);
         for (auto &rule : _rules) {
-            result = invokeMatch<T>(rule, scanner, node);
+            auto matchResult = invokeMatch(rule, scanner, node);
+            result = matchResult.first;
             if (result) break;
         }
+
+        //TODO match the followby
         return result;
     }
 
     template <typename T>
     bool match(SignatureScanner &scanner, std::vector<T> &list) {
-        return false;
+        auto result = false;
+        DEBUG_RULE(this);
+        return result;
     }
 
     template <>
     bool match<std::wstring>(SignatureScanner &scanner, std::wstring &value) {
-        return false;
+        auto result = false;
+        DEBUG_RULE(this);
+        return result;
     }
 
 private:
     std::vector<RuleVariant> _rules;
-    //Rule::RuleVariant _rule1;
 };
 
 }
