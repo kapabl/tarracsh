@@ -9,46 +9,36 @@ Kleene::Kleene()
     _minimum(0) {
 }
 
-Kleene::Kleene(Rule &rule, const int minimum)
+Kleene::Kleene(RuleVariant ruleVariant, const int minimum)
     : Rule(),
-      _rule(rule),
+      _ruleVariant(std::move(ruleVariant)),
       _minimum(minimum) {
 }
 
 Kleene::Kleene(const Kleene &other)
     : Rule(other),
-      _rule(other._rule) {
+      _ruleVariant(other._ruleVariant) {
 }
 
 Kleene::Kleene(Kleene &&other) noexcept
     : Rule(std::move(other)),
-      _rule(std::move(other._rule)) {
+      _ruleVariant(std::move(other._ruleVariant)) {
 }
 
 Kleene &Kleene::operator=(const Kleene &other) {
     if (this == &other) return *this;
     Rule::operator=(other);
-    _rule = other._rule;
+    _ruleVariant = other._ruleVariant;
     return *this;
 }
 
 Kleene &Kleene::operator=(Kleene &&other) noexcept {
     if (this == &other)
         return *this;
-    _rule = std::move(other._rule);
+    _ruleVariant = std::move(other._ruleVariant);
     Rule::operator =(std::move(other));
     return *this;
 }
 
-// bool Kleene::match(SignatureScanner &scanner) {
-//     auto matchedCount = 0;
-//     while (_rule.match(scanner)) {
-//         matchedCount++;
-//     }
-//
-//     auto result = matchedCount >= _minimum;
-//
-//     return true;
-// }
 
 

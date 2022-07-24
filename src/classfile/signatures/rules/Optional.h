@@ -3,11 +3,12 @@
 #include "Rule.h"
 
 
+
 namespace org::kapa::tarracsh::signatures {
 class Optional final : public Rule {
 public:
     Optional();
-    Optional(Rule rule);
+    Optional(const RuleVariant& ruleVariant);
 
     Optional(const Optional &other);
 
@@ -20,23 +21,27 @@ public:
 
     template <typename T>
     bool match(SignatureScanner& scanner, T& node) {
-        auto innerRuleMatched = _rule.match(scanner, node);
+        auto matchResult = invokeMatch(_ruleVariant, scanner, node);
+        //TODO match the followBy
         return true;
     }
 
-    template <typename T>
-    bool match(SignatureScanner& scanner, std::vector<T>& list) {
-        return false;
-    }
+    bool match(SignatureScanner& scanner, std::wstring& value);
 
-    template <>
-    bool match<std::wstring>(SignatureScanner& scanner, std::wstring& value) {
-        return false;
-    }
+    // template <typename T>
+    // bool match(SignatureScanner& scanner, std::vector<T>& list) {
+    //     auto matchResult = invokeMatch(_ruleVariant, scanner, list);
+    //     //TODO match the followBy
+    //     return true;
+    // }
+    //
+
 
 private:
-    Rule _rule;
+    RuleVariant _ruleVariant;
 
 };
+
 } // namespace org::kapa::tarracsh::signatures
+
 #endif

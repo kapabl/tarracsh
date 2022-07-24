@@ -1,4 +1,5 @@
 // ReSharper disable CppExpressionWithoutSideEffects
+// ReSharper disable CppClangTidyClangDiagnosticUnusedValue
 #include "ParsingRules.h"
 
 #include "Rule.h"
@@ -14,59 +15,76 @@ using namespace org::kapa::tarracsh::signatures;
 using namespace std;
 
 
-void ParsingRules::setRuleNames() {
-    SET_RULE_NAME(_class);
-    SET_RULE_NAME(_formalTypeParameter);
-    SET_RULE_NAME(_classBound);
-    SET_RULE_NAME(_interfaceBound);
-    SET_RULE_NAME(_superclass);
-    SET_RULE_NAME(_superinterface);
-    SET_RULE_NAME(_fieldType);
-    SET_RULE_NAME(_classType);
-    SET_RULE_NAME(_packageSpecifier);
-    SET_RULE_NAME(_simpleClassType);
-    SET_RULE_NAME(_typeArguments);
-    SET_RULE_NAME(_wildcardIndicator);
-    SET_RULE_NAME(_typeArgument);
-    SET_RULE_NAME(_classTypeSuffix);
-    SET_RULE_NAME(_typeVariable);
-    SET_RULE_NAME(_arrayType);
-    SET_RULE_NAME(_type);
-    SET_RULE_NAME(_methodType);
-    SET_RULE_NAME(_returnType);
-    SET_RULE_NAME(_throw);
-}
-
 void ParsingRules::initRules() {
 
-    setRuleNames();
+    const auto jvmIdentifier = std::make_shared<JvmIdentifier>();
+    const auto plusTerminal = make_shared<Terminal>(L"+");
+    const auto wildcardIndicator = plusTerminal | '-';
+    const auto typeArgument = (wildcardIndicator >> _fieldType) | '*';
+    const auto typeArguments = +typeArgument;
+    const auto packageSpecifier = +(jvmIdentifier >> '/');
+    const auto simpleClassType = jvmIdentifier >> !typeArguments;
+    const auto classTypeSuffix = '.' >> simpleClassType;
+    const auto classType = 'L' >> !packageSpecifier >> simpleClassType >> *classTypeSuffix;
+    const auto superClass = classType;
+    const auto superInterface = classType;
+    const auto interfaceBound = ':' >> _fieldType;
+    const auto classBound = ':' >> !_fieldType;
+    const auto formalTypeParameter = jvmIdentifier >> classBound >> *interfaceBound;
+    const auto typeVariable = 'T' >> jvmIdentifier;
+    const auto boolBaseType = make_shared<Terminal>(L"B");
 
-    _class >> 'L'
-        >> (*_formalTypeParameter)
-        >> _superclass
-        >> *_superinterface;
+    const auto baseType = boolBaseType | 'C' | 'D' | 'F' | 'I' | 'J' | 'S' | 'Z';
 
-    _formalTypeParameter >> _jvmIdentifier >> _classBound >> *_interfaceBound;
-    _classBound >> ':' >> !_fieldType;
-    _interfaceBound >> ':' >> _fieldType;
-    _superclass >> _classType;
-    _superinterface >> _classType;
-    _fieldType >> _classType | _arrayType | _typeVariable;
-    _classType >> 'L' >> !_packageSpecifier >> _simpleClassType >> *_classTypeSuffix;
-    _packageSpecifier >> _jvmIdentifier >> '/' >> *_packageSpecifier;
-    _simpleClassType >> _jvmIdentifier >> !_typeArguments;
-    _typeArguments >> +_typeArgument;
-    _wildcardIndicator >> _plusTerminal | '-';
-    _typeArgument >> (_wildcardIndicator >> _fieldType) | '*';
-    _classTypeSuffix >> '.' >> _simpleClassType;
-    _typeVariable >> 'T' >> _jvmIdentifier;
-    _arrayType >> '[' >> _type;
-    _type >> _fieldType | _baseType;
+    const auto type = _fieldType | baseType;
+    type->setAnchor(false);
 
-    _methodType >> (*_formalTypeParameter) >> '(' >> *_type >> ')' >> _returnType >> _throw;
-    _returnType >> _type | _voidDescriptor;
-    _throw >> _classType | _typeVariable;
+    const auto types = '(' >> *type >> ')';
+    const auto arrayType = '[' >> type;
+    const auto voidDescriptor = std::make_shared<Terminal>(L"V");
+    const auto returnType = type | voidDescriptor;
+    const auto throwRule = classType | typeVariable;
 
+    const auto formalTypeParameters = '<' >> (+formalTypeParameter) >> '>';
+
+    _methodType =
+        !formalTypeParameters
+        >> types
+        >> returnType
+        >> throwRule;
+
+    _fieldType->addToOr(classType);
+    _fieldType->addToOr(arrayType);
+    _fieldType->addToOr(typeVariable);
+
+    _class =
+        !formalTypeParameters
+        >> superClass
+        >> *superInterface;
+
+    SET_RULE_NAME(_class);
+    SET_RULE_NAME(_fieldType);
+    SET_RULE_NAME(_methodType);
+    SET_RULE_NAME(throwRule);
+    SET_RULE_NAME(returnType);
+    SET_RULE_NAME(type);
+    SET_RULE_NAME(types);
+    SET_RULE_NAME(baseType);
+    SET_RULE_NAME(arrayType);
+    SET_RULE_NAME(typeVariable);
+    SET_RULE_NAME(formalTypeParameter);
+    SET_RULE_NAME(formalTypeParameters);
+    SET_RULE_NAME(classBound);
+    SET_RULE_NAME(interfaceBound);
+    SET_RULE_NAME(superInterface);
+    SET_RULE_NAME(superClass);
+    SET_RULE_NAME(jvmIdentifier);
+    SET_RULE_NAME(wildcardIndicator);
+    SET_RULE_NAME(typeArgument);
+    SET_RULE_NAME(packageSpecifier);
+    SET_RULE_NAME(simpleClassType);
+    SET_RULE_NAME(classTypeSuffix);
+    SET_RULE_NAME(classType);
 }
 
 ParsingRules &ParsingRules::getInstance() {

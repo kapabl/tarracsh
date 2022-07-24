@@ -31,6 +31,9 @@ public:
     bool match(SignatureScanner& scanner, std::vector<T>& list) {
         return false;
     }
+
+
+    //TODO: the followBy ... we dont have the struct/node here`
     template <>
     bool match<std::wstring>(SignatureScanner& scanner, std::wstring& identifier) {
         const auto scannerPosition = scanner.getPosition();
@@ -42,11 +45,16 @@ public:
             ++length;
         }
         const auto result = length > 0;
-        if (!result) {
+        if ( result ) {
+            //TODO continue with the followBy
+            //Rule::match(scanner, node)
+        }
+        else {
             scanner.reset(scannerPosition);
             identifier.clear();
         }
-        return false;
+
+        return result;
     }
     
 

@@ -107,7 +107,7 @@ static VISIT_STRUCT_CONSTEXPR const int max_visitable_members_intrusive = 100;
  * That function is not a template function -- it is defined as taking a
  * particular rank object. Initially, it is defined only for `Rank<0>`.
  *
- * To add an element to the list, we define an overload of the function, which
+ * To addToOr an element to the list, we define an overload of the function, which
  * takes the next higher `Rank` as it's argument. It's return value is,
  * the new value of the list, formed by using `Append_t` with the old value.
  *

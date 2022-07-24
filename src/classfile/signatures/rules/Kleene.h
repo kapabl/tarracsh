@@ -12,10 +12,11 @@ namespace org::kapa::tarracsh::signatures {
 // template <typename T>
 // bool invokeMatch(Rule::RuleVariant &ruleVariant, SignatureScanner &scanner, T &node);
 
+
 class Kleene final : public Rule {
 public:
     Kleene();
-    Kleene(Rule &rule, int minimum);
+    Kleene(RuleVariant rule, int minimum);
 
     Kleene(const Kleene &other);
 
@@ -27,37 +28,43 @@ public:
 
     template <typename T>
     bool match(SignatureScanner &scanner, T &node) {
-        return false;
+        bool result = false;
+        DEBUG_RULE(this);
+        return result;
     }
 
     template <typename T>
     bool match(SignatureScanner &scanner, std::vector<T> &list) {
-        //TODO
-        // auto matchedCount = 0;
-        // T item;
-        // // while (_rule.match(scanner, item)) {
-        // while (invokeMatch<T>(_rule, scanner, item)) {
-        //     list.push_back(item);
-        //     matchedCount++;
-        // }
-        //
-        // auto result = matchedCount >= _minimum;
+        bool result = false;
+        DEBUG_RULE(this);
 
+        const auto startPosition = scanner.getPosition();
+        //TODO
+        auto matchedCount = 0;
+        T item;
+        // while (_ruleVariant.match(scanner, item)) {
+        auto matchResult = invokeMatch(_ruleVariant, scanner, item);
+        while (matchResult.first ) {
+            list.push_back(item);
+            matchedCount++;
+            matchResult = invokeMatch(_ruleVariant, scanner, item);
+        }
+        
+        result = matchedCount >= _minimum;
+        if ( !result ) {
+            scanner.reset(startPosition);
+        }
+
+        //TODO match the followBy
         return true;
     }
-
-    template <>
-    bool match<std::wstring>(SignatureScanner &scanner, std::wstring &value) {
-        return false;
-    }
-
 
     ~Kleene() override = default;
 
 
 private:
-    Rule _rule;
-    // RuleVariant _rule;
+    //Rule _ruleVariant;
+    RuleVariant _ruleVariant;
     int _minimum = 0;
 };
 

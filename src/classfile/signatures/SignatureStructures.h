@@ -39,9 +39,10 @@ struct TypeArguments {
 
 struct PackageSpecifier {
     BEGIN_VISITABLES(PackageSpecifier);
-    VISITABLE(Identifier, identifier);
-    VISITABLE(std::wstring, packateSeparatorTerminal);
-    VISITABLE(std::vector<std::shared_ptr<PackageSpecifier>>, next);
+    // VISITABLE(Identifier, identifier);
+    // VISITABLE(std::wstring, packateSeparatorTerminal);
+    // VISITABLE(std::vector<std::shared_ptr<PackageSpecifier>>, next);
+       VISITABLE(std::vector<Identifier>, next);
     END_VISITABLES;
 };
 
@@ -61,7 +62,6 @@ struct ClassTypeSuffix {
 
 struct ClassType {
     BEGIN_VISITABLES(ClassType);
-    VISITABLE(std::wstring, classTerminal);
     VISITABLE(PackageSpecifier, packageSpecifier);
     VISITABLE(SimpleClassTypeSignature, simpleClassTypeSignature);
     VISITABLE(std::vector<ClassTypeSuffix>, classTypeSignatureSuffixes);
@@ -179,7 +179,8 @@ struct ThrowsSignature {
 
 struct MethodSignatureNode {
     BEGIN_VISITABLES(MethodSignatureNode);
-    VISITABLE(FormalTypeParameters, formalTypeParameters);
+    // VISITABLE(FormalTypeParameters, formalTypeParameters);
+    VISITABLE(std::vector<FormalTypeParameter>, parameters);
     VISITABLE(std::vector<TypeSignature>, signatures);
     VISITABLE(ReturnType, returnType);
     VISITABLE(std::vector<ThrowsSignature>, throwsSignatures);

@@ -12,7 +12,7 @@ using namespace org::kapa::tarracsh;
 
 int main(int argc, char *argv[]) {
 
-    CLI::App app("Tarrash");
+    CLI::App app("Tarracsh");
 
     app.set_version_flag("-v,--version", "version " TARRACSH_VERSION);
 
@@ -32,6 +32,9 @@ int main(int argc, char *argv[]) {
     try {
         app.parse(argc, argv);
     } catch (const CLI::ParseError &e) {
+#ifdef _DEBUG
+        cin.get();
+#endif 
         return app.exit(e);
     }
 

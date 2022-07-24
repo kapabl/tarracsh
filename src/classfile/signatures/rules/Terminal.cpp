@@ -1,3 +1,4 @@
+// ReSharper disable CppClangTidyClangDiagnosticUnusedValue
 #include "Terminal.h"
 #include "RuleFuncs.h"
 
@@ -11,10 +12,13 @@ Terminal::Terminal()
 
 Terminal::Terminal(wstring value)
     : Rule(), _value(std::move(value)) {
+
+    SET_RULE_NAME2(this, format(L"terminal({})", _value));
 }
 
 Terminal::Terminal(const wchar_t *value)
     : Rule(), _value(value) {
+    SET_RULE_NAME2(this, format(L"terminal({})", _value));
 }
 
 
@@ -43,19 +47,19 @@ Terminal &Terminal::operator=(Terminal &&other) noexcept {
     return *this;
 }
 
-// bool Terminal::match(SignatureScanner &scanner) {
-//
-//     const auto scannerPosition = scanner.getPosition();
-//     auto position = 0u;
-//     while (position < _value.length() && !scanner.isEOF()) {
-//         if (_value[position] != scanner.getNextChar()) break;
-//         position++;
-//     }
-//     const auto result = position == _value.length();
-//     if (!result) {
-//         scanner.reset(scannerPosition);
-//     }
-//     return false;
-// }
+bool Terminal::match(SignatureScanner &scanner, std::wstring &value) {
+    bool result = false;
+    DEBUG_RULE(this);
+    result = terminalMatch(scanner);
+    if (result) {
+        if ( _capture ) {
+            value = _value;
+        }
+        //TODO match the followBy
+
+    }
+    return result;
+
+}
 
 std::wstring Terminal::getValue() { return _value; }
