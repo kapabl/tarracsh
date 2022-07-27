@@ -21,8 +21,9 @@ public:
 
     template <typename T>
     bool match(SignatureScanner& scanner, T& node) {
+        bool result = true;
+        DEBUG_RULE(this);
         auto matchResult = invokeMatch(_ruleVariant, scanner, node);
-        //TODO match the followBy
         return true;
     }
 

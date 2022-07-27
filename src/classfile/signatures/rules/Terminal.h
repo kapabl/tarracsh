@@ -41,6 +41,7 @@ public:
         DEBUG_RULE(this);
         result = terminalMatch(scanner);
         if (result) {
+            consoleOut("A");
             //TODO match the followBy
         }
         return result;

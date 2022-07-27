@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "../StructsCommon.h"
+#include "rules/NodeTraits.h"
 #include "../AttributeStructures.h"
 #include "visit_struct/visit_struct_intrusive.hpp"
 
@@ -68,16 +69,22 @@ struct ClassType {
     END_VISITABLES;
 };
 
+
+
 struct BaseType {
     BEGIN_VISITABLES(BaseType);
     VISITABLE(std::wstring, type);
     END_VISITABLES;
 };
 
+template<>
+struct is_or_single_capture<BaseType> {
+    static constexpr bool value = true;
+};
+
 
 struct TypeVariable {
     BEGIN_VISITABLES(TypeVariable);
-    VISITABLE(std::wstring, typeTerminal);
     VISITABLE(Identifier, identifier);
     END_VISITABLES;
 };
@@ -86,7 +93,6 @@ struct TypeSignature;
 
 struct ArrayType {
     BEGIN_VISITABLES(ArrayType);
-    VISITABLE(std::wstring, arrayTypeTerminal);
     VISITABLE(std::shared_ptr<TypeSignature>, typeSignature);
     END_VISITABLES;
 };
@@ -113,12 +119,18 @@ struct FieldTypeSignatureOpt {
 };
 
 
+struct DefinedType {
+    BEGIN_VISITABLES(DefinedType);
+    VISITABLE(std::wstring, wildCharIndicator);
+    VISITABLE(FieldTypeSignature, fieldTypeSignature);
+    END_VISITABLES;
+};
+
 
 
 struct TypeArgument {
     BEGIN_VISITABLES(TypeArgument);
-    VISITABLE(std::wstring, wildCharIndicator);
-    VISITABLE(FieldTypeSignature, fieldTypeSignature);
+    VISITABLE(DefinedType, definedType);
     VISITABLE(std::wstring, starTerminal);
     END_VISITABLES;
 };

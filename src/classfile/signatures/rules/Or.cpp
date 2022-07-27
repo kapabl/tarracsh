@@ -6,25 +6,30 @@ using namespace org::kapa::tarracsh::signatures;
 
 Or::Or() = default;
 Or::Or(const Or &other) = default;
-Or::Or(const RulePtr &left) : Rule() {
+
+Or::Or(const RulePtr &left)
+    : Rule() {
     SET_RULE_NAME2(this, L"or");
     _rules.emplace_back(left);
 }
 
 
-Or::Or(const bool isAnchor): Rule( isAnchor ) {}
-
-Or::Or(Or &&other) noexcept: Rule(std::move(other)) {
+Or::Or(const bool isAnchor)
+    : Rule(isAnchor) {
 }
 
-Or & Or::operator=(const Or &other) {
+Or::Or(Or &&other) noexcept
+    : Rule(std::move(other)) {
+}
+
+Or &Or::operator=(const Or &other) {
     if (this == &other)
         return *this;
     Rule::operator =(other);
     return *this;
 }
 
-Or & Or::operator=(Or &&other) noexcept {
+Or &Or::operator=(Or &&other) noexcept {
     if (this == &other)
         return *this;
     Rule::operator =(std::move(other));
@@ -32,3 +37,16 @@ Or & Or::operator=(Or &&other) noexcept {
 }
 
 void Or::addToOr(RuleVariant ruleVariant) { _rules.emplace_back(ruleVariant); }
+
+template <> bool Or::match<std::wstring>(SignatureScanner &scanner, std::wstring &node) {
+    auto result = false;
+    DEBUG_RULE(this);
+
+    for (auto &ruleVariant : _rules) {
+        std::visit([&scanner, &node, &result](auto rulePtr) {
+            result = rulePtr->match(scanner, node);
+        }, ruleVariant);
+        if (result) break;
+    }
+    return result;
+}

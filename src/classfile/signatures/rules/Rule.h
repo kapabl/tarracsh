@@ -32,13 +32,16 @@ class DebugRule;
 #define SET_RULE_NAME( rule ) rule->setName( L""#rule )
 #define GET_RULE_NAME( rule ) rule->getName()
 #define SET_RULE_NAME2( rule, name ) rule->setName( name )
-#ifdef _DEBUG_RULE
-#define DEBUG_RULE( rule ) DebugRule debugRule( *rule, result );
-#endif
 #else
     #define SET_RULE_NAME2
     #define SET_RULE_NAME
     #define GET_RULE_NAME
+    #define DEBUG_RULE
+#endif
+
+#ifdef _DEBUG_RULE
+    #define DEBUG_RULE( rule ) DebugRule debugRule( *rule, result );
+#else
     #define DEBUG_RULE
 #endif
 
@@ -55,36 +58,65 @@ RuleVariant;
 class Rule {
 public:
     explicit Rule();
-    explicit Rule(const bool isAnchor );
+    explicit Rule(const bool isAnchor);
     Rule(const Rule &other);
     Rule(Rule &&other) noexcept;
     Rule &operator=(const Rule &other);
     Rule &operator=(Rule &&other) noexcept;
     virtual ~Rule();
 
+    static void consoleOut(std::string value) {
+#ifdef _DEBUG_RULE
+        std::cout << value;
+#endif
+    }
+
+    static void consoleOut(std::wstring value) {
+#ifdef _DEBUG_RULE
+        std::wcout << value;
+#endif
+    }
+
 
     template <typename T>
     bool match(SignatureScanner &scanner, T &node) {
         bool result = true;
         DEBUG_RULE(this);
-        auto index = 0u;
+        auto ruleIndex = 0u;
+        auto fieldIndex = 0u;
 
-        visit_struct::for_each(node, [this, &index, &result, &scanner](const char *name, auto &value) {
-            if (!result) return;
+        const auto scannerPosition = scanner.getPosition();
 
-            while (index < _followBy.size()) {
-                auto &ruleVariant = _followBy[index];
-                auto matchResult = invokeMatch(ruleVariant, scanner, value);
-                result = matchResult.first;
+        visit_struct::for_each(
+            node,
+            [
+                this,
+                &ruleIndex,
+                &fieldIndex,
+                &result, &scanner
+            ](const char *name, auto &value) {
 
                 if (!result) return;
 
-                auto canCapture = matchResult.second;
-                if (canCapture) break;
-                index++;
-            }
-            index++;
-        });
+                while (ruleIndex < _followBy.size()) {
+                    auto &ruleVariant = _followBy[ruleIndex];
+                    auto matchResult = invokeMatch(ruleVariant, scanner, value);
+                    result = matchResult.first;
+
+                    if (!result) return;
+
+                    auto capturedInValue = matchResult.second;
+                    auto moreFieldsLeft = fieldIndex + 1 < visit_struct::field_count<T>();
+                    if (capturedInValue && moreFieldsLeft) break;
+                    ruleIndex++;
+                }
+                ruleIndex++;
+                fieldIndex++;
+            });
+
+        if (!result) {
+            scanner.reset(scannerPosition);
+        }
 
         return result;
     }
