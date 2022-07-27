@@ -13,32 +13,17 @@ namespace org::kapa::tarracsh::signatures {
 
 template <typename T>
 std::pair<bool, bool> invokeMatch(RuleVariant &ruleVariant, SignatureScanner &scanner, T &node) {
+
     auto result = std::make_pair(false, false);
-    if (std::holds_alternative<KleenePtr>(ruleVariant)) {
-        const auto rule = std::get<KleenePtr>(ruleVariant);
-        result.first = rule->match(scanner, node);
-        result.second = rule->getCapture();
-    } else if (std::holds_alternative<RulePtr>(ruleVariant)) {
-        const auto rule = std::get<RulePtr>(ruleVariant);
-        result.first = rule->match(scanner, node);
-        result.second = rule->getCapture();
-    } else if (std::holds_alternative<OrPtr>(ruleVariant)) {
-        const auto rule = std::get<OrPtr>(ruleVariant);
-        result.first = rule->match(scanner, node);
-        result.second = rule->getCapture();
-    } else if (std::holds_alternative<OptionalPtr>(ruleVariant)) {
-        const auto rule = std::get<OptionalPtr>(ruleVariant);
-        result.first = rule->match(scanner, node);
-        result.second = rule->getCapture();
-    } else if (std::holds_alternative<TerminalPtr>(ruleVariant)) {
-        const auto rule = std::get<TerminalPtr>(ruleVariant);
-        result.second = rule->getCapture();
-        result.first = rule->match(scanner, node);
-    } else if (std::holds_alternative<JvmIdentifierPtr>(ruleVariant)) {
-        const auto rule = std::get<JvmIdentifierPtr>(ruleVariant);
-        result.first = rule->match(scanner, node);
-        result.second = rule->getCapture();
-    }
+    std::visit([&scanner, &node, &result ](auto rulePtr) {
+
+        if (rulePtr->getName() == L"returnType") {
+            std::cout << "here";
+        }
+
+        result.first = rulePtr->match(scanner, node);
+        result.second = rulePtr->getCapture();
+    }, ruleVariant);
 
     return result;
 }

@@ -172,6 +172,7 @@
     <ClCompile Include="src\classfile\signatures\rules\JvmIdentifier.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\classfile\signatures\rules\NodeTraits.h" />
     <ClInclude Include="src\classfile\signatures\rules\RuleFuncs.h" />
     <ClInclude Include="src\classfile\signatures\rules\ParsingRules.h" />
     <ClInclude Include="src\classfile\signatures\rules\Or.h" />

@@ -57,9 +57,22 @@ public:
         return result;
     }
 
+    wchar_t peekNextChar() const {
+        if (_position + 1 >= _size) return 0;
+
+        const auto result = _signatureString[_position + 1 ];
+
+        return result;
+    }
+
     void step() {
         if (_position + 1 >= _size) return;
         _position++;
+    }
+
+    void back() {
+        if (_position - 1 >= 0) return;
+        _position--;
     }
 
     [[nodiscard]] wchar_t currentChar() const {

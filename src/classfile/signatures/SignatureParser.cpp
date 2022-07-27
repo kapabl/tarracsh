@@ -43,9 +43,10 @@ ClassSignatureNode SignatureParser::readSignature(ClassSignature &classSignature
     const auto signatureString = _constantPool.getString(classSignature.signatureIndex);
     SignatureScanner scanner(signatureString);
 
-    auto& classRule = ParsingRules::getInstance().getClassRule();
-    classRule->match(scanner, result);
+    const auto& classRule = ParsingRules::getInstance().getClassRule();
+    const bool matched = classRule->match(scanner, result);
 
+    assert(matched);
 
     return result;
 
@@ -72,9 +73,12 @@ void SignatureParser::readSignature(FieldSignature &signature) const {
     const auto signatureString = _constantPool.getString(signature.signatureIndex);
     SignatureScanner scanner(signatureString);
 
-    auto& fieldRule = ParsingRules::getInstance().getFieldRule();
-    // fieldRule->match(scanner);
-    //TODO get structure
+    const auto& fieldRule = ParsingRules::getInstance().getFieldRule();
+
+    FieldTypeSignature result;
+    const bool matched = fieldRule->match(scanner, result);
+    assert(matched);
+    
 }
 
 wstring SignatureParser::toString(const ClassSignature &signature) const {

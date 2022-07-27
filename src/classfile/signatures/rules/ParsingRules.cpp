@@ -17,24 +17,31 @@ using namespace std;
 
 void ParsingRules::initRules() {
 
-    const auto jvmIdentifier = std::make_shared<JvmIdentifier>();
+    const auto jvmIdentifier = make_shared<JvmIdentifier>();
     const auto plusTerminal = make_shared<Terminal>(L"+");
     const auto wildcardIndicator = plusTerminal | '-';
-    const auto typeArgument = (wildcardIndicator >> _fieldType) | '*';
-    const auto typeArguments = +typeArgument;
+    wildcardIndicator->setAnchor(false);
+
+    const auto definedType = !wildcardIndicator >> _fieldType;
+
+    const auto typeArgument = definedType | '*';
+    typeArgument->setAnchor(false);
+
+    const auto typeArguments = '<' >> +typeArgument >> '>';
     const auto packageSpecifier = +(jvmIdentifier >> '/');
     const auto simpleClassType = jvmIdentifier >> !typeArguments;
     const auto classTypeSuffix = '.' >> simpleClassType;
-    const auto classType = 'L' >> !packageSpecifier >> simpleClassType >> *classTypeSuffix;
+    const auto classType = 'L' >> !packageSpecifier >> simpleClassType >> *classTypeSuffix >> ';';
     const auto superClass = classType;
     const auto superInterface = classType;
     const auto interfaceBound = ':' >> _fieldType;
     const auto classBound = ':' >> !_fieldType;
     const auto formalTypeParameter = jvmIdentifier >> classBound >> *interfaceBound;
-    const auto typeVariable = 'T' >> jvmIdentifier;
+    const auto typeVariable = 'T' >> jvmIdentifier >> ';';
     const auto boolBaseType = make_shared<Terminal>(L"B");
 
     const auto baseType = boolBaseType | 'C' | 'D' | 'F' | 'I' | 'J' | 'S' | 'Z';
+    baseType->captureChildren(true);
 
     const auto type = _fieldType | baseType;
     type->setAnchor(false);
@@ -43,7 +50,7 @@ void ParsingRules::initRules() {
     const auto arrayType = '[' >> type;
     const auto voidDescriptor = std::make_shared<Terminal>(L"V");
     const auto returnType = type | voidDescriptor;
-    const auto throwRule = classType | typeVariable;
+    const auto throwsSignature = classType | typeVariable;
 
     const auto formalTypeParameters = '<' >> (+formalTypeParameter) >> '>';
 
@@ -51,7 +58,7 @@ void ParsingRules::initRules() {
         !formalTypeParameters
         >> types
         >> returnType
-        >> throwRule;
+        >> *throwsSignature;
 
     _fieldType->addToOr(classType);
     _fieldType->addToOr(arrayType);
@@ -65,7 +72,7 @@ void ParsingRules::initRules() {
     SET_RULE_NAME(_class);
     SET_RULE_NAME(_fieldType);
     SET_RULE_NAME(_methodType);
-    SET_RULE_NAME(throwRule);
+    SET_RULE_NAME(throwsSignature);
     SET_RULE_NAME(returnType);
     SET_RULE_NAME(type);
     SET_RULE_NAME(types);
@@ -80,7 +87,9 @@ void ParsingRules::initRules() {
     SET_RULE_NAME(superClass);
     SET_RULE_NAME(jvmIdentifier);
     SET_RULE_NAME(wildcardIndicator);
+    SET_RULE_NAME(definedType);
     SET_RULE_NAME(typeArgument);
+    SET_RULE_NAME(typeArguments);
     SET_RULE_NAME(packageSpecifier);
     SET_RULE_NAME(simpleClassType);
     SET_RULE_NAME(classTypeSuffix);
