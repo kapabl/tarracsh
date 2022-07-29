@@ -24,7 +24,7 @@ DECLARE_RULE_CLASS(JvmIdentifier);
 
 #undef DECLARE_RULE_CLASS
 
-#define _DEBUG_RULE 
+// #define _DEBUG_RULE 
 
 
 #ifdef _DEBUG

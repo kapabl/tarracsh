@@ -163,7 +163,7 @@
     <ClCompile Include="src\classfile\ClassFileAnalyzer.cpp" />
     <ClCompile Include="src\classfile\AnnotationsParser.cpp" />
     <ClCompile Include="src\classfile\AnnotationsParser.h" />
-    <ClCompile Include="src\classfile\main.cpp" />
+    <ClCompile Include="src\classfile\Main.cpp" />
     <ClCompile Include="src\classfile\signatures\rules\Kleene.cpp" />
     <ClCompile Include="src\classfile\signatures\rules\ParsingRules.cpp" />
     <ClCompile Include="src\classfile\signatures\rules\Rule.cpp" />

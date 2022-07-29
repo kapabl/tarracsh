@@ -34,51 +34,74 @@ using namespace std;
  *  )V
  */
 
-ClassSignatureNode SignatureParser::readSignature(ClassSignature &classSignature) const {
+void SignatureParser::parse(const ClassSignature &classSignature, ClassSignatureNode& node) const {
 
-    ClassSignatureNode result;
-    classSignature.nameIndex = _attribute.nameIndex;
-    classSignature.length = _attribute.length;
-    classSignature.signatureIndex = _reader.readU2();
     const auto signatureString = _constantPool.getString(classSignature.signatureIndex);
     SignatureScanner scanner(signatureString);
 
-    const auto& classRule = ParsingRules::getInstance().getClassRule();
-    const bool matched = classRule->match(scanner, result);
+    const auto &classRule = ParsingRules::getInstance().getClassRule();
+    const bool matched = classRule->match(scanner, node);
 
     assert(matched);
 
+}
+
+void SignatureParser::parse(const MethodSignature &signature, MethodSignatureNode& node) const {
+    const auto signatureString = _constantPool.getString(signature.signatureIndex);
+    SignatureScanner scanner(signatureString);
+
+    const auto &methodRule = ParsingRules::getInstance().getMethodRule();
+    const bool matched = methodRule->match(scanner, node);
+    assert(matched);
+
+}
+
+void SignatureParser::parse(const FieldSignature &signature, FieldTypeSignature& node) const {
+    const auto signatureString = _constantPool.getString(signature.signatureIndex);
+    SignatureScanner scanner(signatureString);
+    const auto &fieldRule = ParsingRules::getInstance().getFieldRule();
+    const bool matched = fieldRule->match(scanner, node);
+    assert(matched);
+
+
+}
+
+void SignatureParser::read(ClassSignature &classSignature) const {
+
+    classSignature.nameIndex = _attribute.nameIndex;
+    classSignature.length = _attribute.length;
+    classSignature.signatureIndex = _reader.readU2();
+
+}
+
+void SignatureParser::read(MethodSignature &signature) const {
+    signature.nameIndex = _attribute.nameIndex;
+    signature.length = _attribute.length;
+    signature.signatureIndex = _reader.readU2();
+
+}
+
+void SignatureParser::read(FieldSignature &signature) const {
+    signature.nameIndex = _attribute.nameIndex;
+    signature.length = _attribute.length;
+    signature.signatureIndex = _reader.readU2();
+}
+
+std::wstring SignatureParser::getString(const ClassSignature & signature) const {
+    const auto result = _constantPool.getString(signature.signatureIndex);
     return result;
 
 }
 
-void SignatureParser::readSignature(MethodSignature &signature) const {
-    signature.nameIndex = _attribute.nameIndex;
-    signature.length = _attribute.length;
-    signature.signatureIndex = _reader.readU2();
-    const auto signatureString = _constantPool.getString(signature.signatureIndex);
-    SignatureScanner scanner(signatureString);
-
-    const auto& methodRule = ParsingRules::getInstance().getMethodRule();
-
-    MethodSignatureNode result;
-    const bool matched = methodRule->match(scanner, result);
-    assert(matched);
+std::wstring SignatureParser::getString(const MethodSignature &signature) const {
+    const auto result = _constantPool.getString(signature.signatureIndex);
+    return result;
 }
 
-void SignatureParser::readSignature(FieldSignature &signature) const {
-    signature.nameIndex = _attribute.nameIndex;
-    signature.length = _attribute.length;
-    signature.signatureIndex = _reader.readU2();
-    const auto signatureString = _constantPool.getString(signature.signatureIndex);
-    SignatureScanner scanner(signatureString);
+std::wstring SignatureParser::getString(const FieldSignature &signature) const {
+    const auto result = _constantPool.getString(signature.signatureIndex);
+    return result;
 
-    const auto& fieldRule = ParsingRules::getInstance().getFieldRule();
-
-    FieldTypeSignature result;
-    const bool matched = fieldRule->match(scanner, result);
-    assert(matched);
-    
 }
 
 wstring SignatureParser::toString(const ClassSignature &signature) const {
@@ -103,20 +126,20 @@ wstring SignatureParser::toString() const {
 
         case AttributeOwner::ClassFile: {
             ClassSignature signature;
-            readSignature(signature);
-            result = toString(signature);
+            read(signature);
+            result = getString(signature);
             break;
         }
         case AttributeOwner::Method: {
             MethodSignature signature;
-            readSignature(signature);
-            result = toString(signature);
+            read(signature);
+            result = getString(signature);
             break;
         }
         case AttributeOwner::Field: {
             FieldSignature signature;
-            readSignature(signature);
-            result = toString(signature);
+            read(signature);
+            result = getString(signature);
             break;
         }
     }

@@ -115,7 +115,8 @@ struct SourceFile : AttributeBase {
 };
 
 struct SourceDebugExtension : AttributeBase {
-    std::vector<u1> debugExtensions;
+    // std::vector<u1> debugExtensions;
+    std::string debugExtensions;
 };
 
 struct LineNumber {
