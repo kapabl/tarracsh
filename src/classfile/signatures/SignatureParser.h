@@ -13,9 +13,18 @@ public:
     SignatureParser(const ConstantPool &constantPool, const attributes::AttributeInfo &attribute, readers::VectorReader &reader)
     : _constantPool(constantPool), _attribute(attribute), _reader(reader) {}
 
-    ClassSignatureNode readSignature(ClassSignature &signature) const;
-    void readSignature(MethodSignature &signature) const;
-    void readSignature(FieldSignature &signature) const;
+    void read(ClassSignature &signature) const;
+    void read(MethodSignature &signature) const;
+    void read(FieldSignature &signature) const;
+
+    void parse(const ClassSignature& signature, ClassSignatureNode& node ) const;
+    void parse(const MethodSignature& signature, MethodSignatureNode& node) const;
+    void parse(const FieldSignature& signature, FieldTypeSignature& node) const;
+
+
+    std::wstring getString(const ClassSignature& signature) const;
+    std::wstring getString(const MethodSignature& signature) const;
+    std::wstring getString(const FieldSignature& signature) const;
 
     std::wstring toString(const ClassSignature &signature) const;
     std::wstring toString(const MethodSignature &signature) const;

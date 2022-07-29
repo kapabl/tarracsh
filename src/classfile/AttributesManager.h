@@ -74,10 +74,6 @@ private:
     const ConstantPool &_constantPool;
     bool _isBigEndian;
 
-
-    /**
-         * TODO consider saving the constant string inside the attribute in the future
-         */
     START_ATTR_TO_STRING(ConstantValue)
         result += L": ";
 
@@ -189,6 +185,30 @@ private:
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(Code)
+        Code codeAttribute;
+        codeAttribute.nameIndex = attribute.nameIndex;
+        codeAttribute.length = attribute.length;
+        codeAttribute.maxStack = reader.readU2();
+        codeAttribute.maxLocals = reader.readU2();
+        codeAttribute.codeLength = reader.readU4();
+
+        for (auto i = 0u; i < codeAttribute.codeLength; i++) {
+            codeAttribute.code.push_back(reader.readU1());
+        }
+
+        codeAttribute.exceptionTableLength = reader.readU2();
+
+        for( auto i = 0u; i < codeAttribute.exceptionTableLength; i++ ) {
+            ExceptionTable exceptionTable{};
+            exceptionTable.startPC = reader.readU2();
+            exceptionTable.endPC = reader.readU2();
+            exceptionTable.handlerPC = reader.readU2();
+            exceptionTable.catchType = reader.readU2();
+            codeAttribute.exceptionTable.push_back(exceptionTable);
+        }
+        result += L" " + std::format(L"maxStack={}, maxLocals={}, codeLength={}, exceptionTableLength={}",
+            codeAttribute.maxStack, codeAttribute.maxLocals, codeAttribute.codeLength, codeAttribute.exceptionTableLength );
+
         // TODO
     END_ATTR_TO_STRING()
 
@@ -225,7 +245,18 @@ private:
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(SourceDebugExtension)
-        // TODO
+        SourceDebugExtension sourceDebugExtension;
+        sourceDebugExtension.nameIndex = attribute.nameIndex;
+        sourceDebugExtension.length = attribute.length;
+        std::wstring value;
+        for (auto i = 0u; i < sourceDebugExtension.length; i++) {
+            const auto character = static_cast<char>(reader.readU1());
+            sourceDebugExtension.debugExtensions.push_back(character);
+            value.push_back(character);
+        }
+
+        result += L" " + value;
+
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(Signature)
