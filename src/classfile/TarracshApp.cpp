@@ -13,6 +13,7 @@
 #endif
 
 using namespace org::kapa::tarracsh;
+using namespace std;
 
 int TarracshApp::run(int argc, char *argv[]) {
 
@@ -22,11 +23,12 @@ int TarracshApp::run(int argc, char *argv[]) {
 }
 
 int TarracshApp::start(int argc, char *argv[]) {
-    init();
+
 
     const auto exitCode = parseCli(argc, argv);
-
     if (exitCode != 0) return exitCode;
+
+    init();
 
     Results results;
     results.resultLog.setFile(_options.logFile);
@@ -86,14 +88,20 @@ int TarracshApp::parseCli(int argc, char **argv) {
 }
 
 #ifdef _WIN32
-void TarracshApp::prepareConsoleForWindows() {
+void TarracshApp::prepareConsoleForVT100() {
     const auto stdOutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleMode(stdOutHandle, ENABLE_VIRTUAL_TERMINAL_PROCESSING | ENABLE_PROCESSED_OUTPUT);
 }
 #endif
 
-void TarracshApp::init() {
+
+
+void TarracshApp::init() const {
+
 #ifdef _WIN32
-    prepareConsoleForWindows();
+    prepareConsoleForVT100();
 #endif
+
+    filesystem::create_directories(_options.outputDir);
+    Log::emptyLogFile( _options.logFile);
 }

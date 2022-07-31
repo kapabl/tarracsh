@@ -10,8 +10,8 @@ class TarracshApp final : public CLI::App {
 
 public:
 
-    TarracshApp(std::string description, std::string name):
-        App( description, name ) {}
+    TarracshApp(const std::string &description, const std::string& name):
+        App(description, name ) {}
 
     static int run(int argc, char *argv[]);
     int start(int argc, char *argv[]);
@@ -22,10 +22,10 @@ private:
     void setupCliOptions();
     int parseCli(int argc, char** argv);
 #ifdef _WIN32
-    static void prepareConsoleForWindows();
+    static void prepareConsoleForVT100();
 #endif
 
-    static void init();
+    void init() const;
 };
 
 
