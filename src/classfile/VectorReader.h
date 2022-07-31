@@ -79,6 +79,10 @@ struct VectorReader {
         }
         return result;
     }
+
+    void jump(const int steps) {
+        position += steps;
+    }
 };
 
 }

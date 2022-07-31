@@ -102,6 +102,7 @@ enum NewArrayInstructions {
 /* Constant Pool Entries */
 
 enum ConstantPoolTag: unsigned char {
+    JVM_CONSTANT_Empty                  = 0,
     JVM_CONSTANT_Utf8                   = 1,
     JVM_CONSTANT_Unicode                = 2, /* unused */
     JVM_CONSTANT_Integer                = 3,

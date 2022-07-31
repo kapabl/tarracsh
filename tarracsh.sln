@@ -3,29 +3,48 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32519.379
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tarrash", "tarrash.vcxproj", "{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tarracsh", "tarrash.vcxproj", "{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
-		Debug1|x64 = Debug1|x64
-		Debug1|x86 = Debug1|x86
+		DebugDir|x64 = DebugDir|x64
+		DebugDir|x86 = DebugDir|x86
+		DebugJar|x64 = DebugJar|x64
+		DebugJar|x86 = DebugJar|x86
+		RelBigDir|x64 = RelBigDir|x64
+		RelBigDir|x86 = RelBigDir|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
+		ReleaseDir|x64 = ReleaseDir|x64
+		ReleaseDir|x86 = ReleaseDir|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Debug|x64.ActiveCfg = Debug|x64
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Debug|x64.Build.0 = Debug|x64
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Debug|x86.ActiveCfg = Debug|Win32
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Debug|x86.Build.0 = Debug|Win32
-		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Debug1|x64.ActiveCfg = Debug1|x64
-		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Debug1|x86.ActiveCfg = Debug1|Win32
-		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Debug1|x86.Build.0 = Debug1|Win32
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.DebugDir|x64.ActiveCfg = DebugDir|x64
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.DebugDir|x64.Build.0 = DebugDir|x64
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.DebugDir|x86.ActiveCfg = DebugDir|Win32
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.DebugDir|x86.Build.0 = DebugDir|Win32
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.DebugJar|x64.ActiveCfg = DebugJar|x64
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.DebugJar|x64.Build.0 = DebugJar|x64
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.DebugJar|x86.ActiveCfg = DebugJar|Win32
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.DebugJar|x86.Build.0 = DebugJar|Win32
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.RelBigDir|x64.ActiveCfg = RelBigDir|x64
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.RelBigDir|x64.Build.0 = RelBigDir|x64
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.RelBigDir|x86.ActiveCfg = RelBigDir|Win32
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.RelBigDir|x86.Build.0 = RelBigDir|Win32
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Release|x64.ActiveCfg = Release|x64
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Release|x64.Build.0 = Release|x64
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Release|x86.ActiveCfg = Release|Win32
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Release|x86.Build.0 = Release|Win32
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.ReleaseDir|x64.ActiveCfg = ReleaseDir|x64
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.ReleaseDir|x64.Build.0 = ReleaseDir|x64
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.ReleaseDir|x86.ActiveCfg = ReleaseDir|Win32
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.ReleaseDir|x86.Build.0 = ReleaseDir|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

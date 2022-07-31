@@ -21,7 +21,7 @@ using common::u1;
 using common::u2;
 using common::u4;
 
-enum AttributeOwner { ClassFile, Method, Field };
+enum AttributeOwner { ClassFile, Method, Field, CodeAttribute, RecordComponentInfoAttribute };
 
 struct AttributeBase {
     u2 nameIndex{};
@@ -64,6 +64,19 @@ struct Attribute {
     // TODO
 };
 
+
+struct BootstrapMethod {
+    u2 bootstrapMethodRef;
+    // u2 numBootstrapArguments;
+    std::vector<u2> bootstrapArguments;
+};
+
+
+struct BootstrapMethods : AttributeBase {
+    // u2 numBootstrapMethods;
+    std::vector<BootstrapMethods> bootstrapMethods;
+};
+
 struct StackMapTable : AttributeBase {
     u2 entryCount;
     std::vector<stack::StackMapFrame> entries;
@@ -81,7 +94,7 @@ struct Code : AttributeBase {
 };
 
 struct Exceptions : AttributeBase {
-    u2 number_of_exceptions;
+    // u2 numberOfExceptions;
     std::vector<u2> exceptionIndexTable;
 };
 
@@ -99,8 +112,8 @@ struct InnerClasses : AttributeBase {
 
 struct EnclosingMethod : AttributeBase {
 
-    u2 class_index{};
-    u2 method_index{};
+    u2 classIndex{};
+    u2 methodIndex{};
 };
 
 struct Synthetic : AttributeBase {
@@ -113,6 +126,34 @@ struct Signature : AttributeBase {
 struct SourceFile : AttributeBase {
     u2 sourceFileIndex{};
 };
+
+/**
+ * ref: https://docs.oracle.com/javase/specs/jvms/se15/preview/specs/records-jvms.html
+ */
+struct RecordComponentInfo {
+    u2 nameIndex;
+    u2 descriptorIndex;
+    u2 count;
+    std::vector<AttributeInfo> items;
+};
+
+/**
+ * ref: https://docs.oracle.com/javase/specs/jvms/se15/preview/specs/records-jvms.html
+ */
+struct Record: AttributeBase {
+    u2 count{};
+    std::vector<RecordComponentInfo> items;
+};
+
+
+/**
+ * ref: https://docs.oracle.com/javase/specs/jvms/se15/preview/specs/sealed-classes-jvms.html#jvms-4.7.30
+ */
+struct PermittedSubclasses : AttributeBase {
+    u2 numberOfClasses;
+    std::vector<u2> classes;
+};
+
 
 struct SourceDebugExtension : AttributeBase {
     // std::vector<u1> debugExtensions;
@@ -266,6 +307,100 @@ struct RuntimeInvisibleAnnotations : RuntimeAnnotations {
 };
 
 
+/**
+ * ref: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.21
+ */
+struct LocalVarTargetEntry {
+    u2 startPC;
+    u2 length;
+    u2 index;
+};
+
+
+/**
+ * ref: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.20.2
+ */
+struct TypePathItem {
+    u1 type_path_kind;
+    u1 type_argument_index;
+};
+
+/**
+ * ref: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.20.2
+ */
+struct TypePath {
+    u1 length;
+    std::vector<TypePathItem> items;
+};
+
+
+/**
+ * ref: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.21
+ */
+struct TypeAnnotation {
+    u1 targetType;
+
+    union TargetInfo {
+        u1 type_parameter_target;
+        u2 supertype_target;
+
+        struct TypeParameterBoundTarget {
+            u1 type_parameter_index;
+            u1 bound_index;
+        } type_parameter_bound_target;
+
+        // empty_target;
+        u1 method_formal_parameter_target;
+        u2 throws_target;
+
+        // outside of union
+        // struct LocalVarTarget {
+        //     u2 table_length;
+        //     std::vector<LocalVarTargetEntry> items;
+        // } local_var_target;
+
+        u2 catch_target;
+        u2 offset_target;
+
+        struct TypeArgumentTarget {
+            u2 offset;
+            u2 type_argument_index;
+        } type_argument_target;
+    } targetInfo;
+
+    struct LocalVarTarget {
+        u2 table_length;
+        std::vector<LocalVarTargetEntry> items;
+    } local_var_target;
+
+    TypePath targetPath;
+    u2 typeIndex;
+    u2 numElementValuePairs;
+    std::vector<AnnotationValuePair> valuePairs;
+
+};
+
+
+/**
+ * ref: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.20
+ *      https://docs.oracle.com/javase/specs/jvms/se15/preview/specs/records-jvms.html
+ */
+struct RuntimeVisibleTypeAnnotations : AttributeBase {
+    u2 count;
+    std::vector<TypeAnnotation> annotations;
+};
+
+/**
+ * ref: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.22
+ *      https://docs.oracle.com/javase/specs/jvms/se15/preview/specs/records-jvms.html
+ */
+struct RuntimeInvisibleTypeAnnotations : AttributeBase {
+    u2 count;
+    std::vector<TypeAnnotation> annotations;
+};
+
+
+
 struct ParameterAnnotation {
     u2 count = 0;
     std::vector<Annotation> items;
@@ -286,6 +421,10 @@ struct RuntimeInvisibleParameterAnnotations : RuntimeParameterAnnotations {
 struct AnnotationDefault : AttributeBase {
     ElementValue defaultValue;
 };
+
+
+
+
 
 #pragma pack(pop)
 

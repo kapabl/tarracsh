@@ -16,11 +16,6 @@ std::pair<bool, bool> invokeMatch(RuleVariant &ruleVariant, SignatureScanner &sc
 
     auto result = std::make_pair(false, false);
     std::visit([&scanner, &node, &result ](auto rulePtr) {
-
-        if (rulePtr->getName() == L"returnType") {
-            std::cout << "here";
-        }
-
         result.first = rulePtr->match(scanner, node);
         result.second = rulePtr->getCapture();
     }, ruleVariant);
@@ -121,7 +116,9 @@ RulePtr operator>>(T left, const T1 &right) {
 template <typename T>
 KleenePtr kleeneOper(T &rule, int minimum) {
     auto result = make_shared<Kleene>(RuleVariant(rule), minimum);
+#ifdef _DEBUG
     SET_RULE_NAME2(result, std::format(L"k({}-{})", minimum, GET_RULE_NAME( rule ) ));
+#endif
     return result;
 }
 
@@ -140,7 +137,9 @@ inline KleenePtr operator*(const JvmIdentifierPtr &right) { return kleeneOper(ri
 template <typename T>
 OptionalPtr optionalOper(T &rule) {
     auto result = make_shared<Optional>(RuleVariant(rule));
+#ifdef _DEBUG
     SET_RULE_NAME2(result, std::format(L"optional({})", GET_RULE_NAME( rule )));
+#endif
     return result;
 }
 
@@ -153,12 +152,11 @@ inline OptionalPtr operator!(JvmIdentifierPtr right) { return optionalOper(right
 
 
 template <typename TRight>
-inline OrPtr orTRuleWithRight(const OrPtr& left, TRight& right) {
+inline OrPtr orTRuleWithRight(const OrPtr &left, TRight &right) {
     OrPtr result;
     if (left->isAnchor()) {
         result = left;
-    }
-    else {
+    } else {
         result = std::make_shared<Or>(true);
         result->addToOr(left);
 

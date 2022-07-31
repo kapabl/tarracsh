@@ -18,13 +18,15 @@ namespace org::kapa::tarracsh::attributes {
 
 #define ATTR_TO_STRING_FUNC_NAME(AttributeName) toString##AttributeName
 
-#define TAG_TO_STRING_FUNC( AttributeName ) \
+#define TAG_TO_FUNCS( AttributeName ) \
     _tags2ToStringFunc[AttributeTag::AttributeName##Tag] = &AttributesManager::ATTR_TO_STRING_FUNC_NAME( AttributeName );
+    
 
 #define START_ATTR_TO_STRING(AttributeName) \
     std::wstring ATTR_TO_STRING_FUNC_NAME(AttributeName)(AttributeInfo & attribute) { \
         std::wstring result = L"Attr - "#AttributeName; \
         readers::VectorReader reader(attribute.info, _isBigEndian);
+
 #define END_ATTR_TO_STRING() \
         return result;\
     }
@@ -192,13 +194,15 @@ private:
         codeAttribute.maxLocals = reader.readU2();
         codeAttribute.codeLength = reader.readU4();
 
-        for (auto i = 0u; i < codeAttribute.codeLength; i++) {
-            codeAttribute.code.push_back(reader.readU1());
-        }
+        reader.jump(codeAttribute.codeLength);
+
+        // for (auto i = 0u; i < codeAttribute.codeLength; i++) {
+        //     codeAttribute.code.push_back(reader.readU1());
+        // }
 
         codeAttribute.exceptionTableLength = reader.readU2();
 
-        for( auto i = 0u; i < codeAttribute.exceptionTableLength; i++ ) {
+        for (auto i = 0u; i < codeAttribute.exceptionTableLength; i++) {
             ExceptionTable exceptionTable{};
             exceptionTable.startPC = reader.readU2();
             exceptionTable.endPC = reader.readU2();
@@ -207,13 +211,20 @@ private:
             codeAttribute.exceptionTable.push_back(exceptionTable);
         }
         result += L" " + std::format(L"maxStack={}, maxLocals={}, codeLength={}, exceptionTableLength={}",
-            codeAttribute.maxStack, codeAttribute.maxLocals, codeAttribute.codeLength, codeAttribute.exceptionTableLength );
+                                     codeAttribute.maxStack, codeAttribute.maxLocals, codeAttribute.codeLength,
+                                     codeAttribute.exceptionTableLength);
 
-        // TODO
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(Exceptions)
-        // TODO
+        Exceptions exceptions;
+        exceptions.nameIndex = attribute.nameIndex;
+        exceptions.length = attribute.length;
+        auto count = reader.readU2();
+        while (count > 0) {
+            exceptions.exceptionIndexTable.push_back(reader.readU2());
+            count--;
+        }
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(LineNumberTable)
@@ -304,15 +315,41 @@ private:
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(EnclosingMethod)
-        // TODO
+        EnclosingMethod enclosingMethod;
+        enclosingMethod.nameIndex = attribute.nameIndex;
+        enclosingMethod.length = attribute.length;
+        enclosingMethod.classIndex = reader.readU2();
+        enclosingMethod.methodIndex = reader.readU2();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(BootstrapMethods)
-        // TODO
+        BootstrapMethods bootstrapMethods;
+        bootstrapMethods.nameIndex = attribute.nameIndex;
+        bootstrapMethods.length = attribute.length;
+        auto count = reader.readU2();
+        while (count > 0) {
+            BootstrapMethod bootstrapMethod;
+            bootstrapMethod.bootstrapMethodRef = reader.readU2();
+            auto argumentCount = reader.readU2();
+            while (argumentCount > 0) {
+                bootstrapMethod.bootstrapArguments.push_back(reader.readU2());
+                argumentCount--;
+            }
+            count--;
+
+        }
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(PermittedSubclasses)
-        // TODO
+        PermittedSubclasses permittedSubclasses;
+        permittedSubclasses.nameIndex = attribute.nameIndex;
+        permittedSubclasses.length = attribute.length;
+        permittedSubclasses.numberOfClasses = reader.readU2();
+        auto count = permittedSubclasses.numberOfClasses;
+        while (count > 0) {
+            permittedSubclasses.classes.push_back(reader.readU2());
+            count--;
+        }
     END_ATTR_TO_STRING()
 
 
@@ -339,39 +376,39 @@ private:
         _tagsMap[RUNTIME_VISIBLE_PARAMETER_ANNOTATIONS] = AttributeTag::RuntimeVisibleParameterAnnotationsTag;
         _tagsMap[RUNTIME_INVISIBLE_PARAMETER_ANNOTATIONS] = AttributeTag::RuntimeInvisibleParameterAnnotationsTag;
         _tagsMap[ANNOTATION_DEFAULT] = AttributeTag::AnnotationDefaultTag;
-        _tagsMap[RUNTIME_VISIBLE_TYPE_ANNOTATIONS] = AttributeTag::RuntimeInvisibleTypeAnnotationsTag;
+        _tagsMap[RUNTIME_VISIBLE_TYPE_ANNOTATIONS] = AttributeTag::RuntimeVisibleTypeAnnotationsTag;
         _tagsMap[RUNTIME_INVISIBLE_TYPE_ANNOTATIONS] = AttributeTag::RuntimeInvisibleTypeAnnotationsTag;
         _tagsMap[ENCLOSING_METHOD] = AttributeTag::EnclosingMethodTag;
         _tagsMap[BOOTSTRAP_METHODS] = AttributeTag::BootstrapMethodsTag;
         _tagsMap[PERMITTED_SUBCLASSES] = AttributeTag::PermittedSubclassesTag;
 
-        TAG_TO_STRING_FUNC(SourceFile)
-        TAG_TO_STRING_FUNC(InnerClasses)
-        TAG_TO_STRING_FUNC(NestMembers)
-        TAG_TO_STRING_FUNC(NestHost)
-        TAG_TO_STRING_FUNC(ConstantValue)
-        TAG_TO_STRING_FUNC(Code)
-        TAG_TO_STRING_FUNC(Exceptions)
-        TAG_TO_STRING_FUNC(LineNumberTable)
-        TAG_TO_STRING_FUNC(LocalVariableTable)
-        TAG_TO_STRING_FUNC(LocalVariableTypeTable)
-        TAG_TO_STRING_FUNC(MethodParameters)
-        TAG_TO_STRING_FUNC(StackMapTable)
-        TAG_TO_STRING_FUNC(Synthetic)
-        TAG_TO_STRING_FUNC(Deprecated)
-        TAG_TO_STRING_FUNC(SourceDebugExtension)
-        TAG_TO_STRING_FUNC(Signature)
-        TAG_TO_STRING_FUNC(Record)
-        TAG_TO_STRING_FUNC(RuntimeVisibleAnnotations)
-        TAG_TO_STRING_FUNC(RuntimeInvisibleAnnotations)
-        TAG_TO_STRING_FUNC(RuntimeVisibleParameterAnnotations)
-        TAG_TO_STRING_FUNC(RuntimeInvisibleParameterAnnotations)
-        TAG_TO_STRING_FUNC(AnnotationDefault)
-        TAG_TO_STRING_FUNC(RuntimeInvisibleTypeAnnotations)
-        TAG_TO_STRING_FUNC(RuntimeInvisibleTypeAnnotations)
-        TAG_TO_STRING_FUNC(EnclosingMethod)
-        TAG_TO_STRING_FUNC(BootstrapMethods)
-        TAG_TO_STRING_FUNC(PermittedSubclasses)
+        TAG_TO_FUNCS(SourceFile)
+        TAG_TO_FUNCS(InnerClasses)
+        TAG_TO_FUNCS(NestMembers)
+        TAG_TO_FUNCS(NestHost)
+        TAG_TO_FUNCS(ConstantValue)
+        TAG_TO_FUNCS(Code)
+        TAG_TO_FUNCS(Exceptions)
+        TAG_TO_FUNCS(LineNumberTable)
+        TAG_TO_FUNCS(LocalVariableTable)
+        TAG_TO_FUNCS(LocalVariableTypeTable)
+        TAG_TO_FUNCS(MethodParameters)
+        TAG_TO_FUNCS(StackMapTable)
+        TAG_TO_FUNCS(Synthetic)
+        TAG_TO_FUNCS(Deprecated)
+        TAG_TO_FUNCS(SourceDebugExtension)
+        TAG_TO_FUNCS(Signature)
+        TAG_TO_FUNCS(Record)
+        TAG_TO_FUNCS(RuntimeVisibleAnnotations)
+        TAG_TO_FUNCS(RuntimeInvisibleAnnotations)
+        TAG_TO_FUNCS(RuntimeVisibleParameterAnnotations)
+        TAG_TO_FUNCS(RuntimeInvisibleParameterAnnotations)
+        TAG_TO_FUNCS(AnnotationDefault)
+        TAG_TO_FUNCS(RuntimeVisibleTypeAnnotations)
+        TAG_TO_FUNCS(RuntimeInvisibleTypeAnnotations)
+        TAG_TO_FUNCS(EnclosingMethod)
+        TAG_TO_FUNCS(BootstrapMethods)
+        TAG_TO_FUNCS(PermittedSubclasses)
 
     }
 };
@@ -379,7 +416,7 @@ private:
 }
 
 #undef ATTR_TO_STRING_FUNC_NAME
-#undef TAG_TO_STRING_FUNC
+#undef TAG_TO_FUNCS
 #undef START_ATTR_TO_STRING
 #undef END_ATTR_TO_STRING
 

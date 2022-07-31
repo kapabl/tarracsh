@@ -8,12 +8,11 @@ using namespace org::kapa::tarracsh;
 using namespace attributes;
 using namespace std;
 
-ClassFileAnalyzer::ClassFileAnalyzer(string fileName, string classPath)
-    : _fileName(move(fileName)),
-      _classPath(move(classPath)),
+ClassFileAnalyzer::ClassFileAnalyzer(Options options, Results &results)
+    : _options(std::move(options)),
+      _results(results),
       _attributesManager(_constantPool) {
 
-    processFile();
 }
 
 void ClassFileAnalyzer::output() {
@@ -23,8 +22,20 @@ void ClassFileAnalyzer::output() {
     outputInterfaces();
 }
 
-void ClassFileAnalyzer::run() {
-    //TODO
+bool ClassFileAnalyzer::run() {
+
+    auto result = true;
+    try {
+        processFile();
+        if (_options.outputClassParse) {
+            output();
+        }
+    } catch (...) {
+        //TODO save files with errors
+        result = false;
+    }
+
+    return result;
 }
 
 void ClassFileAnalyzer::outputAccessModifiers(const u2 accessFlags) const {
@@ -157,7 +168,7 @@ bool ClassFileAnalyzer::readHeader() {
     readRaw(_header, sizeof(ClassFileHeader));
     _isBigEndian = _header.magic == 0x0cafebabe;
     if (!_isBigEndian && _header.magic != stringUtils::swapLong(0x0cafebabe)) {
-        cout << "Invalid class file " << _fileName << endl;
+        cout << "Invalid class file " << _options.classFile << endl;
         _isValid = false;
     }
     _attributesManager.setBigEndian(_isBigEndian);
@@ -239,9 +250,13 @@ void ClassFileAnalyzer::readConstPoolRecord() {
             // TODO newer java version
             break;
 
-        default: // NOLINT(clang-diagnostic-covered-switch-default)
-            assert(false);
+        case JVM_CONSTANT_Empty:
             break;
+
+        default: // NOLINT(clang-diagnostic-covered-switch-default)
+            const auto errorMessage = std::format("Error - Invalid const-pool tag: {} {}", static_cast<int>(tag), _options.classFile);
+            _results.resultLog.writeln(errorMessage);
+            throw std::runtime_error(errorMessage);
     }
 }
 
@@ -286,7 +301,7 @@ void ClassFileAnalyzer::readFields() {
 }
 
 void ClassFileAnalyzer::readAttributesSection(vector<AttributeInfo> &attributes, const int count,
-                                            const AttributeOwner owner) {
+                                              const AttributeOwner owner) {
     for (auto i = 0; i < count; ++i) {
         AttributeInfo attributeInfo;
         attributeInfo.owner = owner;
@@ -321,9 +336,9 @@ void ClassFileAnalyzer::readAttributes() {
 
 void ClassFileAnalyzer::processFile() {
 
-    _fileSize = filesystem::file_size(_fileName);
+    _fileSize = filesystem::file_size(_options.classFile);
 
-    _file.open(_fileName, ifstream::binary);
+    _file.open(_options.classFile, ifstream::binary);
 
     if (readHeader()) {
         readConstantsPool();
