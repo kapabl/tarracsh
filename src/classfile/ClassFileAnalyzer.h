@@ -16,6 +16,7 @@
 #include "AttributesManager.h"
 #include "AccessModifiers.h"
 #include "StringUtils.h"
+#include "Tarracsh.h"
 
 
 namespace org::kapa::tarracsh {
@@ -23,7 +24,7 @@ namespace org::kapa::tarracsh {
 class ClassFileAnalyzer final {
 
 public:
-    explicit ClassFileAnalyzer(std::string fileName, std::string classPath);
+    explicit ClassFileAnalyzer(Options options, Results& results);
 
     ClassFileAnalyzer(const ClassFileAnalyzer &) = delete;
     ClassFileAnalyzer(const ClassFileAnalyzer &&) = delete;
@@ -35,11 +36,11 @@ public:
     [[nodiscard]] bool isValid() const { return _isValid; }
 
     ~ClassFileAnalyzer() = default;
-    void run();
+    bool run();
 
 private:
-    std::string _fileName;
-    std::string _classPath;
+    Options _options;
+    Results& _results;
     bool _isBigEndian{true};
 
     ClassFileHeader _header{};
@@ -73,7 +74,13 @@ private:
 
     template <typename T> void readRaw(T &buffer, unsigned int byteCount) {
 
-        assert(_bytesRead + byteCount <= _fileSize);
+        // assert(_bytesRead + byteCount <= _fileSize);
+
+        if (_bytesRead + byteCount > _fileSize) {
+            const auto errorMessage = std::format("Error - reading beyond size - {}", _options.classFile);
+            _results.resultLog.writeln(errorMessage);
+            throw std::runtime_error(errorMessage);
+        }
         const auto charBuffer = reinterpret_cast<char *>(&buffer);
 
         _file.read(charBuffer, byteCount);

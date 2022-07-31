@@ -3,10 +3,14 @@
 #define JARPARSER_H
 
 #include <string>
+
+#include "Tarracsh.h"
+
+
 namespace org::kapa::tarracsh::jar {
 class JarAnalyzer {
 public:
-    explicit JarAnalyzer(std::string fileName, std::string classPath);
+    explicit JarAnalyzer(Options options);
 
     JarAnalyzer(const JarAnalyzer &) = delete;
     JarAnalyzer(const JarAnalyzer &&) = delete;
@@ -17,11 +21,13 @@ public:
 
     ~JarAnalyzer() = default;
     void run();
+    void output();
+    unsigned int getClassfileCount();
 
 private:
-    std::string _fileName;
-    std::string _classPath;
+    Options _options;
     bool _isValid{true};
+    unsigned int _classfileCount{0};
 };
 }
 #endif

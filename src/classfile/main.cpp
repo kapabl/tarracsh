@@ -1,55 +1,23 @@
 #include <fstream>
 #include <iostream>
+#include "TarracshApp.h"
 
-#include "JarAnalyzer.h"
-#include "ClassFileAnalyzer.h"
-#include "tarracsh.h"
-#include "CLI11.hpp"
 
 using namespace std;
 using namespace std::filesystem;
 using namespace org::kapa::tarracsh;
 
+/**
+ *
+ */
 int main(int argc, char *argv[]) {
 
-    CLI::App app("Tarracsh");
-
-    app.set_version_flag("-v,--version", "version " TARRACSH_VERSION);
-
-    std::string classFile;
-    const auto classfileOption = app.add_option("--classfile", classFile, " Input class file");
-
-    std::string jarFile;
-    const auto jarOption = app.add_option("--jar", jarFile, "Input jar file")->excludes( classfileOption );
-    classfileOption->excludes(jarOption);
-
-    std::string classPath;
-    app.add_flag("-c,--classpath", classPath, "Class paths to look into.");
-
-    std::string outputDir = "output";
-    app.add_flag("--output", outputDir, "Output directory, default './output'");
-
-    try {
-        app.parse(argc, argv);
-    } catch (const CLI::ParseError &e) {
-#ifdef _DEBUG
-        cin.get();
-#endif 
-        return app.exit(e);
-    }
-
-    if (!classfileOption->empty()) {
-        ClassFileAnalyzer classFileAnalyzer(classFile, classPath);
-        classFileAnalyzer.run();
-        classFileAnalyzer.output();
-    } else if (!jarOption->empty()) {
-        jar::JarAnalyzer jarAnalyzer(jarFile, classPath);
-        jarAnalyzer.run();
-     }
-
-#ifdef _DEBUG
+    const auto exitCode = TarracshApp::run(argc, argv);
+      
+#if defined(_DEBUG) || true
     cin.get();
-#endif 
+#endif
 
-    return 0;
+
+    return exitCode;
 }
