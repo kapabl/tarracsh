@@ -37,6 +37,7 @@ public:
 
     ~ClassFileAnalyzer() = default;
     bool run();
+    std::optional<std::string> getPublicSha();
 
 private:
     Options _options;

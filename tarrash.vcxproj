@@ -311,7 +311,10 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\classfile\tables\StringPool.cpp" />
     <ClCompile Include="src\classfile\TarracshApp.cpp" />
+    <ClCompile Include="src\classfile\tables\Table.cpp" />
+    <ClInclude Include="src\classfile\tables\StringPool.h" />
     <ClInclude Include="src\classfile\TarracshApp.h" />
     <ClCompile Include="src\classfile\Log.cpp" />
     <ClCompile Include="src\classfile\DirAnalyzer.cpp" />
@@ -328,6 +331,7 @@
     <ClCompile Include="src\classfile\signatures\SignatureParser.cpp" />
     <ClCompile Include="src\classfile\signatures\rules\Terminal.cpp" />
     <ClCompile Include="src\classfile\signatures\rules\JvmIdentifier.cpp" />
+    <ClInclude Include="src\classfile\tables\Table.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\classfile\Log.h" />

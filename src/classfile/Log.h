@@ -6,6 +6,8 @@
 #include <string>
 #include <utility>
 
+#include "ClassFileAnalyzer.h"
+
 class Log {
 public:
     Log() = default;
@@ -29,9 +31,7 @@ public:
     }
     
     static void emptyLogFile(const std::string& file) {
-        std::ofstream logFile;
-        logFile.open(file, std::ofstream::out | std::ofstream::trunc);
-        logFile.close();
+        std::filesystem::resize_file( std::filesystem::path(file), 0);
     }
 
 private:

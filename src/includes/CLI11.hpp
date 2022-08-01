@@ -5883,8 +5883,8 @@ class App {
     ///
     /// For example,
     ///
-    ///     std::string filename;
-    ///     program.add_option("filename", filename, "description of filename");
+    ///     std::string filenamePtr;
+    ///     program.add_option("filenamePtr", filenamePtr, "description of filenamePtr");
     ///
     Option *add_option(std::string option_name,
                        callback_t option_callback,
