@@ -27,8 +27,17 @@ bool ClassFileAnalyzer::run() {
             ParserOutput parserOutput(*this);
             parserOutput.run();
         }
-    } catch (...) {
+    } catch (const std::runtime_error &runtimeException) {
         result = false;
+        const auto errorMessage = std::format("Error parsing file: {}, msg:{}", _options.classFile,
+                                              runtimeException.what());
+        _results.resultLog.writeln(errorMessage);
+    }
+    catch (...) {
+        result = false;
+        const auto errorMessage = std::format("Error parsing file: {}", _options.classFile);
+        _results.resultLog.writeln(errorMessage);
+        // throw std::runtime_error(errorMessage);
     }
 
     return result;
@@ -44,9 +53,6 @@ std::optional<tables::Sha256> ClassFileAnalyzer::getPublicSha() {
     std::optional<tables::Sha256> result;
     if (run()) {
         result = calculatePublicSha();
-    } else {
-        const auto errorMessage = std::format("Error - can't parse file:{}", _options.classFile);
-        _results.resultLog.writeln(errorMessage);
     }
     return result;
 }
@@ -134,13 +140,15 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
         case JVM_CONSTANT_Long: {
             LongInfo longInfo{{tag}, readU4(), readU4()};
             _constantPool.addRecord(longInfo);
+            _constantPool.addEmptyIndex();
             index++;
             break;
         }
 
         case JVM_CONSTANT_Double: {
             DoubleInfo doubleInfo{{tag}, readU4(), readU4()};
-            _constantPool.addRecord(doubleInfo);
+            _constantPool.addEmptyIndex();
+            _constantPool.addEmptyIndex();
             index++;
             break;
         }
@@ -231,7 +239,6 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
             throw std::runtime_error(errorMessage);
     }
 }
-
 
 
 void ClassFileAnalyzer::readConstantsPool() {

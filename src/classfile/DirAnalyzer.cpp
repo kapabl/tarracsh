@@ -1,5 +1,3 @@
-
-
 #include <filesystem>
 #include <iostream>
 #include <utility>
@@ -33,10 +31,10 @@ void DirAnalyzer::regularProcess(filesystem::directory_entry const &dirEntry) {
 
     ClassFileAnalyzer classFileAnalyzer(classfileOptions, _results);
     if (classFileAnalyzer.run()) {
-        _results.classfileCount++;
+        _results.classfiles.count++;
 
     } else {
-        _results.classfileErrors++;
+        _results.classfiles.errors++;
     }
 }
 
@@ -48,41 +46,41 @@ void DirAnalyzer::publicShaProcess(filesystem::directory_entry const &dirEntry) 
     const auto lastWriteTime = filesystem::last_write_time(filename);
     const auto timestamp = chrono::duration_cast<chrono::microseconds>(lastWriteTime.time_since_epoch()).count();
 
-    const tables::ShaRow* row = _shaTable->findByKey(filename);
+    const tables::ShaRow *row = _shaTable->findByKey(filename);
     const bool rowFound = row != nullptr;
     const auto unchangedFile = rowFound && row->fileSize == size && row->lastWriteTime == timestamp;
 
-    if ( !unchangedFile) {
+    if (!unchangedFile) {
 
         Options classfileOptions(_options);
         classfileOptions.classFile = filename;
 
         ClassFileAnalyzer classFileAnalyzer(classfileOptions, _results);
         const auto shaResult = classFileAnalyzer.getPublicSha();
-        
+
         if (shaResult.has_value()) {
             const auto isSamePublicSha = rowFound && shaResult.value() == row->sha256;
 
-            if ( isSamePublicSha ) {
+            if (isSamePublicSha) {
                 _results.resultLog.writeln(std::format("Same public sha of changed file:{}", filename));
-            }
-            else {
+            } else {
                 tables::ShaRow newRow;
                 newRow.filename.ptr = _shaTable->getPoolString(filename);
                 newRow.type = tables::EntryType::Classfile;
                 newRow.lastWriteTime = timestamp;
                 newRow.fileSize = size;
-                newRow.classname.ptr = _shaTable->getPoolString(classFileAnalyzer.getFullClassname());
+                newRow.classname.ptr = _shaTable->getPoolString(classFileAnalyzer.getMainClassname());
                 newRow.sha256 = shaResult.value();
-                _shaTable->add(newRow);
+                _shaTable->addOrUpdate(newRow);
             }
 
-            _results.classfileCount++;
+            _results.classfiles.parsedCount++;
 
+        } else {
+            _results.classfiles.errors++;
         }
-        else {
-            _results.classfileErrors++;
-        }
+    } else {
+        _results.publicSha.unchangedCount++;
     }
 
 }
@@ -91,7 +89,6 @@ void DirAnalyzer::publicShaProcess(filesystem::directory_entry const &dirEntry) 
  * TODO implement thread pool, enqueue "tasks"
  */
 void DirAnalyzer::processClassfile(filesystem::directory_entry const &dirEntry) {
-
     if (_options.generatePublicSha) {
         publicShaProcess(dirEntry);
     } else {
@@ -116,8 +113,8 @@ void DirAnalyzer::processJarFile(filesystem::directory_entry const &dirEntry) {
     jarOptions.jarFile = dirEntry.path().string();
     jar::JarAnalyzer jarAnalyzer(jarOptions);
     jarAnalyzer.run();
-    _results.jarfileCount++;
-    _results.classfileCount += jarAnalyzer.getClassfileCount();
+    _results.jarfiles.count++;
+    _results.classfiles.count += jarAnalyzer.getClassfileCount();
 }
 
 bool DirAnalyzer::initializePublicShaTable() {
@@ -133,8 +130,16 @@ void DirAnalyzer::processDirEntry(filesystem::directory_entry const &dirEntry) {
     }
 
     cout << "\033[2K";
-    cout << format("class files: {}, jar:{}", _results.classfileCount, _results.jarfileCount);
-    cout << format(", class errors: {}, jar errors:{}", _results.classfileErrors, _results.jarfileErrors);
+    cout << format("parsed: {}, jars:{}", _results.classfiles.count, _results.jarfiles.count);
+    cout << format(", errors: {}, jar errors:{}", _results.classfiles.errors, _results.jarfiles.errors);
+    if (_options.generatePublicSha) {
+        cout << format(", public sha - count: {}, sameSha: {}, differentSha: {}, unchanged: {} ", 
+            _results.publicSha.count,
+            _results.publicSha.sameSha,
+            _results.publicSha.differentSha,
+            _results.publicSha.unchangedCount
+        );
+    }
     cout << "\r" << std::flush;
 }
 
@@ -157,7 +162,7 @@ void DirAnalyzer::run() {
     auto totalTime = chrono::duration_cast<chrono::seconds>(end - start);
     cout << endl << format("total time: {}", totalTime) << endl;
 
-    if (_options.generatePublicSha) {
+    if (_options.generatePublicSha && _shaTable->isDirty()) {
         _shaTable->write();
     }
 }
