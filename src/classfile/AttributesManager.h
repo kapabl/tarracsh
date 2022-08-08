@@ -93,19 +93,20 @@ private:
 
             case JVM_CONSTANT_Float: {
 
-                constantValue.value.floatValue = static_cast<FloatInfo &>(constantValueEntry).value;
+                constantValue.value.floatValue = static_cast<FloatInfo &>(constantValueEntry).getFloat();
                 result += std::to_wstring(constantValue.value.floatValue);
                 break;
             }
 
             case JVM_CONSTANT_Long: {
-                constantValue.value.longValue = static_cast<LongInfo &>(constantValueEntry).valueUnion.value;
+                auto longInfo = static_cast<LongInfo&>(constantValueEntry);
+                constantValue.value.longValue = longInfo.getLongLong();
                 result += std::to_wstring(constantValue.value.longValue);
                 break;
             }
 
             case JVM_CONSTANT_Double: {
-                constantValue.value.doubleValue = static_cast<DoubleInfo &>(constantValueEntry).value;
+                constantValue.value.doubleValue = static_cast<DoubleInfo &>(constantValueEntry).getDouble();
                 result += std::to_wstring(constantValue.value.doubleValue);
                 break;
             }

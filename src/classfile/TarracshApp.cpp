@@ -1,8 +1,5 @@
-#include "Tarracsh.h"
 #include "TarracshApp.h"
-
 #include "ClassFileAnalyzer.h"
-#include "CLI11.hpp"
 #include "DirAnalyzer.h"
 #include "JarAnalyzer.h"
 
@@ -68,9 +65,11 @@ void TarracshApp::setupCliOptions() {
 
     add_flag("-c,--classpath", _options.classPath, "Class paths to look into.");
     add_flag("--generate-public-sha", _options.generatePublicSha, "yes/no");
-    add_flag("--output-class-parse", _options.outputClassParse, "yes/no");
+    add_flag("--print-class-parse", _options.printClassParse, "yes/no");
+    add_flag("--print-cpool", _options.printConstantPool, "yes/no");
     add_flag("--output-dir", _options.outputDir, "Output directory, default './output'");
     add_flag("--output-log-file", _options.logFile, "Log file, default './output/result.log");
+ 
     const auto workers = add_flag("--workers", _options.workers, "Number of workers, default 4");
     workers->default_val(_options.workers);
 }
@@ -104,4 +103,5 @@ void TarracshApp::init() const {
 
     filesystem::create_directories(_options.outputDir);
     Log::emptyLogFile( _options.logFile);
+    ConstantPool::init();
 }

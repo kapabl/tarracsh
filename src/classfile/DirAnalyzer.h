@@ -6,7 +6,7 @@
 #include <string>
 
 #include "Tarracsh.h"
-#include "tables/Table.h"
+#include "tables/PublicShaTable.h"
 
 
 namespace org::kapa::tarracsh::dir {
@@ -29,9 +29,13 @@ private:
     Options _options;
     Results _results;
     [[nodiscard]] std::string generateShaTablename() const;
-    tables::Table<tables::ShaRow, std::string*> _shaTable;
+    void processJarFile(std::filesystem::directory_entry const &dirEntry);
+    std::shared_ptr<tables::PublicShaTable> _shaTable;
 
     bool _isValid{true};
+
+    bool initializePublicShaTable();
+    void processDirEntry(std::filesystem::directory_entry const &dirEntry);
 
     static bool isClassfile(std::filesystem::directory_entry const& dirEntry);
     void regularProcess(std::filesystem::directory_entry const &dirEntry);

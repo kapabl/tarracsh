@@ -22,7 +22,8 @@ struct Options {
     std::string classPath;
     std::string outputDir{"./output"};
     bool generatePublicSha{false};
-    bool outputClassParse{false};
+    bool printClassParse{false};
+    bool printConstantPool{false};
     std::string logFile{outputDir + "/result.log"};
     int workers{4};
 };

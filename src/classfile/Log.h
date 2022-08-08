@@ -2,11 +2,11 @@
 #define TARRACSH_LOG_H
 #include <cassert>
 #include <fstream>
+#include <filesystem>
 #include <mutex>
 #include <string>
 #include <utility>
 
-#include "ClassFileAnalyzer.h"
 
 class Log {
 public:

@@ -1,18 +1,21 @@
-#include "DirAnalyzer.h"
+
 
 #include <filesystem>
 #include <iostream>
 #include <utility>
+#include <string>
 
 #include "ClassFileAnalyzer.h"
 #include "JarAnalyzer.h"
-#include "tables/Table.h"
+#include "DirAnalyzer.h"
+
 
 using namespace org::kapa::tarracsh::dir;
+using namespace org::kapa::tarracsh::tables;
 using namespace std;
 
 DirAnalyzer::DirAnalyzer(Options options)
-    : _options(move(options)), _shaTable(generateShaTablename()) {
+    : _options(move(options))/*, _shaTable(generateShaTablename())*/ {
 
 }
 
@@ -39,26 +42,49 @@ void DirAnalyzer::regularProcess(filesystem::directory_entry const &dirEntry) {
 
 void DirAnalyzer::publicShaProcess(filesystem::directory_entry const &dirEntry) {
 
-    //TODO check table first
+    const auto filename = dirEntry.path().string();
+    const auto size = filesystem::file_size(filename);
 
-    auto filename = dirEntry.path().string();
-    Options classfileOptions(_options);
-    classfileOptions.classFile = filename;
+    const auto lastWriteTime = filesystem::last_write_time(filename);
+    const auto timestamp = chrono::duration_cast<chrono::microseconds>(lastWriteTime.time_since_epoch()).count();
 
-    ClassFileAnalyzer classFileAnalyzer(classfileOptions, _results);
+    const tables::ShaRow* row = _shaTable->findByKey(filename);
+    const bool rowFound = row != nullptr;
+    const auto unchangedFile = rowFound && row->fileSize == size && row->lastWriteTime == timestamp;
 
-    const auto shaResult = classFileAnalyzer.getPublicSha();
-    if (shaResult.has_value() ) {
-        tables::ShaRow row( _shaTable.getStringPool(), filename);
-        row.type = tables::EntryType::Classfile;
-        row.creationDatetime = 0; //TODO
-        row.fileSize = 0; //TODO
-        _shaTable.add(row);
-        _results.classfileCount++;
+    if ( !unchangedFile) {
 
-    } else {
-        _results.classfileErrors++;
+        Options classfileOptions(_options);
+        classfileOptions.classFile = filename;
+
+        ClassFileAnalyzer classFileAnalyzer(classfileOptions, _results);
+        const auto shaResult = classFileAnalyzer.getPublicSha();
+        
+        if (shaResult.has_value()) {
+            const auto isSamePublicSha = rowFound && shaResult.value() == row->sha256;
+
+            if ( isSamePublicSha ) {
+                _results.resultLog.writeln(std::format("Same public sha of changed file:{}", filename));
+            }
+            else {
+                tables::ShaRow newRow;
+                newRow.filename.ptr = _shaTable->getPoolString(filename);
+                newRow.type = tables::EntryType::Classfile;
+                newRow.lastWriteTime = timestamp;
+                newRow.fileSize = size;
+                newRow.classname.ptr = _shaTable->getPoolString(classFileAnalyzer.getFullClassname());
+                newRow.sha256 = shaResult.value();
+                _shaTable->add(newRow);
+            }
+
+            _results.classfileCount++;
+
+        }
+        else {
+            _results.classfileErrors++;
+        }
     }
+
 }
 
 /**
@@ -75,13 +101,41 @@ void DirAnalyzer::processClassfile(filesystem::directory_entry const &dirEntry) 
 }
 
 std::string DirAnalyzer::generateShaTablename() const {
-    std::string result(_options.outputDir);
+    std::string result(_options.directory);
     ranges::replace(result, '/', '_');
     ranges::replace(result, ':', '_');
     ranges::replace(result, '\\', '_');
+    result += tables::TableExtension;
     result = (std::filesystem::path(_options.outputDir) / result).string();
 
     return result;
+}
+
+void DirAnalyzer::processJarFile(filesystem::directory_entry const &dirEntry) {
+    Options jarOptions(_options);
+    jarOptions.jarFile = dirEntry.path().string();
+    jar::JarAnalyzer jarAnalyzer(jarOptions);
+    jarAnalyzer.run();
+    _results.jarfileCount++;
+    _results.classfileCount += jarAnalyzer.getClassfileCount();
+}
+
+bool DirAnalyzer::initializePublicShaTable() {
+    _shaTable = std::make_shared<PublicShaTable>(generateShaTablename());
+    return _shaTable->read();
+}
+
+void DirAnalyzer::processDirEntry(filesystem::directory_entry const &dirEntry) {
+    if (isJar(dirEntry)) {
+        processJarFile(dirEntry);
+    } else if (isClassfile(dirEntry)) {
+        processClassfile(dirEntry);
+    }
+
+    cout << "\033[2K";
+    cout << format("class files: {}, jar:{}", _results.classfileCount, _results.jarfileCount);
+    cout << format(", class errors: {}, jar errors:{}", _results.classfileErrors, _results.jarfileErrors);
+    cout << "\r" << std::flush;
 }
 
 void DirAnalyzer::run() {
@@ -90,25 +144,13 @@ void DirAnalyzer::run() {
 
     _results.resultLog.setFile(_options.logFile);
 
+    if (_options.generatePublicSha) {
+        if (!initializePublicShaTable()) return;
+    }
+
     for (auto const &dirEntry : filesystem::recursive_directory_iterator(_options.directory)) {
         if (dirEntry.is_regular_file()) {
-
-            if (isJar(dirEntry)) {
-                Options jarOptions(_options);
-                jarOptions.jarFile = dirEntry.path().string();
-                jar::JarAnalyzer jarAnalyzer(jarOptions);
-                jarAnalyzer.run();
-                _results.jarfileCount++;
-                _results.classfileCount += jarAnalyzer.getClassfileCount();
-            } else if (isClassfile(dirEntry)) {
-                processClassfile(dirEntry);
-            }
-
-            cout << "\033[2K";
-            cout << format("class files: {}, jar:{}", _results.classfileCount, _results.jarfileCount);
-            cout << format(", class errors: {}, jar errors:{}", _results.classfileErrors, _results.jarfileErrors);
-            cout << "\r" << std::flush;
-
+            processDirEntry(dirEntry);
         }
     }
     const auto end = chrono::high_resolution_clock::now();
@@ -116,6 +158,6 @@ void DirAnalyzer::run() {
     cout << endl << format("total time: {}", totalTime) << endl;
 
     if (_options.generatePublicSha) {
-        _shaTable.write();
+        _shaTable->write();
     }
 }

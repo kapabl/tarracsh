@@ -1,11 +1,8 @@
-//
-// Created by xman on 6/24/2022.
-//
-
-#ifndef TARRASH_CONSTANTPOOL_H
-#define TARRASH_CONSTANTPOOL_H
+#ifndef TARRACSH_CONSTANT_POOL_H
+#define TARRACSH_CONSTANT_POOL_H
 
 
+#include <cassert>
 #include <cstring>
 
 #include "DescriptorParser.h"
@@ -19,19 +16,14 @@ public:
         _buffer.reserve(1048576);
     }
 
-    void relocate() {
-        const auto baseAddress = reinterpret_cast<u1 *>(_buffer.data());
-        for (auto &pConstantPoolRecord : _constantPoolIndex) {
-            const auto offset = reinterpret_cast<std::intptr_t>(pConstantPoolRecord);
-            pConstantPoolRecord = reinterpret_cast<ConstantPoolRecord *>(baseAddress + offset);
-        }
-    }
+    void relocate();
 
     ConstantPoolRecord &operator[](const u2 index) const {
         return getEntry(index);
     }
 
     void setCount(const u2 count) { _count = count; }
+    [[nodiscard]] u2 getCount() const { return _count; }
 
     template <typename T>
     void add(T &data, const int size) {
@@ -73,8 +65,8 @@ public:
         return name;
     }
 
-    [[nodiscard]] std::wstring getString(const u2 stringIndex) const {
-        auto name = getEntry(stringIndex).utf8Info.getValue();
+    [[nodiscard]] std::wstring getString(const u2 stringIndex, const bool withEscaped = false) const {
+        auto name = getEntry(stringIndex).utf8Info.getValue(withEscaped);
         return name;
     }
 
@@ -100,15 +92,15 @@ public:
                 break;
 
             case JVM_CONSTANT_Float:
-                result = std::to_wstring(constantPoolRecord.floatInfo.value);
+                result = std::to_wstring(constantPoolRecord.floatInfo.getFloat());
                 break;
 
             case JVM_CONSTANT_Long:
-                result = std::to_wstring(constantPoolRecord.longInfo.valueUnion.value);
+                result = std::to_wstring(constantPoolRecord.longInfo.getLongLong());
                 break;
 
             case JVM_CONSTANT_Double:
-                result = std::to_wstring(constantPoolRecord.doubleInfo.value);
+                result = std::to_wstring(constantPoolRecord.doubleInfo.getDouble());
                 break;
 
             case JVM_CONSTANT_Utf8:
@@ -119,9 +111,11 @@ public:
                 result = getString(constantPoolRecord.stringInfo.stringIndex);
                 break;
 
+            case JVM_CONSTANT_Class:
+                result = getClassInfoName(constantPoolRecord.classInfo.nameIndex);
+                break;
 
             case JVM_CONSTANT_Unicode:
-            case JVM_CONSTANT_Class:
             case JVM_CONSTANT_Fieldref:
             case JVM_CONSTANT_Methodref:
             case JVM_CONSTANT_InterfaceMethodref:
@@ -138,19 +132,42 @@ public:
 
         return result;
     }
+
+    void print() const;
+    static void init();
+    static std::string tagToString(ConstantPoolTag tag);
+    static std::string refKindToString(MethodHandleSubtypes tag);
+
 private:
     [[maybe_unused]] u2 _count{};
     std::vector<u1> _buffer;
-
+    static std::vector<std::string> _poolTagToString;
+    static std::vector<std::string> _refKindToString;
+    
     std::vector<ConstantPoolRecord *> _constantPoolIndex;
 
-    [[nodiscard]] ConstantPoolRecord &getEntry(const u2 index) const {
-        assert(index - 1u < _constantPoolIndex.size());
-        auto &result = *_constantPoolIndex[index - 1];
-        return result;
-    }
+    [[nodiscard]] ConstantPoolRecord &getEntry(const u2 index) const;
+    void printEntry(const ConstPoolBase &entry, int index) const;
+    void printEntry(const Utf8Info &entry, int index) const;
+    void printEntry(const StringInfo &entry, int index) const;
+    void printEntry(const LongInfo &entry, int index) const;
+    void printEntry(const DoubleInfo &entry, int index) const;
+    void printEntry(const IntegerInfo &entry, int index) const;
+    void printEntry(const FloatInfo &entry, int index) const;
+    void printEntry(const ClassInfo &entry, int index) const;
+    void printEntry(const MethodrefInfo &entry, int index) const;
+    void printEntry(const MethodHandleInfo &entry, int index) const;
+    void printEntry(const MethodTypeInfo &entry, int index) const;
+    void printEntry(const FieldrefInfo &entry, int index) const;
+    void printEntry(const ModuleInfo &entry, int index) const;
+    void printRefExtraInfo(const MemberInfo &entry) const;
+    void printEntry(const InterfaceMethodrefInfo &entry, int index) const;
+    void printEntry(const InvokeDynamicInfo &entry, int index) const;
+    void printEntry(const NameAndTypeInfo &entry, int index) const;
+    void printEntry(const ConstantPoolRecord &entry, int index) const;
 
 };
 
+
 }
-#endif //TARRASH_CONSTANTPOOL_H
+#endif //TARRACSH_CONSTANT_POOL_H

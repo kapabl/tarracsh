@@ -52,6 +52,12 @@ struct MemberInfo : ConstPoolBase {
     u2 nameAndTypeIndex;
 };
 
+struct NameAndTypeInfo : ConstPoolBase {
+    u2 nameIndex;
+    u2 descriptorIndex;
+};
+
+
 struct FieldrefInfo : MemberInfo {};
 struct MethodrefInfo : MemberInfo {};
 struct InterfaceMethodrefInfo : MemberInfo {};
@@ -93,32 +99,56 @@ struct IntegerInfo : ConstPoolBase {
 };
 
 struct FloatInfo : ConstPoolBase {
-    float value;
+    u4 u4Value;
+    [[nodiscard]] float getFloat() const {
+        const float result = *reinterpret_cast<const float*>(&u4Value);
+        return result;
+    }
 };
 
 struct LongInfo : ConstPoolBase {
-    union {
-        struct ValueParts {
-            u4 highBytes;
-            u4 lowBytes;
-        } valueParts;
-        long long value;
-    } valueUnion;
+    u4 highBytes;
+    u4 lowBytes;
 
+    [[nodiscard]] long long getLongLong() const {
+        long long result = highBytes;
+        result = result << 32 | lowBytes;
+        return result;
+    }
 };
 
 struct DoubleInfo : ConstPoolBase {
-    double value;
+    u4 highBytes;
+    u4 lowBytes;
+
+    [[nodiscard]] double getDouble() const {
+        uint64_t uint64 = highBytes;
+        uint64 = uint64 << 32 | lowBytes;
+        const double result = *reinterpret_cast<double*>(&uint64);
+        return result;
+    }
 };
 
 struct MethodHandleInfo : ConstPoolBase {
-    u1 referenceKind;
+    MethodHandleSubtypes referenceKind;
     u2 referenceIndex;
+};
+
+struct DynamicInfo : ConstPoolBase {
+    u2 bootstrapMethodAttrIndex;
+    u2 nameAndTypeIndex;
+};
+struct PackageInfo : ConstPoolBase {
+    u2 nameIndex;
 };
 
 struct InvokeDynamicInfo : ConstPoolBase {
     u2 bootstrapMethodAttrIndex;
     u2 nameAndTypeIndex;
+};
+
+struct ModuleInfo : ConstPoolBase {
+    u2 nameIndex;
 };
 
 struct ConstantPoolRecord {
@@ -128,6 +158,7 @@ struct ConstantPoolRecord {
         ClassInfo classInfo;
         FieldrefInfo fieldrefInfo;
         MethodrefInfo methodrefInfo;
+        NameAndTypeInfo nameAndTypeInfo;
         InterfaceMethodrefInfo interfaceMethodrefInfo;
         MethodTypeInfo methodTypeInfo;
         StringInfo stringInfo;
@@ -137,6 +168,9 @@ struct ConstantPoolRecord {
         LongInfo longInfo;
         MethodHandleInfo methodHandleInfo;
         InvokeDynamicInfo invokeDynamicInfo;
+        ModuleInfo moduleInfo;
+        DynamicInfo dynamicInfo;
+        PackageInfo packageInfo;
     };
 };
 

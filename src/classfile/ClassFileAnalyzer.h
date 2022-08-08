@@ -1,22 +1,20 @@
-//
-// Created by xman on 6/24/2022.
-//
-
-#ifndef TARRASH_CLASSFILEPARSER_H
-#define TARRASH_CLASSFILEPARSER_H
+#ifndef TARRACSH_CLASSFILEPARSER_H
+#define TARRACSH_CLASSFILEPARSER_H
 
 #include <cassert>
 #include <filesystem>
 #include <fstream>
 #include <string>
 #include <vector>
+#include "Tarracsh.h"
 
 #include "ClassFileStructures.h"
 #include "ConstantPool.h"
 #include "AttributesManager.h"
 #include "AccessModifiers.h"
 #include "StringUtils.h"
-#include "Tarracsh.h"
+
+#include "tables/PublicShaTable.h"
 
 
 namespace org::kapa::tarracsh {
@@ -24,7 +22,7 @@ namespace org::kapa::tarracsh {
 class ClassFileAnalyzer final {
 
 public:
-    explicit ClassFileAnalyzer(Options options, Results& results);
+    explicit ClassFileAnalyzer(Options &options, Results &results);
 
     ClassFileAnalyzer(const ClassFileAnalyzer &) = delete;
     ClassFileAnalyzer(const ClassFileAnalyzer &&) = delete;
@@ -37,11 +35,32 @@ public:
 
     ~ClassFileAnalyzer() = default;
     bool run();
-    std::optional<std::string> getPublicSha();
+    tables::Sha256 calculatePublicSha();
+    std::optional<tables::Sha256> getPublicSha();
+    attributes::AttributesManager &getAttributesManager() { return _attributesManager; }
+    accessModifiers::AccessModifiers &getAccessModifiers() { return _accessModifiers; }
+    ConstantPool &getConstantPool() { return _constantPool; }
+    std::vector<MethodInfo> &getMethods() { return _methods; }
+    MainClassInfo &getMainClassInfo() { return _mainClassInfo; }
+    std::vector<attributes::AttributeInfo> &getAttributes() { return _attributes; }
+    std::vector<FieldInfo> &getFields() { return _fields; }
+
+    [[nodiscard]] uint64_t getFileSize() const { return _fileSize; }
+    [[nodiscard]] std::filesystem::file_time_type getFileModifiedDate() const { return _lastWriteTime; }
+
+    [[nodiscard]] uint64_t getFileModifiedTimestamp() const {
+        const auto result = std::chrono::duration_cast<std::chrono::microseconds>(_lastWriteTime.time_since_epoch()).count();
+        return result;
+    }
+
+    [[nodiscard]] std::wstring getFullClassname() const {
+        std::wstring result = _constantPool.getClassInfoName(_mainClassInfo.thisClass);
+        return result;
+    }
 
 private:
     Options _options;
-    Results& _results;
+    Results &_results;
     bool _isBigEndian{true};
 
     ClassFileHeader _header{};
@@ -59,19 +78,10 @@ private:
     bool _isValid = true;
     attributes::AttributesManager _attributesManager;
     accessModifiers::AccessModifiers _accessModifiers;
+    std::filesystem::file_time_type _lastWriteTime;
 
-    void outputAccessModifiers(const u2 accessFlags) const;
-    void outputMethod(MethodInfo &methodInfo);
-    void outputMethods();
 
     [[nodiscard]] std::wstring getClassInfoName(const u2 index) const;
-
-    void outputClass(const std::wstring &type);
-    void outputClass();
-    std::wstring attributesToString(std::vector<attributes::AttributeInfo> &attributes);
-    void outputField(FieldInfo &fieldInfo);
-    void outputFields();
-    void outputInterfaces();
 
     template <typename T> void readRaw(T &buffer, unsigned int byteCount) {
 
@@ -99,6 +109,14 @@ private:
         }
     }
 
+    template <typename T = u2>
+    void readReversed(u2& buffer) {
+        readRaw(buffer, 2);
+        if (_isBigEndian) {
+            buffer = stringUtils::swapShort(buffer);
+        }
+    }
+
     template <typename T = u4>
     void read(u4 &buffer) {
         readRaw(buffer, 4);
@@ -108,10 +126,11 @@ private:
     }
 
     u2 readU2();
+    u2 readU2Reversed();
     u4 readU4();
     u1 readU1();
     bool readHeader();
-    void readConstPoolRecord();
+    void readConstPoolEntry( int& index);
     void readConstantsPool();
     void readMainClassInfo();
     void readInterfaces();
@@ -120,8 +139,9 @@ private:
                                const attributes::AttributeOwner owner);
     void readMethods();
     void readAttributes();
+    void getFileInfo();
     void processFile();
 
 };
 }
-#endif 
+#endif
