@@ -53,7 +53,7 @@ public:
         return result;
     }
 
-    [[nodiscard]] std::wstring getFullClassname() const {
+    [[nodiscard]] std::wstring getMainClassname() const {
         std::wstring result = _constantPool.getClassInfoName(_mainClassInfo.thisClass);
         return result;
     }

@@ -153,7 +153,7 @@ private:
 
         const auto innerClassname = _constantPool.getClassInfoName(innerClass.innerClassInfoIndex);
         const auto outerClassname = _constantPool.getClassInfoName(innerClass.outerClassInfoIndex);
-        const auto name = _constantPool.getClassInfoName(innerClass.innerNameIndex);
+        const auto name = _constantPool.getClassname(innerClass.innerNameIndex);
 
         const auto accessModifier = _accessModifiers.toString(innerClass.innerClassAccessFlags);
         std::wstring result =
