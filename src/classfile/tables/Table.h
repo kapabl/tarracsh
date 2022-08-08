@@ -5,6 +5,9 @@
 #include <unordered_map>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
+#include <string>
+
 
 #include "StringPool.h"
 
@@ -13,79 +16,33 @@
 
 namespace org::kapa::tarracsh::tables {
 
-enum EntryType { Classfile, Jar, Directory };
-
-
-struct ShaRow {
-
-
-    EntryType type{Classfile};
-
-    union {
-        std::string *filenamePtr{nullptr};
-        uint64_t filenamePoolOffset;
-    };
-
-    int64_t creationDatetime{};
-    int64_t fileSize{};
-
-    struct SHA {
-        uint64_t _18b;
-        uint64_t _28b;
-        uint64_t _38b;
-        uint64_t _48b;
-    } sha256;
-
-
-    ShaRow(StringPool& stringPool, std::string& filename) {
-        filenamePtr = stringPool.add(filename);
-    }
-
-    [[nodiscard]] std::string* getKey() const { return filenamePtr; }
-    
-
-    void serialize(StringPool &stringPool, ShaRow &output) const {
-        output = *this;
-        output.filenamePoolOffset = stringPool.toOffset(filenamePtr);
-    }
-
-    void deserialize(StringPool &stringPool, const ShaRow &input) {
-        const auto destination = const_cast<ShaRow *>(this);
-        *destination = input;
-        filenamePtr = stringPool.toPtr(input.filenamePoolOffset);
-    }
-
-    void deserialize(StringPool &stringPool) {
-        filenamePtr = stringPool.toPtr(filenamePoolOffset);
-    }
+union PoolStringItem {
+    char *ptr{nullptr};
+    uint64_t offset;
 };
 
-template <typename T, typename TKey>
+constexpr const char* TableExtension = ".kapamd";
+
+
+template <typename T, typename K>
 class Table {
 
 public:
-    explicit Table(const std::string filename)
+
+
+
+    explicit Table(const std::string &filename)
         : _filename(filename) {
-        read();
+        _stringPool = std::make_shared<StringPool>(filename + StringPoolExtension);
     }
 
-    std::optional<T> get(const TKey key) const {
+    std::optional<T> get(const K key) const {
         std::optional<T> result;
         const auto &it = _rows.find(key);
         if (it != _rows.end()) {
             result = *it;
         }
         return result;
-    }
-
-    bool add(const T &row) const {
-        auto key = row.getKey();
-        const auto &it = _rows.find(key);
-        if (it == _rows.end()) {
-            _rows[key] = row;
-            return true;
-        }
-        return false;
     }
 
     bool update(const T &row) const {
@@ -98,41 +55,86 @@ public:
         return false;
     }
 
+    bool add(const T &row) {
+        auto key = row.getKey();
+        const auto &it = _rows.find(key);
+        if (it == _rows.end()) {
+            _rows.insert({key, row});
+            return true;
+        }
+        return false;
+    }
 
-    void write() const {
+
+    void write() {
         backupPrevFile();
+
+        _stringPool->write();
 
         std::ofstream file(_filename, std::ios::binary);
         file.unsetf(std::ios::skipws);
 
         for (auto &[key, row] : _rows) {
             T outputRow;
-            row.serialize(_stringPool, &outputRow);
-            file.write(&outputRow, _rowSize);
+            row.serialize(_stringPool, outputRow);
+            file.write(reinterpret_cast<char *>(&outputRow), _rowSize);
         }
     }
 
-    void read() {
+    bool read() {
+
+        if (!_stringPool->read()) return false;
+
+        if (!std::filesystem::exists(_filename)) return true;
+
         std::ifstream file(_filename, std::ios::binary);
-        file.unsetf(std::ios::skipws);
+        // file.unsetf(std::ios::skipws);
 
         while (!file.eof()) {
             T rowBuffer;
-            file.read(&rowBuffer, _rowSize);
-            rowBuffer.deserialize( _stringPool );
-            _rows[rowBuffer.getKey()] = rowBuffer;
+            const auto bytesRead = file.readsome(reinterpret_cast<char *>(&rowBuffer), _rowSize);
+            if ( bytesRead != _rowSize ) {
+                std::cout << std::format("Error reading table: {}", _filename) << std::endl;
+                return false;
+            }
+            rowBuffer.deserialize(_stringPool);
+
+            const auto &key = rowBuffer.getKey();
+            _rows[key] = rowBuffer;
         }
+
+        return true;
     }
 
-    StringPool& getStringPool() { return _stringPool; }
+    std::shared_ptr<StringPool> getStringPool() { return _stringPool; }
+
+    [[nodiscard]] char *getPoolString(const std::string &value) const {
+        const auto result = _stringPool->add(value);
+        return result;
+    }
+
+    [[nodiscard]] char* getPoolString(const std::wstring& value) const {
+        const auto result = _stringPool->add(value);
+        return result;
+    }
 
 
-private:
-    std::unordered_map<TKey, T> _rows;
+    T *findByKey(const K &key) {
+        T *result{};
+        const auto it = _rows.find(key);
+        if (it != _rows.end()) {
+            result = &it->second;
+        }
+        return result;
+    }
+
+
+protected:
+    std::unordered_map<K, T> _rows;
     std::string _filename;
     unsigned int _rowSize = sizeof(T);
 
-    StringPool _stringPool;
+    std::shared_ptr<StringPool> _stringPool;
 
     void backupPrevFile() const {
         const auto prevFilename = std::filesystem::path(_filename) / ".prev";

@@ -1,8 +1,10 @@
 #ifndef TARRACSH_STRING_POOL_H
 #define TARRACSH_STRING_POOL_H
-#include <optional>
+#include <filesystem>
+#include <fstream>
 #include <string>
 #include <unordered_map>
+#include "../StringUtils.h"
 
 
 #pragma pack( push, 1 )
@@ -10,79 +12,137 @@
 namespace org::kapa::tarracsh::tables {
 
 
+constexpr const char* StringPoolExtension = ".string-pool";
+
+
 class StringPool {
 
+
 public:
-    explicit StringPool(unsigned int poolSize)
-        : _poolSize(poolSize) {
-        _pool = static_cast<unsigned char *>(malloc(poolSize));
+    constexpr static uint64_t StartPoolSize = 1024u * 1024u * 500u;
+    constexpr static uint64_t ReadChunkSize = 1024u * 4u;
+
+    explicit StringPool(std::string filename)
+        : _filename(std::move(filename)) {
+        _pool = static_cast<char *>(malloc(StartPoolSize));
+
+        add("");
     }
 
     ~StringPool() {
         free(_pool);
     }
 
-    uint64_t toOffset(std::string *stringPtr) {
+    uint64_t toOffset(const char *stringPtr) const {
 
-        auto result = 0;
-        //TODO
+        const auto result = stringPtr - _pool;
         return result;
 
     }
 
-    std::string *toPtr(uint64_t offset) {
+    [[nodiscard]] char *toPtr(const uint64_t offset) const {
 
-        //TODO
-        return nullptr;
-
+        const auto result = &_pool[offset];
+        return result;
     }
 
+    char* add(const std::wstring& wStringValue) {
+        const std::string stringValue = stringUtils::utf16ToUtf8(wStringValue);
+        const auto result = add(stringValue);
+        return result;
+    }
 
-    std::string *add(const std::string &stringValue) {
-        if (_isSealed) return nullptr;
-        if (stringValue.length() + _position >= _poolSize) {
-            reallocPool();
+ 
+    char *add(const std::string &stringValue) {
+
+        char *result = nullptr;
+        const auto it = _hash.find(stringValue);
+
+        if (it == _hash.end()) {
+
+            if (stringValue.length() + _position >= _poolSize) {
+                reallocPool();
+            }
+
+            _hash[stringValue] = _position;
+            result = &_pool[_position];
+            if (stringValue.length() > 0)
+            {
+                const char* begin = &*stringValue.begin();
+                std::memcpy(result, begin, stringValue.length());
+            }
+            
+            _position += stringValue.length();
+            _pool[_position] = 0;
+            _position++;
+
+        } else {
+            result = &_pool[it->second];
         }
 
-
+        return result;
 
     }
 
-    void read() {
-        //TODO
+    bool read() {
+
+        if (!std::filesystem::exists(_filename)) return true;
+
+        const auto fileSize = std::filesystem::file_size(std::filesystem::path(_filename));
+
+        if (fileSize > _poolSize) {
+            free(_pool);
+            _poolSize = fileSize;
+            _pool = static_cast<char *>(malloc(_poolSize));
+        }
+
+        std::ifstream file(_filename, std::ios::binary);
+        file.unsetf(std::ios::skipws);
+        _position = 0;
+
+        while (!file.eof()) {
+            file.read(&_pool[_position], ReadChunkSize);
+            _position += file.gcount();
+        }
+
+        uint64_t currentPosition = 0;
+
+        while (currentPosition < _position) {
+            std::string value(&_pool[currentPosition]);
+            _hash[value] = currentPosition;
+            currentPosition += value.length() + 1;
+        }
+        return true;
+
     }
 
-    void write() {
-        //TODO
+    void write() const {
+        std::ofstream file(_filename, std::ios::binary);
+        file.unsetf(std::ios::skipws);
+        file.write(_pool, _position);
     }
 
 
 private:
-    unsigned char *_pool;
-    unsigned int _position{0};
+    char *_pool{nullptr};
+    uint64_t _position{0};
 
-    std::unordered_map<std::string, unsigned int> _hash;
+    std::unordered_map<std::string, uint64_t> _hash;
 
-    bool _isSealed{false};
-    unsigned int _poolSize;
+    uint64_t _poolSize{StartPoolSize};
+    std::string _filename;
 
-    void seal() {
-        _isSealed = true;
-        //TODO seal the pool for translations string/offsets?
-    }
 
     void reallocPool() {
         _poolSize = _poolSize * 2;
-        auto newPool = static_cast<unsigned char *>(realloc(_pool, _poolSize));
-        auto offset = newPool - _pool;
-
-        //TODO reallocate 
-
+        _pool = static_cast<char *>(realloc(_pool, _poolSize));
     }
 
 };
 
 }
+
+#undef CHUNK_SIZE
 
 #pragma pack(pop)
 

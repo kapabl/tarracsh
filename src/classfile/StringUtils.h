@@ -5,6 +5,7 @@
 #ifndef TARRASH_STRINGUTILS_H
 #define TARRASH_STRINGUTILS_H
 
+#include <cctype>
 #include <string>
 #include <numeric>
 #include <locale>
@@ -54,20 +55,23 @@ inline std::wstring utf82wstring(const char *source, const bool withEscape = fal
         convert; // NOLINT(clang-diagnostic-deprecated-declarations)
 
     const std::u16string u16s = convert.from_bytes(source);
-    std::wstring result = u162wstring(u16s);
+    std::wstring result;
 
     if (withEscape) {
-        std::wstring escapedResult;
-        for (const auto wchar : result) {
-            if (isgraph(wchar)) {
-                escapedResult.push_back(wchar);
+        // std::wstring escapedResult;
+        for (const auto wchar : u16s) {
+            if (wchar < 256 && std::isgraph(wchar)) {
+                result.push_back(wchar);
             } else {
                 auto formatted = std::format(L"{:#06x}", static_cast<int>(wchar));
                 formatted.erase(0, 2);
-                escapedResult += L"\\u" + formatted;
+                result += L"\\u" + formatted;
             }
         }
-        result = escapedResult;
+        // result = escapedResult;
+    }
+    else {
+        result = u162wstring(u16s);
     }
     return result;
 }
@@ -88,6 +92,12 @@ inline wchar_t char2wchar(const char source) {
 #pragma warning( pop )
 inline std::wstring utf82wstring(const unsigned char *source, bool withEscape = false) {
     return utf82wstring(reinterpret_cast<const char *>(source), withEscape);
+}
+
+inline std::string utf16ToUtf8(const std::wstring& utf16Str)
+{
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
+    return conv.to_bytes(utf16Str);
 }
 
 inline std::string join(const std::vector<std::string> &strings, std::string delim) {
