@@ -1,6 +1,6 @@
 #include <iostream>
 #include "ParserOutput.h"
-#include "tables/PublicShaTable.h"
+#include "tables/PublicMd5Table.h"
 
 #include "MethodDescriptorParser.h"
 #include "ClassFileAnalyzer.h"

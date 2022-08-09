@@ -2,21 +2,22 @@
 #define PUBLIC_SHA_TABLE_H
 #include <string>
 #include <utility>
+//TODO include openssl to use md5
+//#include <openssl/>
 #include "Table.h"
 
 namespace org::kapa::tarracsh::tables {
 
 enum EntryType { Classfile, Jar, Directory };
 
-struct Sha256 {
-    uint64_t _18b{};
-    uint64_t _28b{};
-    uint64_t _38b{};
-    uint64_t _48b{};
-    bool operator==(const Sha256 & sha256) const = default;
+#define MD5_DIGEST_LENGTH 16
+
+struct MD5 {
+    unsigned char buf[MD5_DIGEST_LENGTH]{};
+    bool operator==(const MD5 & right) const = default;
 };
 
-struct ShaRow {
+struct Md5Row {
 
 
     EntryType type{Classfile};
@@ -25,10 +26,10 @@ struct ShaRow {
     PoolStringItem package;
     uint64_t lastWriteTime{};
     uint64_t fileSize{};
-    Sha256 sha256;
+    MD5 md5{};
 
-    ShaRow()
-        : sha256{0, 0, 0, 0} {
+    Md5Row()
+       {
     }
 
 
@@ -37,15 +38,15 @@ struct ShaRow {
         return result;
     }
 
-    void serialize(const std::shared_ptr<StringPool>& stringPool,  ShaRow &output) const {
+    void serialize(const std::shared_ptr<StringPool>& stringPool,  Md5Row &output) const {
         output = *this;
         output.filename.offset = stringPool->toOffset(filename.ptr);
         output.classname.offset = stringPool->toOffset(classname.ptr);
         output.package.offset = stringPool->toOffset(package.ptr);
     }
 
-    void deserialize(const std::shared_ptr<StringPool>& stringPool, const ShaRow &input) {
-        const auto destination = const_cast<ShaRow *>(this);
+    void deserialize(const std::shared_ptr<StringPool>& stringPool, const Md5Row &input) {
+        const auto destination = const_cast<Md5Row *>(this);
         *destination = input;
         filename.ptr = stringPool->toPtr(input.filename.offset);
         classname.ptr = stringPool->toPtr(input.classname.offset);
@@ -59,10 +60,10 @@ struct ShaRow {
     }
 };
 
-class PublicShaTable : public Table<ShaRow, std::string> {
+class PublicMd5Table : public Table<Md5Row, std::string> {
 
 public:
-    PublicShaTable( const std::string& filename):
+    PublicMd5Table( const std::string& filename):
         Table( filename) {
 
         

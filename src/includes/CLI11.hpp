@@ -295,7 +295,7 @@ inline std::string &remove_quotes(std::string &str) {
 }
 
 /// Add a leader to the beginning of all new lines (nothing is added
-/// at the start of the first line). `"; "` would be for ini files
+/// at the startTime of the first line). `"; "` would be for ini files
 ///
 /// Can't use Regex, or this would be a subs.
 inline std::string fix_newlines(const std::string &leader, std::string input) {
@@ -2619,7 +2619,7 @@ class ConfigBase : public Config {
   protected:
     /// the character used for comments
     char commentChar = '#';
-    /// the character used to start an array '\0' is a default to not use
+    /// the character used to startTime an array '\0' is a default to not use
     char arrayStart = '[';
     /// the character used to end an array '\0' is a default to not use
     char arrayEnd = ']';
@@ -2650,7 +2650,7 @@ class ConfigBase : public Config {
         commentChar = cchar;
         return this;
     }
-    /// Specify the start and end characters for an array
+    /// Specify the startTime and end characters for an array
     ConfigBase *arrayBounds(char aStart, char aEnd) {
         arrayStart = aStart;
         arrayEnd = aEnd;
@@ -5376,7 +5376,7 @@ Option *default_flag_modifiers(Option *opt) {
 class Option_group;
 /// Creates a command line program, with very few defaults.
 /** To use, create a new `Program()` instance with `argc`, `argv`, and a help description. The templated
- *  add_option methods make it easy to prepare options. Remember to call `.start` before starting your
+ *  add_option methods make it easy to prepare options. Remember to call `.startTime` before starting your
  * program, so that the options can be evaluated and the help option doesn't accidentally run your program. */
 class App {
     friend Option;
@@ -5420,7 +5420,7 @@ class App {
     /// before help or ini files are processed. INHERITABLE
     bool immediate_callback_{false};
 
-    /// This is a function that runs prior to the start of parsing
+    /// This is a function that runs prior to the startTime of parsing
     std::function<void(std::size_t)> pre_parse_callback_{};
 
     /// This is a function that runs when parsing has finished.
@@ -5725,7 +5725,7 @@ class App {
         return this;
     }
 
-    /// Set the subcommand to be disabled by default, so on clear(), at the start of each parse it is disabled
+    /// Set the subcommand to be disabled by default, so on clear(), at the startTime of each parse it is disabled
     App *disabled_by_default(bool disable = true) {
         if(disable) {
             default_startup = startup_mode::disabled;
@@ -5735,7 +5735,7 @@ class App {
         return this;
     }
 
-    /// Set the subcommand to be enabled by default, so on clear(), at the start of each parse it is enabled (not
+    /// Set the subcommand to be enabled by default, so on clear(), at the startTime of each parse it is enabled (not
     /// disabled)
     App *enabled_by_default(bool enable = true) {
         if(enable) {
@@ -5875,7 +5875,7 @@ class App {
     /// Add an option, will automatically understand the type for common types.
     ///
     /// To use, create a variable with the expected type, and pass it in after the name.
-    /// After start is called, you can use count to see if the value was passed, and
+    /// After startTime is called, you can use count to see if the value was passed, and
     /// the value will be initialized properly. Numbers, vectors, and strings are supported.
     ///
     /// ->required(), ->default, and the validators are options,

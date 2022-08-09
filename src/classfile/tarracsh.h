@@ -12,9 +12,9 @@
 namespace org::kapa::tarracsh {
 
 struct Options {
-    CLI::Option* classfileOption;
-    CLI::Option* dirOption;
-    CLI::Option* jarOption;
+    CLI::Option *classfileOption;
+    CLI::Option *dirOption;
+    CLI::Option *jarOption;
 
     std::string classFile;
     std::string directory;
@@ -24,20 +24,71 @@ struct Options {
     bool generatePublicSha{false};
     bool printClassParse{false};
     bool printConstantPool{false};
+    bool rebuild{false};
     std::string logFile{outputDir + "/result.log"};
     int workers{4};
+
 };
 
 
 struct Results {
-    unsigned classfileCount{};
-    unsigned classfileErrors{};
-    unsigned jarfileCount{};
-    unsigned jarfileErrors{};
+
+    struct {
+        unsigned count{};
+        unsigned parsedCount{};
+        unsigned errors{};
+    } classfiles;
+
+    struct {
+        unsigned count{};
+        unsigned parsedCount{};
+        unsigned errors{};
+    } jarfiles;
+
+    struct {
+        int unchangedCount{};
+        int count{};
+        int sameSha{};
+        int differentSha{};
+        int newFile{};
+    } publicSha;
+
     unsigned long classfileTime{};
     unsigned long jarfileTime{};
 
     Log resultLog;
+
+};
+
+struct PrintTimeScope {
+    PrintTimeScope(const bool autoStart ) {
+        if (autoStart) {
+            start();
+        }
+    }
+
+    void start() {
+        startTime = std::chrono::high_resolution_clock::now();
+    }
+
+    void stop() {
+        endTime = std::chrono::high_resolution_clock::now();
+    }
+
+    void printElapsedTime() {
+        stop();
+        auto totalTime = std::chrono::duration_cast<std::chrono::seconds>(endTime - startTime);
+        std::cout << std::endl << std::format("total time: {}", totalTime) << std::endl;
+    }
+
+    ~PrintTimeScope() {
+
+        printElapsedTime();
+    }
+
+    std::chrono::time_point<std::chrono::steady_clock> startTime{};
+    std::chrono::time_point<std::chrono::steady_clock> endTime{};
+
 };
 
 }

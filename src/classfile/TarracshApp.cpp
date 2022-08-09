@@ -65,6 +65,7 @@ void TarracshApp::setupCliOptions() {
 
     add_flag("-c,--classpath", _options.classPath, "Class paths to look into.");
     add_flag("--generate-public-sha", _options.generatePublicSha, "yes/no");
+    add_flag("--rebuild", _options.rebuild, "yes/no");
     add_flag("--print-class-parse", _options.printClassParse, "yes/no");
     add_flag("--print-cpool", _options.printConstantPool, "yes/no");
     add_flag("--output-dir", _options.outputDir, "Output directory, default './output'");

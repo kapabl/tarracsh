@@ -2,6 +2,7 @@
 #define TARRACSH_STRING_POOL_H
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <unordered_map>
 #include "../StringUtils.h"
@@ -120,6 +121,17 @@ public:
         std::ofstream file(_filename, std::ios::binary);
         file.unsetf(std::ios::skipws);
         file.write(_pool, _position);
+    }
+
+    bool clean() {
+        auto result = true;
+        if (std::filesystem::exists(_filename)) {
+            result = std::filesystem::remove(_filename);
+            if ( !result ) {
+                std::cout << std::format("Error removing string pool file: {}", _filename) << std::endl;
+            }
+        }
+        return result;
     }
 
 

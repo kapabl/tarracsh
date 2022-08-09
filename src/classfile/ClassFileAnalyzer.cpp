@@ -1,6 +1,6 @@
 #include <iostream>
 #include "ClassFileAnalyzer.h"
-#include "tables/PublicShaTable.h"
+#include "tables/PublicMd5Table.h"
 
 #include "MethodDescriptorParser.h"
 #include "ParserOutput.h"
@@ -43,14 +43,14 @@ bool ClassFileAnalyzer::run() {
     return result;
 }
 
-tables::Sha256 ClassFileAnalyzer::calculatePublicSha() {
-    tables::Sha256 result;
+tables::MD5 ClassFileAnalyzer::calculatePublicSha() {
+    tables::MD5 result;
     //TODO
     return result;
 }
 
-std::optional<tables::Sha256> ClassFileAnalyzer::getPublicSha() {
-    std::optional<tables::Sha256> result;
+std::optional<tables::MD5> ClassFileAnalyzer::getPublicSha() {
+    std::optional<tables::MD5> result;
     if (run()) {
         result = calculatePublicSha();
     }
