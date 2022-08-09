@@ -90,6 +90,22 @@ public:
         }
     }
 
+
+    bool clean() {
+        const auto stringPoolCleaned = _stringPool->clean();
+        auto tableFileCleaned = true;
+        if (std::filesystem::exists(_filename)) {
+            tableFileCleaned = std::filesystem::remove(_filename);
+            if (!tableFileCleaned) {
+                std::cout << std::format("Error removing table file {}", _filename) << std::endl;
+            }
+        }
+
+        const auto result = stringPoolCleaned && tableFileCleaned;
+
+        return result;
+    }
+
     bool read() {
 
         if (!_stringPool->read()) return false;

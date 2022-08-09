@@ -31,7 +31,7 @@ void DirAnalyzer::regularProcess(filesystem::directory_entry const &dirEntry) {
 
     ClassFileAnalyzer classFileAnalyzer(classfileOptions, _results);
     if (classFileAnalyzer.run()) {
-        _results.classfiles.count++;
+        _results.classfiles.parsedCount++;
 
     } else {
         _results.classfiles.errors++;
@@ -46,9 +46,11 @@ void DirAnalyzer::publicShaProcess(filesystem::directory_entry const &dirEntry) 
     const auto lastWriteTime = filesystem::last_write_time(filename);
     const auto timestamp = chrono::duration_cast<chrono::microseconds>(lastWriteTime.time_since_epoch()).count();
 
-    const tables::ShaRow *row = _shaTable->findByKey(filename);
+    const tables::Md5Row *row = _shaTable->findByKey(filename);
     const bool rowFound = row != nullptr;
     const auto unchangedFile = rowFound && row->fileSize == size && row->lastWriteTime == timestamp;
+
+    _results.publicSha.count++;
 
     if (!unchangedFile) {
 
@@ -59,19 +61,27 @@ void DirAnalyzer::publicShaProcess(filesystem::directory_entry const &dirEntry) 
         const auto shaResult = classFileAnalyzer.getPublicSha();
 
         if (shaResult.has_value()) {
-            const auto isSamePublicSha = rowFound && shaResult.value() == row->sha256;
+            const auto isSamePublicSha = rowFound && shaResult.value() == row->md5;
 
             if (isSamePublicSha) {
                 _results.resultLog.writeln(std::format("Same public sha of changed file:{}", filename));
+                _results.publicSha.sameSha++;
             } else {
-                tables::ShaRow newRow;
+
+                tables::Md5Row newRow;
                 newRow.filename.ptr = _shaTable->getPoolString(filename);
                 newRow.type = tables::EntryType::Classfile;
                 newRow.lastWriteTime = timestamp;
                 newRow.fileSize = size;
                 newRow.classname.ptr = _shaTable->getPoolString(classFileAnalyzer.getMainClassname());
-                newRow.sha256 = shaResult.value();
+                newRow.md5 = shaResult.value();
                 _shaTable->addOrUpdate(newRow);
+
+                if (rowFound) {
+                    _results.publicSha.differentSha++;
+                } else {
+                    _results.publicSha.newFile++;
+                }
             }
 
             _results.classfiles.parsedCount++;
@@ -89,6 +99,7 @@ void DirAnalyzer::publicShaProcess(filesystem::directory_entry const &dirEntry) 
  * TODO implement thread pool, enqueue "tasks"
  */
 void DirAnalyzer::processClassfile(filesystem::directory_entry const &dirEntry) {
+    _results.classfiles.count++;
     if (_options.generatePublicSha) {
         publicShaProcess(dirEntry);
     } else {
@@ -118,8 +129,34 @@ void DirAnalyzer::processJarFile(filesystem::directory_entry const &dirEntry) {
 }
 
 bool DirAnalyzer::initializePublicShaTable() {
-    _shaTable = std::make_shared<PublicShaTable>(generateShaTablename());
+    _shaTable = std::make_shared<PublicMd5Table>(generateShaTablename());
+    const auto result = _options.rebuild ? _shaTable->clean() : _shaTable->read();
     return _shaTable->read();
+}
+
+void DirAnalyzer::printDirEntryStats() {
+    cout << "\033[2K";
+
+    cout << format("classfiles No:\033[36m{}\033[39m|Ok:\033[92m{}\033[39m|Er:\033[91m{}\033[39m--",
+                   _results.classfiles.count,
+                   _results.classfiles.parsedCount,
+                   _results.classfiles.errors);
+
+    cout << format("jars No:\033[36m{}\033[39m|Ok:\033[92m{}\033[39m|Er:\033[91m{}\033[39m--",
+                   _results.jarfiles.count,
+                   _results.jarfiles.parsedCount,
+                   _results.jarfiles.errors);
+
+    if (_options.generatePublicSha) {
+        cout << format("public sha No:{}|New:{}|Same:{}|Diff:{}|Unchanged:{}",
+                       _results.publicSha.count,
+                       _results.publicSha.newFile,
+                       _results.publicSha.sameSha,
+                       _results.publicSha.differentSha,
+                       _results.publicSha.unchangedCount
+            );
+    }
+    cout << "\r" << std::flush;
 }
 
 void DirAnalyzer::processDirEntry(filesystem::directory_entry const &dirEntry) {
@@ -128,41 +165,44 @@ void DirAnalyzer::processDirEntry(filesystem::directory_entry const &dirEntry) {
     } else if (isClassfile(dirEntry)) {
         processClassfile(dirEntry);
     }
-
-    cout << "\033[2K";
-    cout << format("parsed: {}, jars:{}", _results.classfiles.count, _results.jarfiles.count);
-    cout << format(", errors: {}, jar errors:{}", _results.classfiles.errors, _results.jarfiles.errors);
-    if (_options.generatePublicSha) {
-        cout << format(", public sha - count: {}, sameSha: {}, differentSha: {}, unchanged: {} ", 
-            _results.publicSha.count,
-            _results.publicSha.sameSha,
-            _results.publicSha.differentSha,
-            _results.publicSha.unchangedCount
-        );
-    }
-    cout << "\r" << std::flush;
 }
 
-void DirAnalyzer::run() {
-
-    const auto start = chrono::high_resolution_clock::now();
-
+bool DirAnalyzer::initDirAnalysis() {
     _results.resultLog.setFile(_options.logFile);
 
     if (_options.generatePublicSha) {
-        if (!initializePublicShaTable()) return;
+        if (!initializePublicShaTable()) return false;
     }
+    return true;
+}
 
+void DirAnalyzer::analyze() {
+    auto count = 0u;
     for (auto const &dirEntry : filesystem::recursive_directory_iterator(_options.directory)) {
         if (dirEntry.is_regular_file()) {
             processDirEntry(dirEntry);
         }
-    }
-    const auto end = chrono::high_resolution_clock::now();
-    auto totalTime = chrono::duration_cast<chrono::seconds>(end - start);
-    cout << endl << format("total time: {}", totalTime) << endl;
+        count++;
 
+        if (count % 10 == 0) {
+            printDirEntryStats();
+        }
+    }
+    printDirEntryStats();
+}
+
+void DirAnalyzer::endDirAnalysis() const {
     if (_options.generatePublicSha && _shaTable->isDirty()) {
         _shaTable->write();
     }
+}
+
+void DirAnalyzer::run() {
+
+    PrintTimeScope timeScope(true);
+
+    if (!initDirAnalysis()) return;
+    analyze();
+    endDirAnalysis();
+
 }

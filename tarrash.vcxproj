@@ -364,7 +364,7 @@
     <ClCompile Include="src\classfile\TarracshApp.cpp" />
     <ClCompile Include="src\classfile\tables\Table.cpp" />
     <ClInclude Include="src\classfile\ParserOutput.h" />
-    <ClInclude Include="src\classfile\tables\PublicShaTable.h" />
+    <ClInclude Include="src\classfile\tables\PublicMd5Table.h" />
     <ClInclude Include="src\classfile\tables\StringPool.h" />
     <ClInclude Include="src\classfile\TarracshApp.h" />
     <ClCompile Include="src\classfile\Log.cpp" />

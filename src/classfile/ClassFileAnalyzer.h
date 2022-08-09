@@ -14,7 +14,7 @@
 #include "AccessModifiers.h"
 #include "StringUtils.h"
 
-#include "tables/PublicShaTable.h"
+#include "tables/PublicMd5Table.h"
 
 
 namespace org::kapa::tarracsh {
@@ -35,8 +35,8 @@ public:
 
     ~ClassFileAnalyzer() = default;
     bool run();
-    tables::Sha256 calculatePublicSha();
-    std::optional<tables::Sha256> getPublicSha();
+    tables::MD5 calculatePublicSha();
+    std::optional<tables::MD5> getPublicSha();
     attributes::AttributesManager &getAttributesManager() { return _attributesManager; }
     accessModifiers::AccessModifiers &getAccessModifiers() { return _accessModifiers; }
     ConstantPool &getConstantPool() { return _constantPool; }
