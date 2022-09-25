@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ShowAllFiles>true</ShowAllFiles>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerCommandArguments>
+    </LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugDir|x64'">
+    <LocalDebuggerCommandArguments>--dir D:\temp\reti\test-subjects\app --generate-public-sha=no --rebuild=no</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFile|x64'">
+    <LocalDebuggerCommandArguments>--classfile D:\temp\reti\test-subjects\app\com\amazon\ion\impl\bin\IonRawBinaryWriter.class  --print-cpool=no --generate-public-sha=no --print-class-parse=yes</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugJar|x64'">
+    <LocalDebuggerCommandArguments>--classfile .\test-subjects\org\kapa\infrastructure\languages\kotlin\Event.class</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDir|x64'">
+    <LocalDebuggerCommandArguments>--dir .\test-subjects --generate-public-sha=yes</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelBigDir|x64'">
+    <LocalDebuggerCommandArguments>--dir D:\temp\reti\test-subjects\app --generate-public-sha=no --rebuild=no</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+</Project>

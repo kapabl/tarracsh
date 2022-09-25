@@ -5,6 +5,10 @@
 #include "MethodDescriptorParser.h"
 #include "ParserOutput.h"
 
+#include "Poco/MD5Engine.h"
+#include "Poco/DigestStream.h"
+#include "Poco/StreamCopier.h"
+
 
 using namespace org::kapa::tarracsh;
 using namespace attributes;
@@ -43,16 +47,45 @@ bool ClassFileAnalyzer::run() {
     return result;
 }
 
-tables::MD5 ClassFileAnalyzer::calculatePublicSha() {
-    tables::MD5 result;
+std::string ClassFileAnalyzer::md5OfClassInfo(u2 classInfoIndex) const {
+    const auto classname = _constantPool.getClassInfoName(classInfoIndex);
+    auto result = stringUtils::md5AsString(classname);
+    return result;
+}
+
+std::string ClassFileAnalyzer::calculatePublicMethodsDigest() const {
+    string result;
     //TODO
     return result;
 }
 
-std::optional<tables::MD5> ClassFileAnalyzer::getPublicSha() {
+std::string ClassFileAnalyzer::calculateInterfacesDigest() const {
+    string result;
+    //TODO
+    return result;
+}
+
+tables::MD5 ClassFileAnalyzer::calculatePublicDigest() const {
+
+    Poco::MD5Engine md5;
+    Poco::DigestOutputStream stream(md5);
+    stream << md5OfClassInfo(_mainClassInfo.thisClass)
+        << _mainClassInfo.accessFlags
+        << md5OfClassInfo(_mainClassInfo.superClass)
+        << calculatePublicMethodsDigest()
+        << calculateInterfacesDigest();
+
+    stream.close();
+
+    tables::MD5 result;
+    memcpy(result.buf, &*md5.digest().begin(), MD5_DIGEST_LENGTH);
+    return result;
+}
+
+std::optional<tables::MD5> ClassFileAnalyzer::getPublicDigest() {
     std::optional<tables::MD5> result;
     if (run()) {
-        result = calculatePublicSha();
+        result = calculatePublicDigest();
     }
     return result;
 }
@@ -106,7 +139,7 @@ bool ClassFileAnalyzer::readHeader() {
 
 
 void ClassFileAnalyzer::readConstPoolEntry(int &index) {
-    ConstantPoolTag tag = static_cast<ConstantPoolTag>(readU1());
+    const auto tag = static_cast<ConstantPoolTag>(readU1());
 
     switch (tag) {
         case JVM_CONSTANT_Utf8: {

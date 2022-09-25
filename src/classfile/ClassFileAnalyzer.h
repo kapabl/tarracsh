@@ -35,8 +35,11 @@ public:
 
     ~ClassFileAnalyzer() = default;
     bool run();
-    tables::MD5 calculatePublicSha();
-    std::optional<tables::MD5> getPublicSha();
+    [[nodiscard]] std::string md5OfClassInfo(u2 classInfoIndex) const;
+    [[nodiscard]] std::string calculatePublicMethodsDigest() const;
+    [[nodiscard]] std::string calculateInterfacesDigest() const;
+    [[nodiscard]] tables::MD5 calculatePublicDigest() const;
+    std::optional<tables::MD5> getPublicDigest();
     attributes::AttributesManager &getAttributesManager() { return _attributesManager; }
     accessModifiers::AccessModifiers &getAccessModifiers() { return _accessModifiers; }
     ConstantPool &getConstantPool() { return _constantPool; }
