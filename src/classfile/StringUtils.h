@@ -11,6 +11,8 @@
 #include <locale>
 #include <codecvt>
 #include <format>
+#include <Poco/DigestStream.h>
+#include <Poco/MD5Engine.h>
 
 /**
  *
@@ -69,8 +71,7 @@ inline std::wstring utf82wstring(const char *source, const bool withEscape = fal
             }
         }
         // result = escapedResult;
-    }
-    else {
+    } else {
         result = u162wstring(u16s);
     }
     return result;
@@ -94,8 +95,8 @@ inline std::wstring utf82wstring(const unsigned char *source, bool withEscape = 
     return utf82wstring(reinterpret_cast<const char *>(source), withEscape);
 }
 
-inline std::string utf16ToUtf8(const std::wstring& utf16Str)
-{
+
+inline std::string utf16ToUtf8(const std::wstring &utf16Str) {
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
     return conv.to_bytes(utf16Str);
 }
@@ -128,6 +129,22 @@ inline unsigned short swapShort(const unsigned short value) {
 
 inline unsigned int swapLong(const unsigned int value) {
     const unsigned int result = value >> 24 | (value << 8 & 0x00FF0000) | (value >> 8 & 0x0000FF00) | value << 24;
+    return result;
+}
+
+inline std::vector<unsigned char> md5(const std::wstring &value) {
+    const auto utf8 = utf16ToUtf8(value);
+
+    Poco::MD5Engine md5;
+    Poco::DigestOutputStream stream(md5);
+    stream << utf8;
+    stream.close();
+    auto result = md5.digest();
+    return result;
+}
+inline std::string md5AsString(const std::wstring& value) {
+    auto digest = md5(value);
+    auto result = std::string(reinterpret_cast<char*>( &*digest.begin()), digest.size());
     return result;
 }
 

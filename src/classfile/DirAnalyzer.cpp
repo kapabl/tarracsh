@@ -58,7 +58,7 @@ void DirAnalyzer::publicShaProcess(filesystem::directory_entry const &dirEntry) 
         classfileOptions.classFile = filename;
 
         ClassFileAnalyzer classFileAnalyzer(classfileOptions, _results);
-        const auto shaResult = classFileAnalyzer.getPublicSha();
+        const auto shaResult = classFileAnalyzer.getPublicDigest();
 
         if (shaResult.has_value()) {
             const auto isSamePublicSha = rowFound && shaResult.value() == row->md5;
