@@ -7,6 +7,7 @@
 
 #include <cctype>
 #include <string>
+#include <set>
 #include <numeric>
 #include <locale>
 #include <codecvt>
@@ -101,24 +102,25 @@ inline std::string utf16ToUtf8(const std::wstring &utf16Str) {
     return conv.to_bytes(utf16Str);
 }
 
-inline std::string join(const std::vector<std::string> &strings, std::string delim) {
-    if (strings.empty()) {
-        return {};
-    }
-
-    auto result =
-        accumulate(strings.begin() + 1, strings.end(), strings[0],
-                   [&delim](const std::string &x, const std::string &y) { return x + delim + y; });
+template <typename T, typename T1>
+inline T1 join(const T &parts, T1 delim) {
+    T1 result;
+    result = accumulate(parts.begin(), parts.end(), result,
+                        [&delim](const auto &x, const auto &y) {
+                            return x + delim + y;
+                        });
     return result;
 }
+
 
 template <typename T> T join(const std::vector<T> &parts, T delim) {
     if (parts.empty()) {
         return T();
     }
 
-    auto result = std::accumulate(parts.begin() + 1, parts.end(), parts[0],
-                                  [&delim](const T &x, const T &y) { return x + delim + y; });
+    auto result = std::accumulate(
+        parts.begin() + 1, parts.end(), parts[0],
+        [&delim](const T &x, const T &y) { return x + delim + y; });
     return result;
 }
 
@@ -132,23 +134,48 @@ inline unsigned int swapLong(const unsigned int value) {
     return result;
 }
 
-inline std::vector<unsigned char> md5(const std::wstring &value) {
-    const auto utf8 = utf16ToUtf8(value);
+inline std::vector<unsigned char> md5(const std::string &value) {
 
     Poco::MD5Engine md5;
     Poco::DigestOutputStream stream(md5);
-    stream << utf8;
+    stream << value;
     stream.close();
     auto result = md5.digest();
     return result;
 }
-inline std::string md5AsString(const std::wstring& value) {
-    auto digest = md5(value);
-    auto result = std::string(reinterpret_cast<char*>( &*digest.begin()), digest.size());
+
+inline std::vector<unsigned char> md5(const std::wstring &value) {
+    const auto utf8 = utf16ToUtf8(value);
+    auto result = md5(utf8);
     return result;
 }
 
+inline std::string digestToString(Poco::DigestEngine::Digest &digest) {
+    auto result = std::string(reinterpret_cast<char *>(&*digest.begin()), digest.size());
+    return result;
+}
+
+inline std::string md5AsString(const std::wstring &value) {
+    auto digest = md5(value);
+    auto result = digestToString(digest);
+    return result;
+}
+
+inline std::string md5AsString(const std::string& value) {
+    auto digest = md5(value);
+    auto result = digestToString(digest);
+    return result;
+}
+
+inline std::string md5SetAsString(const std::set<std::string>& md5Set) {
+    const std::string delim;
+    const std::string methodsMd5 = stringUtils::join(md5Set, delim);
+    auto result = stringUtils::md5AsString(methodsMd5);
+    return result;
 }
 
 
-#endif // TARRASH_STRINGUTILS_H
+}
+
+
+#endif

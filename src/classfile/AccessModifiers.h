@@ -29,6 +29,11 @@ public:
         return result;
     }
 
+    [[nodiscard]] static bool isPublic(const u2 accessFlags) {
+        const bool result = (accessFlags & JVM_ACC_PUBLIC) != 0;
+        return result;
+    }
+
 private:
     // clang-format off
     inline static std::array<std::wstring,19> _accessModifiers{
