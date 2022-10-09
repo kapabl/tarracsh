@@ -2,6 +2,13 @@
 #define TARRASH_ATTRIBUTES_MANAGER_H
 
 
+#include "tables/PublicMd5Table.h"
+
+#include "Poco/MD5Engine.h"
+#include "Poco/DigestStream.h"
+#include "Poco/StreamCopier.h"
+
+#include <iostream>
 #include <string>
 #include <cassert>
 #include <unordered_map>
@@ -20,7 +27,7 @@ namespace org::kapa::tarracsh::attributes {
 
 #define TAG_TO_FUNCS( AttributeName ) \
     _tags2ToStringFunc[AttributeTag::AttributeName##Tag] = &AttributesManager::ATTR_TO_STRING_FUNC_NAME( AttributeName );
-    
+
 
 #define START_ATTR_TO_STRING(AttributeName) \
     std::wstring ATTR_TO_STRING_FUNC_NAME(AttributeName)(AttributeInfo & attribute) { \
@@ -45,7 +52,7 @@ public:
 
     void setBigEndian(bool value) { _isBigEndian = value; }
 
-    AttributeTag getTag(const std::wstring &stringTag) const {
+    [[nodiscard]] AttributeTag getTag(const std::wstring &stringTag) const {
         const auto it = _tagsMap.find(stringTag);
         if (it != _tagsMap.end()) {
             return it->second;
@@ -53,14 +60,16 @@ public:
         return AttributeTag::InvalidTag;
     }
 
-    std::wstring toString(AttributeInfo &attribute) {
+    [[nodiscard]] std::wstring toString(const AttributeInfo &attribute) const {
 
         const auto tagName = _constantPool[attribute.nameIndex].utf8Info.getValue();
 
         const auto tag = getTag(tagName);
         const auto it = _tags2ToStringFunc.find(tag);
+
+        auto _this = const_cast<AttributesManager *>(this);
         std::wstring result = (it != _tags2ToStringFunc.end())
-                                  ? (this->*(it->second))(attribute)
+                                  ? (_this->*(it->second))(const_cast<AttributeInfo &>(attribute))
                                   : (L"Invalid Attribute: " + tagName);
 
         return result;
@@ -99,7 +108,7 @@ private:
             }
 
             case JVM_CONSTANT_Long: {
-                auto longInfo = static_cast<LongInfo&>(constantValueEntry);
+                auto longInfo = static_cast<LongInfo &>(constantValueEntry);
                 constantValue.value.longValue = longInfo.getLongLong();
                 result += std::to_wstring(constantValue.value.longValue);
                 break;
@@ -230,30 +239,37 @@ private:
 
     START_ATTR_TO_STRING(LineNumberTable)
         // TODO
+        std::cout << "Attribute TODO: LineNumberTable" << std::endl;
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(LocalVariableTable)
         // TODO
+        std::cout << "Attribute TODO: LocalVariableTable" << std::endl;
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(LocalVariableTypeTable)
         // TODO
+        std::cout << "Attribute TODO: LocalVariableTypeTable" << std::endl;
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(MethodParameters)
         // TODO
+        std::cout << "Attribute TODO: MethodParameters" << std::endl;
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(StackMapTable)
         // TODO
+        std::cout << "Attribute TODO: StackMapTable" << std::endl;
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(Synthetic)
         // TODO
+        std::cout << "Attribute TODO: Synthetic" << std::endl;
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(Deprecated)
         // TODO
+        std::cout << "Attribute TODO: Deprecated" << std::endl;
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(SourceDebugExtension)
@@ -277,7 +293,7 @@ private:
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(Record)
-        // TODO
+        result += L" Attribute TODO: Record";
     END_ATTR_TO_STRING()
 
 
@@ -308,11 +324,13 @@ private:
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeVisibleTypeAnnotations)
-        // TODO
+        const annotations::AnnotationsParser annotationsParser(_constantPool, attribute, reader);
+        result += L" " + annotationsParser.toStringRuntimeTypeAnnotations();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeInvisibleTypeAnnotations)
-        // TODO
+        const annotations::AnnotationsParser annotationsParser(_constantPool, attribute, reader);
+        result += L" " + annotationsParser.toStringRuntimeTypeAnnotations();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(EnclosingMethod)
@@ -321,6 +339,7 @@ private:
         enclosingMethod.length = attribute.length;
         enclosingMethod.classIndex = reader.readU2();
         enclosingMethod.methodIndex = reader.readU2();
+        //TODO convert to string
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(BootstrapMethods)

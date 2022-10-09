@@ -66,12 +66,12 @@ struct Utf8Info : ConstPoolBase {
     u2 length;
     u1 bytes[1];
 
-    std::wstring getValue(bool withEscaped = false) const {
+    [[nodiscard]] std::wstring getValue(bool withEscaped = false) const {
         auto result = stringUtils::utf82wstring(bytes, withEscaped);
         return result;
     }
 
-    std::wstring getValueAsClassname(bool withEscaped = false) const {
+    [[nodiscard]] std::wstring getValueAsClassname(bool withEscaped = false) const {
         auto result = getValue(withEscaped);
         for (auto &wchar : result) {
             if (wchar == L'/') {

@@ -21,9 +21,10 @@ int TarracshApp::run(int argc, char *argv[]) {
 
 int TarracshApp::start(int argc, char *argv[]) {
 
-
     const auto exitCode = parseCli(argc, argv);
-    if (exitCode != 0) return exitCode;
+    if (exitCode != 0) {
+        return exitCode;
+    }
 
     init();
 
@@ -51,7 +52,7 @@ void TarracshApp::setupCliOptions() {
     set_version_flag("-v,--version", "version " TARRACSH_VERSION);
 
     _options.classfileOption = add_option("--classfile", _options.classFile, " Input class file");
-    _options.dirOption = add_option("--dir", _options.directory, " directory");
+    _options.dirOption = add_option("--dir", _options.directory, "Input directory");
     _options.jarOption = add_option("--jar", _options.jarFile, "Input jar file");
 
     _options.classfileOption->excludes(_options.jarOption);
@@ -70,7 +71,7 @@ void TarracshApp::setupCliOptions() {
     add_flag("--print-cpool", _options.printConstantPool, "yes/no");
     add_flag("--output-dir", _options.outputDir, "Output directory, default './output'");
     add_flag("--output-log-file", _options.logFile, "Log file, default './output/result.log");
- 
+
     const auto workers = add_flag("--workers", _options.workers, "Number of workers, default 4");
     workers->default_val(_options.workers);
 }
@@ -95,7 +96,6 @@ void TarracshApp::prepareConsoleForVT100() {
 #endif
 
 
-
 void TarracshApp::init() const {
 
 #ifdef _WIN32
@@ -103,6 +103,6 @@ void TarracshApp::init() const {
 #endif
 
     filesystem::create_directories(_options.outputDir);
-    Log::emptyLogFile( _options.logFile);
+    Log::emptyLogFile(_options.logFile);
     ConstantPool::init();
 }

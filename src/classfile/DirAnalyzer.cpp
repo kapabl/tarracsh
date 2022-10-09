@@ -58,10 +58,10 @@ void DirAnalyzer::publicShaProcess(filesystem::directory_entry const &dirEntry) 
         classfileOptions.classFile = filename;
 
         ClassFileAnalyzer classFileAnalyzer(classfileOptions, _results);
-        const auto shaResult = classFileAnalyzer.getPublicDigest();
+        const auto publicDigest = classFileAnalyzer.getPublicDigest();
 
-        if (shaResult.has_value()) {
-            const auto isSamePublicSha = rowFound && shaResult.value() == row->md5;
+        if (publicDigest.has_value()) {
+            const auto isSamePublicSha = rowFound && publicDigest.value() == row->md5;
 
             if (isSamePublicSha) {
                 _results.resultLog.writeln(std::format("Same public sha of changed file:{}", filename));
@@ -74,7 +74,7 @@ void DirAnalyzer::publicShaProcess(filesystem::directory_entry const &dirEntry) 
                 newRow.lastWriteTime = timestamp;
                 newRow.fileSize = size;
                 newRow.classname.ptr = _shaTable->getPoolString(classFileAnalyzer.getMainClassname());
-                newRow.md5 = shaResult.value();
+                newRow.md5 = publicDigest.value();
                 _shaTable->addOrUpdate(newRow);
 
                 if (rowFound) {

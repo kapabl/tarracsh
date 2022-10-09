@@ -1,6 +1,3 @@
-
-
-
 #include <string>
 #include <vector>
 
@@ -21,7 +18,7 @@ std::vector<std::string> ConstantPool::_refKindToString;
 
 void ConstantPool::addEmptyIndex() {
     _constantPoolIndex.push_back(
-        reinterpret_cast<ConstantPoolRecord*>(_buffer.size()) // NOLINT(performance-no-int-to-ptr)
+        reinterpret_cast<ConstantPoolRecord *>(_buffer.size()) // NOLINT(performance-no-int-to-ptr)
         );
 }
 
@@ -38,7 +35,7 @@ void ConstantPool::relocate() {
     }
 }
 
-ConstantPoolRecord & ConstantPool::operator[](const u2 index) const {
+ConstantPoolRecord &ConstantPool::operator[](const u2 index) const {
     return getEntry(index);
 }
 
@@ -46,7 +43,7 @@ ConstantPoolRecord & ConstantPool::operator[](const u2 index) const {
 std::wstring ConstantPool::getClassInfoName(const u2 classInfoIndex) const {
     if (classInfoIndex == 0) return L"";
     const auto &classInfo = getEntry(classInfoIndex).classInfo;
-    auto name = getClassname( classInfo.nameIndex );
+    auto name = getClassname(classInfo.nameIndex);
     return name;
 }
 
@@ -176,198 +173,198 @@ std::string ConstantPool::refKindToString(MethodHandleSubtypes tag) {
     return std::format("Invalid MethodHandleSubtypes tag:{}", static_cast<unsigned char>(tag));
 }
 
-ConstantPoolRecord & ConstantPool::getEntry(const u2 index) const {
+ConstantPoolRecord &ConstantPool::getEntry(const u2 index) const {
     assert(index < _constantPoolIndex.size());
     auto &result = *_constantPoolIndex[index];
     return result;
 }
 
 
-inline void ConstantPool::printEntry(const ConstPoolBase& entry, int index) const {
+inline void ConstantPool::printEntry(const ConstPoolBase &entry, int index) const {
     cout << endl << std::flush;
     cout << format("{: <6} {: <22}\t", index, ConstantPool::tagToString(entry.tag));
 }
 
-inline void ConstantPool::printEntry(const Utf8Info& entry, int index) const {
+inline void ConstantPool::printEntry(const Utf8Info &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
     wcout << entry.getValue(true);
 }
 
-inline void ConstantPool::printEntry(const StringInfo& entry, int index) const {
+inline void ConstantPool::printEntry(const StringInfo &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
-    const auto& stringValue = getString(entry.stringIndex, true);
+    const auto &stringValue = getString(entry.stringIndex, true);
     wcout << format(L"idx:{} {}", entry.stringIndex, stringValue);
 }
 
-inline void ConstantPool::printEntry(const LongInfo& entry, int index) const {
+inline void ConstantPool::printEntry(const LongInfo &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
     wcout << entry.getLongLong();
 }
 
-inline void ConstantPool::printEntry(const DoubleInfo& entry, int index) const {
+inline void ConstantPool::printEntry(const DoubleInfo &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
     wcout << entry.getDouble();
 }
 
-inline void ConstantPool::printEntry(const IntegerInfo& entry, int index) const {
+inline void ConstantPool::printEntry(const IntegerInfo &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
     wcout << entry.value;
 }
-inline void ConstantPool::printEntry(const FloatInfo& entry, int index) const {
+
+inline void ConstantPool::printEntry(const FloatInfo &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
     wcout << entry.getFloat();
 }
 
-inline void ConstantPool::printEntry(const ClassInfo& entry, int index) const {
+inline void ConstantPool::printEntry(const ClassInfo &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
     wcout << format(L"idx:{} {}", entry.nameIndex, getClassname(entry.nameIndex));
 }
 
-inline void ConstantPool::printEntry(const MethodrefInfo& entry, int index) const {
+inline void ConstantPool::printEntry(const MethodrefInfo &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
     printRefExtraInfo(entry);
 }
 
 
-inline void ConstantPool::printEntry(const MethodHandleInfo& entry, int index) const {
+inline void ConstantPool::printEntry(const MethodHandleInfo &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
     cout << format("ref kind:{}, ref idx:{}",
-        ConstantPool::refKindToString(entry.referenceKind),
-        entry.referenceIndex
-    );
+                   ConstantPool::refKindToString(entry.referenceKind),
+                   entry.referenceIndex
+        );
 }
 
-inline void ConstantPool::printEntry(const MethodTypeInfo& entry, int index) const {
+inline void ConstantPool::printEntry(const MethodTypeInfo &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
     wcout << getEntry(entry.descriptorIndex).utf8Info.getValue();
 }
 
-inline void ConstantPool::printEntry(const FieldrefInfo& entry, int index) const {
+inline void ConstantPool::printEntry(const FieldrefInfo &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
     printRefExtraInfo(entry);
 }
 
-inline void ConstantPool::printEntry(const ModuleInfo& entry, int index) const {
+inline void ConstantPool::printEntry(const ModuleInfo &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
     wcout << getEntry(entry.nameIndex).utf8Info.getValue();
 }
 
-void ConstantPool::printRefExtraInfo(const MemberInfo& entry) const {
-    const auto& nameAndTypeInfo = getEntry(entry.nameAndTypeIndex).nameAndTypeInfo;
+void ConstantPool::printRefExtraInfo(const MemberInfo &entry) const {
+    const auto &nameAndTypeInfo = getEntry(entry.nameAndTypeIndex).nameAndTypeInfo;
     wcout << format(L"idx:{}/{} {}: {}:{}",
-        entry.classIndex,
-        entry.nameAndTypeIndex,
-        getClassInfoName(entry.classIndex),
-        getString(nameAndTypeInfo.nameIndex),
-        getString(nameAndTypeInfo.descriptorIndex)
-    );
+                    entry.classIndex,
+                    entry.nameAndTypeIndex,
+                    getClassInfoName(entry.classIndex),
+                    getString(nameAndTypeInfo.nameIndex),
+                    getString(nameAndTypeInfo.descriptorIndex)
+        );
 }
 
-inline void ConstantPool::printEntry(const InterfaceMethodrefInfo& entry, int index) const {
+inline void ConstantPool::printEntry(const InterfaceMethodrefInfo &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
     printRefExtraInfo(entry);
 }
 
-inline void ConstantPool::printEntry(const InvokeDynamicInfo& entry, int index) const {
+inline void ConstantPool::printEntry(const InvokeDynamicInfo &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
 
-    const auto& nameAndType = getEntry(entry.nameAndTypeIndex).nameAndTypeInfo;
+    const auto &nameAndType = getEntry(entry.nameAndTypeIndex).nameAndTypeInfo;
 
     wcout << format(L"Bootstrap MT idx:{},N&T:{} {}{}",
-        entry.bootstrapMethodAttrIndex,
-        entry.nameAndTypeIndex,
-        getString(nameAndType.nameIndex),
-        getString(nameAndType.descriptorIndex)
-    );
+                    entry.bootstrapMethodAttrIndex,
+                    entry.nameAndTypeIndex,
+                    getString(nameAndType.nameIndex),
+                    getString(nameAndType.descriptorIndex)
+        );
 
 }
 
-inline void ConstantPool::printEntry(const NameAndTypeInfo& entry, int index) const {
+inline void ConstantPool::printEntry(const NameAndTypeInfo &entry, int index) const {
     printEntry(static_cast<ConstPoolBase>(entry), index);
     wcout << format(L"idx:{}/{} {}:{}",
-        entry.nameIndex,
-        entry.descriptorIndex,
-        getString(entry.nameIndex),
-        getString(entry.descriptorIndex)
-    );
+                    entry.nameIndex,
+                    entry.descriptorIndex,
+                    getString(entry.nameIndex),
+                    getString(entry.descriptorIndex)
+        );
 }
 
 
-inline void ConstantPool::printEntry(const ConstantPoolRecord& entry, int index) const {
+inline void ConstantPool::printEntry(const ConstantPoolRecord &entry, int index) const {
     switch (entry.base.tag) {
-    case JVM_CONSTANT_Utf8:
-        printEntry(entry.utf8Info, index);
-        break;
+        case JVM_CONSTANT_Utf8:
+            printEntry(entry.utf8Info, index);
+            break;
 
-    case JVM_CONSTANT_Float:
-        printEntry(entry.floatInfo, index);
-        break;
+        case JVM_CONSTANT_Float:
+            printEntry(entry.floatInfo, index);
+            break;
 
-    case JVM_CONSTANT_Integer:
-        printEntry(entry.integerInfo, index);
-        break;
+        case JVM_CONSTANT_Integer:
+            printEntry(entry.integerInfo, index);
+            break;
 
-    case JVM_CONSTANT_Long:
-        printEntry(entry.longInfo, index);
-        break;
+        case JVM_CONSTANT_Long:
+            printEntry(entry.longInfo, index);
+            break;
 
-    case JVM_CONSTANT_Double:
-        printEntry(entry.doubleInfo, index);
-        break;
+        case JVM_CONSTANT_Double:
+            printEntry(entry.doubleInfo, index);
+            break;
 
-    case JVM_CONSTANT_Class:
-        printEntry(entry.classInfo, index);
-        break;
+        case JVM_CONSTANT_Class:
+            printEntry(entry.classInfo, index);
+            break;
 
-    case JVM_CONSTANT_String:
-        printEntry(entry.stringInfo, index);
-        break;
+        case JVM_CONSTANT_String:
+            printEntry(entry.stringInfo, index);
+            break;
 
-    case JVM_CONSTANT_NameAndType:
-        printEntry(entry.nameAndTypeInfo, index);
-        break;
+        case JVM_CONSTANT_NameAndType:
+            printEntry(entry.nameAndTypeInfo, index);
+            break;
 
-    case JVM_CONSTANT_Methodref:
-        printEntry(entry.methodrefInfo, index);
-        break;
+        case JVM_CONSTANT_Methodref:
+            printEntry(entry.methodrefInfo, index);
+            break;
 
-    case JVM_CONSTANT_MethodHandle:
-        printEntry(entry.methodHandleInfo, index);
-        break;
+        case JVM_CONSTANT_MethodHandle:
+            printEntry(entry.methodHandleInfo, index);
+            break;
 
-    case JVM_CONSTANT_InvokeDynamic:
-        printEntry(entry.invokeDynamicInfo, index);
-        break;
+        case JVM_CONSTANT_InvokeDynamic:
+            printEntry(entry.invokeDynamicInfo, index);
+            break;
 
-    case JVM_CONSTANT_MethodType:
-        printEntry(entry.methodTypeInfo, index);
-        break;
+        case JVM_CONSTANT_MethodType:
+            printEntry(entry.methodTypeInfo, index);
+            break;
 
+        case JVM_CONSTANT_Fieldref:
+            printEntry(entry.fieldrefInfo, index);
+            break;
 
-    case JVM_CONSTANT_Fieldref:
-        printEntry(entry.fieldrefInfo, index);
-        break;
+        case JVM_CONSTANT_InterfaceMethodref:
+            printEntry(entry.interfaceMethodrefInfo, index);
+            break;
 
-    case JVM_CONSTANT_InterfaceMethodref:
-        printEntry(entry.interfaceMethodrefInfo, index);
-        break;
+        case JVM_CONSTANT_Module:
+            printEntry(entry.moduleInfo, index);
+            break;
 
-    case JVM_CONSTANT_Module:
-        printEntry(entry.moduleInfo, index);
-        break;
-
-    case JVM_CONSTANT_Package:
-    case JVM_CONSTANT_Dynamic:
-        printEntry(entry.base, index);
-        break;
+        case JVM_CONSTANT_Package:
+        case JVM_CONSTANT_Dynamic:
+            printEntry(entry.base, index);
+            break;
 
         // case JVM_CONSTANT_ExternalMax:
-    case JVM_CONSTANT_Unicode:
-        cout << "Unused Cool Entry type found: JVM_CONSTANT_Unicode";
-        break;
+        case JVM_CONSTANT_Unicode:
+            cout << "Unused Cool Entry type found: JVM_CONSTANT_Unicode";
+            break;
 
-    case JVM_CONSTANT_Empty:
-        cout << "empty entry";
-        break;
+        case JVM_CONSTANT_Empty:
+            cout << "empty entry";
+            break;
     }
 }

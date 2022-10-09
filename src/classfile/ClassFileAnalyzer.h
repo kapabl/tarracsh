@@ -1,7 +1,6 @@
 #ifndef TARRACSH_CLASSFILEPARSER_H
 #define TARRACSH_CLASSFILEPARSER_H
 
-#include <cassert>
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -35,15 +34,12 @@ public:
 
     ~ClassFileAnalyzer() = default;
     bool run();
-    [[nodiscard]] std::string md5OfClassInfo(u2 classInfoIndex) const;
-    [[nodiscard]] std::string calculatePublicMethodsDigest() const;
-    [[nodiscard]] std::string calculateInterfacesDigest() const;
-    [[nodiscard]] tables::MD5 calculatePublicDigest() const;
     std::optional<tables::MD5> getPublicDigest();
     attributes::AttributesManager &getAttributesManager() { return _attributesManager; }
     accessModifiers::AccessModifiers &getAccessModifiers() { return _accessModifiers; }
     ConstantPool &getConstantPool() { return _constantPool; }
     std::vector<MethodInfo> &getMethods() { return _methods; }
+    std::vector<u2> &getInterfaces() { return _interfaces; }
     MainClassInfo &getMainClassInfo() { return _mainClassInfo; }
     std::vector<attributes::AttributeInfo> &getAttributes() { return _attributes; }
     std::vector<FieldInfo> &getFields() { return _fields; }
@@ -82,7 +78,6 @@ private:
     attributes::AttributesManager _attributesManager;
     accessModifiers::AccessModifiers _accessModifiers;
     std::filesystem::file_time_type _lastWriteTime;
-
 
     [[nodiscard]] std::wstring getClassInfoName(const u2 index) const;
 
@@ -146,5 +141,7 @@ private:
     void processFile();
 
 };
+
+
 }
 #endif

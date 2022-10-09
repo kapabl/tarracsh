@@ -1,14 +1,11 @@
 #include <iostream>
 #include "ClassFileAnalyzer.h"
+
+#include "ClassFileDigest.h"
 #include "tables/PublicMd5Table.h"
 
 #include "MethodDescriptorParser.h"
 #include "ParserOutput.h"
-
-#include "Poco/MD5Engine.h"
-#include "Poco/DigestStream.h"
-#include "Poco/StreamCopier.h"
-
 
 using namespace org::kapa::tarracsh;
 using namespace attributes;
@@ -18,7 +15,6 @@ ClassFileAnalyzer::ClassFileAnalyzer(Options &options, Results &results)
     : _options(options),
       _results(results),
       _attributesManager(_constantPool) {
-
 }
 
 
@@ -31,61 +27,26 @@ bool ClassFileAnalyzer::run() {
             ParserOutput parserOutput(*this);
             parserOutput.run();
         }
-    } catch (const std::runtime_error &runtimeException) {
+    } catch (const runtime_error &runtimeException) {
         result = false;
-        const auto errorMessage = std::format("Error parsing file: {}, msg:{}", _options.classFile,
-                                              runtimeException.what());
+        const auto errorMessage = format("Error parsing file: {}, msg:{}", _options.classFile,
+                                         runtimeException.what());
         _results.resultLog.writeln(errorMessage);
     }
     catch (...) {
         result = false;
-        const auto errorMessage = std::format("Error parsing file: {}", _options.classFile);
+        const auto errorMessage = format("Error parsing file: {}", _options.classFile);
         _results.resultLog.writeln(errorMessage);
-        // throw std::runtime_error(errorMessage);
     }
 
     return result;
 }
 
-std::string ClassFileAnalyzer::md5OfClassInfo(u2 classInfoIndex) const {
-    const auto classname = _constantPool.getClassInfoName(classInfoIndex);
-    auto result = stringUtils::md5AsString(classname);
-    return result;
-}
-
-std::string ClassFileAnalyzer::calculatePublicMethodsDigest() const {
-    string result;
-    //TODO
-    return result;
-}
-
-std::string ClassFileAnalyzer::calculateInterfacesDigest() const {
-    string result;
-    //TODO
-    return result;
-}
-
-tables::MD5 ClassFileAnalyzer::calculatePublicDigest() const {
-
-    Poco::MD5Engine md5;
-    Poco::DigestOutputStream stream(md5);
-    stream << md5OfClassInfo(_mainClassInfo.thisClass)
-        << _mainClassInfo.accessFlags
-        << md5OfClassInfo(_mainClassInfo.superClass)
-        << calculatePublicMethodsDigest()
-        << calculateInterfacesDigest();
-
-    stream.close();
-
-    tables::MD5 result;
-    memcpy(result.buf, &*md5.digest().begin(), MD5_DIGEST_LENGTH);
-    return result;
-}
-
-std::optional<tables::MD5> ClassFileAnalyzer::getPublicDigest() {
-    std::optional<tables::MD5> result;
+optional<tables::MD5> ClassFileAnalyzer::getPublicDigest() {
+    optional<tables::MD5> result;
     if (run()) {
-        result = calculatePublicDigest();
+        const ClassFileDigest classFileDigest(*this);
+        result = classFileDigest.digest();
     }
     return result;
 }
@@ -180,7 +141,7 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
 
         case JVM_CONSTANT_Double: {
             DoubleInfo doubleInfo{{tag}, readU4(), readU4()};
-            _constantPool.addEmptyIndex();
+            _constantPool.addRecord(doubleInfo);
             _constantPool.addEmptyIndex();
             index++;
             break;
@@ -266,10 +227,10 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
             break;
 
         default: // NOLINT(clang-diagnostic-covered-switch-default)
-            const auto errorMessage = std::format("Error - Invalid const-pool tag: {} {}", static_cast<int>(tag),
-                                                  _options.classFile);
+            const auto errorMessage = format("Error - Invalid const-pool tag: {} {}", static_cast<int>(tag),
+                                             _options.classFile);
             _results.resultLog.writeln(errorMessage);
-            throw std::runtime_error(errorMessage);
+            throw runtime_error(errorMessage);
     }
 }
 

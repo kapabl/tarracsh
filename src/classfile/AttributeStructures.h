@@ -320,7 +320,7 @@ struct LocalVarTargetEntry {
 /**
  * ref: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.20.2
  */
-struct TypePathItem {
+struct TargetPathItem {
     u1 type_path_kind;
     u1 type_argument_index;
 };
@@ -328,9 +328,9 @@ struct TypePathItem {
 /**
  * ref: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.20.2
  */
-struct TypePath {
+struct TargetPath {
     u1 length;
-    std::vector<TypePathItem> items;
+    std::vector<TargetPathItem> items;
 };
 
 
@@ -349,18 +349,23 @@ struct TypeAnnotation {
             u1 bound_index;
         } type_parameter_bound_target;
 
+        struct FormalParameterTarget {
+            u1 formal_parameter_index;
+        } formal_parameter_target;
+
         // empty_target;
-        u1 method_formal_parameter_target;
-        u2 throws_target;
+        //u2 throws_target;
+        struct ThrowsTarget {
+            u2 throws_type_index;
+        } throws_target;
 
-        // outside of union
-        // struct LocalVarTarget {
-        //     u2 table_length;
-        //     std::vector<LocalVarTargetEntry> items;
-        // } local_var_target;
+        struct CatchTarget {
+            u2 exception_table_index;
+        } catch_target;
 
-        u2 catch_target;
-        u2 offset_target;
+        struct OffsetTarget {
+            u2 offset;
+        } offset_target;
 
         struct TypeArgumentTarget {
             u2 offset;
@@ -373,10 +378,10 @@ struct TypeAnnotation {
         std::vector<LocalVarTargetEntry> items;
     } local_var_target;
 
-    TypePath targetPath;
+    TargetPath targetPath;
     u2 typeIndex;
-    u2 numElementValuePairs;
-    std::vector<AnnotationValuePair> valuePairs;
+    u2 count;
+    std::vector<AnnotationValuePair> values;
 
 };
 
@@ -385,21 +390,16 @@ struct TypeAnnotation {
  * ref: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.20
  *      https://docs.oracle.com/javase/specs/jvms/se15/preview/specs/records-jvms.html
  */
-struct RuntimeVisibleTypeAnnotations : AttributeBase {
+struct RuntimeTypeAnnotations : AttributeBase {
     u2 count;
-    std::vector<TypeAnnotation> annotations;
+    std::vector<TypeAnnotation> items;
 };
 
-/**
- * ref: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.22
- *      https://docs.oracle.com/javase/specs/jvms/se15/preview/specs/records-jvms.html
- */
-struct RuntimeInvisibleTypeAnnotations : AttributeBase {
-    u2 count;
-    std::vector<TypeAnnotation> annotations;
+struct RuntimeVisibleTypeAnnotations : RuntimeTypeAnnotations {
 };
 
-
+struct RuntimeInvisibleTypeAnnotations : RuntimeTypeAnnotations {
+};
 
 struct ParameterAnnotation {
     u2 count = 0;
