@@ -5,6 +5,7 @@
 #ifndef TARRASH_STACKFRAME_H
 #define TARRASH_STACKFRAME_H
 
+#include <vector>
 #include "classfile_constants.h"
 #include "StructsCommon.h"
 

@@ -154,6 +154,11 @@ private:
 
 }
 
+union StringPoolItem {
+    char* ptr{ nullptr };
+    uint64_t offset;
+};
+
 #undef CHUNK_SIZE
 
 #pragma pack(pop)

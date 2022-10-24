@@ -2,7 +2,7 @@
 #include "ClassFileAnalyzer.h"
 
 #include "ClassFileDigest.h"
-#include "tables/PublicMd5Table.h"
+#include "tables/ClassfileDigestTable.h"
 
 #include "MethodDescriptorParser.h"
 #include "ParserOutput.h"
@@ -11,9 +11,10 @@ using namespace org::kapa::tarracsh;
 using namespace attributes;
 using namespace std;
 
-ClassFileAnalyzer::ClassFileAnalyzer(Options &options, Results &results)
+ClassFileAnalyzer::ClassFileAnalyzer(readers::ClassFileReader &reader, Options &options, Results &results)
     : _options(options),
       _results(results),
+      _reader(reader),
       _attributesManager(_constantPool) {
 }
 
@@ -29,13 +30,13 @@ bool ClassFileAnalyzer::run() {
         }
     } catch (const runtime_error &runtimeException) {
         result = false;
-        const auto errorMessage = format("Error parsing file: {}, msg:{}", _options.classFile,
+        const auto errorMessage = format("Error parsing file: {}, msg:{}", _options.classFilePath,
                                          runtimeException.what());
         _results.resultLog.writeln(errorMessage);
     }
     catch (...) {
         result = false;
-        const auto errorMessage = format("Error parsing file: {}", _options.classFile);
+        const auto errorMessage = format("Error parsing file: {}", _options.classFilePath);
         _results.resultLog.writeln(errorMessage);
     }
 
@@ -58,59 +59,23 @@ wstring ClassFileAnalyzer::getClassInfoName(const u2 index) const {
     return result;
 }
 
-u2 ClassFileAnalyzer::readU2() {
-    u2 result;
-    read(result);
-    return result;
-}
-
-u2 ClassFileAnalyzer::readU2Reversed() {
-    u2 result;
-    readReversed(result);
-    return result;
-}
-
-u4 ClassFileAnalyzer::readU4() {
-    u4 result;
-    read(result);
-    return result;
-}
-
-u1 ClassFileAnalyzer::readU1() {
-    u1 result;
-    readRaw(result);
-    return result;
-}
-
-bool ClassFileAnalyzer::readHeader() {
-    // readRaw(_header, sizeof(ClassFileHeader));
-    readRaw(_header, sizeof(_header.magic));
-    _isBigEndian = _header.magic == 0x0cafebabe;
-    if (!_isBigEndian && _header.magic != stringUtils::swapLong(0x0cafebabe)) {
-        cout << "Invalid class file " << _options.classFile << endl;
-        _isValid = false;
-    }
-    _attributesManager.setBigEndian(_isBigEndian);
-
-    _header.minorVersion = readU2();
-    _header.majorVersion = readU2();
-
-    return _isValid;
+void ClassFileAnalyzer::initialize() {
+    _attributesManager.setBigEndian(_reader.isBigEndian());
 }
 
 
 void ClassFileAnalyzer::readConstPoolEntry(int &index) {
-    const auto tag = static_cast<ConstantPoolTag>(readU1());
+    const auto tag = static_cast<ConstantPoolTag>(_reader.readU1());
 
     switch (tag) {
         case JVM_CONSTANT_Utf8: {
-            const u2 length = readU2();
+            const u2 length = _reader.readU2();
             const auto recordSize = length + sizeof(Utf8Info);
             Utf8Info &utf8Info = *static_cast<Utf8Info *>(malloc(recordSize));
             utf8Info.tag = tag;
             utf8Info.length = length;
             const auto data = reinterpret_cast<u1 *>(utf8Info.bytes);
-            readRaw(*data, utf8Info.length);
+            _reader.readRaw(*data, utf8Info.length);
             utf8Info.bytes[length] = 0;
             _constantPool.addRecord(utf8Info, static_cast<int>(recordSize));
 
@@ -120,19 +85,19 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
         }
 
         case JVM_CONSTANT_Float: {
-            FloatInfo floatInfo{{tag}, readU4()};
+            FloatInfo floatInfo{{tag}, _reader.readU4()};
             _constantPool.addRecord(floatInfo);
             break;
         }
 
         case JVM_CONSTANT_Integer: {
-            IntegerInfo integerInfo{{tag}, static_cast<int>(readU4())};
+            IntegerInfo integerInfo{{tag}, static_cast<int>(_reader.readU4())};
             _constantPool.addRecord(integerInfo);
             break;
         }
 
         case JVM_CONSTANT_Long: {
-            LongInfo longInfo{{tag}, readU4(), readU4()};
+            LongInfo longInfo{{tag}, _reader.readU4(), _reader.readU4()};
             _constantPool.addRecord(longInfo);
             _constantPool.addEmptyIndex();
             index++;
@@ -140,7 +105,7 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
         }
 
         case JVM_CONSTANT_Double: {
-            DoubleInfo doubleInfo{{tag}, readU4(), readU4()};
+            DoubleInfo doubleInfo{{tag}, _reader.readU4(), _reader.readU4()};
             _constantPool.addRecord(doubleInfo);
             _constantPool.addEmptyIndex();
             index++;
@@ -148,59 +113,60 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
         }
 
         case JVM_CONSTANT_MethodType: {
-            MethodTypeInfo methodTypeInfo{{tag}, readU2()};
+            MethodTypeInfo methodTypeInfo{{tag}, _reader.readU2()};
             _constantPool.addRecord(methodTypeInfo);
             break;
         }
         case JVM_CONSTANT_String: {
-            StringInfo stringInfo{{tag}, readU2()};
+            StringInfo stringInfo{{tag}, _reader.readU2()};
             _constantPool.addRecord(stringInfo);
             break;
         }
 
         case JVM_CONSTANT_Class: {
-            ClassInfo classInfo{{tag}, readU2()};
+            ClassInfo classInfo{{tag}, _reader.readU2()};
             _constantPool.addRecord(classInfo);
             break;
         }
 
         case JVM_CONSTANT_NameAndType: {
-            NameAndTypeInfo nameAndTypeInfo{{tag}, readU2(), readU2()};
+            NameAndTypeInfo nameAndTypeInfo{{tag}, _reader.readU2(), _reader.readU2()};
             _constantPool.addRecord(nameAndTypeInfo);
             break;
         }
 
         case JVM_CONSTANT_Methodref: {
-            MethodrefInfo methodrefInfo{{{tag}, readU2(), readU2()}};
+            MethodrefInfo methodrefInfo{{{tag}, _reader.readU2(), _reader.readU2()}};
             _constantPool.addRecord(methodrefInfo);
             break;
         }
 
         case JVM_CONSTANT_Fieldref: {
-            FieldrefInfo fieldrefInfo{{{tag}, readU2(), readU2()}};
+            FieldrefInfo fieldrefInfo{{{tag}, _reader.readU2(), _reader.readU2()}};
             _constantPool.addRecord(fieldrefInfo);
             break;
         }
 
         case JVM_CONSTANT_InterfaceMethodref: {
-            InterfaceMethodrefInfo memberInfo{{{tag}, readU2(), readU2()}};
+            InterfaceMethodrefInfo memberInfo{{{tag}, _reader.readU2(), _reader.readU2()}};
             _constantPool.addRecord(memberInfo);
             break;
         }
 
         case JVM_CONSTANT_MethodHandle: {
-            MethodHandleInfo methodHandleInfo{{tag}, static_cast<MethodHandleSubtypes>(readU1()), readU2()};
+            MethodHandleInfo methodHandleInfo{{tag}, static_cast<MethodHandleSubtypes>(_reader.readU1()),
+                                              _reader.readU2()};
             _constantPool.addRecord(methodHandleInfo);
             break;
         }
 
         case JVM_CONSTANT_InvokeDynamic: {
-            InvokeDynamicInfo invokeDynamicInfo{{tag}, readU2(), readU2()};
+            InvokeDynamicInfo invokeDynamicInfo{{tag}, _reader.readU2(), _reader.readU2()};
             _constantPool.addRecord(invokeDynamicInfo);
             break;
         }
         case JVM_CONSTANT_Module: {
-            ModuleInfo moduleInfo{{tag}, readU2()};
+            ModuleInfo moduleInfo{{tag}, _reader.readU2()};
             _constantPool.addRecord(moduleInfo);
             break;
         }
@@ -211,13 +177,13 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
             break;
 
         case JVM_CONSTANT_Package: {
-            PackageInfo packageInfo{{tag}, readU2()};
+            PackageInfo packageInfo{{tag}, _reader.readU2()};
             _constantPool.addRecord(packageInfo);
             break;
         }
 
         case JVM_CONSTANT_Dynamic: {
-            DynamicInfo dynamicInfo{{tag}, readU2(), readU2()};
+            DynamicInfo dynamicInfo{{tag}, _reader.readU2(), _reader.readU2()};
             _constantPool.addRecord(dynamicInfo);
             break;
         }
@@ -228,7 +194,7 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
 
         default: // NOLINT(clang-diagnostic-covered-switch-default)
             const auto errorMessage = format("Error - Invalid const-pool tag: {} {}", static_cast<int>(tag),
-                                             _options.classFile);
+                                             _options.classFilePath);
             _results.resultLog.writeln(errorMessage);
             throw runtime_error(errorMessage);
     }
@@ -236,7 +202,7 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
 
 
 void ClassFileAnalyzer::readConstantsPool() {
-    const u2 count = readU2();
+    const u2 count = _reader.readU2();
     _constantPool.setCount(count);
     int index = 1;
     while (index < count) {
@@ -251,28 +217,28 @@ void ClassFileAnalyzer::readConstantsPool() {
 }
 
 void ClassFileAnalyzer::readMainClassInfo() {
-    _mainClassInfo.accessFlags = readU2();
-    _mainClassInfo.thisClass = readU2();
-    _mainClassInfo.superClass = readU2();
+    _mainClassInfo.accessFlags = _reader.readU2();
+    _mainClassInfo.thisClass = _reader.readU2();
+    _mainClassInfo.superClass = _reader.readU2();
 }
 
 void ClassFileAnalyzer::readInterfaces() {
-    const auto count = readU2();
+    const auto count = _reader.readU2();
     _interfaces.resize(count);
     for (auto i = 0; i < count; ++i) {
-        read(_interfaces[i]);
+        _reader.read(_interfaces[i]);
     }
 }
 
 void ClassFileAnalyzer::readFields() {
-    const auto count = readU2();
+    const auto count = _reader.readU2();
 
     for (auto i = 0; i < count; ++i) {
         FieldInfo fieldInfo;
-        read(fieldInfo.accessFlags);
-        read(fieldInfo.nameIndex);
-        read(fieldInfo.descriptorIndex);
-        const auto attributeCount = readU2();
+        _reader.read(fieldInfo.accessFlags);
+        _reader.read(fieldInfo.nameIndex);
+        _reader.read(fieldInfo.descriptorIndex);
+        const auto attributeCount = _reader.readU2();
         readAttributesSection(fieldInfo.attributes, attributeCount, AttributeOwner::Field);
         _fields.push_back(fieldInfo);
     }
@@ -283,10 +249,10 @@ void ClassFileAnalyzer::readAttributesSection(vector<AttributeInfo> &attributes,
     for (auto i = 0; i < count; ++i) {
         AttributeInfo attributeInfo;
         attributeInfo.owner = owner;
-        read(attributeInfo.nameIndex);
-        read(attributeInfo.length);
+        _reader.read(attributeInfo.nameIndex);
+        _reader.read(attributeInfo.length);
         for (auto length = 0u; length < attributeInfo.length; ++length) {
-            const auto byte = readU1();
+            const auto byte = _reader.readU1();
             attributeInfo.info.push_back(byte);
         }
         attributes.push_back(attributeInfo);
@@ -294,43 +260,39 @@ void ClassFileAnalyzer::readAttributesSection(vector<AttributeInfo> &attributes,
 }
 
 void ClassFileAnalyzer::readMethods() {
-    const auto count = readU2();
+    const auto count = _reader.readU2();
     for (auto i = 0; i < count; ++i) {
         MethodInfo methodInfo;
-        methodInfo.accessFlags = readU2();
-        methodInfo.nameIndex = readU2();
-        methodInfo.descriptorIndex = readU2();
+        methodInfo.accessFlags = _reader.readU2();
+        methodInfo.nameIndex = _reader.readU2();
+        methodInfo.descriptorIndex = _reader.readU2();
 
-        const auto attributeCount = readU2();
+        const auto attributeCount = _reader.readU2();
         readAttributesSection(methodInfo.attributes, attributeCount, AttributeOwner::Method);
         _methods.push_back(methodInfo);
     }
 }
 
 void ClassFileAnalyzer::readAttributes() {
-    const auto count = readU2();
+    const auto count = _reader.readU2();
     readAttributesSection(_attributes, count, AttributeOwner::ClassFile);
 }
 
 void ClassFileAnalyzer::getFileInfo() {
-    _lastWriteTime = filesystem::last_write_time(_options.classFile);
-    _fileSize = filesystem::file_size(_options.classFile);
+    _lastWriteTime = filesystem::last_write_time(_options.classFilePath);
 }
 
 void ClassFileAnalyzer::processFile() {
 
+    if (!isValid()) return;
+
     getFileInfo();
+    initialize();
+    readConstantsPool();
+    readMainClassInfo();
+    readInterfaces();
+    readFields();
+    readMethods();
+    readAttributes();
 
-    _file.open(_options.classFile, ifstream::binary);
-
-    if (readHeader()) {
-        readConstantsPool();
-        readMainClassInfo();
-        readInterfaces();
-        readFields();
-        readMethods();
-        readAttributes();
-    }
-
-    _file.close();
 }

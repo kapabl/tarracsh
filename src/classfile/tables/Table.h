@@ -16,10 +16,6 @@
 
 namespace org::kapa::tarracsh::tables {
 
-union PoolStringItem {
-    char *ptr{nullptr};
-    uint64_t offset;
-};
 
 constexpr const char *TableExtension = ".kapamd";
 

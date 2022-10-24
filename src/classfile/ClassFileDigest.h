@@ -11,7 +11,7 @@
 #include "AttributesManager.h"
 #include "ClassFileAnalyzer.h"
 
-#include "tables/PublicMd5Table.h"
+#include "tables/ClassfileDigestTable.h"
 
 
 namespace org::kapa::tarracsh {
