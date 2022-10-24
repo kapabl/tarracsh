@@ -6,7 +6,7 @@
 #include <string>
 
 #include "Tarracsh.h"
-#include "tables/PublicMd5Table.h"
+#include "tables/ClassfileDigestTable.h"
 
 
 namespace org::kapa::tarracsh::dir {
@@ -28,22 +28,23 @@ public:
 private:
     Options _options;
     Results _results;
-    [[nodiscard]] std::string generateShaTablename() const;
+    [[nodiscard]] std::string generateDigestTablename() const;
     void processJarFile(std::filesystem::directory_entry const &dirEntry);
-    std::shared_ptr<tables::PublicMd5Table> _shaTable;
+    std::shared_ptr<tables::ClassfileDigestTable> _digestTable;
 
     bool _isValid{true};
 
-    bool initializePublicShaTable();
+    bool initializePublicMd5Table();
     void printDirEntryStats();
     void processDirEntry(std::filesystem::directory_entry const &dirEntry);
     bool initDirAnalysis();
-    void analyze();
+    void analyzeClassfile();
     void endDirAnalysis() const;
 
     static bool isClassfile(std::filesystem::directory_entry const& dirEntry);
-    void regularProcess(std::filesystem::directory_entry const &dirEntry);
-    void publicShaProcess(std::filesystem::directory_entry const &dirEntry);
+    void analyzeClassfile(std::filesystem::directory_entry const &dirEntry);
+    bool isFileUnchanged(uintmax_t size, long long timestamp, const tables::ClassfileDigestRow *row) const;
+    void digestClassfile(std::filesystem::directory_entry const &classFileDirEntry);
     void processClassfile(std::filesystem::directory_entry const& dirEntry);
     static bool isJar(std::filesystem::directory_entry const& dirEntry);
 };

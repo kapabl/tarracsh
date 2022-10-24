@@ -31,7 +31,9 @@ public:
     }
     
     static void emptyLogFile(const std::string& file) {
-        std::filesystem::resize_file( std::filesystem::path(file), 0);
+        if (std::filesystem::exists(file)) {
+            resize_file(std::filesystem::path(file), 0);
+        }
     }
 
 private:

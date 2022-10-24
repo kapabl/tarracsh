@@ -16,42 +16,51 @@ struct Options {
     CLI::Option *dirOption;
     CLI::Option *jarOption;
 
-    std::string classFile;
+    std::string classFilePath;
     std::string directory;
     std::string jarFile;
     std::string classPath;
     std::string outputDir{"./output"};
-    bool generatePublicSha{false};
+    bool generatePublicDigest{false};
     bool printClassParse{false};
     bool printConstantPool{false};
     bool rebuild{false};
     std::string logFile{outputDir + "/result.log"};
     int workers{4};
+    bool useFileTimestamp{true};
 
+};
+
+
+struct PublicDigestResult {
+    int unchangedCount{};
+    int count{};
+    int same{};
+    int differentDigest{};
+    int newFile{};
+};
+
+struct ClassfileStats {
+    unsigned count{};
+    unsigned parsedCount{};
+    unsigned errors{};
+    PublicDigestResult digest;
 };
 
 
 struct Results {
 
-    struct {
-        unsigned count{};
-        unsigned parsedCount{};
-        unsigned errors{};
-    } classfiles;
+    ClassfileStats classfiles;
 
     struct {
         unsigned count{};
         unsigned parsedCount{};
         unsigned errors{};
+        unsigned classfileCount{};
+        PublicDigestResult digest;
+        ClassfileStats classfiles;
     } jarfiles;
 
-    struct {
-        int unchangedCount{};
-        int count{};
-        int sameSha{};
-        int differentSha{};
-        int newFile{};
-    } publicSha;
 
     unsigned long classfileTime{};
     unsigned long jarfileTime{};

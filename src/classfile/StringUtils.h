@@ -161,19 +161,23 @@ inline std::string md5AsString(const std::wstring &value) {
     return result;
 }
 
-inline std::string md5AsString(const std::string& value) {
+inline std::string md5AsString(const std::string &value) {
     auto digest = md5(value);
     auto result = digestToString(digest);
     return result;
 }
 
-inline std::string md5SetAsString(const std::set<std::string>& md5Set) {
+inline std::string md5SetAsString(const std::set<std::string> &md5Set) {
     const std::string delim;
     const std::string methodsMd5 = stringUtils::join(md5Set, delim);
     auto result = stringUtils::md5AsString(methodsMd5);
     return result;
 }
 
+inline std::string pathToClassname(std::string path) {
+    std::ranges::replace(path, '/', '.');
+    return path;
+}
 
 }
 

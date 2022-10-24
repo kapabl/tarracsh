@@ -4,8 +4,12 @@
 #include <string>
 
 #include "ClassFileAnalyzer.h"
-#include "JarAnalyzer.h"
+#include "jars/JarAnalyzer.h"
 #include "DirAnalyzer.h"
+
+#include "FilesystemUtils.h"
+#include "jars/JarDigester.h"
+#include "readers/FileReader.h"
 
 
 using namespace org::kapa::tarracsh::dir;
@@ -13,7 +17,7 @@ using namespace org::kapa::tarracsh::tables;
 using namespace std;
 
 DirAnalyzer::DirAnalyzer(Options options)
-    : _options(move(options))/*, _shaTable(generateShaTablename())*/ {
+    : _options(move(options))/*, _digestTable(generateDigestTablename())*/ {
 
 }
 
@@ -25,11 +29,13 @@ bool DirAnalyzer::isClassfile(filesystem::directory_entry const &dirEntry) {
     return dirEntry.path().extension() == ".class";
 }
 
-void DirAnalyzer::regularProcess(filesystem::directory_entry const &dirEntry) {
-    Options classfileOptions(_options);
-    classfileOptions.classFile = dirEntry.path().string();
+void DirAnalyzer::analyzeClassfile(filesystem::directory_entry const &dirEntry) {
+    Options options(_options);
+    options.classFilePath = dirEntry.path().string();
 
-    ClassFileAnalyzer classFileAnalyzer(classfileOptions, _results);
+    readers::FileReader reader(options.classFilePath);
+
+    ClassFileAnalyzer classFileAnalyzer(reader, options, _results);
     if (classFileAnalyzer.run()) {
         _results.classfiles.parsedCount++;
 
@@ -38,49 +44,57 @@ void DirAnalyzer::regularProcess(filesystem::directory_entry const &dirEntry) {
     }
 }
 
-void DirAnalyzer::publicShaProcess(filesystem::directory_entry const &dirEntry) {
+bool DirAnalyzer::isFileUnchanged(const uintmax_t size, const long long timestamp, const ClassfileDigestRow *row) const {
+    auto const result = _options.useFileTimestamp &&
+                        row != nullptr &&
+                        row->fileSize == size &&
+                        row->lastWriteTime == timestamp;
+    return result;
+}
+
+void DirAnalyzer::digestClassfile(filesystem::directory_entry const &dirEntry) {
 
     const auto filename = dirEntry.path().string();
     const auto size = filesystem::file_size(filename);
 
-    const auto lastWriteTime = filesystem::last_write_time(filename);
-    const auto timestamp = chrono::duration_cast<chrono::microseconds>(lastWriteTime.time_since_epoch()).count();
+    const auto timestamp = fsUtils::getLastWriteTimestamp(filename);
 
-    const tables::Md5Row *row = _shaTable->findByKey(filename);
+    const tables::ClassfileDigestRow *row = _digestTable->findByKey(filename);
     const bool rowFound = row != nullptr;
-    const auto unchangedFile = rowFound && row->fileSize == size && row->lastWriteTime == timestamp;
+    const auto unchangedFile = isFileUnchanged(size, timestamp, row);
 
-    _results.publicSha.count++;
+    _results.classfiles.digest.count++;
 
     if (!unchangedFile) {
 
         Options classfileOptions(_options);
-        classfileOptions.classFile = filename;
+        classfileOptions.classFilePath = filename;
+        readers::FileReader reader(filename);
 
-        ClassFileAnalyzer classFileAnalyzer(classfileOptions, _results);
+        ClassFileAnalyzer classFileAnalyzer(reader, classfileOptions, _results);
         const auto publicDigest = classFileAnalyzer.getPublicDigest();
 
         if (publicDigest.has_value()) {
-            const auto isSamePublicSha = rowFound && publicDigest.value() == row->md5;
+            const auto isSamePublicDigest = rowFound && publicDigest.value() == row->md5;
 
-            if (isSamePublicSha) {
-                _results.resultLog.writeln(std::format("Same public sha of changed file:{}", filename));
-                _results.publicSha.sameSha++;
+            if (isSamePublicDigest) {
+                _results.resultLog.writeln(std::format("Same public digestEntry of changed file:{}", filename));
+                _results.classfiles.digest.same++;
             } else {
 
-                tables::Md5Row newRow;
-                newRow.filename.ptr = _shaTable->getPoolString(filename);
+                ClassfileDigestRow newRow;
+                newRow.filename.ptr = _digestTable->getPoolString(filename);
                 newRow.type = tables::EntryType::Classfile;
                 newRow.lastWriteTime = timestamp;
                 newRow.fileSize = size;
-                newRow.classname.ptr = _shaTable->getPoolString(classFileAnalyzer.getMainClassname());
+                newRow.classname.ptr = _digestTable->getPoolString(classFileAnalyzer.getMainClassname());
                 newRow.md5 = publicDigest.value();
-                _shaTable->addOrUpdate(newRow);
+                _digestTable->addOrUpdate(newRow);
 
                 if (rowFound) {
-                    _results.publicSha.differentSha++;
+                    _results.classfiles.digest.differentDigest++;
                 } else {
-                    _results.publicSha.newFile++;
+                    _results.classfiles.digest.newFile++;
                 }
             }
 
@@ -90,7 +104,7 @@ void DirAnalyzer::publicShaProcess(filesystem::directory_entry const &dirEntry) 
             _results.classfiles.errors++;
         }
     } else {
-        _results.publicSha.unchangedCount++;
+        _results.classfiles.digest.unchangedCount++;
     }
 
 }
@@ -100,15 +114,15 @@ void DirAnalyzer::publicShaProcess(filesystem::directory_entry const &dirEntry) 
  */
 void DirAnalyzer::processClassfile(filesystem::directory_entry const &dirEntry) {
     _results.classfiles.count++;
-    if (_options.generatePublicSha) {
-        publicShaProcess(dirEntry);
+    if (_options.generatePublicDigest) {
+        digestClassfile(dirEntry);
     } else {
-        regularProcess(dirEntry);
+        analyzeClassfile(dirEntry);
     }
 
 }
 
-std::string DirAnalyzer::generateShaTablename() const {
+std::string DirAnalyzer::generateDigestTablename() const {
     std::string result(_options.directory);
     ranges::replace(result, '/', '_');
     ranges::replace(result, ':', '_');
@@ -120,41 +134,68 @@ std::string DirAnalyzer::generateShaTablename() const {
 }
 
 void DirAnalyzer::processJarFile(filesystem::directory_entry const &dirEntry) {
+
     Options jarOptions(_options);
     jarOptions.jarFile = dirEntry.path().string();
-    jar::JarAnalyzer jarAnalyzer(jarOptions);
-    jarAnalyzer.run();
+
     _results.jarfiles.count++;
-    _results.classfiles.count += jarAnalyzer.getClassfileCount();
+    if (_options.generatePublicDigest) {
+        jar::JarDigester jarDigester(jarOptions, _results, _digestTable);
+        jarDigester.run();
+        _results.jarfiles.classfileCount += jarDigester.getClassfileCount();
+    } else {
+        jar::JarAnalyzer jarAnalyzer(jarOptions, _results);
+        jarAnalyzer.run();
+        _results.jarfiles.classfileCount += jarAnalyzer.getClassfileCount();
+    }
 }
 
-bool DirAnalyzer::initializePublicShaTable() {
-    _shaTable = std::make_shared<PublicMd5Table>(generateShaTablename());
-    const auto result = _options.rebuild ? _shaTable->clean() : _shaTable->read();
-    return _shaTable->read();
+bool DirAnalyzer::initializePublicMd5Table() {
+    _digestTable = std::make_shared<ClassfileDigestTable>(generateDigestTablename());
+    const auto result = _options.rebuild ? _digestTable->clean() : _digestTable->read();
+    return _digestTable->read();
 }
 
 void DirAnalyzer::printDirEntryStats() {
-    cout << "\033[2K";
+    // cout << "\033[2K";
 
-    cout << format("classfiles No:\033[36m{}\033[39m|Ok:\033[92m{}\033[39m|Er:\033[91m{}\033[39m--",
+    printf("\033[2J");
+    printf("\033[%d;%dH", 0, 0);
+
+    cout << format("classfiles No:\033[36m{}\033[39m|Ok:\033[92m{}\033[39m|Er:\033[91m{}\033[39m",
                    _results.classfiles.count,
                    _results.classfiles.parsedCount,
-                   _results.classfiles.errors);
+                   _results.classfiles.errors) << endl;
 
-    cout << format("jars No:\033[36m{}\033[39m|Ok:\033[92m{}\033[39m|Er:\033[91m{}\033[39m--",
+    cout << format("jars No:\033[36m{}\033[39m|Ok:\033[92m{}\033[39m|Er:\033[91m{}\033[39m",
                    _results.jarfiles.count,
                    _results.jarfiles.parsedCount,
-                   _results.jarfiles.errors);
+                   _results.jarfiles.errors) << endl;
 
-    if (_options.generatePublicSha) {
-        cout << format("public sha No:{}|New:{}|Same:{}|Diff:{}|Unchanged:{}",
-                       _results.publicSha.count,
-                       _results.publicSha.newFile,
-                       _results.publicSha.sameSha,
-                       _results.publicSha.differentSha,
-                       _results.publicSha.unchangedCount
-            );
+    if (_options.generatePublicDigest) {
+        cout << format("classfile digest No:{}|New:{}|Same:{}|Diff:{}|Unchanged:{}",
+                       _results.classfiles.digest.count,
+                       _results.classfiles.digest.newFile,
+                       _results.classfiles.digest.same,
+                       _results.classfiles.digest.differentDigest,
+                       _results.classfiles.digest.unchangedCount
+            ) << endl;
+
+        cout << format("jar digest No:{}|New:{}|Same:{}|Diff:{}|Unchanged:{}",
+                       _results.jarfiles.digest.count,
+                       _results.jarfiles.digest.newFile,
+                       _results.jarfiles.digest.same,
+                       _results.jarfiles.digest.differentDigest,
+                       _results.jarfiles.digest.unchangedCount
+            ) << endl;
+
+        cout << format("jar classfile digest No:{}|New:{}|Same:{}|Diff:{}|Unchanged:{}",
+            _results.jarfiles.classfiles.digest.count,
+            _results.jarfiles.classfiles.digest.newFile,
+            _results.jarfiles.classfiles.digest.same,
+            _results.jarfiles.classfiles.digest.differentDigest,
+            _results.jarfiles.classfiles.digest.unchangedCount
+        ) << endl;
     }
     cout << "\r" << std::flush;
 }
@@ -170,17 +211,19 @@ void DirAnalyzer::processDirEntry(filesystem::directory_entry const &dirEntry) {
 bool DirAnalyzer::initDirAnalysis() {
     _results.resultLog.setFile(_options.logFile);
 
-    if (_options.generatePublicSha) {
-        if (!initializePublicShaTable()) return false;
+    if (_options.generatePublicDigest) {
+        if (!initializePublicMd5Table()) return false;
     }
     return true;
 }
 
-void DirAnalyzer::analyze() {
+void DirAnalyzer::analyzeClassfile() {
     auto count = 0u;
     for (auto const &dirEntry : filesystem::recursive_directory_iterator(_options.directory)) {
         if (dirEntry.is_regular_file()) {
             processDirEntry(dirEntry);
+        } else if (dirEntry.is_directory()) {
+            //TODO recursive?
         }
         count++;
 
@@ -192,8 +235,8 @@ void DirAnalyzer::analyze() {
 }
 
 void DirAnalyzer::endDirAnalysis() const {
-    if (_options.generatePublicSha && _shaTable->isDirty()) {
-        _shaTable->write();
+    if (_options.generatePublicDigest && _digestTable->isDirty()) {
+        _digestTable->write();
     }
 }
 
@@ -202,7 +245,7 @@ void DirAnalyzer::run() {
     PrintTimeScope timeScope(true);
 
     if (!initDirAnalysis()) return;
-    analyze();
+    analyzeClassfile();
     endDirAnalysis();
 
 }

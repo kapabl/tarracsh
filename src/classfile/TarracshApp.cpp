@@ -1,7 +1,8 @@
 #include "TarracshApp.h"
 #include "ClassFileAnalyzer.h"
 #include "DirAnalyzer.h"
-#include "JarAnalyzer.h"
+#include "jars/JarAnalyzer.h"
+#include "readers/FileReader.h"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -32,10 +33,12 @@ int TarracshApp::start(int argc, char *argv[]) {
     results.resultLog.setFile(_options.logFile);
 
     if (!_options.classfileOption->empty()) {
-        ClassFileAnalyzer classFileAnalyzer(_options, results);
+        readers::FileReader reader(_options.classFilePath);
+        ClassFileAnalyzer classFileAnalyzer(reader, _options, results);
         classFileAnalyzer.run();
     } else if (!_options.jarOption->empty()) {
-        jar::JarAnalyzer jarAnalyzer(_options);
+        //TODO we need a class that takes the decision between analyze or digest
+        jar::JarAnalyzer jarAnalyzer(_options, results);
         jarAnalyzer.run();
     } else if (!_options.dirOption->empty()) {
         dir::DirAnalyzer dirAnalyzer(_options);
@@ -51,7 +54,7 @@ int TarracshApp::start(int argc, char *argv[]) {
 void TarracshApp::setupCliOptions() {
     set_version_flag("-v,--version", "version " TARRACSH_VERSION);
 
-    _options.classfileOption = add_option("--classfile", _options.classFile, " Input class file");
+    _options.classfileOption = add_option("--classfile", _options.classFilePath, " Input class file");
     _options.dirOption = add_option("--dir", _options.directory, "Input directory");
     _options.jarOption = add_option("--jar", _options.jarFile, "Input jar file");
 
@@ -65,10 +68,11 @@ void TarracshApp::setupCliOptions() {
     _options.dirOption->excludes(_options.classfileOption);
 
     add_flag("-c,--classpath", _options.classPath, "Class paths to look into.");
-    add_flag("--generate-public-sha", _options.generatePublicSha, "yes/no");
-    add_flag("--rebuild", _options.rebuild, "yes/no");
-    add_flag("--print-class-parse", _options.printClassParse, "yes/no");
-    add_flag("--print-cpool", _options.printConstantPool, "yes/no");
+    add_flag("--generate-public-digest", _options.generatePublicDigest, "yes/no - Default 'no'");
+    add_flag("--use-file-timestamp", _options.useFileTimestamp, "yes/no - Default 'yes'. User file timestamp and size to check if file was modified");
+    add_flag("--rebuild", _options.rebuild, "yes/no - Default 'no'");
+    add_flag("--print-class-parse", _options.printClassParse, "yes/no - Default 'no'");
+    add_flag("--print-cpool", _options.printConstantPool, "yes/no - Default 'no'. Print Constant Pool");
     add_flag("--output-dir", _options.outputDir, "Output directory, default './output'");
     add_flag("--output-log-file", _options.logFile, "Log file, default './output/result.log");
 

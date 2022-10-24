@@ -11,9 +11,8 @@
 #include "ConstantPool.h"
 #include "AttributesManager.h"
 #include "AccessModifiers.h"
-#include "StringUtils.h"
-
-#include "tables/PublicMd5Table.h"
+#include "readers/ClassFileReader.h"
+#include "tables/ClassfileDigestTable.h"
 
 
 namespace org::kapa::tarracsh {
@@ -21,16 +20,14 @@ namespace org::kapa::tarracsh {
 class ClassFileAnalyzer final {
 
 public:
-    explicit ClassFileAnalyzer(Options &options, Results &results);
+    explicit ClassFileAnalyzer(readers::ClassFileReader& reader, Options &options, Results &results);
 
     ClassFileAnalyzer(const ClassFileAnalyzer &) = delete;
     ClassFileAnalyzer(const ClassFileAnalyzer &&) = delete;
     ClassFileAnalyzer &operator=(const ClassFileAnalyzer &) = delete;
     ClassFileAnalyzer &operator=(const ClassFileAnalyzer &&) = delete;
 
-    void output();
-
-    [[nodiscard]] bool isValid() const { return _isValid; }
+    [[nodiscard]] bool isValid() const { return _reader.isValid(); }
 
     ~ClassFileAnalyzer() = default;
     bool run();
@@ -43,8 +40,6 @@ public:
     MainClassInfo &getMainClassInfo() { return _mainClassInfo; }
     std::vector<attributes::AttributeInfo> &getAttributes() { return _attributes; }
     std::vector<FieldInfo> &getFields() { return _fields; }
-
-    [[nodiscard]] uint64_t getFileSize() const { return _fileSize; }
     [[nodiscard]] std::filesystem::file_time_type getFileModifiedDate() const { return _lastWriteTime; }
 
     [[nodiscard]] uint64_t getFileModifiedTimestamp() const {
@@ -60,9 +55,8 @@ public:
 private:
     Options _options;
     Results &_results;
-    bool _isBigEndian{true};
+    readers::ClassFileReader& _reader;
 
-    ClassFileHeader _header{};
     ConstantPool _constantPool;
     MainClassInfo _mainClassInfo{};
     std::vector<u2> _interfaces;
@@ -70,64 +64,13 @@ private:
     std::vector<MethodInfo> _methods;
     std::vector<attributes::AttributeInfo> _attributes;
 
-    uint64_t _fileSize{};
-    unsigned int _bytesRead{};
-
-    std::ifstream _file;
-    bool _isValid = true;
     attributes::AttributesManager _attributesManager;
     accessModifiers::AccessModifiers _accessModifiers;
     std::filesystem::file_time_type _lastWriteTime;
 
     [[nodiscard]] std::wstring getClassInfoName(const u2 index) const;
 
-    template <typename T> void readRaw(T &buffer, unsigned int byteCount) {
-
-        // assert(_bytesRead + byteCount <= _fileSize);
-
-        if (_bytesRead + byteCount > _fileSize) {
-            const auto errorMessage = std::format("Error - reading beyond size - {}", _options.classFile);
-            _results.resultLog.writeln(errorMessage);
-            throw std::runtime_error(errorMessage);
-        }
-        const auto charBuffer = reinterpret_cast<char *>(&buffer);
-
-        _file.read(charBuffer, byteCount);
-
-        _bytesRead += byteCount;
-    }
-
-    template <typename T> void readRaw(T &buffer) { readRaw(buffer, sizeof(buffer)); }
-
-    template <typename T = u2>
-    void read(u2 &buffer) {
-        readRaw(buffer, 2);
-        if (!_isBigEndian) {
-            buffer = stringUtils::swapShort(buffer);
-        }
-    }
-
-    template <typename T = u2>
-    void readReversed(u2& buffer) {
-        readRaw(buffer, 2);
-        if (_isBigEndian) {
-            buffer = stringUtils::swapShort(buffer);
-        }
-    }
-
-    template <typename T = u4>
-    void read(u4 &buffer) {
-        readRaw(buffer, 4);
-        if (!_isBigEndian) {
-            buffer = stringUtils::swapLong(buffer);
-        }
-    }
-
-    u2 readU2();
-    u2 readU2Reversed();
-    u4 readU4();
-    u1 readU1();
-    bool readHeader();
+    void initialize();
     void readConstPoolEntry( int& index);
     void readConstantsPool();
     void readMainClassInfo();
