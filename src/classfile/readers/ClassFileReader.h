@@ -75,14 +75,15 @@ public:
     void readHeader() {
         readRaw(_header, sizeof(_header.magic));
         _isBigEndian = _header.magic == 0x0cafebabe;
-        if (!_isBigEndian && _header.magic != stringUtils::swapLong(0x0cafebabe)) {
+        _isValid = _isBigEndian || _header.magic == stringUtils::swapLong(0x0cafebabe);
+        if (_isValid) {
+            _header.minorVersion = readU2();
+            _header.majorVersion = readU2();
+        } else {
             //TODO better message with filename or jar filename + class
             std::cout << "Invalid class file " << std::endl;
             // cout << "Invalid class file " << _options.classFilePath << std::endl;
             _isValid = false;
-        } else {
-            _header.minorVersion = readU2();
-            _header.majorVersion = readU2();
         }
 
     }

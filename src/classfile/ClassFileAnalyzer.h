@@ -11,6 +11,7 @@
 #include "ConstantPool.h"
 #include "AttributesManager.h"
 #include "AccessModifiers.h"
+#include "Stats.h"
 #include "readers/ClassFileReader.h"
 #include "tables/ClassfileDigestTable.h"
 
@@ -40,12 +41,6 @@ public:
     MainClassInfo &getMainClassInfo() { return _mainClassInfo; }
     std::vector<attributes::AttributeInfo> &getAttributes() { return _attributes; }
     std::vector<FieldInfo> &getFields() { return _fields; }
-    [[nodiscard]] std::filesystem::file_time_type getFileModifiedDate() const { return _lastWriteTime; }
-
-    [[nodiscard]] uint64_t getFileModifiedTimestamp() const {
-        const auto result = std::chrono::duration_cast<std::chrono::microseconds>(_lastWriteTime.time_since_epoch()).count();
-        return result;
-    }
 
     [[nodiscard]] std::wstring getMainClassname() const {
         std::wstring result = _constantPool.getClassInfoName(_mainClassInfo.thisClass);
@@ -66,7 +61,7 @@ private:
 
     attributes::AttributesManager _attributesManager;
     accessModifiers::AccessModifiers _accessModifiers;
-    std::filesystem::file_time_type _lastWriteTime;
+
 
     [[nodiscard]] std::wstring getClassInfoName(const u2 index) const;
 
@@ -80,7 +75,6 @@ private:
                                const attributes::AttributeOwner owner);
     void readMethods();
     void readAttributes();
-    void getFileInfo();
     void processFile();
 
 };

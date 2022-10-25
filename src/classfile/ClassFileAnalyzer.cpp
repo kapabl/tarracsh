@@ -278,15 +278,11 @@ void ClassFileAnalyzer::readAttributes() {
     readAttributesSection(_attributes, count, AttributeOwner::ClassFile);
 }
 
-void ClassFileAnalyzer::getFileInfo() {
-    _lastWriteTime = filesystem::last_write_time(_options.classFilePath);
-}
 
 void ClassFileAnalyzer::processFile() {
 
     if (!isValid()) return;
 
-    getFileInfo();
     initialize();
     readConstantsPool();
     readMainClassInfo();

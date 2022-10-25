@@ -32,42 +32,6 @@ struct Options {
 };
 
 
-struct PublicDigestResult {
-    int unchangedCount{};
-    int count{};
-    int same{};
-    int differentDigest{};
-    int newFile{};
-};
-
-struct ClassfileStats {
-    unsigned count{};
-    unsigned parsedCount{};
-    unsigned errors{};
-    PublicDigestResult digest;
-};
-
-
-struct Results {
-
-    ClassfileStats classfiles;
-
-    struct {
-        unsigned count{};
-        unsigned parsedCount{};
-        unsigned errors{};
-        unsigned classfileCount{};
-        PublicDigestResult digest;
-        ClassfileStats classfiles;
-    } jarfiles;
-
-
-    unsigned long classfileTime{};
-    unsigned long jarfileTime{};
-
-    Log resultLog;
-
-};
 
 struct PrintTimeScope {
     PrintTimeScope(const bool autoStart ) {

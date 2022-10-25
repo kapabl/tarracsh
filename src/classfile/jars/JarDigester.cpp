@@ -38,10 +38,10 @@ optional<MD5> JarDigester::parseEntry(const JarEntry &jarEntry, const ClassfileD
 
     ClassFileAnalyzer classFileAnalyzer(reader, classfileOptions, _results);
     const auto digest = classFileAnalyzer.getPublicDigest();
-    const bool rowFound = row != nullptr;
 
     if (digest.has_value()) {
-        const auto isSameDigest = rowFound && digest.value() == row->md5;
+        const bool alreadyExists = row != nullptr;
+        const auto isSameDigest = alreadyExists && digest.value() == row->md5;
 
         if (isSameDigest) {
             _results.resultLog.writeln(std::format("Same public digestEntry of changed file:{}",
@@ -49,19 +49,19 @@ optional<MD5> JarDigester::parseEntry(const JarEntry &jarEntry, const ClassfileD
             _results.jarfiles.classfiles.digest.same++;
             result = row->md5;
         } else {
-
+            const auto classname = classFileAnalyzer.getMainClassname();
             ClassfileDigestRow newRow;
             newRow.filename.ptr = _digestTable->getPoolString(_options.jarFile);
             newRow.type = EntryType::Classfile;
             newRow.lastWriteTime = jarEntry.getLastWriteTime();
             newRow.fileSize = jarEntry.getSize();
-            newRow.classname.ptr = _digestTable->getPoolString(classFileAnalyzer.getMainClassname());
+            newRow.classname.ptr = _digestTable->getPoolString(classname);
             newRow.md5 = digest.value();
             _digestTable->addOrUpdate(newRow);
 
             result = newRow.md5;
 
-            if (rowFound) {
+            if (alreadyExists) {
                 _results.jarfiles.classfiles.digest.differentDigest++;
             } else {
                 _results.jarfiles.classfiles.digest.newFile++;
@@ -117,20 +117,29 @@ optional<MD5> JarDigester::getPublicDigest() {
 
     const auto entries = zipArchive.getEntries();
     map<string, MD5> digestMap;
+    _results.print(_options);
+    auto index = 0;
     for (auto &entry : entries) {
         JarEntry jarEntry(entry);
         if (jarEntry.isClassfile()) {
-            cout << entry.getName() << endl;
+            //cout << entry.getName() << endl;
             _classfileCount++;
             auto classDigest = digestEntry(jarEntry);
             digestMap[jarEntry.getClassname()] = classDigest.value();
+            index++;
+
+            if (index % 10 == 0) {
+                _results.print(_options);
+            }
         }
     }
+
+    _results.print(_options);
 
     Poco::MD5Engine md5Engine;
     Poco::DigestOutputStream stream(md5Engine);
 
-    for (const auto & [buf] : digestMap | views::values) {
+    for (const auto &[buf] : digestMap | views::values) {
         stream.write(reinterpret_cast<const char *>(buf), MD5_DIGEST_LENGTH);
     }
 
@@ -138,6 +147,7 @@ optional<MD5> JarDigester::getPublicDigest() {
     MD5 md5Bytes;
     memcpy(md5Bytes.buf, &*md5Engine.digest().begin(), MD5_DIGEST_LENGTH);
     result = md5Bytes;
+
     return result;
 }
 
@@ -147,14 +157,14 @@ void JarDigester::digest() {
     const auto size = filesystem::file_size(filename);
     const auto timestamp = fsUtils::getLastWriteTimestamp(filename);
     const ClassfileDigestRow *row = _digestTable->findByKey(filename);
-    const bool rowFound = row != nullptr;
+    const bool isExistingJar = row != nullptr;
     const auto unchangedFile = isFileUnchanged(size, timestamp, row);
     if (!unchangedFile) {
 
         const auto digest = getPublicDigest();
 
         if (digest.has_value()) {
-            const auto isSameDigest = rowFound && digest.value() == row->md5;
+            const auto isSameDigest = isExistingJar && digest.value() == row->md5;
 
             if (isSameDigest) {
                 _results.resultLog.writeln(std::format("Same public digestEntry of changed jar file:{}", filename));
@@ -169,18 +179,17 @@ void JarDigester::digest() {
                 newRow.md5 = digest.value();
                 _digestTable->addOrUpdate(newRow);
 
-                if (rowFound) {
+                if (isExistingJar) {
                     _results.jarfiles.digest.differentDigest++;
                 } else {
                     _results.jarfiles.digest.newFile++;
                 }
             }
-            _results.jarfiles.count++;
+            _results.jarfiles.digest.count++;
         } else {
             _results.jarfiles.errors++;
         }
-    }
-    else {
+    } else {
         _results.jarfiles.classfiles.digest.count += static_cast<int>(row->count);
     }
 }

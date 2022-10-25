@@ -155,8 +155,8 @@ private:
 }
 
 union StringPoolItem {
-    char* ptr{ nullptr };
-    uint64_t offset;
+    char* ptr;
+    uint64_t offset{0u};
 };
 
 #undef CHUNK_SIZE

@@ -35,7 +35,6 @@ private:
     bool _isValid{true};
 
     bool initializePublicMd5Table();
-    void printDirEntryStats();
     void processDirEntry(std::filesystem::directory_entry const &dirEntry);
     bool initDirAnalysis();
     void analyzeClassfile();

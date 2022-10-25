@@ -36,7 +36,9 @@ string ClassFileDigest::digest(
     const vector<attributes::AttributeInfo> &attributeInfos) const {
     set<string> md5Set;
     for (auto &attributeInfo : attributeInfos) {
-        md5Set.insert(digest(attributeInfo));
+        if (attributeInfo.info.size() > 0) {
+            md5Set.insert(digest(attributeInfo));
+        }
     }
     auto result = stringUtils::md5SetAsString(md5Set);
 
