@@ -13,7 +13,6 @@ public:
     explicit FileReader(const std::string &filename)
         : ClassFileReader() {
         _file.open(filename, std::ifstream::binary);
-        // _lastWriteTime = std::filesystem::last_write_time(_options.classFilePath);
         _size = std::filesystem::file_size( filename);
         readHeader();
         

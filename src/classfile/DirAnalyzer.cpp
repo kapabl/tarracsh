@@ -156,49 +156,6 @@ bool DirAnalyzer::initializePublicMd5Table() {
     return _digestTable->read();
 }
 
-void DirAnalyzer::printDirEntryStats() {
-    // cout << "\033[2K";
-
-    printf("\033[2J");
-    printf("\033[%d;%dH", 0, 0);
-
-    cout << format("classfiles No:\033[36m{}\033[39m|Ok:\033[92m{}\033[39m|Er:\033[91m{}\033[39m",
-                   _results.classfiles.count,
-                   _results.classfiles.parsedCount,
-                   _results.classfiles.errors) << endl;
-
-    cout << format("jars No:\033[36m{}\033[39m|Ok:\033[92m{}\033[39m|Er:\033[91m{}\033[39m",
-                   _results.jarfiles.count,
-                   _results.jarfiles.parsedCount,
-                   _results.jarfiles.errors) << endl;
-
-    if (_options.generatePublicDigest) {
-        cout << format("classfile digest No:{}|New:{}|Same:{}|Diff:{}|Unchanged:{}",
-                       _results.classfiles.digest.count,
-                       _results.classfiles.digest.newFile,
-                       _results.classfiles.digest.same,
-                       _results.classfiles.digest.differentDigest,
-                       _results.classfiles.digest.unchangedCount
-            ) << endl;
-
-        cout << format("jar digest No:{}|New:{}|Same:{}|Diff:{}|Unchanged:{}",
-                       _results.jarfiles.digest.count,
-                       _results.jarfiles.digest.newFile,
-                       _results.jarfiles.digest.same,
-                       _results.jarfiles.digest.differentDigest,
-                       _results.jarfiles.digest.unchangedCount
-            ) << endl;
-
-        cout << format("jar classfile digest No:{}|New:{}|Same:{}|Diff:{}|Unchanged:{}",
-            _results.jarfiles.classfiles.digest.count,
-            _results.jarfiles.classfiles.digest.newFile,
-            _results.jarfiles.classfiles.digest.same,
-            _results.jarfiles.classfiles.digest.differentDigest,
-            _results.jarfiles.classfiles.digest.unchangedCount
-        ) << endl;
-    }
-    cout << "\r" << std::flush;
-}
 
 void DirAnalyzer::processDirEntry(filesystem::directory_entry const &dirEntry) {
     if (isJar(dirEntry)) {
@@ -228,10 +185,10 @@ void DirAnalyzer::analyzeClassfile() {
         count++;
 
         if (count % 10 == 0) {
-            printDirEntryStats();
+            _results.print(_options);
         }
     }
-    printDirEntryStats();
+    _results.print(_options);
 }
 
 void DirAnalyzer::endDirAnalysis() const {

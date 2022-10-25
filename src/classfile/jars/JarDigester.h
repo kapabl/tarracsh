@@ -1,10 +1,13 @@
 #ifndef JAR_DIGESTER_H
 #define JAR_DIGESTER_H
 #include "../Tarracsh.h"
+#include "../Stats.h"
+
 #include <ranges>
 #include "JarEntry.h"
 
 #include "../tables/ClassfileDigestTable.h"
+
 
 namespace org::kapa::tarracsh::jar {
 class JarDigester {

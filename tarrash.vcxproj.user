@@ -16,6 +16,10 @@
     <LocalDebuggerCommandArguments>--dir D:\temp\reti\test-subjects\app --generate-public-digest=yes --rebuild=no</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbJarDirMd5|x64'">
+    <LocalDebuggerCommandArguments>--dir D:\temp\reti\test-subjects\jars --generate-public-digest=yes --rebuild=no</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFile|x64'">
     <LocalDebuggerCommandArguments>--classfile D:\temp\reti\test-subjects\app\com\amazon\ion\impl\bin\IonRawBinaryWriter.class  --print-cpool=no --generate-public-sha=no --print-class-parse=yes</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
