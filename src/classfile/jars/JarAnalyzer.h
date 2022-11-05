@@ -5,7 +5,7 @@
 #include <ranges>
 #include "JarEntry.h"
 
-#include "../tables/ClassfileDigestTable.h"
+#include "../tables/DigestTable.h"
 
 
 

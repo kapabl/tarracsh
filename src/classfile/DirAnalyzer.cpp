@@ -8,7 +8,7 @@
 #include "DirAnalyzer.h"
 
 #include "FilesystemUtils.h"
-#include "jars/JarDigester.h"
+#include "jars/JarProcessor.h"
 #include "readers/FileReader.h"
 
 
@@ -29,7 +29,7 @@ bool DirAnalyzer::isClassfile(filesystem::directory_entry const &dirEntry) {
     return dirEntry.path().extension() == ".class";
 }
 
-void DirAnalyzer::analyzeClassfile(filesystem::directory_entry const &dirEntry) {
+void DirAnalyzer::analyze(filesystem::directory_entry const &dirEntry) {
     Options options(_options);
     options.classFilePath = dirEntry.path().string();
 
@@ -44,7 +44,7 @@ void DirAnalyzer::analyzeClassfile(filesystem::directory_entry const &dirEntry) 
     }
 }
 
-bool DirAnalyzer::isFileUnchanged(const uintmax_t size, const long long timestamp, const ClassfileDigestRow *row) const {
+bool DirAnalyzer::isFileUnchanged(const uintmax_t size, const long long timestamp, const DigestRow *row) const {
     auto const result = _options.useFileTimestamp &&
                         row != nullptr &&
                         row->fileSize == size &&
@@ -59,7 +59,7 @@ void DirAnalyzer::digestClassfile(filesystem::directory_entry const &dirEntry) {
 
     const auto timestamp = fsUtils::getLastWriteTimestamp(filename);
 
-    const tables::ClassfileDigestRow *row = _digestTable->findByKey(filename);
+    const tables::DigestRow *row = _digestTable->findByKey(filename);
     const bool rowFound = row != nullptr;
     const auto unchangedFile = isFileUnchanged(size, timestamp, row);
 
@@ -82,12 +82,12 @@ void DirAnalyzer::digestClassfile(filesystem::directory_entry const &dirEntry) {
                 _results.classfiles.digest.same++;
             } else {
 
-                ClassfileDigestRow newRow;
-                newRow.filename.ptr = _digestTable->getPoolString(filename);
+                DigestRow newRow;
+                newRow.filename = _digestTable->getPoolString(filename);
                 newRow.type = tables::EntryType::Classfile;
                 newRow.lastWriteTime = timestamp;
                 newRow.fileSize = size;
-                newRow.classname.ptr = _digestTable->getPoolString(classFileAnalyzer.getMainClassname());
+                newRow.classname = _digestTable->getPoolString(classFileAnalyzer.getMainClassname());
                 newRow.md5 = publicDigest.value();
                 _digestTable->addOrUpdate(newRow);
 
@@ -110,14 +110,14 @@ void DirAnalyzer::digestClassfile(filesystem::directory_entry const &dirEntry) {
 }
 
 /**
- * TODO implement thread pool, enqueue "tasks"
+ * TODO implement thread _threadPool, enqueue "tasks"
  */
 void DirAnalyzer::processClassfile(filesystem::directory_entry const &dirEntry) {
     _results.classfiles.count++;
     if (_options.generatePublicDigest) {
         digestClassfile(dirEntry);
     } else {
-        analyzeClassfile(dirEntry);
+        analyze(dirEntry);
     }
 
 }
@@ -133,33 +133,36 @@ std::string DirAnalyzer::generateDigestTablename() const {
     return result;
 }
 
-void DirAnalyzer::processJarFile(filesystem::directory_entry const &dirEntry) {
+void DirAnalyzer::processJar(filesystem::directory_entry const &dirEntry) {
 
     Options jarOptions(_options);
     jarOptions.jarFile = dirEntry.path().string();
 
     _results.jarfiles.count++;
     if (_options.generatePublicDigest) {
-        jar::JarDigester jarDigester(jarOptions, _results, _digestTable);
-        jarDigester.run();
-        _results.jarfiles.classfileCount += jarDigester.getClassfileCount();
+        jar::JarDigestTask jarDigestTask(jarOptions, _results, _digestTable);
+        jar::JarProcessor jarProcessor(jarOptions, _results, jarDigestTask);
+        jarProcessor.run();
+        _results.jarfiles.classfileCount += jarProcessor.getClassfileCount();
     } else {
-        jar::JarAnalyzer jarAnalyzer(jarOptions, _results);
-        jarAnalyzer.run();
-        _results.jarfiles.classfileCount += jarAnalyzer.getClassfileCount();
+        //TODO
+        // jar::JarAnalyzeTask jarAnalyzeTask(jarOptions, _results);
+        // jar::JarProcessor jarProcessor(jarOptions, _results, jarAnalyzeTask);
+        // jarProcessor.run();
+        //_results.jarfiles.classfileCount += jarAnalyzer.getClassfileCount();
     }
 }
 
-bool DirAnalyzer::initializePublicMd5Table() {
-    _digestTable = std::make_shared<ClassfileDigestTable>(generateDigestTablename());
+bool DirAnalyzer::initializeDigestTables() {
+    _digestTable = std::make_shared<DigestTable>(generateDigestTablename());
     const auto result = _options.rebuild ? _digestTable->clean() : _digestTable->read();
-    return _digestTable->read();
+    return result;
 }
 
 
-void DirAnalyzer::processDirEntry(filesystem::directory_entry const &dirEntry) {
+void DirAnalyzer::processFile(filesystem::directory_entry const &dirEntry) {
     if (isJar(dirEntry)) {
-        processJarFile(dirEntry);
+        processJar(dirEntry);
     } else if (isClassfile(dirEntry)) {
         processClassfile(dirEntry);
     }
@@ -169,16 +172,16 @@ bool DirAnalyzer::initDirAnalysis() {
     _results.resultLog.setFile(_options.logFile);
 
     if (_options.generatePublicDigest) {
-        if (!initializePublicMd5Table()) return false;
+        if (!initializeDigestTables()) return false;
     }
     return true;
 }
 
-void DirAnalyzer::analyzeClassfile() {
+void DirAnalyzer::analyze() {
     auto count = 0u;
     for (auto const &dirEntry : filesystem::recursive_directory_iterator(_options.directory)) {
         if (dirEntry.is_regular_file()) {
-            processDirEntry(dirEntry);
+            processFile(dirEntry);
         } else if (dirEntry.is_directory()) {
             //TODO recursive?
         }
@@ -191,7 +194,7 @@ void DirAnalyzer::analyzeClassfile() {
     _results.print(_options);
 }
 
-void DirAnalyzer::endDirAnalysis() const {
+void DirAnalyzer::endAnalysis() const {
     if (_options.generatePublicDigest && _digestTable->isDirty()) {
         _digestTable->write();
     }
@@ -202,7 +205,7 @@ void DirAnalyzer::run() {
     PrintTimeScope timeScope(true);
 
     if (!initDirAnalysis()) return;
-    analyzeClassfile();
-    endDirAnalysis();
+    analyze();
+    endAnalysis();
 
 }

@@ -11,21 +11,34 @@ namespace org::kapa::tarracsh {
 class ConstantPool {
 public:
     ConstantPool();
+    ~ConstantPool();
     void relocate();
     ConstantPoolRecord &operator[](const u2 index) const;
-        void setCount(const u2 count) { _count = count; }
+    void setCount(const u2 count) { _count = count; }
     [[nodiscard]] u2 getCount() const { return _count; }
 
+    // template <typename T>
+    // void add(T &data, const int size) {
+    //
+    //     auto reservedSpace = size;
+    //     while (reservedSpace > 0) {
+    //         _buffer.push_back(0);
+    //         --reservedSpace;
+    //     }
+    //     const auto start = &*(_buffer.end() - size);
+    //     memcpy(start, &data, size);
+    //
+    // }
     template <typename T>
     void add(T &data, const int size) {
 
-        auto reservedSpace = size;
-        while (reservedSpace > 0) {
-            _buffer.push_back(0);
-            --reservedSpace;
+        if (size + _position >= _size) {
+            _size <<= 1;
+            _buffer = static_cast<u1 *>(realloc(_buffer, _size));
         }
-        const auto start = &*(_buffer.end() - size);
-        memcpy(start, &data, size);
+
+        memcpy(&_buffer[_position], &data, size);
+        _position += size;
 
     }
 
@@ -37,7 +50,7 @@ public:
     template <typename T>
     void addRecord(T &data, int size) {
         _constantPoolIndex.push_back(
-            reinterpret_cast<ConstantPoolRecord *>(_buffer.size()) // NOLINT(performance-no-int-to-ptr)
+            reinterpret_cast<ConstantPoolRecord *>(_position) // NOLINT(performance-no-int-to-ptr)
             );
         add(data, size);
     }
@@ -56,7 +69,10 @@ public:
 
 private:
     [[maybe_unused]] u2 _count{};
-    std::vector<u1> _buffer;
+    // std::vector<u1> _buffer;
+    u1 *_buffer;
+    uint64_t _size{1024 * 1024};
+    uint64_t _position{0};
     static std::vector<std::string> _poolTagToString;
     static std::vector<std::string> _refKindToString;
 

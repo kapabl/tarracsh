@@ -2,6 +2,7 @@
 
 
 #include <libzippp/libzippp.h>
+#include <BS_thread_pool.hpp>
 
 #include "JarEntry.h"
 #include "../ClassFileAnalyzer.h"
@@ -25,7 +26,7 @@ void JarAnalyzer::parseEntry(const JarEntry &jarEntry) const {
 
     Options classfileOptions(_options);
     classfileOptions.classFilePath = jarEntry.getName();
-    readers::MemoryReader reader(jarEntry.getZipEntry());
+    readers::MemoryReader reader(jarEntry);
 
     ClassFileAnalyzer classFileAnalyzer(reader, classfileOptions, _results);
     if (classFileAnalyzer.run()) {
@@ -37,19 +38,24 @@ void JarAnalyzer::parseEntry(const JarEntry &jarEntry) const {
 }
 
 void JarAnalyzer::analyze() {
-
-    ZipArchive zipArchive(_options.jarFile);
-    zipArchive.open(ZipArchive::ReadOnly);
-
-    const auto entries = zipArchive.getEntries();
-    for (auto &entry : entries) {
-        JarEntry jarEntry(entry);
-        if (jarEntry.isClassfile()) {
-            cout << entry.getName() << endl;
-            _classfileCount++;
-            parseEntry(jarEntry);
-        }
-    }
+    //TODO
+    // ZipArchive zipArchive(_options.jarFile);
+    // zipArchive.open(ZipArchive::ReadOnly);
+    //
+    // const auto entries = zipArchive.getEntries();
+    // BS::thread_pool pool;
+    //
+    // for (auto &entry : entries) {
+    //     pool.push_task([this, entry] {
+    //         const JarEntry jarEntry(entry);
+    //         if (jarEntry.isClassfile()) {
+    //             cout << entry.getName() << endl;
+    //             _classfileCount++;
+    //             parseEntry(jarEntry);
+    //         }
+    //     });
+    // }
+    // pool.wait_for_tasks();
 }
 
 

@@ -80,9 +80,7 @@ public:
             _header.minorVersion = readU2();
             _header.majorVersion = readU2();
         } else {
-            //TODO better message with filename or jar filename + class
             std::cout << "Invalid class file " << std::endl;
-            // cout << "Invalid class file " << _options.classFilePath << std::endl;
             _isValid = false;
         }
 

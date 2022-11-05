@@ -11,7 +11,7 @@
 #include "AttributesManager.h"
 #include "ClassFileAnalyzer.h"
 
-#include "tables/ClassfileDigestTable.h"
+#include "tables/DigestTable.h"
 
 
 namespace org::kapa::tarracsh {
@@ -36,7 +36,7 @@ private:
     ClassFileAnalyzer& _classFileAnalyzer;
     ConstantPool& _constantPool;
   
-    [[nodiscard]] std::string digestString(u2 index) const;
+    [[nodiscard]] std::string digestUtf8Entry(u2 index) const;
     [[nodiscard]] std::string digestClassInfo(u2 classInfoIndex) const;
     [[nodiscard]] std::string digest(const attributes::AttributeInfo & attributeInfo) const;
     [[nodiscard]] std::string digest(const std::vector<attributes::AttributeInfo>& attributeInfos) const;

@@ -10,15 +10,17 @@ ClassFileDigest::ClassFileDigest(ClassFileAnalyzer &classFileAnalyzer)
 }
 
 
-string ClassFileDigest::digestString(u2 index) const {
-    const auto classname = _constantPool.getString(index);
-    auto result = stringUtils::md5AsString(classname);
+string ClassFileDigest::digestUtf8Entry(u2 index) const {
+    const auto& utf8Info = _constantPool[index].utf8Info;
+    auto digest = stringUtils::md5( reinterpret_cast<const char*>(utf8Info.bytes), utf8Info.length);
+
+    auto result = stringUtils::digestToString(digest);
     return result;
 }
 
 string ClassFileDigest::digestClassInfo(u2 classInfoIndex) const {
-    const auto classname = _constantPool.getClassInfoName(classInfoIndex);
-    auto result = stringUtils::md5AsString(classname);
+    const auto& classInfo = _constantPool[classInfoIndex].classInfo;
+    auto result = digestUtf8Entry(classInfo.nameIndex);
     return result;
 }
 
@@ -73,7 +75,7 @@ string ClassFileDigest::digest(const FieldInfo &fieldInfo) const {
 
     Poco::MD5Engine md5;
     Poco::DigestOutputStream stream(md5);
-    stream << digestString(fieldInfo.nameIndex)
+    stream << digestUtf8Entry(fieldInfo.nameIndex)
         << fieldInfo.accessFlags
         << digest(fieldInfo.attributes);
 
@@ -111,7 +113,7 @@ string ClassFileDigest::digest(const MethodInfo &methodInfo) const {
 
     Poco::MD5Engine md5;
     Poco::DigestOutputStream stream(md5);
-    stream << digestString(methodInfo.nameIndex)
+    stream << digestUtf8Entry(methodInfo.nameIndex)
         << methodInfo.accessFlags
         << digest(methodInfo.attributes);
 
