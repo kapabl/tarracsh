@@ -18,17 +18,24 @@ std::vector<std::string> ConstantPool::_refKindToString;
 
 void ConstantPool::addEmptyIndex() {
     _constantPoolIndex.push_back(
-        reinterpret_cast<ConstantPoolRecord *>(_buffer.size()) // NOLINT(performance-no-int-to-ptr)
-        );
+        reinterpret_cast<ConstantPoolRecord *>(_position));
 }
 
 ConstantPool::ConstantPool() {
-    _buffer.reserve(1048576);
+    // _buffer.reserve(1024 * 10240);
+    _buffer = static_cast<u1*>(malloc(_size));
+    _constantPoolIndex.reserve(20 * 1024);
     addEmptyIndex();
 }
 
+ConstantPool::~ConstantPool() {
+    free(_buffer);
+    _buffer = nullptr;
+}
+
 void ConstantPool::relocate() {
-    const auto baseAddress = reinterpret_cast<u1 *>(_buffer.data());
+    //const auto baseAddress = reinterpret_cast<u1 *>(_buffer.data());
+    const auto baseAddress = reinterpret_cast<u1 *>(_buffer);
     for (auto &pConstantPoolRecord : _constantPoolIndex) {
         const auto offset = reinterpret_cast<std::intptr_t>(pConstantPoolRecord);
         pConstantPoolRecord = reinterpret_cast<ConstantPoolRecord *>(baseAddress + offset);

@@ -1,7 +1,7 @@
 #ifndef TARRACSH_TABLE_H
 #define TARRACSH_TABLE_H
 #include <optional>
-#include <string>
+#include <shared_mutex>
 #include <unordered_map>
 #include <filesystem>
 #include <fstream>
@@ -24,6 +24,8 @@ template <typename T, typename K>
 class Table {
 
 public:
+    virtual ~Table() = default;
+
     explicit Table(const std::string &filename)
         : _filename(filename) {
         _stringPool = std::make_shared<StringPool>(filename + StringPoolExtension);
@@ -31,7 +33,7 @@ public:
 
     [[nodiscard]] bool isDirty() const { return _isDirty; }
 
-    std::optional<T> get(const K key) const {
+    [[nodiscard]] std::optional<T> get(const K key) const {
         std::optional<T> result;
         const auto &it = _rows.find(key);
         if (it != _rows.end()) {
@@ -41,38 +43,52 @@ public:
     }
 
     bool update(const T &row) {
-        auto key = row.getKey();
+        std::lock_guard lock(_mutex);
+        auto key = getKey(row);
         const auto &it = _rows.find(key);
         if (it != _rows.end()) {
+            const T *pBeforeRow = &it->second;
             _rows[key] = row;
             _isDirty = true;
+            //updateIndexes(pBeforeRow, &row);
             return true;
         }
         return false;
     }
 
-    void addOrUpdate(const T& row) {
-        auto key = row.getKey();
+    void addOrUpdate(const T &row) {
+        std::lock_guard lock(_mutex);
+        auto key = getKey(row);
+        const auto &it = _rows.find(key);
+        const T *pBeforeRow = nullptr;
+        if (it != _rows.end()) {
+            pBeforeRow = &it->second;
+        }
+        //updateIndexes(pBeforeRow, &row);
         _rows[key] = row;
         _isDirty = true;
     }
 
     bool add(const T &row) {
-        auto key = row.getKey();
-        const auto &it = _rows.find(key);
-        if (it == _rows.end()) {
-            _rows.insert({key, row});
-            _isDirty = true;
-            return true;
-        }
-        return false;
+        std::lock_guard lock(_mutex);
+        return internalAdd(row);
     }
 
+    virtual void updateIndexes(const T *pBeforeRow, const T *pAfterRow) {
+    }
+
+    virtual std::string getKey(const T &row) = 0;
+
+
+    void backupPrevFiles() const {
+        backupPrevFile(_filename);
+        const auto stringPoolFilename = _stringPool->getFilename();
+        backupPrevFile(stringPoolFilename);
+    }
 
     void write() {
-        if (std::filesystem::exists(_filename)) {
-            backupPrevFile();
-        }
+        std::lock_guard lock(_mutex);
+        backupPrevFiles();
 
         _stringPool->write();
 
@@ -80,14 +96,13 @@ public:
         file.unsetf(std::ios::skipws);
 
         for (auto &[key, row] : _rows) {
-            T outputRow;
-            row.serialize(_stringPool, outputRow);
-            file.write(reinterpret_cast<char *>(&outputRow), _rowSize);
+            file.write(reinterpret_cast<char *>(&row), _rowSize);
         }
     }
 
 
     bool clean() {
+        std::lock_guard lock(_mutex);
         const auto stringPoolCleaned = _stringPool->clean();
         auto tableFileCleaned = true;
         if (std::filesystem::exists(_filename)) {
@@ -103,7 +118,7 @@ public:
     }
 
     bool read() {
-
+        std::lock_guard lock(_mutex);
         if (!_stringPool->read()) return false;
 
         if (!std::filesystem::exists(_filename)) return true;
@@ -117,16 +132,13 @@ public:
             const auto bytesRead = file.gcount();
             if (bytesRead == 0) {
                 continue;
-            };
+            }
 
             if (bytesRead != _rowSize) {
                 std::cout << std::format("Error reading table: {}", _filename) << std::endl;
                 return false;
             }
-            rowBuffer.deserialize(_stringPool);
-
-            const auto &key = rowBuffer.getKey();
-            _rows[key] = rowBuffer;
+            internalAdd(rowBuffer);
         }
 
         return true;
@@ -134,18 +146,20 @@ public:
 
     std::shared_ptr<StringPool> getStringPool() { return _stringPool; }
 
-    [[nodiscard]] char *getPoolString(const std::string &value) const {
+    [[nodiscard]] StringPoolItem getPoolString(const std::string &value) const {
+
         const auto result = _stringPool->add(value);
         return result;
     }
 
-    [[nodiscard]] char *getPoolString(const std::wstring &value) const {
+    [[nodiscard]] StringPoolItem getPoolString(const std::wstring &value) const {
         const auto result = _stringPool->add(value);
         return result;
     }
 
 
     T *findByKey(const K &key) {
+        std::shared_lock lock(_mutex);
         T *result{};
         const auto it = _rows.find(key);
         if (it != _rows.end()) {
@@ -160,15 +174,32 @@ protected:
     std::string _filename;
     bool _isDirty{false};
     unsigned int _rowSize = sizeof(T);
+    std::shared_mutex _mutex;
 
     std::shared_ptr<StringPool> _stringPool;
 
-    void backupPrevFile() const {
-        const auto prevFilename = std::filesystem::path(_filename) / ".prev";
+    void backupPrevFile(const std::string &filename) const {
+        if (!std::filesystem::exists(filename)) {
+            return;
+        }
+        const auto prevFilename = std::filesystem::path(filename + ".prev");
         std::filesystem::remove(prevFilename);
+
         std::filesystem::rename(
-            std::filesystem::path(_filename),
+            std::filesystem::path(filename),
             prevFilename);
+    }
+
+    bool internalAdd(const T& row) {
+        auto key = getKey(row);
+        const auto& it = _rows.find(key);
+        if (it == _rows.end()) {
+            _rows.insert({ key, row });
+            //updateIndexes(nullptr, &row);
+            _isDirty = true;
+            return true;
+        }
+        return false;
     }
 };
 

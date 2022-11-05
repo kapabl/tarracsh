@@ -19,6 +19,8 @@ Global
 		Debug|x86 = Debug|x86
 		DebugJar|x64 = DebugJar|x64
 		DebugJar|x86 = DebugJar|x86
+		Rel2|x64 = Rel2|x64
+		Rel2|x86 = Rel2|x86
 		RelBigDir|x64 = RelBigDir|x64
 		RelBigDir|x86 = RelBigDir|x86
 		RelDirMd5|x64 = RelDirMd5|x64
@@ -53,6 +55,10 @@ Global
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.DebugJar|x64.Build.0 = DebugJar|x64
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.DebugJar|x86.ActiveCfg = DebugJar|Win32
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.DebugJar|x86.Build.0 = DebugJar|Win32
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Rel2|x64.ActiveCfg = Rel2|x64
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Rel2|x64.Build.0 = Rel2|x64
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Rel2|x86.ActiveCfg = Rel2|Win32
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Rel2|x86.Build.0 = Rel2|Win32
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.RelBigDir|x64.ActiveCfg = RelBigDir|x64
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.RelBigDir|x64.Build.0 = RelBigDir|x64
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.RelBigDir|x86.ActiveCfg = RelBigDir|Win32

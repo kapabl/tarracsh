@@ -3,6 +3,8 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <mutex>
+#include <shared_mutex>
 #include <string>
 #include <unordered_map>
 #include "../StringUtils.h"
@@ -13,7 +15,13 @@
 namespace org::kapa::tarracsh::tables {
 
 
-constexpr const char* StringPoolExtension = ".string-pool";
+constexpr const char *StringPoolExtension = ".string-pool";
+
+typedef uint64_t StringPoolItem;
+// struct StringPoolItem {
+//     //char* ptr;
+//     uint64_t offset{0u};
+// };
 
 
 class StringPool {
@@ -29,6 +37,8 @@ public:
 
         add("");
     }
+
+    [[nodiscard]] std::string getFilename() { return _filename; }
 
     ~StringPool() {
         free(_pool);
@@ -47,42 +57,16 @@ public:
         return result;
     }
 
-    char* add(const std::wstring& wStringValue) {
+    StringPoolItem add(const std::wstring &wStringValue) {
         const std::string stringValue = stringUtils::utf16ToUtf8(wStringValue);
-        const auto result = add(stringValue);
+        const auto result = internalAdd(stringValue);
         return result;
     }
 
- 
-    char *add(const std::string &stringValue) {
 
-        char *result = nullptr;
-        const auto it = _hash.find(stringValue);
-
-        if (it == _hash.end()) {
-
-            if (stringValue.length() + _position >= _poolSize) {
-                reallocPool();
-            }
-
-            _hash[stringValue] = _position;
-            result = &_pool[_position];
-            if (stringValue.length() > 0)
-            {
-                const char* begin = &*stringValue.begin();
-                std::memcpy(result, begin, stringValue.length());
-            }
-            
-            _position += stringValue.length();
-            _pool[_position] = 0;
-            _position++;
-
-        } else {
-            result = &_pool[it->second];
-        }
-
+    StringPoolItem add(const std::string &stringValue) {
+        const auto result = internalAdd(stringValue);
         return result;
-
     }
 
     bool read() {
@@ -127,10 +111,16 @@ public:
         auto result = true;
         if (std::filesystem::exists(_filename)) {
             result = std::filesystem::remove(_filename);
-            if ( !result ) {
+            if (!result) {
                 std::cout << std::format("Error removing string pool file: {}", _filename) << std::endl;
             }
         }
+        return result;
+    }
+
+    [[nodiscard]] const char *getCString(const StringPoolItem &item) {
+        std::shared_lock readersLock(_sharedMutex);
+        const auto result = &_pool[item];
         return result;
     }
 
@@ -143,6 +133,39 @@ private:
 
     uint64_t _poolSize{StartPoolSize};
     std::string _filename;
+    std::shared_mutex _sharedMutex;
+
+
+    StringPoolItem internalAdd(const std::string &stringValue) {
+        std::unique_lock writeLock(_sharedMutex);
+
+        StringPoolItem result;
+        const auto it = _hash.find(stringValue);
+
+        if (it == _hash.end()) {
+
+            if (stringValue.length() + _position >= _poolSize) {
+                reallocPool();
+            }
+
+            _hash[stringValue] = _position;
+            result = _position;
+            if (stringValue.length() > 0) {
+                const char *begin = &*stringValue.begin();
+                std::memcpy(&_pool[result], begin, stringValue.length());
+            }
+
+            _position += stringValue.length();
+            _pool[_position] = 0;
+            _position++;
+
+        } else {
+            result = it->second;
+        }
+
+        return result;
+
+    }
 
 
     void reallocPool() {
@@ -154,10 +177,6 @@ private:
 
 }
 
-union StringPoolItem {
-    char* ptr;
-    uint64_t offset{0u};
-};
 
 #undef CHUNK_SIZE
 

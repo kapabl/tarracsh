@@ -6,7 +6,7 @@
 #include <string>
 
 #include "Tarracsh.h"
-#include "tables/ClassfileDigestTable.h"
+#include "tables/DigestTable.h"
 
 
 namespace org::kapa::tarracsh::dir {
@@ -29,20 +29,20 @@ private:
     Options _options;
     Results _results;
     [[nodiscard]] std::string generateDigestTablename() const;
-    void processJarFile(std::filesystem::directory_entry const &dirEntry);
-    std::shared_ptr<tables::ClassfileDigestTable> _digestTable;
+    void processJar(std::filesystem::directory_entry const &dirEntry);
+    std::shared_ptr<tables::DigestTable> _digestTable;
 
     bool _isValid{true};
 
-    bool initializePublicMd5Table();
-    void processDirEntry(std::filesystem::directory_entry const &dirEntry);
+    bool initializeDigestTables();
+    void processFile(std::filesystem::directory_entry const &dirEntry);
     bool initDirAnalysis();
-    void analyzeClassfile();
-    void endDirAnalysis() const;
+    void analyze();
+    void endAnalysis() const;
 
     static bool isClassfile(std::filesystem::directory_entry const& dirEntry);
-    void analyzeClassfile(std::filesystem::directory_entry const &dirEntry);
-    bool isFileUnchanged(uintmax_t size, long long timestamp, const tables::ClassfileDigestRow *row) const;
+    void analyze(std::filesystem::directory_entry const &dirEntry);
+    bool isFileUnchanged(uintmax_t size, long long timestamp, const tables::DigestRow *row) const;
     void digestClassfile(std::filesystem::directory_entry const &classFileDirEntry);
     void processClassfile(std::filesystem::directory_entry const& dirEntry);
     static bool isJar(std::filesystem::directory_entry const& dirEntry);

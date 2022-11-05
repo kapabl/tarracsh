@@ -5,23 +5,20 @@
 #include <filesystem>
 #include <fstream>
 #include <libzippp/libzippp.h>
+#include "../jars/JarEntry.h"
+
 
 namespace org::kapa::tarracsh::readers {
 
 class MemoryReader final : public ClassFileReader {
 
 public:
-    explicit MemoryReader(const libzippp::ZipEntry &entry)
+    explicit MemoryReader(const jar::JarEntry &jarEntry)
         : ClassFileReader() {
 
-        _size = static_cast<long long>(entry.getSize());
-        _buffer = static_cast<char *>(entry.readAsBinary());
+        _size = static_cast<long long>(jarEntry.getSize());
+        _buffer = jarEntry.getBuffer();
         readHeader();
-
-    }
-
-    ~MemoryReader() override {
-        delete[] _buffer;
     }
 
     MemoryReader(const MemoryReader &) = delete;

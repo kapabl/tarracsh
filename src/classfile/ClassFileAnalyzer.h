@@ -13,7 +13,7 @@
 #include "AccessModifiers.h"
 #include "Stats.h"
 #include "readers/ClassFileReader.h"
-#include "tables/ClassfileDigestTable.h"
+#include "tables/DigestTable.h"
 
 
 namespace org::kapa::tarracsh {
