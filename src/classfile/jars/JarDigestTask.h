@@ -32,8 +32,8 @@ private:
     bool _isNewJarFile{false};
     std::map<std::string, tables::Md5Column> _digestMap;
 
-    [[nodiscard]] std::optional<tables::Md5Column> parseEntry(const JarEntry &jarEntry, 
-        const tables::ClassfileRow* row, auto&& taskThreadContext) const;
+    [[nodiscard]] std::optional<tables::Md5Column> parseEntry(const JarEntry &jarEntry,
+                                                              const tables::ClassfileRow *row) const;
 
     [[nodiscard]] const tables::ClassfileRow *getClassfileRow(const JarEntry &jarEntry) const;
     [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const tables::ClassfileRow *classRow);
