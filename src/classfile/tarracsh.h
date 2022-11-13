@@ -32,9 +32,8 @@ struct Options {
 };
 
 
-
 struct PrintTimeScope {
-    PrintTimeScope(const bool autoStart ) {
+    PrintTimeScope(const bool autoStart) {
         if (autoStart) {
             start();
         }
@@ -48,9 +47,14 @@ struct PrintTimeScope {
         endTime = std::chrono::high_resolution_clock::now();
     }
 
-    void printElapsedTime() {
+    std::chrono::duration<long long> getElapsedTime() {
         stop();
-        auto totalTime = std::chrono::duration_cast<std::chrono::seconds>(endTime - startTime);
+        const auto result = std::chrono::duration_cast<std::chrono::seconds>(endTime - startTime);
+        return result;
+    }
+
+    void printElapsedTime() {
+        auto totalTime = getElapsedTime();
         std::cout << std::endl << std::format("total time: {}", totalTime) << std::endl;
     }
 

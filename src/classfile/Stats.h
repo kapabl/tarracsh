@@ -6,21 +6,25 @@
 #include "Tarracsh.h"
 
 
-namespace org::kapa::tarracsh {
+namespace org::kapa::tarracsh::stats {
 
+typedef std::atomic<unsigned int> Counter;
+typedef std::atomic<unsigned long> FileTime;
+// typedef unsigned int Counter;
+// typedef unsigned long FileTime;
 
 struct PublicDigestResult {
-    unsigned unchangedCount{};
-    unsigned count{};
-    unsigned same{};
-    unsigned differentDigest{};
-    unsigned newFile{};
+    Counter unchangedCount{};
+    Counter count{};
+    Counter same{};
+    Counter differentDigest{};
+    Counter newFile{};
 };
 
 struct ClassfileStats {
-    unsigned count{};
-    unsigned parsedCount{};
-    unsigned errors{};
+    Counter count{};
+    Counter parsedCount{};
+    Counter errors{};
     PublicDigestResult digest;
 };
 
@@ -30,22 +34,22 @@ struct Results {
     ClassfileStats classfiles;
 
     struct {
-        unsigned count{};
-        unsigned parsedCount{};
-        unsigned errors{};
-        unsigned classfileCount{};
+        Counter count{};
+        Counter parsedCount{};
+        Counter errors{};
+        Counter classfileCount{};
         PublicDigestResult digest;
         ClassfileStats classfiles;
     } jarfiles;
 
 
-    unsigned long classfileTime{};
-    unsigned long jarfileTime{};
+    FileTime classfileTime{};
+    FileTime jarfileTime{};
 
     Log resultLog;
 
 
-    void print(const Options& options) const;
+    void print(const Options &options) const;
     void printAll(const Options &options) const;
 
 };

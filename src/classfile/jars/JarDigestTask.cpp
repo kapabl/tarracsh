@@ -9,6 +9,7 @@
 
 using namespace org::kapa::tarracsh::jar;
 using namespace org::kapa::tarracsh::tables;
+using namespace org::kapa::tarracsh::stats;
 using namespace std;
 
 JarDigestTask::JarDigestTask(
@@ -32,22 +33,41 @@ const ClassfileRow *JarDigestTask::getClassfileRow(const JarEntry &jarEntry) con
 }
 
 void JarDigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
-    const auto classDigest = digestEntry(jarEntry);
-    {
+
+    auto taskThreadContext = [this, &taskMutex](auto &&func) {
         std::unique_lock lock(taskMutex);
-        _jarFileRow->classfileCount++;
-        _digestMap[jarEntry.getClassname()] = classDigest.value();
+        func();
+    };
+
+    const auto *row = getClassfileRow(jarEntry);
+
+    const auto isUnchanged = row != nullptr && isClassfileUnchanged(jarEntry, row);
+    const std::optional<Md5Column> classDigest =
+        isUnchanged
+            ? row->md5
+            : parseEntry(jarEntry, row, taskThreadContext);
+
+    std::unique_lock lock(taskMutex);
+
+    ++_results.jarfiles.classfiles.count;
+    ++_results.jarfiles.classfiles.digest.count;
+
+    if (isUnchanged) {
+        ++_results.jarfiles.classfiles.digest.unchangedCount;
     }
+    ++_jarFileRow->classfileCount;
+    _digestMap[jarEntry.getClassname()] = classDigest.value();
+
 }
 
 void JarDigestTask::end() {
-    _results.jarfiles.digest.count++;
+    ++_results.jarfiles.digest.count;
     _results.jarfiles.classfileCount += _jarFileRow->classfileCount;
 
     if (_isFileUnchanged) {
         _results.jarfiles.classfiles.digest.count += _jarFileRow->classfileCount;
         _results.jarfiles.classfiles.digest.unchangedCount += _jarFileRow->classfileCount;
-        _results.jarfiles.digest.unchangedCount++;
+        ++_results.jarfiles.digest.unchangedCount;
         return;
     }
 
@@ -67,19 +87,15 @@ void JarDigestTask::end() {
 
     if (isSameDigest) {
         _results.resultLog.writeln(std::format("Same public digestEntry of changed jar file:{}", filename));
-        _results.jarfiles.digest.same++;
+        ++_results.jarfiles.digest.same;
     } else {
         _jarFileRow->md5 = digest;
-        //_jarFileRow->classfileCount = _count;
-
         if (_isNewJarFile) {
-            _results.jarfiles.digest.newFile++;
+            ++_results.jarfiles.digest.newFile;
         } else {
-            _results.jarfiles.digest.differentDigest++;
+            ++_results.jarfiles.digest.differentDigest;
         }
     }
-
-
 
 }
 
@@ -97,7 +113,7 @@ const FileRow *JarDigestTask::createJarFileRow(const std::string &filename) cons
     jarFileRow.type = Jar;
     jarFileRow.lastWriteTime = _jarTimestamp;
     jarFileRow.fileSize = _jarSize;
-    const auto id =_filesTable->add(jarFileRow);
+    const auto id = _filesTable->add(jarFileRow);
     const auto result = _filesTable->getRow(id);
     return result;
 
@@ -124,26 +140,11 @@ bool JarDigestTask::start() {
     return result;
 }
 
-std::optional<Md5Column> JarDigestTask::digestEntry(
-    const JarEntry &jarEntry) const {
-    std::optional<Md5Column> result;
-    _results.jarfiles.classfiles.count++;
-    _results.jarfiles.classfiles.digest.count++;
-    const auto *row = getClassfileRow(jarEntry);
+optional<Md5Column> JarDigestTask::parseEntry(
+    const JarEntry &jarEntry,
+    const ClassfileRow *row,
+    auto &&taskThreadContext) const {
 
-    if (row != nullptr && isClassfileUnchanged(jarEntry, row)) {
-        _results.jarfiles.classfiles.digest.unchangedCount++;
-        result = row->md5;
-        return result;
-    }
-
-    result = parseEntry(jarEntry, row);
-
-    return result;
-
-}
-
-optional<Md5Column> JarDigestTask::parseEntry(const JarEntry &jarEntry, const ClassfileRow *row) const {
     optional<Md5Column> result;
     Options classfileOptions(_options);
     classfileOptions.classFilePath = jarEntry.getName();
@@ -157,9 +158,14 @@ optional<Md5Column> JarDigestTask::parseEntry(const JarEntry &jarEntry, const Cl
         const auto isSameDigest = alreadyExists && digest.value() == row->md5;
 
         if (isSameDigest) {
-            _results.resultLog.writeln(std::format("Same public digestEntry of changed file:{}",
-                                                   _digestTable->createKey(*row)));
-            _results.jarfiles.classfiles.digest.same++;
+
+            taskThreadContext([this,&row] {
+                _results.resultLog.writeln(
+                    std::format("Same public digestEntry of changed file:{}",
+                                _digestTable->createKey(*row)));
+                ++_results.jarfiles.classfiles.digest.same;
+            });
+
             result = row->md5;
         } else {
             const auto classname = classFileAnalyzer.getMainClassname();
@@ -172,18 +178,24 @@ optional<Md5Column> JarDigestTask::parseEntry(const JarEntry &jarEntry, const Cl
             digestRow.id = _digestTable->addOrUpdate(digestRow);
 
             result = digestRow.md5;
+            taskThreadContext([this,&alreadyExists] {
+                if (alreadyExists) {
+                    ++_results.jarfiles.classfiles.digest.differentDigest;
+                } else {
+                    ++_results.jarfiles.classfiles.digest.newFile;
+                }
+            });
 
-            if (alreadyExists) {
-                _results.jarfiles.classfiles.digest.differentDigest++;
-            } else {
-                _results.jarfiles.classfiles.digest.newFile++;
-            }
         }
-
-        _results.jarfiles.classfiles.parsedCount++;
+        taskThreadContext([this] {
+            ++_results.jarfiles.classfiles.parsedCount;
+        });
 
     } else {
-        _results.jarfiles.classfiles.errors++;
+        taskThreadContext([this] {
+            ++_results.jarfiles.classfiles.errors;
+        });
+
     }
     return result;
 }

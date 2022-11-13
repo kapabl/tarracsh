@@ -8,7 +8,7 @@
 namespace org::kapa::tarracsh::jar {
 class JarAnalyzerTask {
 public:
-    explicit JarAnalyzerTask(Options options, Results &results);
+    explicit JarAnalyzerTask(Options options, stats::Results &results);
 
     JarAnalyzerTask(const JarAnalyzerTask &) = delete;
     JarAnalyzerTask(const JarAnalyzerTask &&) = delete;
@@ -21,11 +21,11 @@ public:
     void run();
 
 
-    unsigned int getClassfileCount() const;
+    [[nodiscard]] unsigned int getClassfileCount() const;
 
 
 private:
-    Results &_results;
+    stats::Results &_results;
     Options _options;
     bool _isValid{true};
     unsigned int _classfileCount{0};

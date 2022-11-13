@@ -9,6 +9,7 @@
 
 using namespace org::kapa::tarracsh;
 using namespace attributes;
+using namespace stats;
 using namespace std;
 
 ClassFileAnalyzer::ClassFileAnalyzer(readers::ClassFileReader &reader, Options &options, Results &results)

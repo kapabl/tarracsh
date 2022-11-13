@@ -14,7 +14,7 @@ namespace org::kapa::tarracsh::jar {
 class JarDigestTask : public JarTask {
 public:
     explicit JarDigestTask(
-        Options options, Results &results,
+        Options options, stats::Results &results,
         std::shared_ptr<tables::ClassfilesTable> digestTable,
         std::shared_ptr<tables::FilesTable> filesTable
         );
@@ -26,14 +26,15 @@ public:
 private:
     std::shared_ptr<tables::ClassfilesTable> _digestTable;
     std::shared_ptr<tables::FilesTable> _filesTable;
-    Results &_results;
+    stats::Results &_results;
     Options _options;
     bool _isFileUnchanged{false};
     bool _isNewJarFile{false};
     std::map<std::string, tables::Md5Column> _digestMap;
 
-    [[nodiscard]] std::optional<tables::Md5Column> digestEntry(const JarEntry &jarEntry) const;
-    std::optional<tables::Md5Column> parseEntry(const JarEntry &jarEntry, const tables::ClassfileRow* row) const;
+    [[nodiscard]] std::optional<tables::Md5Column> parseEntry(const JarEntry &jarEntry, 
+        const tables::ClassfileRow* row, auto&& taskThreadContext) const;
+
     [[nodiscard]] const tables::ClassfileRow *getClassfileRow(const JarEntry &jarEntry) const;
     [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const tables::ClassfileRow *classRow);
     [[nodiscard]] bool isFileUnchanged() const;

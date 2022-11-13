@@ -21,7 +21,7 @@ namespace org::kapa::tarracsh {
 class ClassFileAnalyzer final {
 
 public:
-    explicit ClassFileAnalyzer(readers::ClassFileReader& reader, Options &options, Results &results);
+    explicit ClassFileAnalyzer(readers::ClassFileReader& reader, Options &options, stats::Results &results);
 
     ClassFileAnalyzer(const ClassFileAnalyzer &) = delete;
     ClassFileAnalyzer(const ClassFileAnalyzer &&) = delete;
@@ -49,7 +49,7 @@ public:
 
 private:
     Options _options;
-    Results &_results;
+    stats::Results &_results;
     readers::ClassFileReader& _reader;
 
     ConstantPool _constantPool;

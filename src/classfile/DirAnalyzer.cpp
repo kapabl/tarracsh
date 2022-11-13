@@ -246,8 +246,13 @@ void DirAnalyzer::run() {
 
     PrintTimeScope timeScope(true);
 
-    if (!initDirAnalysis()) return;
-    analyze();
-    endAnalysis();
+    if (initDirAnalysis()) {
+        analyze();
+        endAnalysis();
+    }
+    cout << endl << ((1.0 * _results.classfiles.count +
+            _results.jarfiles.classfileCount) / (timeScope.getElapsedTime().count() * 1.0))
+        << " classfile/s: " << endl;
+
 
 }
