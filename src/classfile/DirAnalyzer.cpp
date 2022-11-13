@@ -39,10 +39,10 @@ void DirAnalyzer::analyze(filesystem::directory_entry const &dirEntry) {
 
     ClassFileAnalyzer classFileAnalyzer(reader, options, _results);
     if (classFileAnalyzer.run()) {
-        _results.classfiles.parsedCount++;
+        ++_results.classfiles.parsedCount;
 
     } else {
-        _results.classfiles.errors++;
+        ++_results.classfiles.errors;
     }
 }
 
@@ -65,7 +65,7 @@ void DirAnalyzer::digestClassfile(filesystem::directory_entry const &dirEntry) {
     const bool rowFound = row != nullptr;
     const auto unchangedFile = isFileUnchanged(size, timestamp, row);
 
-    _results.classfiles.digest.count++;
+    ++_results.classfiles.digest.count;
 
     if (!unchangedFile) {
 
@@ -81,7 +81,7 @@ void DirAnalyzer::digestClassfile(filesystem::directory_entry const &dirEntry) {
 
             if (isSamePublicDigest) {
                 _results.resultLog.writeln(std::format("Same public digestEntry of changed file:{}", filename));
-                _results.classfiles.digest.same++;
+                ++_results.classfiles.digest.same;
             } else {
 
                 FileRow fileRow;
@@ -100,19 +100,19 @@ void DirAnalyzer::digestClassfile(filesystem::directory_entry const &dirEntry) {
                 digestRow.id = _digestTable->addOrUpdate(digestRow);
 
                 if (rowFound) {
-                    _results.classfiles.digest.differentDigest++;
+                    ++_results.classfiles.digest.differentDigest;
                 } else {
-                    _results.classfiles.digest.newFile++;
+                    ++_results.classfiles.digest.newFile;
                 }
             }
 
-            _results.classfiles.parsedCount++;
+            ++_results.classfiles.parsedCount;
 
         } else {
-            _results.classfiles.errors++;
+            ++_results.classfiles.errors;
         }
     } else {
-        _results.classfiles.digest.unchangedCount++;
+        ++_results.classfiles.digest.unchangedCount;
     }
 
 }
@@ -121,7 +121,7 @@ void DirAnalyzer::digestClassfile(filesystem::directory_entry const &dirEntry) {
  * TODO implement thread _threadPool, enqueue "tasks"
  */
 void DirAnalyzer::processClassfile(filesystem::directory_entry const &dirEntry) {
-    _results.classfiles.count++;
+    ++_results.classfiles.count;
     if (_options.generatePublicDigest) {
         digestClassfile(dirEntry);
     } else {
@@ -154,24 +154,27 @@ std::string DirAnalyzer::generateStringPoolFilename(const string &name) const {
     return result;
 }
 
-void DirAnalyzer::processJar(filesystem::directory_entry const &dirEntry) {
+// void DirAnalyzer::processJar(filesystem::directory_entry dirEntry) {
+void DirAnalyzer::processJar(std::string filename) {
+    _jarThreadPool.push_task([this,filename] {
+        Options jarOptions(_options);
+        // jarOptions.jarFile = dirEntry.path().string();
+        jarOptions.jarFile = filename;
 
-    Options jarOptions(_options);
-    jarOptions.jarFile = dirEntry.path().string();
-
-    _results.jarfiles.count++;
-    if (_options.generatePublicDigest) {
-        jar::JarDigestTask jarDigestTask(jarOptions, _results, _digestTable, _filesTable);
-        jar::JarProcessor jarProcessor(jarOptions, _results, jarDigestTask);
-        jarProcessor.run();
-        //_results.jarfiles.classfileCount += jarProcessor.getClassfileCount();
-    } else {
-        //TODO
-        // jar::JarAnalyzeTask jarAnalyzeTask(jarOptions, _results);
-        // jar::JarProcessor jarProcessor(jarOptions, _results, jarAnalyzeTask);
-        // jarProcessor.run();
-        //_results.jarfiles.classfileCount += jarAnalyzer.getClassfileCount();
-    }
+        ++_results.jarfiles.count;
+        if (_options.generatePublicDigest) {
+            jar::JarDigestTask jarDigestTask(jarOptions, _results, _digestTable, _filesTable);
+            jar::JarProcessor jarProcessor(jarOptions, _results, jarDigestTask);
+            jarProcessor.run();
+            //_results.jarfiles.classfileCount += jarProcessor.getClassfileCount();
+        } else {
+            //TODO
+            // jar::JarAnalyzeTask jarAnalyzeTask(jarOptions, _results);
+            // jar::JarProcessor jarProcessor(jarOptions, _results, jarAnalyzeTask);
+            // jarProcessor.run();
+            //_results.jarfiles.classfileCount += jarAnalyzer.getClassfileCount();
+        }
+    });
 }
 
 bool DirAnalyzer::initializeDigestTables() {
@@ -195,9 +198,10 @@ bool DirAnalyzer::initializeDigestTables() {
 }
 
 
-void DirAnalyzer::processFile(filesystem::directory_entry const &dirEntry) {
+void DirAnalyzer::processFile(const filesystem::directory_entry &dirEntry) {
     if (isJar(dirEntry)) {
-        processJar(dirEntry);
+        // processJar(dirEntry);
+        processJar(dirEntry.path().string());
     } else if (isClassfile(dirEntry)) {
         processClassfile(dirEntry);
     }
@@ -217,14 +221,14 @@ void DirAnalyzer::analyze() {
     for (auto const &dirEntry : filesystem::recursive_directory_iterator(_options.directory)) {
         if (dirEntry.is_regular_file()) {
             processFile(dirEntry);
-        } else if (dirEntry.is_directory()) {
-            //TODO recursive?
         }
         count++;
-        if (count % 100 == 0) {
+        if (count % 1000 == 0) {
             _results.print(_options);
         }
     }
+    _jarThreadPool.wait_for_tasks();
+    _results.print(_options);
     _results.printAll(_options);
 }
 
@@ -251,8 +255,7 @@ void DirAnalyzer::run() {
         endAnalysis();
     }
     cout << endl << ((1.0 * _results.classfiles.count +
-            _results.jarfiles.classfileCount) / (timeScope.getElapsedTime().count() * 1.0))
+                      _results.jarfiles.classfileCount) / (timeScope.getElapsedTime().count() * 1.0))
         << " classfile/s: " << endl;
-
 
 }

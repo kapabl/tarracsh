@@ -1,6 +1,5 @@
 #include "JarProcessor.h"
 
-
 #include <BS_thread_pool.hpp>
 #include <unordered_set>
 #include <libzippp/libzippp.h>
@@ -85,7 +84,7 @@ void JarProcessor::run() {
         _threadPool.wait_for_tasks();
     }
     _jarTask.end();
-    _results.jarfiles.parsedCount++;
+    ++_results.jarfiles.parsedCount;
     _results.print(_options);
 }
 

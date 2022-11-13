@@ -4,6 +4,7 @@
 
 #include <filesystem>
 #include <string>
+#include <BS_thread_pool.hpp>
 
 #include "Tarracsh.h"
 #include "tables/ClassfilesTable.h"
@@ -31,15 +32,18 @@ private:
     stats::Results _results;
     [[nodiscard]] std::string generateFileTablename(const std::string &name) const;
     [[nodiscard]] std::string generateStringPoolFilename(const std::string& name) const;
-    void processJar(std::filesystem::directory_entry const &dirEntry);
+    // void processJar(std::filesystem::directory_entry dirEntry);
+    void processJar(std::string filename);
     std::shared_ptr<tables::FilesTable> _filesTable;
     std::shared_ptr<tables::StringPool> _stringPool;
     std::shared_ptr<tables::ClassfilesTable> _digestTable;
 
+    BS::thread_pool _jarThreadPool;
+
     bool _isValid{true};
 
     bool initializeDigestTables();
-    void processFile(std::filesystem::directory_entry const &dirEntry);
+    void processFile(const std::filesystem::directory_entry &dirEntry);
     bool initDirAnalysis();
     void analyze();
     void endAnalysis() const;
