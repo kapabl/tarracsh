@@ -10,3 +10,6 @@
 /Debug/
 /cmake-build-debug/
 
+/output/digest.kapamd
+/output/files.kapamd
+/output/sp.string-pool

@@ -1,5 +1,6 @@
 #ifndef TARRACSH_STRING_POOL_H
 #define TARRACSH_STRING_POOL_H
+#include <cassert>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -8,6 +9,7 @@
 #include <string>
 #include <unordered_map>
 #include "../StringUtils.h"
+#include "../FilesystemUtils.h"
 
 
 #pragma pack( push, 1 )
@@ -53,6 +55,8 @@ public:
 
     [[nodiscard]] char *toPtr(const uint64_t offset) const {
 
+        assert(offset < _size);
+
         const auto result = &_pool[offset];
         return result;
     }
@@ -73,12 +77,12 @@ public:
 
         if (!std::filesystem::exists(_filename)) return true;
 
-        const auto fileSize = std::filesystem::file_size(std::filesystem::path(_filename));
+        const auto fileSize = file_size(std::filesystem::path(_filename));
 
-        if (fileSize > _poolSize) {
+        if (fileSize > _size) {
             free(_pool);
-            _poolSize = fileSize;
-            _pool = static_cast<char *>(malloc(_poolSize));
+            _size = fileSize;
+            _pool = static_cast<char *>(malloc(_size));
         }
 
         std::ifstream file(_filename, std::ios::binary);
@@ -97,15 +101,19 @@ public:
             _hash[value] = currentPosition;
             currentPosition += value.length() + 1;
         }
+        _isDirty = false;
         return true;
 
     }
 
     void write() const {
+        fsUtils::backupPrevFile(_filename);
         std::ofstream file(_filename, std::ios::binary);
         file.unsetf(std::ios::skipws);
         file.write(_pool, _position);
     }
+
+    [[nodiscard]] bool isDirty() const { return _isDirty; }
 
     bool clean() {
         auto result = true;
@@ -126,12 +134,13 @@ public:
 
 
 private:
+    bool _isDirty{false};
     char *_pool{nullptr};
     uint64_t _position{0};
 
     std::unordered_map<std::string, uint64_t> _hash;
 
-    uint64_t _poolSize{StartPoolSize};
+    uint64_t _size{StartPoolSize};
     std::string _filename;
     std::shared_mutex _sharedMutex;
 
@@ -144,11 +153,12 @@ private:
 
         if (it == _hash.end()) {
 
-            if (stringValue.length() + _position >= _poolSize) {
+            if (stringValue.length() + _position >= _size) {
                 reallocPool();
             }
 
             _hash[stringValue] = _position;
+            _isDirty = true;
             result = _position;
             if (stringValue.length() > 0) {
                 const char *begin = &*stringValue.begin();
@@ -167,10 +177,9 @@ private:
 
     }
 
-
     void reallocPool() {
-        _poolSize = _poolSize * 2;
-        _pool = static_cast<char *>(realloc(_pool, _poolSize));
+        _size = _size * 2;
+        _pool = static_cast<char *>(realloc(_pool, _size));
     }
 
 };

@@ -2,26 +2,22 @@
 #define JAR_ANALYZER_H
 #include "../Tarracsh.h"
 #include "../Stats.h"
-#include <ranges>
 #include "JarEntry.h"
-
-#include "../tables/DigestTable.h"
-
 
 
 namespace org::kapa::tarracsh::jar {
-class JarAnalyzer {
+class JarAnalyzerTask {
 public:
-    explicit JarAnalyzer(Options options, Results &results);
+    explicit JarAnalyzerTask(Options options, Results &results);
 
-    JarAnalyzer(const JarAnalyzer &) = delete;
-    JarAnalyzer(const JarAnalyzer &&) = delete;
-    JarAnalyzer &operator=(const JarAnalyzer &) = delete;
-    JarAnalyzer &operator=(const JarAnalyzer &&) = delete;
+    JarAnalyzerTask(const JarAnalyzerTask &) = delete;
+    JarAnalyzerTask(const JarAnalyzerTask &&) = delete;
+    JarAnalyzerTask &operator=(const JarAnalyzerTask &) = delete;
+    JarAnalyzerTask &operator=(const JarAnalyzerTask &&) = delete;
 
     [[nodiscard]] bool isValid() const { return _isValid; }
 
-    ~JarAnalyzer() = default;
+    ~JarAnalyzerTask() = default;
     void run();
 
 

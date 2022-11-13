@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="CMakePresetLoader"><![CDATA[{
+  "useNewFormat": true
+}]]></component>
   <component name="CMakeReloadState">
     <option name="reloaded" value="true" />
   </component>
@@ -12,23 +15,14 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fcc1f7de-c9bd-46dd-a3b2-571107d49846" name="Changes" comment="Fixing....">
-      <change beforePath="$PROJECT_DIR$/.clwb/.bazelproject" beforeDir="false" afterPath="$PROJECT_DIR$/1-.clwb/.bazelproject" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.clwb/.blaze/modules/.project-data-dir.iml" beforeDir="false" afterPath="$PROJECT_DIR$/1-.clwb/.blaze/modules/.project-data-dir.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.clwb/.blaze/modules/.workspace.iml" beforeDir="false" afterPath="$PROJECT_DIR$/1-.clwb/.blaze/modules/.workspace.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.clwb/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/1-.clwb/.idea/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.clwb/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/1-.clwb/.idea/.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.clwb/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" afterPath="$PROJECT_DIR$/1-.clwb/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.clwb/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/1-.clwb/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.clwb/.idea/runConfigurations.xml" beforeDir="false" afterPath="$PROJECT_DIR$/1-.clwb/.idea/runConfigurations.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.clwb/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/1-.clwb/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUILD.bazel" beforeDir="false" afterPath="$PROJECT_DIR$/BUILD.bazel" afterDir="false" />
-    </list>
+    <list default="true" id="fcc1f7de-c9bd-46dd-a3b2-571107d49846" name="Changes" comment="Fixing...." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
   </component>
   <component name="ConanProjectSettings">
     <option name="conanPath" value="" />
@@ -94,9 +88,9 @@
     "cf.advertisement.text.overridden": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "last_opened_file_path": "D:/dev/kapa/repos/tarracsh",
+    "last_opened_file_path": "/home/kapa/repos/tarracsh",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "CPPToolchains"
+    "settings.editor.selected.configurable": "vcs.Git"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -111,6 +105,11 @@
       </blaze-settings>
       <method v="2">
         <option name="Blaze.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
   </component>
@@ -136,6 +135,7 @@
       <workItem from="1657939717228" duration="604000" />
       <workItem from="1658093288850" duration="53000" />
       <workItem from="1658093502801" duration="353000" />
+      <workItem from="1667700364752" duration="1631000" />
     </task>
     <task id="LOCAL-00001" summary="Adding CMAKE build">
       <created>1657267051727</created>

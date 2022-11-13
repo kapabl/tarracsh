@@ -13,7 +13,7 @@
 #include "AccessModifiers.h"
 #include "Stats.h"
 #include "readers/ClassFileReader.h"
-#include "tables/DigestTable.h"
+#include "tables/ClassfilesTable.h"
 
 
 namespace org::kapa::tarracsh {
@@ -32,7 +32,7 @@ public:
 
     ~ClassFileAnalyzer() = default;
     bool run();
-    std::optional<tables::MD5> getPublicDigest();
+    std::optional<tables::Md5Column> getPublicDigest();
     attributes::AttributesManager &getAttributesManager() { return _attributesManager; }
     accessModifiers::AccessModifiers &getAccessModifiers() { return _accessModifiers; }
     ConstantPool &getConstantPool() { return _constantPool; }

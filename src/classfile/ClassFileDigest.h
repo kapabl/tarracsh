@@ -11,7 +11,7 @@
 #include "AttributesManager.h"
 #include "ClassFileAnalyzer.h"
 
-#include "tables/DigestTable.h"
+#include "tables/ClassfilesTable.h"
 
 
 namespace org::kapa::tarracsh {
@@ -28,7 +28,7 @@ public:
 
 
     ~ClassFileDigest() = default;
-    [[nodiscard]] tables::MD5 digest() const;
+    [[nodiscard]] tables::Md5Column digest() const;
 
 
 private:
