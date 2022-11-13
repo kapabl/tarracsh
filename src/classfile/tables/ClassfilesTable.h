@@ -13,7 +13,6 @@ struct ClassfileRow : AutoIncrementedRow {
     ColumnRef file{};
     StringPoolItem classname{0u};
     StringPoolItem package{0u};
-    uint64_t count{1};
     uint64_t lastWriteTime{};
     uint64_t size{};
     int crc{0};
