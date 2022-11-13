@@ -1,0 +1,56 @@
+
+
+Stats of parallelize classfile parsing, jar single threaded
+============================================================
+Nov-13-2022
+
+classfiles: 570776 jars: 488
+
+classfiles:
+        No        Ok     Error
+     90855     90855         0
+jars:
+        No        Ok     Error
+       488       488         0
+standalone classfile digest:
+        No       New      Same      Diff Unchanged
+     90855     90855         0         0         0
+jar digest:
+        No       New      Same      Diff Unchanged
+       488       488         0         0         0
+classfile inside jars digest:
+        No       New      Same      Diff Unchanged
+    479921    479921         0         0         0
+
+total classfiles: 570776
+
+2571.06 classfile/s:
+
+total time: 222s
+
+----------------------------
+
+
+classfiles: 570776 jars: 488
+
+classfiles:
+        No        Ok     Error
+     90855     90855         0
+jars:
+        No        Ok     Error
+       488       488         0
+standalone classfile digest:
+        No       New      Same      Diff Unchanged
+     90855     90855         0         0         0
+jar digest:
+        No       New      Same      Diff Unchanged
+       488       488         0         0         0
+classfile inside jars digest:
+        No       New      Same      Diff Unchanged
+    479921    479921         0         0         0
+
+total classfiles: 570774
+
+2492.46 classfile/s:
+
+total time: 229s
