@@ -1,7 +1,7 @@
 #include "TarracshApp.h"
 #include "ClassFileAnalyzer.h"
 #include "DirAnalyzer.h"
-#include "jars/JarAnalyzer.h"
+#include "jars/JarAnalyzerTask.h"
 #include "readers/FileReader.h"
 
 #ifdef _WIN32
@@ -38,7 +38,7 @@ int TarracshApp::start(int argc, char *argv[]) {
         classFileAnalyzer.run();
     } else if (!_options.jarOption->empty()) {
         //TODO we need a class that takes the decision between analyze or digest
-        jar::JarAnalyzer jarAnalyzer(_options, results);
+        jar::JarAnalyzerTask jarAnalyzer(_options, results);
         jarAnalyzer.run();
     } else if (!_options.dirOption->empty()) {
         dir::DirAnalyzer dirAnalyzer(_options);

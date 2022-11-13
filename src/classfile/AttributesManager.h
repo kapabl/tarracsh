@@ -2,7 +2,7 @@
 #define TARRASH_ATTRIBUTES_MANAGER_H
 
 
-#include "tables/DigestTable.h"
+#include "tables/ClassfilesTable.h"
 
 #include "Poco/MD5Engine.h"
 #include "Poco/DigestStream.h"

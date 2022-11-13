@@ -2,7 +2,7 @@
 #include "ClassFileAnalyzer.h"
 
 #include "ClassFileDigest.h"
-#include "tables/DigestTable.h"
+#include "tables/ClassfilesTable.h"
 
 #include "MethodDescriptorParser.h"
 #include "ParserOutput.h"
@@ -43,8 +43,8 @@ bool ClassFileAnalyzer::run() {
     return result;
 }
 
-optional<tables::MD5> ClassFileAnalyzer::getPublicDigest() {
-    optional<tables::MD5> result;
+optional<tables::Md5Column> ClassFileAnalyzer::getPublicDigest() {
+    optional<tables::Md5Column> result;
     if (run()) {
         const ClassFileDigest classFileDigest(*this);
         result = classFileDigest.digest();

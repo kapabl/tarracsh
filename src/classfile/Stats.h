@@ -45,7 +45,8 @@ struct Results {
     Log resultLog;
 
 
-    void print(const Options& options);
+    void print(const Options& options) const;
+    void printAll(const Options &options) const;
 
 };
 

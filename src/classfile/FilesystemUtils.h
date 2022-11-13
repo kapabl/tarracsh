@@ -14,6 +14,18 @@ inline auto getLastWriteTimestamp( const std::string& filename) {
     return result;
 }
 
+inline void backupPrevFile(const std::string& filename) {
+    if (!std::filesystem::exists(filename)) {
+        return;
+    }
+    const auto prevFilename = std::filesystem::path(filename + ".prev");
+    std::filesystem::remove(prevFilename);
+
+    std::filesystem::rename(
+        std::filesystem::path(filename),
+        prevFilename);
+}
+
 }
 
 

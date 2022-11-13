@@ -126,7 +126,7 @@ string ClassFileDigest::digest(const MethodInfo &methodInfo) const {
 
 }
 
-tables::MD5 ClassFileDigest::digest() const {
+tables::Md5Column ClassFileDigest::digest() const {
 
     Poco::MD5Engine md5;
     Poco::DigestOutputStream stream(md5);
@@ -142,7 +142,7 @@ tables::MD5 ClassFileDigest::digest() const {
 
     stream.close();
 
-    tables::MD5 result;
+    tables::Md5Column result;
     memcpy(result.buf, &*md5.digest().begin(), MD5_DIGEST_LENGTH);
     return result;
 }

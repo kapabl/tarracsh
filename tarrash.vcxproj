@@ -564,9 +564,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
-    <Link>
-      <AdditionalOptions>/VERBOSE %(AdditionalOptions)</AdditionalOptions>
-    </Link>
+    <Link />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelJarDirMd5|x64'">
     <ClCompile>
@@ -614,21 +612,23 @@
   <ItemGroup>
     <ClCompile Include="src\classfile\ClassFileDigest.cpp" />
     <ClCompile Include="src\classfile\ConstantPool.cpp" />
-    <ClCompile Include="src\classfile\jars\JarAnalyzer.cpp" />
+    <ClCompile Include="src\classfile\jars\JarAnalyzerTask.cpp" />
+    <ClCompile Include="src\classfile\jars\JarDigestTask.cpp" />
     <ClCompile Include="src\classfile\jars\JarProcessor.cpp" />
-    <ClCompile Include="src\classfile\jars\JarTask.cpp" />
     <ClCompile Include="src\classfile\ParserOutput.cpp" />
     <ClCompile Include="src\classfile\readers\ClassFileReader.cpp" />
     <ClCompile Include="src\classfile\readers\FileReader.cpp" />
     <ClCompile Include="src\classfile\readers\MemoryReader.cpp" />
     <ClCompile Include="src\classfile\Stats.cpp" />
-    <ClCompile Include="src\classfile\tables\DigestTable.cpp" />
+    <ClCompile Include="src\classfile\tables\ClassfilesTable.cpp" />
+    <ClCompile Include="src\classfile\tables\FilesTable.cpp" />
     <ClCompile Include="src\classfile\tables\StringPool.cpp" />
     <ClCompile Include="src\classfile\TarracshApp.cpp" />
     <ClCompile Include="src\classfile\tables\Table.cpp" />
     <ClInclude Include="src\classfile\ClassFileDigest.h" />
     <ClInclude Include="src\classfile\FilesystemUtils.h" />
-    <ClInclude Include="src\classfile\jars\JarAnalyzer.h" />
+    <ClInclude Include="src\classfile\jars\JarAnalyzerTask.h" />
+    <ClInclude Include="src\classfile\jars\JarDigestTask.h" />
     <ClInclude Include="src\classfile\jars\JarProcessor.h" />
     <ClInclude Include="src\classfile\jars\JarEntry.h" />
     <ClInclude Include="src\classfile\jars\JarTask.h" />
@@ -637,7 +637,8 @@
     <ClInclude Include="src\classfile\readers\FileReader.h" />
     <ClInclude Include="src\classfile\readers\MemoryReader.h" />
     <ClInclude Include="src\classfile\Stats.h" />
-    <ClInclude Include="src\classfile\tables\DigestTable.h" />
+    <ClInclude Include="src\classfile\tables\ClassfilesTable.h" />
+    <ClInclude Include="src\classfile\tables\FilesTable.h" />
     <ClInclude Include="src\classfile\tables\StringPool.h" />
     <ClInclude Include="src\classfile\TarracshApp.h" />
     <ClCompile Include="src\classfile\Log.cpp" />

@@ -3,11 +3,10 @@
 #include "../Tarracsh.h"
 #include "../Stats.h"
 
-#include <ranges>
 #include "JarEntry.h"
 #include "JarTask.h"
 
-#include "../tables/DigestTable.h"
+#include "../tables/ClassfilesTable.h"
 
 
 namespace org::kapa::tarracsh::jar {
@@ -39,7 +38,7 @@ private:
     bool _isValid{true};
     std::atomic<unsigned int> _classfileCount{0};
 
-    [[nodiscard]] tables::DigestRow* getRow(const JarEntry& jarEntry) const;
+    [[nodiscard]] tables::ClassfileRow* getRow(const JarEntry& jarEntry) const;
     void waitForAvailableBuffer();
 
 

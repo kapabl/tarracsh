@@ -20,15 +20,33 @@ namespace org::kapa::tarracsh::tables {
 constexpr const char *TableExtension = ".kapamd";
 
 
+struct AutoIncrementedRow {
+    uint64_t id{-1ull};
+};
+
+struct ColumnRef {
+    uint64_t id;
+};
+
+#define MD5_DIGEST_LENGTH 16
+
+struct Md5Column {
+    unsigned char buf[MD5_DIGEST_LENGTH]{};
+    bool operator==(const Md5Column &right) const = default;
+};
+
+
+enum EntryType { Classfile, Jar, Directory };
+
 template <typename T, typename K>
 class Table {
 
 public:
     virtual ~Table() = default;
 
-    explicit Table(const std::string &filename)
-        : _filename(filename) {
-        _stringPool = std::make_shared<StringPool>(filename + StringPoolExtension);
+    explicit Table(std::string filename, const std::shared_ptr<StringPool> stringPool)
+        : _filename(std::move(filename)),
+          _stringPool(stringPool) {
     }
 
     [[nodiscard]] bool isDirty() const { return _isDirty; }
@@ -42,36 +60,46 @@ public:
         return result;
     }
 
-    bool update(const T &row) {
+    uint64_t update(const T &row) {
         std::lock_guard lock(_mutex);
-        auto key = getKey(row);
-        const auto &it = _rows.find(key);
-        if (it != _rows.end()) {
-            const T *pBeforeRow = &it->second;
-            _rows[key] = row;
-            _isDirty = true;
-            //updateIndexes(pBeforeRow, &row);
-            return true;
-        }
-        return false;
-    }
-
-    void addOrUpdate(const T &row) {
-        std::lock_guard lock(_mutex);
-        auto key = getKey(row);
-        const auto &it = _rows.find(key);
-        const T *pBeforeRow = nullptr;
-        if (it != _rows.end()) {
-            pBeforeRow = &it->second;
-        }
-        //updateIndexes(pBeforeRow, &row);
-        _rows[key] = row;
+        const auto update = internalUpdate(row);
         _isDirty = true;
+        return update;
     }
 
-    bool add(const T &row) {
+    uint64_t addOrUpdate(const T &row) {
+
         std::lock_guard lock(_mutex);
-        return internalAdd(row);
+        auto key = getKey(row);
+        const auto &it = _rows.find(key);
+
+        const auto result =
+            it != _rows.end()
+                ? internalUpdate(row)
+                : internalAdd(row);
+
+        _isDirty = true;
+
+        return result;
+    }
+
+    uint64_t getAutoincrement(T *row) {
+        const auto result = _reverseAutoincrementIndex[row];
+        return result;
+    }
+
+    const T *getRow(uint64_t id) {
+        const auto result = _autoIncrementIndex[id];
+        return result;
+    }
+
+    uint64_t add(const T &row) {
+        std::lock_guard lock(_mutex);
+        const auto result = internalAdd(row);
+
+        _isDirty = true;
+
+        return result;
     }
 
     virtual void updateIndexes(const T *pBeforeRow, const T *pAfterRow) {
@@ -79,24 +107,19 @@ public:
 
     virtual std::string getKey(const T &row) = 0;
 
-
-    void backupPrevFiles() const {
-        backupPrevFile(_filename);
-        const auto stringPoolFilename = _stringPool->getFilename();
-        backupPrevFile(stringPoolFilename);
-    }
-
     void write() {
         std::lock_guard lock(_mutex);
-        backupPrevFiles();
-
-        _stringPool->write();
+        fsUtils::backupPrevFile(_filename);
 
         std::ofstream file(_filename, std::ios::binary);
         file.unsetf(std::ios::skipws);
 
-        for (auto &[key, row] : _rows) {
-            file.write(reinterpret_cast<char *>(&row), _rowSize);
+        // for (auto &[key, row] : _rows) {
+        //     file.write(reinterpret_cast<char *>(&row), _rowSize);
+        // }
+
+        for (auto pRow : _autoIncrementIndex) {
+            file.write(reinterpret_cast<const char *>(pRow), _rowSize);
         }
     }
 
@@ -119,7 +142,6 @@ public:
 
     bool read() {
         std::lock_guard lock(_mutex);
-        if (!_stringPool->read()) return false;
 
         if (!std::filesystem::exists(_filename)) return true;
 
@@ -158,7 +180,7 @@ public:
     }
 
 
-    T *findByKey(const K &key) {
+    const T *findByKey(const K &key) {
         std::shared_lock lock(_mutex);
         T *result{};
         const auto it = _rows.find(key);
@@ -171,35 +193,41 @@ public:
 
 protected:
     std::unordered_map<K, T> _rows;
+
+    std::vector<const T *> _autoIncrementIndex;
+    std::unordered_map<const T *, uint64_t> _reverseAutoincrementIndex;
+
     std::string _filename;
     bool _isDirty{false};
     unsigned int _rowSize = sizeof(T);
     std::shared_mutex _mutex;
 
-    std::shared_ptr<StringPool> _stringPool;
+    const std::shared_ptr<StringPool> _stringPool;
 
-    void backupPrevFile(const std::string &filename) const {
-        if (!std::filesystem::exists(filename)) {
-            return;
-        }
-        const auto prevFilename = std::filesystem::path(filename + ".prev");
-        std::filesystem::remove(prevFilename);
 
-        std::filesystem::rename(
-            std::filesystem::path(filename),
-            prevFilename);
+    uint64_t internalAdd(const T &row) {
+
+        auto key = getKey(row);
+        const auto &it = _rows.find(key);
+        assert(!_rows.contains(key));
+
+        T *pRow = &(_rows.insert({key, row}).first->second);
+        const auto result = _autoIncrementIndex.size();
+        pRow->id = result;
+        _autoIncrementIndex.push_back(pRow);
+        _reverseAutoincrementIndex[pRow] = result;
+
+        return result;
     }
 
-    bool internalAdd(const T& row) {
+    uint64_t internalUpdate(const T &row) {
+
         auto key = getKey(row);
-        const auto& it = _rows.find(key);
-        if (it == _rows.end()) {
-            _rows.insert({ key, row });
-            //updateIndexes(nullptr, &row);
-            _isDirty = true;
-            return true;
-        }
-        return false;
+        assert(_rows.contains(key));
+        _rows[key] = row;
+        const auto result = _reverseAutoincrementIndex[&row];
+
+        return result;
     }
 };
 

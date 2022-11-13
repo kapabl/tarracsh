@@ -4,12 +4,14 @@
 #include <string>
 
 #include "ClassFileAnalyzer.h"
-#include "jars/JarAnalyzer.h"
+#include "jars/JarAnalyzerTask.h"
 #include "DirAnalyzer.h"
 
 #include "FilesystemUtils.h"
+#include "jars/JarDigestTask.h"
 #include "jars/JarProcessor.h"
 #include "readers/FileReader.h"
+#include "tables/FilesTable.h"
 
 
 using namespace org::kapa::tarracsh::dir;
@@ -44,7 +46,7 @@ void DirAnalyzer::analyze(filesystem::directory_entry const &dirEntry) {
     }
 }
 
-bool DirAnalyzer::isFileUnchanged(const uintmax_t size, const long long timestamp, const DigestRow *row) const {
+bool DirAnalyzer::isFileUnchanged(const uintmax_t size, const long long timestamp, const FileRow *row) const {
     auto const result = _options.useFileTimestamp &&
                         row != nullptr &&
                         row->fileSize == size &&
@@ -59,7 +61,7 @@ void DirAnalyzer::digestClassfile(filesystem::directory_entry const &dirEntry) {
 
     const auto timestamp = fsUtils::getLastWriteTimestamp(filename);
 
-    const tables::DigestRow *row = _digestTable->findByKey(filename);
+    const FileRow *row = _filesTable->findByKey(filename);
     const bool rowFound = row != nullptr;
     const auto unchangedFile = isFileUnchanged(size, timestamp, row);
 
@@ -82,14 +84,20 @@ void DirAnalyzer::digestClassfile(filesystem::directory_entry const &dirEntry) {
                 _results.classfiles.digest.same++;
             } else {
 
-                DigestRow newRow;
-                newRow.filename = _digestTable->getPoolString(filename);
-                newRow.type = tables::EntryType::Classfile;
-                newRow.lastWriteTime = timestamp;
-                newRow.fileSize = size;
-                newRow.classname = _digestTable->getPoolString(classFileAnalyzer.getMainClassname());
-                newRow.md5 = publicDigest.value();
-                _digestTable->addOrUpdate(newRow);
+                FileRow fileRow;
+                fileRow.filename = _filesTable->getPoolString(filename);
+                fileRow.type = Classfile;
+                fileRow.lastWriteTime = timestamp;
+                fileRow.fileSize = size;
+                fileRow.md5 = publicDigest.value();
+                fileRow.id = _filesTable->addOrUpdate(fileRow);
+
+                ClassfileRow digestRow(fileRow);
+                digestRow.size = size;
+                digestRow.lastWriteTime = timestamp;
+                digestRow.md5 = publicDigest.value();
+                digestRow.classname = _digestTable->getPoolString(classFileAnalyzer.getMainClassname());
+                digestRow.id = _digestTable->addOrUpdate(digestRow);
 
                 if (rowFound) {
                     _results.classfiles.digest.differentDigest++;
@@ -122,12 +130,25 @@ void DirAnalyzer::processClassfile(filesystem::directory_entry const &dirEntry) 
 
 }
 
-std::string DirAnalyzer::generateDigestTablename() const {
-    std::string result(_options.directory);
-    ranges::replace(result, '/', '_');
-    ranges::replace(result, ':', '_');
-    ranges::replace(result, '\\', '_');
-    result += tables::TableExtension;
+std::string DirAnalyzer::generateFileTablename(const string &name) const {
+    std::string result(name + TableExtension);
+    // std::string result(_options.directory);
+    // ranges::replace(result, '/', '_');
+    // ranges::replace(result, ':', '_');
+    // ranges::replace(result, '\\', '_');
+    // result += "-" + name + TableExtension;
+    result = (std::filesystem::path(_options.outputDir) / result).string();
+
+    return result;
+}
+
+std::string DirAnalyzer::generateStringPoolFilename(const string &name) const {
+    std::string result(name + StringPoolExtension);
+    // std::string result(_options.directory);
+    // ranges::replace(result, '/', '_');
+    // ranges::replace(result, ':', '_');
+    // ranges::replace(result, '\\', '_');
+    // result += "-" + name + StringPoolExtension;
     result = (std::filesystem::path(_options.outputDir) / result).string();
 
     return result;
@@ -140,7 +161,7 @@ void DirAnalyzer::processJar(filesystem::directory_entry const &dirEntry) {
 
     _results.jarfiles.count++;
     if (_options.generatePublicDigest) {
-        jar::JarDigestTask jarDigestTask(jarOptions, _results, _digestTable);
+        jar::JarDigestTask jarDigestTask(jarOptions, _results, _digestTable, _filesTable);
         jar::JarProcessor jarProcessor(jarOptions, _results, jarDigestTask);
         jarProcessor.run();
         _results.jarfiles.classfileCount += jarProcessor.getClassfileCount();
@@ -154,8 +175,22 @@ void DirAnalyzer::processJar(filesystem::directory_entry const &dirEntry) {
 }
 
 bool DirAnalyzer::initializeDigestTables() {
-    _digestTable = std::make_shared<DigestTable>(generateDigestTablename());
-    const auto result = _options.rebuild ? _digestTable->clean() : _digestTable->read();
+    auto result = true;
+
+    _stringPool = std::make_shared<StringPool>(generateStringPoolFilename("sp"));
+    _filesTable = std::make_shared<FilesTable>(generateFileTablename("files"), _stringPool);
+    _digestTable = std::make_shared<ClassfilesTable>(generateFileTablename("digest"), _stringPool, _filesTable);
+
+    if (_options.rebuild) {
+        _stringPool->clean();
+        _filesTable->clean();
+        _digestTable->clean();
+    } else {
+        result = _stringPool->read() &&
+                 _filesTable->read() &&
+                 _digestTable->read();
+    }
+
     return result;
 }
 
@@ -186,17 +221,24 @@ void DirAnalyzer::analyze() {
             //TODO recursive?
         }
         count++;
-
-        if (count % 10 == 0) {
+        if (count % 100 == 0) {
             _results.print(_options);
         }
     }
-    _results.print(_options);
+    _results.printAll(_options);
 }
 
 void DirAnalyzer::endAnalysis() const {
-    if (_options.generatePublicDigest && _digestTable->isDirty()) {
-        _digestTable->write();
+    if (_options.generatePublicDigest) {
+        if (_stringPool->isDirty()) {
+            _stringPool->write();
+        }
+        if (_filesTable->isDirty()) {
+            _filesTable->write();
+        }
+        if (_digestTable->isDirty()) {
+            _digestTable->write();
+        }
     }
 }
 

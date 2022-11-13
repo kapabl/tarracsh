@@ -1,20 +1,10 @@
-#include "DigestTable.h"
+#include "ClassfilesTable.h"
 
 using namespace org::kapa::tarracsh::tables;
 
-void DigestTable::updateJarIndex(const DigestRow* pBeforeRow,
-    const DigestRow * pAfterRow) {
-    if ( pBeforeRow != nullptr ) {
-        const auto it = _jarIndex.find(pBeforeRow->filename);
-        if ( it != _jarIndex.end() ) {
-            it->second.erase(pBeforeRow);
-        }
-    }
-    _jarIndex[pAfterRow->filename].insert(pAfterRow);
-}
 
-void DigestTable::updateClassnameIndex(const DigestRow *pBeforeRow,
-    const DigestRow *pAfterRow) {
+void ClassfilesTable::updateClassnameIndex(const ClassfileRow *pBeforeRow,
+    const ClassfileRow *pAfterRow) {
     if (pBeforeRow != nullptr) {
         const auto it = _classnameIndex.find(pBeforeRow->classname);
         if (it != _classnameIndex.end()) {
@@ -24,8 +14,8 @@ void DigestTable::updateClassnameIndex(const DigestRow *pBeforeRow,
     _classnameIndex[pAfterRow->classname].insert(pAfterRow);
 }
 
-void DigestTable::updateDigestIndex(const DigestRow *pBeforeRow, 
-    const DigestRow *pAfterRow) {
+void ClassfilesTable::updateDigestIndex(const ClassfileRow *pBeforeRow, 
+    const ClassfileRow *pAfterRow) {
     if (pBeforeRow != nullptr) {
         const auto digestHexString = stringUtils::bytesToHexString(pBeforeRow->md5.buf, MD5_DIGEST_LENGTH);
         const auto it = _digestIndex.find(digestHexString);

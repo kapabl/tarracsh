@@ -1,18 +1,23 @@
 #include "Stats.h"
 
 using namespace org::kapa::tarracsh;
-//TODO print table: https://stackoverflow.com/questions/14765155/how-can-i-easily-format-my-data-table-in-c
-void Results::print(const Options &options) {
+void Results::print(const Options &options) const {
     // cout << "\033[2K";
 
     printf("\033[2J");
     printf("\033[%d;%dH", 0, 0);
 
-    // std::cout << std::format("classfiles No:\033[36m{}\033[39m|Ok:\033[92m{}\033[39m|Er:\033[91m{}\033[39m",
-    //     classfiles.count,
-    //     classfiles.parsedCount,
-    //     classfiles.errors) << std::endl;
+    std::cout << "classfiles: " <<
+        classfiles.count + jarfiles.classfiles.count <<
+        " jars: " << jarfiles.count;
 
+    std::cout << "\r" << std::flush;
+    
+}
+
+void Results::printAll(const Options& options) const {
+
+    std::cout << std::endl << std::endl;
     std::cout << "classfiles:" << std::endl << std::right
         << std::setw(10) << "No"
         << std::setw(10) << "Ok"

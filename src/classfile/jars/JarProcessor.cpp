@@ -23,7 +23,6 @@ JarProcessor::JarProcessor(Options options, Results &results,
       _options(std::move(options)) {
 }
 
-
 constexpr int MaxConcurrentBuffers = 40;
 
 void JarProcessor::waitForAvailableBuffer() {
@@ -49,14 +48,11 @@ void JarProcessor::run() {
         zipArchive.open(ZipArchive::ReadOnly);
 
         const auto entries = zipArchive.getEntries();
-        _results.print(_options);
         std::atomic<int> index{ 0 };
-
-        _results.print(_options);
 
         for (auto& entry : entries) {
 
-            if (index % 100 == 0) {
+            if (index % 1000 == 0) {
                 _results.print(_options);
             }
 

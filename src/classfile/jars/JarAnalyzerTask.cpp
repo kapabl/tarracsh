@@ -1,4 +1,4 @@
-#include "JarAnalyzer.h"
+#include "JarAnalyzerTask.h"
 
 
 #include <libzippp/libzippp.h>
@@ -16,12 +16,12 @@ using namespace jar;
 using namespace std;
 
 
-JarAnalyzer::JarAnalyzer(Options options, Results &results)
+JarAnalyzerTask::JarAnalyzerTask(Options options, Results &results)
     : _results(results),
       _options(std::move(options)) {
 }
 
-void JarAnalyzer::parseEntry(const JarEntry &jarEntry) const {
+void JarAnalyzerTask::parseEntry(const JarEntry &jarEntry) const {
     //TODO collect fore stats like total number of methods etc
 
     Options classfileOptions(_options);
@@ -37,7 +37,7 @@ void JarAnalyzer::parseEntry(const JarEntry &jarEntry) const {
     }
 }
 
-void JarAnalyzer::analyze() {
+void JarAnalyzerTask::analyze() {
     //TODO
     // ZipArchive zipArchive(_options.jarFile);
     // zipArchive.open(ZipArchive::ReadOnly);
@@ -59,11 +59,11 @@ void JarAnalyzer::analyze() {
 }
 
 
-void JarAnalyzer::run() {
+void JarAnalyzerTask::run() {
     analyze();
 }
 
 
-unsigned int JarAnalyzer::getClassfileCount() const {
+unsigned int JarAnalyzerTask::getClassfileCount() const {
     return _classfileCount;
 }
