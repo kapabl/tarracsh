@@ -10,11 +10,11 @@ namespace org::kapa::tarracsh {
 
 
 struct PublicDigestResult {
-    int unchangedCount{};
-    int count{};
-    int same{};
-    int differentDigest{};
-    int newFile{};
+    unsigned unchangedCount{};
+    unsigned count{};
+    unsigned same{};
+    unsigned differentDigest{};
+    unsigned newFile{};
 };
 
 struct ClassfileStats {

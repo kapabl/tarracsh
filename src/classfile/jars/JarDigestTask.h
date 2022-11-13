@@ -30,9 +30,6 @@ private:
     Options _options;
     bool _isFileUnchanged{false};
     bool _isNewJarFile{false};
-    tables::FileRow *_jarFileRow = nullptr;
-    uintmax_t _jarSize{};
-    long long _jarTimestamp{};
     std::map<std::string, tables::Md5Column> _digestMap;
 
     [[nodiscard]] std::optional<tables::Md5Column> digestEntry(const JarEntry &jarEntry) const;

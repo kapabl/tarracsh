@@ -164,7 +164,7 @@ void DirAnalyzer::processJar(filesystem::directory_entry const &dirEntry) {
         jar::JarDigestTask jarDigestTask(jarOptions, _results, _digestTable, _filesTable);
         jar::JarProcessor jarProcessor(jarOptions, _results, jarDigestTask);
         jarProcessor.run();
-        _results.jarfiles.classfileCount += jarProcessor.getClassfileCount();
+        //_results.jarfiles.classfileCount += jarProcessor.getClassfileCount();
     } else {
         //TODO
         // jar::JarAnalyzeTask jarAnalyzeTask(jarOptions, _results);

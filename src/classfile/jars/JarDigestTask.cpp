@@ -35,13 +35,18 @@ void JarDigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex
     const auto classDigest = digestEntry(jarEntry);
     {
         std::unique_lock lock(taskMutex);
+        _jarFileRow->classfileCount++;
         _digestMap[jarEntry.getClassname()] = classDigest.value();
     }
 }
 
 void JarDigestTask::end() {
     _results.jarfiles.digest.count++;
+    _results.jarfiles.classfileCount += _jarFileRow->classfileCount;
+
     if (_isFileUnchanged) {
+        _results.jarfiles.classfiles.digest.count += _jarFileRow->classfileCount;
+        _results.jarfiles.classfiles.digest.unchangedCount += _jarFileRow->classfileCount;
         _results.jarfiles.digest.unchangedCount++;
         return;
     }
@@ -65,12 +70,17 @@ void JarDigestTask::end() {
         _results.jarfiles.digest.same++;
     } else {
         _jarFileRow->md5 = digest;
+        //_jarFileRow->classfileCount = _count;
+
         if (_isNewJarFile) {
             _results.jarfiles.digest.newFile++;
         } else {
             _results.jarfiles.digest.differentDigest++;
         }
     }
+
+
+
 }
 
 
