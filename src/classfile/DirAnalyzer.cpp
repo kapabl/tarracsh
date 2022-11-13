@@ -7,7 +7,7 @@
 #include "../jars/JarAnalyzerTask.h"
 #include "DirAnalyzer.h"
 
-#include "FilesystemUtils.h"
+#include "../utils/FilesystemUtils.h"
 #include "../jars/JarDigestTask.h"
 #include "../jars/JarProcessor.h"
 #include "readers/FileReader.h"

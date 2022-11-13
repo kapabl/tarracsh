@@ -1,7 +1,7 @@
 #ifndef JAR_PROCESSOR_H
 #define JAR_PROCESSOR_H
-#include "../Tarracsh.h"
-#include "../Stats.h"
+#include "../app/Tarracsh.h"
+#include "../classfile/Stats.h"
 
 #include "JarEntry.h"
 #include "JarTask.h"

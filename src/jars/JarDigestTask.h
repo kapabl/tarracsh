@@ -1,7 +1,7 @@
 #ifndef TARRACSH_JAR_DIGEST_H
 #define TARRACSH_JAR_DIGEST_H
-#include "../Tarracsh.h"
-#include "../Stats.h"
+#include "../app/Tarracsh.h"
+#include "../classfile/Stats.h"
 #include <map>
 
 #include "JarEntry.h"
