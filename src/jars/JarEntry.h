@@ -4,7 +4,7 @@
 #include <chrono>
 #include <unordered_set>
 #include <libzippp/libzippp.h>
-#include "../StringUtils.h"
+#include "../utils/StringUtils.h"
 
 namespace org::kapa::tarracsh::jar {
 class JarEntry {

@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <fstream>
 #include <libzippp/libzippp.h>
-#include "../jars/JarEntry.h"
+#include "../../jars/JarEntry.h"
 
 
 namespace org::kapa::tarracsh::readers {

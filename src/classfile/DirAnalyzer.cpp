@@ -4,14 +4,14 @@
 #include <string>
 
 #include "ClassFileAnalyzer.h"
-#include "jars/JarAnalyzerTask.h"
+#include "../jars/JarAnalyzerTask.h"
 #include "DirAnalyzer.h"
 
 #include "FilesystemUtils.h"
-#include "jars/JarDigestTask.h"
-#include "jars/JarProcessor.h"
+#include "../jars/JarDigestTask.h"
+#include "../jars/JarProcessor.h"
 #include "readers/FileReader.h"
-#include "tables/FilesTable.h"
+#include "../tables/FilesTable.h"
 
 
 using namespace org::kapa::tarracsh::dir;
