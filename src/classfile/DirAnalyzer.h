@@ -6,7 +6,7 @@
 #include <string>
 #include <BS_thread_pool.hpp>
 
-#include "Tarracsh.h"
+#include "../app/Tarracsh.h"
 #include "../tables/ClassfilesTable.h"
 #include "../tables/FilesTable.h"
 

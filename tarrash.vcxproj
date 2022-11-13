@@ -617,9 +617,6 @@
     <ClCompile Include="src\classfile\ClassFileDigest.cpp" />
     <ClCompile Include="src\classfile\ConstantPool.cpp" />
     <ClCompile Include="src\classfile\DirAnalyzer.cpp" />
-    <ClCompile Include="src\classfile\jars\JarAnalyzerTask.cpp" />
-    <ClCompile Include="src\classfile\jars\JarDigestTask.cpp" />
-    <ClCompile Include="src\classfile\jars\JarProcessor.cpp" />
     <ClCompile Include="src\classfile\ParserOutput.cpp" />
     <ClCompile Include="src\classfile\readers\ClassFileReader.cpp" />
     <ClCompile Include="src\classfile\readers\FileReader.cpp" />
@@ -633,10 +630,6 @@
     <ClCompile Include="src\classfile\signatures\rules\Terminal.cpp" />
     <ClCompile Include="src\classfile\signatures\SignatureParser.cpp" />
     <ClCompile Include="src\classfile\Stats.cpp" />
-    <ClCompile Include="src\classfile\tables\ClassfilesTable.cpp" />
-    <ClCompile Include="src\classfile\tables\FilesTable.cpp" />
-    <ClCompile Include="src\classfile\tables\StringPool.cpp" />
-    <ClCompile Include="src\classfile\tables\Table.cpp" />
     <ClCompile Include="src\jars\JarAnalyzerTask.cpp" />
     <ClCompile Include="src\jars\JarDigestTask.cpp" />
     <ClCompile Include="src\jars\JarProcessor.cpp" />
@@ -692,6 +685,7 @@
     <ClInclude Include="src\tables\FilesTable.h" />
     <ClInclude Include="src\tables\StringPool.h" />
     <ClInclude Include="src\tables\Table.h" />
+    <ClInclude Include="src\utils\DigestUtils.h" />
     <ClInclude Include="src\utils\FilesystemUtils.h" />
     <ClInclude Include="src\utils\StringUtils.h" />
   </ItemGroup>

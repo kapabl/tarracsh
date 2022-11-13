@@ -12,9 +12,9 @@ ClassFileDigest::ClassFileDigest(ClassFileAnalyzer &classFileAnalyzer)
 
 string ClassFileDigest::digestUtf8Entry(u2 index) const {
     const auto& utf8Info = _constantPool[index].utf8Info;
-    auto digest = stringUtils::md5( reinterpret_cast<const char*>(utf8Info.bytes), utf8Info.length);
+    auto digest = digestUtils::md5( reinterpret_cast<const char*>(utf8Info.bytes), utf8Info.length);
 
-    auto result = stringUtils::digestToString(digest);
+    auto result = digestUtils::digestToString(digest);
     return result;
 }
 
@@ -30,7 +30,7 @@ std::string ClassFileDigest::digest(const attributes::AttributeInfo &attributeIn
     stream.write(reinterpret_cast<const char *>(&*attributeInfo.info.begin()), attributeInfo.length);
     stream.close();
     auto digest = md5.digest();
-    auto result = stringUtils::digestToString(digest);
+    auto result = digestUtils::digestToString(digest);
     return result;
 }
 
@@ -42,7 +42,7 @@ string ClassFileDigest::digest(
             md5Set.insert(digest(attributeInfo));
         }
     }
-    auto result = stringUtils::md5SetAsString(md5Set);
+    auto result = digestUtils::md5SetAsString(md5Set);
 
     return result;
 }
@@ -55,7 +55,7 @@ string ClassFileDigest::digestPublicMethods() const {
             md5Set.insert(digest(method));
         }
     }
-    auto result = stringUtils::md5SetAsString(md5Set);
+    auto result = digestUtils::md5SetAsString(md5Set);
     return result;
 }
 
@@ -67,7 +67,7 @@ string ClassFileDigest::digestPublicFields() const {
             md5Set.insert(digest(fieldInfo));
         }
     }
-    auto result = stringUtils::md5SetAsString(md5Set);
+    auto result = digestUtils::md5SetAsString(md5Set);
     return result;
 }
 
@@ -83,7 +83,7 @@ string ClassFileDigest::digest(const FieldInfo &fieldInfo) const {
 
     stream.close();
     auto digest = md5.digest();
-    auto result = stringUtils::digestToString(digest);
+    auto result = digestUtils::digestToString(digest);
     return result;
 }
 
@@ -93,14 +93,14 @@ string ClassFileDigest::digestInterfaces() const {
     for (const auto interfaceIndex : _classFileAnalyzer.getInterfaces()) {
         md5Set.insert(digestInterface(interfaceIndex));
     }
-    auto result = stringUtils::md5SetAsString(md5Set);
+    auto result = digestUtils::md5SetAsString(md5Set);
     return result;
 }
 
 std::string ClassFileDigest::digestInterface(const u2 interfaceIndex) const {
     const auto &classInfo = _constantPool[interfaceIndex].classInfo;
     const auto encodedName = _constantPool[classInfo.nameIndex].utf8Info.getValue();
-    auto result = stringUtils::md5AsString(encodedName);
+    auto result = digestUtils::md5AsString(encodedName);
     return result;
 }
 
@@ -121,7 +121,7 @@ string ClassFileDigest::digest(const MethodInfo &methodInfo) const {
 
     stream.close();
     auto digest = md5.digest();
-    auto result = stringUtils::digestToString(digest);
+    auto result = digestUtils::digestToString(digest);
     return result;
 
 }

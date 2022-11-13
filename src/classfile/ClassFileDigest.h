@@ -4,7 +4,8 @@
 #include <filesystem>
 #include <string>
 #include <vector>
-#include "Tarracsh.h"
+#include "../app/Tarracsh.h"
+#include "../utils/DigestUtils.h"
 
 #include "ClassFileStructures.h"
 #include "ConstantPool.h"

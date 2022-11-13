@@ -1,7 +1,7 @@
 #ifndef JAR_ANALYZER_H
 #define JAR_ANALYZER_H
-#include "../Tarracsh.h"
-#include "../Stats.h"
+#include "../app/Tarracsh.h"
+#include "../classfile/Stats.h"
 #include "JarEntry.h"
 
 

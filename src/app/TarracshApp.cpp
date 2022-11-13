@@ -1,8 +1,8 @@
 #include "TarracshApp.h"
-#include "ClassFileAnalyzer.h"
-#include "DirAnalyzer.h"
-#include "jars/JarAnalyzerTask.h"
-#include "readers/FileReader.h"
+#include "../classfile/ClassFileAnalyzer.h"
+#include "../classfile/DirAnalyzer.h"
+#include "../jars/JarAnalyzerTask.h"
+#include "../classfile/readers/FileReader.h"
 
 #ifdef _WIN32
 #include <Windows.h>

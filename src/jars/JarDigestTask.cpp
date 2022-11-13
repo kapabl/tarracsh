@@ -3,9 +3,9 @@
 #include <ranges>
 #include <utility>
 
-#include "../ClassFileAnalyzer.h"
-#include "../readers/MemoryReader.h"
-#include "../FilesystemUtils.h"
+#include "../classfile/ClassFileAnalyzer.h"
+#include "../classfile/readers/MemoryReader.h"
+#include "../utils/FilesystemUtils.h"
 
 using namespace org::kapa::tarracsh::jar;
 using namespace org::kapa::tarracsh::tables;

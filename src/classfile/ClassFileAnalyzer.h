@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include "Tarracsh.h"
+#include "../app/Tarracsh.h"
 
 #include "ClassFileStructures.h"
 #include "ConstantPool.h"
