@@ -29,7 +29,7 @@ int TarracshApp::start(int argc, char *argv[]) {
 
     init();
 
-    Results results;
+    stats::Results results;
     results.resultLog.setFile(_options.logFile);
 
     if (!_options.classfileOption->empty()) {

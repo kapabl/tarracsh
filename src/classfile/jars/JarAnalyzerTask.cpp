@@ -12,6 +12,7 @@ using namespace libzippp;
 
 using namespace org::kapa::tarracsh;
 using namespace tables;
+using namespace stats;
 using namespace jar;
 using namespace std;
 
@@ -30,10 +31,10 @@ void JarAnalyzerTask::parseEntry(const JarEntry &jarEntry) const {
 
     ClassFileAnalyzer classFileAnalyzer(reader, classfileOptions, _results);
     if (classFileAnalyzer.run()) {
-        _results.jarfiles.classfiles.parsedCount++;
+        ++_results.jarfiles.classfiles.parsedCount;
 
     } else {
-        _results.jarfiles.classfiles.errors++;
+        ++_results.jarfiles.classfiles.errors;
     }
 }
 

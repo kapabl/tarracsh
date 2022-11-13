@@ -13,8 +13,8 @@ namespace org::kapa::tarracsh::jar {
 class JarProcessor {
 public:
     explicit JarProcessor(
-        Options options, 
-        Results &results,
+        Options options,
+        stats::Results &results,
         JarTask &jarTask
        );
 
@@ -33,7 +33,7 @@ public:
 
 private:
     JarTask& _jarTask;
-    Results &_results;
+    stats::Results &_results;
     Options _options;
     bool _isValid{true};
     std::atomic<unsigned int> _classfileCount{0};

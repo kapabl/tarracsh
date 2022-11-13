@@ -1,6 +1,6 @@
 #include "Stats.h"
 
-using namespace org::kapa::tarracsh;
+using namespace org::kapa::tarracsh::stats;
 void Results::print(const Options &options) const {
     // cout << "\033[2K";
 
@@ -108,5 +108,9 @@ void Results::printAll(const Options& options) const {
             << std::setw(10) << jarfiles.classfiles.digest.unchangedCount
             << std::endl;
     }
+
+    std::cout << std::endl << std::format("total classfiles: {}", classfiles.count +
+        jarfiles.classfileCount) << std::endl;
+
     std::cout << "\r" << std::flush;
 }

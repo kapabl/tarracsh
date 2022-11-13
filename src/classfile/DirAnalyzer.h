@@ -28,7 +28,7 @@ public:
 
 private:
     Options _options;
-    Results _results;
+    stats::Results _results;
     [[nodiscard]] std::string generateFileTablename(const std::string &name) const;
     [[nodiscard]] std::string generateStringPoolFilename(const std::string& name) const;
     void processJar(std::filesystem::directory_entry const &dirEntry);
