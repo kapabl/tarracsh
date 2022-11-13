@@ -8,8 +8,8 @@
 #include <shared_mutex>
 #include <string>
 #include <unordered_map>
-#include "../StringUtils.h"
-#include "../FilesystemUtils.h"
+#include "../utils/StringUtils.h"
+#include "../utils/FilesystemUtils.h"
 
 
 #pragma pack( push, 1 )

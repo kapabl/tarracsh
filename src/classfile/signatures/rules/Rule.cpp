@@ -3,7 +3,7 @@
 #include "Optional.h"
 #include "Or.h"
 #include "RuleFuncs.h"
-#include "../../StringUtils.h"
+#include "../../../utils/StringUtils.h"
 
 
 using namespace org::kapa::tarracsh::signatures;

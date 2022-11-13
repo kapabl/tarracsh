@@ -6,7 +6,7 @@
 #include "StructsCommon.h"
 
 
-#include "StringUtils.h"
+#include "../utils/StringUtils.h"
 
 namespace org::kapa::tarracsh::readers {
 

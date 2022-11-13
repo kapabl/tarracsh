@@ -6,7 +6,7 @@
 #include <string>
 
 #include "CLI11.hpp"
-#include "Log.h"
+#include "../classfile/Log.h"
 
 
 namespace org::kapa::tarracsh {

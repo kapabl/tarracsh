@@ -2,7 +2,7 @@
 #include "ClassFileAnalyzer.h"
 
 #include "ClassFileDigest.h"
-#include "tables/ClassfilesTable.h"
+#include "../tables/ClassfilesTable.h"
 
 #include "MethodDescriptorParser.h"
 #include "ParserOutput.h"

@@ -7,8 +7,8 @@
 #include <BS_thread_pool.hpp>
 
 #include "Tarracsh.h"
-#include "tables/ClassfilesTable.h"
-#include "tables/FilesTable.h"
+#include "../tables/ClassfilesTable.h"
+#include "../tables/FilesTable.h"
 
 
 namespace org::kapa::tarracsh::dir {

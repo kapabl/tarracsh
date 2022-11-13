@@ -7,7 +7,7 @@
 #include "Terminal.h"
 #include "Optional.h"
 #include "JvmIdentifier.h"
-#include "../../StringUtils.h"
+#include "../../../utils/StringUtils.h"
 
 namespace org::kapa::tarracsh::signatures {
 
