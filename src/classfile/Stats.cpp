@@ -1,8 +1,17 @@
 #include "Stats.h"
 
 using namespace org::kapa::tarracsh::stats;
+
+
 void Results::print(const Options &options) const {
     // cout << "\033[2K";
+    
+    const auto result = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::high_resolution_clock::now() - lastPrint);
+
+    if (result.count() < 500) return;
+
+    lastPrint = std::chrono::high_resolution_clock::now();
 
     printf("\033[2J");
     printf("\033[%d;%dH", 0, 0);
