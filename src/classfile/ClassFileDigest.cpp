@@ -11,26 +11,21 @@ ClassFileDigest::ClassFileDigest(ClassFileAnalyzer &classFileAnalyzer)
 
 
 string ClassFileDigest::digestUtf8Entry(u2 index) const {
-    const auto& utf8Info = _constantPool[index].utf8Info;
-    auto digest = digestUtils::md5( reinterpret_cast<const char*>(utf8Info.bytes), utf8Info.length);
+    const auto &utf8Info = _constantPool[index].utf8Info;
+    auto digest = digestUtils::digest(reinterpret_cast<const char *>(utf8Info.bytes), utf8Info.length);
 
     auto result = digestUtils::digestToString(digest);
     return result;
 }
 
 string ClassFileDigest::digestClassInfo(u2 classInfoIndex) const {
-    const auto& classInfo = _constantPool[classInfoIndex].classInfo;
+    const auto &classInfo = _constantPool[classInfoIndex].classInfo;
     auto result = digestUtf8Entry(classInfo.nameIndex);
     return result;
 }
 
-std::string ClassFileDigest::digest(const attributes::AttributeInfo &attributeInfo) const {
-    Poco::MD5Engine md5;
-    Poco::DigestOutputStream stream(md5);
-    stream.write(reinterpret_cast<const char *>(&*attributeInfo.info.begin()), attributeInfo.length);
-    stream.close();
-    auto digest = md5.digest();
-    auto result = digestUtils::digestToString(digest);
+std::string ClassFileDigest::digest(const attributes::AttributeInfo &attributeInfo) {
+    auto result = digestUtils::digestToString(attributeInfo.info);
     return result;
 }
 
@@ -73,18 +68,15 @@ string ClassFileDigest::digestPublicFields() const {
 
 string ClassFileDigest::digest(const FieldInfo &fieldInfo) const {
 
-    Poco::MD5Engine md5;
-    Poco::DigestOutputStream stream(md5);
-    stream << digestUtf8Entry(fieldInfo.nameIndex)
-        << fieldInfo.accessFlags
-        << digest(fieldInfo.attributes);
-
-    writeUtf8InfoToStream(fieldInfo.descriptorIndex, stream);
-
-    stream.close();
-    auto digest = md5.digest();
-    auto result = digestUtils::digestToString(digest);
+    vector<char> buffer;
+    ranges::copy(digestUtf8Entry(fieldInfo.nameIndex), buffer.end());
+    ranges::copy(digest(fieldInfo.attributes), buffer.end());
+    ranges::copy(_constantPool[fieldInfo.descriptorIndex].utf8Info.bytes, buffer.end());
+    buffer.push_back(static_cast<char>(fieldInfo.accessFlags & 0x0ff));
+    buffer.push_back(static_cast<char>(fieldInfo.accessFlags >> 8));
+    auto result = digestUtils::digestToString(buffer);
     return result;
+
 }
 
 string ClassFileDigest::digestInterfaces() const {
@@ -104,45 +96,35 @@ std::string ClassFileDigest::digestInterface(const u2 interfaceIndex) const {
     return result;
 }
 
-void ClassFileDigest::writeUtf8InfoToStream(const u2 constPoolIndex, Poco::DigestOutputStream &stream) const {
-    const auto &utf8Info = _constantPool[constPoolIndex].utf8Info;
-    stream.write(reinterpret_cast<const char *>(utf8Info.bytes), utf8Info.length);
-}
-
 string ClassFileDigest::digest(const MethodInfo &methodInfo) const {
-
-    Poco::MD5Engine md5;
-    Poco::DigestOutputStream stream(md5);
-    stream << digestUtf8Entry(methodInfo.nameIndex)
-        << methodInfo.accessFlags
-        << digest(methodInfo.attributes);
-
-    writeUtf8InfoToStream(methodInfo.descriptorIndex, stream);
-
-    stream.close();
-    auto digest = md5.digest();
-    auto result = digestUtils::digestToString(digest);
+    vector<char> buffer;
+    ranges::copy(digestUtf8Entry(methodInfo.nameIndex), buffer.end());
+    ranges::copy(digest(methodInfo.attributes), buffer.end());
+    ranges::copy(_constantPool[methodInfo.descriptorIndex].utf8Info.bytes, buffer.end());
+    buffer.push_back(static_cast<char>(methodInfo.accessFlags & 0x0ff));
+    buffer.push_back(static_cast<char>(methodInfo.accessFlags >> 8));
+    auto result = digestUtils::digestToString(buffer);
     return result;
-
 }
 
-tables::Md5Column ClassFileDigest::digest() const {
+tables::DigestColumn ClassFileDigest::digest() const {
 
-    Poco::MD5Engine md5;
-    Poco::DigestOutputStream stream(md5);
     const auto& mainClassInfo = _classFileAnalyzer.getMainClassInfo();
     const auto& attributes = _classFileAnalyzer.getAttributes();
-    stream << digestClassInfo(mainClassInfo.thisClass)
-        << mainClassInfo.accessFlags
-        << digestClassInfo(mainClassInfo.superClass)
-        << digest(attributes)
-        << digestPublicMethods()
-        << digestPublicFields()
-        << digestInterfaces();
 
-    stream.close();
+    vector<char> buffer;
+    ranges::copy(digestClassInfo(mainClassInfo.thisClass), buffer.end());
+    ranges::copy(digestClassInfo(mainClassInfo.superClass), buffer.end());
+    ranges::copy(digest(attributes), buffer.end());
+    ranges::copy(digestPublicMethods(), buffer.end());
+    ranges::copy(digestPublicFields(), buffer.end());
+    ranges::copy(digestInterfaces(), buffer.end());
+    buffer.push_back(static_cast<char>(mainClassInfo.accessFlags & 0x0ff));
+    buffer.push_back(static_cast<char>(mainClassInfo.accessFlags >> 8));
 
-    tables::Md5Column result;
-    memcpy(result.buf, &*md5.digest().begin(), MD5_DIGEST_LENGTH);
+    const auto digest = digestUtils::digest(&*buffer.begin(), buffer.size());
+    tables::DigestColumn result;
+    memcpy(result.buf, &*digest.begin(), MD5_DIGEST_LENGTH);
     return result;
+    
 }

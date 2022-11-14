@@ -32,7 +32,7 @@ public:
 
     ~ClassFileAnalyzer() = default;
     bool run();
-    std::optional<tables::Md5Column> getPublicDigest();
+    std::optional<tables::DigestColumn> getPublicDigest();
     attributes::AttributesManager &getAttributesManager() { return _attributesManager; }
     accessModifiers::AccessModifiers &getAccessModifiers() { return _accessModifiers; }
     ConstantPool &getConstantPool() { return _constantPool; }

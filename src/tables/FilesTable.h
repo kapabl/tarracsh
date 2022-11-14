@@ -14,7 +14,7 @@ struct FileRow: AutoIncrementedRow {
     uint64_t lastWriteTime{};
     uint64_t fileSize{};
     uint32_t classfileCount{};
-    Md5Column md5{};
+    DigestColumn digest{};
 
     // FileRow() = default;
     // FileRow(  const File)

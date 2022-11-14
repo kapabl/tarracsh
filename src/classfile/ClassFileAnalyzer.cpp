@@ -44,8 +44,8 @@ bool ClassFileAnalyzer::run() {
     return result;
 }
 
-optional<tables::Md5Column> ClassFileAnalyzer::getPublicDigest() {
-    optional<tables::Md5Column> result;
+optional<tables::DigestColumn> ClassFileAnalyzer::getPublicDigest() {
+    optional<tables::DigestColumn> result;
     if (run()) {
         const ClassFileDigest classFileDigest(*this);
         result = classFileDigest.digest();

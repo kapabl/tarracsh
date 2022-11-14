@@ -29,10 +29,25 @@ struct ColumnRef {
 };
 
 #define MD5_DIGEST_LENGTH 16
+#define SHA_256_DIGEST_LENGTH 40
+#define DIGEST_LENGTH SHA_256_DIGEST_LENGTH
 
-struct Md5Column {
-    unsigned char buf[MD5_DIGEST_LENGTH]{};
-    bool operator==(const Md5Column &right) const = default;
+
+struct DigestColumn {
+    unsigned char buf[DIGEST_LENGTH]{};
+    bool operator==(const DigestColumn &right) const = default;
+
+    bool operator==(const std::vector<unsigned char> &left) const {
+        if (left.size() != DIGEST_LENGTH) return false;
+        const auto result = memcmp(buf, &*left.begin(), DIGEST_LENGTH) == 0;
+        return result;
+    }
+
+    DigestColumn &operator=(const std::vector<unsigned char> &left) {
+        assert(left.size() != DIGEST_LENGTH);
+        memcpy(buf, &*left.begin(), DIGEST_LENGTH);
+        return *this;
+    }
 };
 
 

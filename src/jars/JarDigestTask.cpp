@@ -5,6 +5,7 @@
 
 #include "../classfile/ClassFileAnalyzer.h"
 #include "../classfile/readers/MemoryReader.h"
+#include "../utils/DigestUtils.h"
 #include "../utils/FilesystemUtils.h"
 
 using namespace org::kapa::tarracsh::jar;
@@ -37,9 +38,9 @@ void JarDigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex
     const auto *row = getClassfileRow(jarEntry);
 
     const auto isUnchanged = row != nullptr && isClassfileUnchanged(jarEntry, row);
-    const std::optional<Md5Column> classDigest =
+    const std::optional<DigestColumn> classDigest =
         isUnchanged
-            ? row->md5
+            ? row->digest
             : parseEntry(jarEntry, row);
 
     ++_results.jarfiles.classfiles.count;
@@ -65,25 +66,20 @@ void JarDigestTask::end() {
         return;
     }
 
-    Poco::MD5Engine md5Engine;
-    Poco::DigestOutputStream stream(md5Engine);
-
-    for (const auto &[buf] : _digestMap | views::values) {
-        stream.write(reinterpret_cast<const char *>(buf), MD5_DIGEST_LENGTH);
+    vector<char> buffer;
+    for (auto &[buf] : _digestMap | views::values) {
+        std::copy_n(buf, DIGEST_LENGTH, buffer.end());
     }
-
-    stream.close();
-    Md5Column digest;
-    memcpy(digest.buf, &*md5Engine.digest().begin(), MD5_DIGEST_LENGTH);
+    const auto digest = digestUtils::digest(&*buffer.begin(), buffer.size());
 
     const auto &filename = _options.jarFile;
-    const auto isSameDigest = !_isNewJarFile && digest == _jarFileRow->md5;
+    const auto isSameDigest = !_isNewJarFile && _jarFileRow->digest == digest;
 
     if (isSameDigest) {
         _results.resultLog.writeln(std::format("Same public digestEntry of changed jar file:{}", filename));
         ++_results.jarfiles.digest.same;
     } else {
-        _jarFileRow->md5 = digest;
+        _jarFileRow->digest = digest;
         if (_isNewJarFile) {
             ++_results.jarfiles.digest.newFile;
         } else {
@@ -134,9 +130,9 @@ bool JarDigestTask::start() {
     return result;
 }
 
-optional<Md5Column> JarDigestTask::parseEntry(const JarEntry &jarEntry,
-                                              const ClassfileRow *row) const {
-    optional<Md5Column> result;
+optional<DigestColumn> JarDigestTask::parseEntry(const JarEntry &jarEntry,
+                                                 const ClassfileRow *row) const {
+    optional<DigestColumn> result;
     Options classfileOptions(_options);
     classfileOptions.classFilePath = jarEntry.getName();
     readers::MemoryReader reader(jarEntry);
@@ -146,7 +142,7 @@ optional<Md5Column> JarDigestTask::parseEntry(const JarEntry &jarEntry,
 
     if (digest.has_value()) {
         const bool rowAlreadyExists = row != nullptr;
-        const auto isSameDigest = rowAlreadyExists && digest.value() == row->md5;
+        const auto isSameDigest = rowAlreadyExists && digest.value() == row->digest;
 
         if (isSameDigest) {
 
@@ -155,7 +151,7 @@ optional<Md5Column> JarDigestTask::parseEntry(const JarEntry &jarEntry,
                             _digestTable->createKey(*row)));
             ++_results.jarfiles.classfiles.digest.same;
 
-            result = row->md5;
+            result = row->digest;
         } else {
             const auto classname = classFileAnalyzer.getMainClassname();
 
@@ -163,10 +159,10 @@ optional<Md5Column> JarDigestTask::parseEntry(const JarEntry &jarEntry,
             digestRow.lastWriteTime = jarEntry.getLastWriteTime();
             digestRow.size = jarEntry.getSize();
             digestRow.classname = _digestTable->getPoolString(classname);
-            digestRow.md5 = digest.value();
+            digestRow.digest = digest.value();
             digestRow.id = _digestTable->addOrUpdate(digestRow);
 
-            result = digestRow.md5;
+            result = digestRow.digest;
 
             if (rowAlreadyExists) {
                 ++_results.jarfiles.classfiles.digest.differentDigest;

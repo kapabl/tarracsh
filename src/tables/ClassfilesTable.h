@@ -16,7 +16,7 @@ struct ClassfileRow : AutoIncrementedRow {
     uint64_t lastWriteTime{};
     uint64_t size{};
     int crc{0};
-    Md5Column md5{};
+    DigestColumn digest{};
 
     ClassfileRow() = default;
 
