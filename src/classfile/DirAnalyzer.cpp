@@ -57,17 +57,20 @@ bool DirAnalyzer::isFileUnchanged(const uintmax_t size, const long long timestam
 void DirAnalyzer::digestClassfile(filesystem::directory_entry const &dirEntry) {
 
     const auto filename = dirEntry.path().string();
+    // if (filename.find("CharacterInsDelInterface.class") != string::npos) {
+    //     cout << "here";
+    // }
     const auto size = filesystem::file_size(filename);
 
     const auto timestamp = fsUtils::getLastWriteTimestamp(filename);
 
     const FileRow *row = _filesTable->findByKey(filename);
     const bool rowFound = row != nullptr;
-    const auto unchangedFile = isFileUnchanged(size, timestamp, row);
+    const auto isFileChanged = !isFileUnchanged(size, timestamp, row);
 
     ++_results.classfiles.digest.count;
 
-    if (!unchangedFile) {
+    if (isFileChanged) {
 
         Options classfileOptions(_options);
         classfileOptions.classFilePath = filename;
@@ -83,34 +86,32 @@ void DirAnalyzer::digestClassfile(filesystem::directory_entry const &dirEntry) {
                 _results.resultLog.writeln(std::format("Same public digestEntry of changed file:{}", filename));
                 ++_results.classfiles.digest.same;
             } else {
-
-                FileRow fileRow;
-                fileRow.filename = _filesTable->getPoolString(filename);
-                fileRow.type = Classfile;
-                fileRow.lastWriteTime = timestamp;
-                fileRow.fileSize = size;
-                fileRow.digest = publicDigest.value();
-                fileRow.id = _filesTable->addOrUpdate(fileRow);
-
-                ClassfileRow digestRow(fileRow);
-                digestRow.size = size;
-                digestRow.lastWriteTime = timestamp;
-                digestRow.digest = publicDigest.value();
-                digestRow.classname = _digestTable->getPoolString(classFileAnalyzer.getMainClassname());
-                digestRow.id = _digestTable->addOrUpdate(digestRow);
-
                 if (rowFound) {
                     ++_results.classfiles.digest.differentDigest;
                 } else {
                     ++_results.classfiles.digest.newFile;
                 }
             }
-
             ++_results.classfiles.parsedCount;
-
         } else {
             ++_results.classfiles.errors;
         }
+
+        FileRow fileRow;
+        fileRow.filename = _filesTable->getPoolString(filename);
+        fileRow.type = Classfile;
+        fileRow.lastWriteTime = timestamp;
+        fileRow.fileSize = size;
+        fileRow.digest = publicDigest.value();
+        fileRow.id = _filesTable->addOrUpdate(fileRow);
+
+        ClassfileRow digestRow(fileRow);
+        digestRow.size = size;
+        digestRow.lastWriteTime = timestamp;
+        digestRow.digest = publicDigest.value();
+        digestRow.classname = _digestTable->getPoolString(classFileAnalyzer.getMainClassname());
+        digestRow.id = _digestTable->addOrUpdate(digestRow);
+
     } else {
         ++_results.classfiles.digest.unchangedCount;
     }
