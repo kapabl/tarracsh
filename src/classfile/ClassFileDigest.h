@@ -36,17 +36,17 @@ private:
 
     ClassFileAnalyzer& _classFileAnalyzer;
     ConstantPool& _constantPool;
-  
-    [[nodiscard]] std::string digestUtf8Entry(u2 index) const;
-    [[nodiscard]] std::string digestClassInfo(u2 classInfoIndex) const;
-    [[nodiscard]] static std::string digest(const attributes::AttributeInfo & attributeInfo);
-    [[nodiscard]] std::string digest(const std::vector<attributes::AttributeInfo>& attributeInfos) const;
-    [[nodiscard]] std::string digest(const MethodInfo& methodInfo) const;
-    [[nodiscard]] std::string digestPublicMethods() const;
-    [[nodiscard]] std::string digestPublicFields() const;
-    [[nodiscard]] std::string digest(const FieldInfo& fieldInfo) const;
-    [[nodiscard]] std::string digestInterfaces() const;
-    [[nodiscard]] std::string digestInterface(const u2 interfaceIndex) const;
+    [[nodiscard]] std::vector<unsigned char> digestClassInfo(u2 classInfoIndex) const;
+    [[nodiscard]] std::vector<unsigned char> digestUtf8Entry(u2 index) const;
+
+    [[nodiscard]] std::vector<unsigned char> digestAttribute(const attributes::AttributeInfo & attributeInfo) const;
+    [[nodiscard]] std::vector<unsigned char> digest(const std::vector<attributes::AttributeInfo>& attributeInfos) const;
+    [[nodiscard]] std::vector<unsigned char> digestMethod(const MethodInfo& methodInfo) const;
+    [[nodiscard]] std::vector<unsigned char> digestPublicMethods() const;
+    [[nodiscard]] std::vector<unsigned char> digestPublicFields() const;
+    [[nodiscard]] std::vector<unsigned char> digestField(const FieldInfo& fieldInfo) const;
+    [[nodiscard]] std::vector<unsigned char> digestInterfaces() const;
+    [[nodiscard]] std::vector<unsigned char> digestInterface(const u2 interfaceIndex) const;
 
 };
 

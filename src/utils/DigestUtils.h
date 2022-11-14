@@ -5,28 +5,33 @@
 #include <set>
 #include <locale>
 #include <format>
-#include <Poco/DigestStream.h>
-#include <Poco/MD5Engine.h>
-#include "StringUtils.h"
 
+
+#define MD5_DIGEST_LENGTH 16
+#define SHA_256_DIGEST_LENGTH 40
+
+#define DIGEST_LENGTH SHA_256_DIGEST_LENGTH
+// #define USE_POCO
+
+#ifdef USE_POCO
+    #define DIGEST_LENGTH MD5_DIGEST_LENGTH
+    #include <Poco/DigestStream.h>
+    #include <Poco/MD5Engine.h>
+#else
+    #define DIGEST_LENGTH SHA_256_DIGEST_LENGTH
+    #include <sodium/crypto_hash_sha256.h>
+#endif
+
+
+#include "StringUtils.h"
 
 namespace org::kapa::tarracsh::digestUtils {
 
+typedef std::vector<unsigned char> DigestVector;
+typedef std::vector<unsigned char> DigestBuffer;
 
-
-
-inline std::vector<unsigned char> md5(const std::string &value) {
-
-    Poco::MD5Engine md5;
-    Poco::DigestOutputStream stream(md5);
-    stream << value;
-    stream.close();
-    auto result = md5.digest();
-    return result;
-}
-
-inline std::vector<unsigned char> digest(const char *bytes, const int length) {
-
+#ifdef USE_POCO
+inline DigestVector digest(const char *bytes, const int length) {
     Poco::MD5Engine md5;
     Poco::DigestOutputStream stream(md5);
     stream.write(bytes, length);
@@ -34,61 +39,33 @@ inline std::vector<unsigned char> digest(const char *bytes, const int length) {
     auto result = md5.digest();
     return result;
 }
-
-inline std::vector<unsigned char> md5(const std::wstring &value) {
-    const auto utf8 = stringUtils::utf16ToUtf8(value);
-    auto result = md5(utf8);
+#else
+inline DigestVector digest(const char *bytes, const int length) {
+    DigestVector result(DIGEST_LENGTH);
+    crypto_hash_sha256(
+        &*result.begin(),
+        reinterpret_cast<const unsigned char *>(bytes),
+        length);
+    return result;
+}
+#endif
+inline DigestVector digest(const DigestBuffer &buffer) {
+    auto result = digest(reinterpret_cast<const char *>(&*buffer.begin()), buffer.size());
     return result;
 }
 
-inline std::string digestToString(Poco::DigestEngine::Digest &digest) {
-    auto result = std::string(reinterpret_cast<char *>(&*digest.begin()), digest.size());
+inline DigestVector digest(const std::vector<char> &buffer) {
+    auto result = digest(&*buffer.begin(), buffer.size());
     return result;
 }
 
-inline Poco::DigestEngine::Digest bytesToDigest(const unsigned char *bytes, int length) {
-    Poco::DigestEngine::Digest result;
-    for (int i = 0; i < length; i++) {
-        result.push_back(bytes[i]);
+inline DigestVector digestSet(const std::set<DigestVector> &digestSet) {
+
+    DigestBuffer buffer;
+    for (auto &digest : digestSet) {
+        std::ranges::copy(digest, buffer.end());
     }
-    return result;
-}
-inline std::string md5AsString(const std::wstring &value) {
-    auto digest = md5(value);
-    auto result = digestToString(digest);
-    return result;
-}
-
-inline std::string md5AsString(const std::string &value) {
-    auto digest = md5(value);
-    auto result = digestToString(digest);
-    return result;
-}
-
-inline std::string md5SetAsString(const std::set<std::string> &md5Set) {
-    const std::string delim;
-    const std::string methodsMd5 = stringUtils::join(md5Set, delim);
-    auto result = md5AsString(methodsMd5);
-    return result;
-}
-
-inline std::string digestToString( const char* buffer, unsigned int length) {
-    Poco::MD5Engine md5;
-    Poco::DigestOutputStream stream(md5);
-    stream.write(buffer, length);
-    stream.close();
-    auto digest = md5.digest();
-    auto result = digestToString(digest);
-    return result;
-}
-
-inline std::string digestToString(const std::vector<unsigned char>& buffer){
-    auto result = digestToString(reinterpret_cast<const char*>(&*buffer.begin()), buffer.size());
-    return result;
-}
-
-inline std::string digestToString(const std::vector<char>& buffer) {
-    auto result = digestToString(&*buffer.begin(), buffer.size());
+    auto result = digest(buffer);
     return result;
 }
 
