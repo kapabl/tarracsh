@@ -8,9 +8,9 @@
 #include <iostream>
 #include <string>
 
-
 #include "StringPool.h"
 
+#include "../utils/DigestUtils.h"
 
 #pragma pack( push, 1 )
 
@@ -27,10 +27,6 @@ struct AutoIncrementedRow {
 struct ColumnRef {
     uint64_t id;
 };
-
-#define MD5_DIGEST_LENGTH 16
-#define SHA_256_DIGEST_LENGTH 40
-#define DIGEST_LENGTH SHA_256_DIGEST_LENGTH
 
 
 struct DigestColumn {
