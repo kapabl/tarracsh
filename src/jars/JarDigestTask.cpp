@@ -153,16 +153,8 @@ optional<DigestColumn> JarDigestTask::parseEntry(const JarEntry &jarEntry,
 
             result = row->digest;
         } else {
-            const auto classname = classFileAnalyzer.getMainClassname();
 
-            ClassfileRow digestRow(*_jarFileRow);
-            digestRow.lastWriteTime = jarEntry.getLastWriteTime();
-            digestRow.size = jarEntry.getSize();
-            digestRow.classname = _digestTable->getPoolString(classname);
-            digestRow.digest = digest.value();
-            digestRow.id = _digestTable->addOrUpdate(digestRow);
-
-            result = digestRow.digest;
+            result = digest.value();
 
             if (rowAlreadyExists) {
                 ++_results.jarfiles.classfiles.digest.differentDigest;
@@ -174,9 +166,17 @@ optional<DigestColumn> JarDigestTask::parseEntry(const JarEntry &jarEntry,
 
         ++_results.jarfiles.classfiles.parsedCount;
 
+        const auto classname = classFileAnalyzer.getMainClassname();
+        ClassfileRow digestRow(*_jarFileRow);
+        digestRow.lastWriteTime = jarEntry.getLastWriteTime();
+        digestRow.size = jarEntry.getSize();
+        digestRow.classname = _digestTable->getPoolString(classname);
+        digestRow.digest = digest.value();
+        digestRow.crc = jarEntry.getCRC();
+        digestRow.id = _digestTable->addOrUpdate(digestRow);
+
     } else {
         ++_results.jarfiles.classfiles.errors;
-
     }
     return result;
 }
