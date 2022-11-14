@@ -40,7 +40,7 @@ struct DigestColumn {
     }
 
     DigestColumn &operator=(const std::vector<unsigned char> &left) {
-        assert(left.size() != DIGEST_LENGTH);
+        assert(left.size() == DIGEST_LENGTH);
         memcpy(buf, &*left.begin(), DIGEST_LENGTH);
         return *this;
     }

@@ -13,7 +13,7 @@ ClassFileDigest::ClassFileDigest(ClassFileAnalyzer &classFileAnalyzer)
 
 DigestVector ClassFileDigest::digestUtf8Entry(u2 index) const {
     const auto &utf8Info = _constantPool[index].utf8Info;
-    auto result = digestUtils::digest(reinterpret_cast<const char*>(utf8Info.bytes), utf8Info.length);
+    auto result = digestUtils::digest(reinterpret_cast<const char *>(utf8Info.bytes), utf8Info.length);
     return result;
 }
 
@@ -67,12 +67,13 @@ DigestVector ClassFileDigest::digestPublicFields() const {
 
 DigestVector ClassFileDigest::digestField(const FieldInfo &fieldInfo) const {
 
-    vector<char> buffer;
-    ranges::copy(digestUtf8Entry(fieldInfo.nameIndex), buffer.end());
-    ranges::copy(digest(fieldInfo.attributes), buffer.end());
-    ranges::copy(_constantPool[fieldInfo.descriptorIndex].utf8Info.bytes, buffer.end());
-    buffer.push_back(static_cast<char>(fieldInfo.accessFlags & 0x0ff));
-    buffer.push_back(static_cast<char>(fieldInfo.accessFlags >> 8));
+    DigestBuffer buffer;
+    buffer.append(digestUtf8Entry(fieldInfo.nameIndex))
+          .append(digest(fieldInfo.attributes))
+          .append(digest(fieldInfo.attributes))
+          .append(_constantPool[fieldInfo.descriptorIndex].utf8Info.bytes)
+          .append(fieldInfo.accessFlags);
+
     auto result = digestUtils::digest(buffer);
     return result;
 
@@ -91,40 +92,40 @@ DigestVector ClassFileDigest::digestInterfaces() const {
 DigestVector ClassFileDigest::digestInterface(const u2 interfaceIndex) const {
     DigestBuffer buffer;
     const auto &classInfo = _constantPool[interfaceIndex].classInfo;
-    ranges::copy(_constantPool[classInfo.nameIndex].utf8Info.bytes, buffer.end());
+    buffer.append(_constantPool[classInfo.nameIndex].utf8Info.bytes);
     auto result = digestUtils::digest(buffer);
     return result;
 }
 
 DigestVector ClassFileDigest::digestMethod(const MethodInfo &methodInfo) const {
-    vector<char> buffer;
-    ranges::copy(digestUtf8Entry(methodInfo.nameIndex), buffer.end());
-    ranges::copy(digest(methodInfo.attributes), buffer.end());
-    ranges::copy(_constantPool[methodInfo.descriptorIndex].utf8Info.bytes, buffer.end());
-    buffer.push_back(static_cast<char>(methodInfo.accessFlags & 0x0ff));
-    buffer.push_back(static_cast<char>(methodInfo.accessFlags >> 8));
+    DigestBuffer buffer;
+    buffer.append(digestUtf8Entry(methodInfo.nameIndex))
+          .append(digest(methodInfo.attributes))
+          .append(_constantPool[methodInfo.descriptorIndex].utf8Info.bytes)
+          .append(methodInfo.accessFlags);
+
     auto result = digestUtils::digest(buffer);
     return result;
 }
 
 tables::DigestColumn ClassFileDigest::digest() const {
 
-    const auto& mainClassInfo = _classFileAnalyzer.getMainClassInfo();
-    const auto& attributes = _classFileAnalyzer.getAttributes();
+    const auto &mainClassInfo = _classFileAnalyzer.getMainClassInfo();
+    const auto &attributes = _classFileAnalyzer.getAttributes();
 
-    vector<char> buffer;
-    ranges::copy(digestClassInfo(mainClassInfo.thisClass), buffer.end());
-    ranges::copy(digestClassInfo(mainClassInfo.superClass), buffer.end());
-    ranges::copy(digest(attributes), buffer.end());
-    ranges::copy(digestPublicMethods(), buffer.end());
-    ranges::copy(digestPublicFields(), buffer.end());
-    ranges::copy(digestInterfaces(), buffer.end());
-    buffer.push_back(static_cast<char>(mainClassInfo.accessFlags & 0x0ff));
-    buffer.push_back(static_cast<char>(mainClassInfo.accessFlags >> 8));
+    DigestBuffer buffer;
+    buffer
+        .append(digestClassInfo(mainClassInfo.thisClass))
+        .append(digestClassInfo(mainClassInfo.superClass))
+        .append(digest(attributes))
+        .append(digestPublicMethods())
+        .append(digestPublicFields())
+        .append(digestInterfaces())
+        .append(mainClassInfo.accessFlags);;
 
-    const auto digest = digestUtils::digest(&*buffer.begin(), buffer.size());
+    const auto digest = digestUtils::digest(reinterpret_cast<const char *>(&*buffer.begin()), buffer.size());
     tables::DigestColumn result;
     memcpy(result.buf, &*digest.begin(), MD5_DIGEST_LENGTH);
     return result;
-    
+
 }

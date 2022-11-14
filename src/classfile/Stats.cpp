@@ -7,11 +7,13 @@ void Results::print(const Options &options) const {
     printf("\033[2J");
     printf("\033[%d;%dH", 0, 0);
 
+    std::cout << "\r";
+
     std::cout << "classfiles: " <<
         classfiles.count + jarfiles.classfiles.count <<
         " jars: " << jarfiles.count;
 
-    std::cout << "\r" << std::flush;
+    std::cout << std::flush;
     
 }
 

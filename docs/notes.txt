@@ -1,4 +1,39 @@
 
+Stats of parellelizing jar files and jar processing
+===================================================
+params: 
+    3/4 of total thread for jars
+    1/4 of total hardware thread for classfiles inside jar
+
+classfiles: 570776 jars: 488
+
+classfiles:
+        No        Ok     Error
+     90855     90855         0
+jars:
+        No        Ok     Error
+       488       488         0
+standalone classfile digest:
+        No       New      Same      Diff Unchanged
+     90855     90855         0         0         0
+jar digest:
+        No       New      Same      Diff Unchanged
+       488       488         0         0         0
+classfile inside jars digest:
+        No       New      Same      Diff Unchanged
+    479921    479921         0         0         0
+
+total classfiles: 570776
+
+5142.13 classfile/s:
+
+total time: 111s
+
+Next possible optimization: parallelize standalone
+classfile processing
+
+=============================================
+
 
 Stats of parallelize classfile parsing, jar single threaded
 ============================================================
@@ -54,3 +89,5 @@ total classfiles: 570774
 2492.46 classfile/s:
 
 total time: 229s
+
+=============================

@@ -28,7 +28,28 @@
 namespace org::kapa::tarracsh::digestUtils {
 
 typedef std::vector<unsigned char> DigestVector;
-typedef std::vector<unsigned char> DigestBuffer;
+//typedef std::vector<unsigned char> DigestBuffer;
+
+struct DigestBuffer: std::vector<unsigned char> {
+
+    template <typename T>
+    DigestBuffer& append( const T& value ) {
+        std::ranges::copy(value, std::back_inserter(*this));
+        return *this;
+    }
+
+    template <typename T>
+    DigestBuffer& append(const T& value, int size) {
+        std::copy_n(value, DIGEST_LENGTH, std::back_inserter(*this));
+        return *this;
+    }
+
+    DigestBuffer& append(const unsigned short& value) {
+        push_back(static_cast<char>(value & 0x0ff));
+        push_back(static_cast<char>(value >> 8));
+        return *this;
+    }
+};
 
 #ifdef USE_POCO
 inline DigestVector digest(const char *bytes, const int length) {
@@ -49,8 +70,17 @@ inline DigestVector digest(const char *bytes, const int length) {
     return result;
 }
 #endif
-inline DigestVector digest(const DigestBuffer &buffer) {
-    auto result = digest(reinterpret_cast<const char *>(&*buffer.begin()), buffer.size());
+
+// inline DigestVector digest(const DigestBuffer &buffer) {
+//     auto result = digest(reinterpret_cast<const char *>(&*buffer.begin()), buffer.size());
+//     return result;
+// }
+
+inline DigestVector digest(const std::vector<unsigned char>& buffer) {
+    if (buffer.empty()) {
+        return DigestVector(DIGEST_LENGTH);
+    }
+    auto result = digest(reinterpret_cast<const char*>(&*buffer.begin()), buffer.size());
     return result;
 }
 
@@ -61,9 +91,12 @@ inline DigestVector digest(const std::vector<char> &buffer) {
 
 inline DigestVector digestSet(const std::set<DigestVector> &digestSet) {
 
+    if ( digestSet.empty()) {
+        return DigestVector(DIGEST_LENGTH);
+    }
     DigestBuffer buffer;
     for (auto &digest : digestSet) {
-        std::ranges::copy(digest, buffer.end());
+        buffer.append(digest);
     }
     auto result = digest(buffer);
     return result;
