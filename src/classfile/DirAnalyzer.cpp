@@ -77,7 +77,7 @@ void DirAnalyzer::digestClassfile(filesystem::directory_entry const &dirEntry) {
         const auto publicDigest = classFileAnalyzer.getPublicDigest();
 
         if (publicDigest.has_value()) {
-            const auto isSamePublicDigest = rowFound && publicDigest.value() == row->md5;
+            const auto isSamePublicDigest = rowFound && publicDigest.value() == row->digest;
 
             if (isSamePublicDigest) {
                 _results.resultLog.writeln(std::format("Same public digestEntry of changed file:{}", filename));
@@ -89,13 +89,13 @@ void DirAnalyzer::digestClassfile(filesystem::directory_entry const &dirEntry) {
                 fileRow.type = Classfile;
                 fileRow.lastWriteTime = timestamp;
                 fileRow.fileSize = size;
-                fileRow.md5 = publicDigest.value();
+                fileRow.digest = publicDigest.value();
                 fileRow.id = _filesTable->addOrUpdate(fileRow);
 
                 ClassfileRow digestRow(fileRow);
                 digestRow.size = size;
                 digestRow.lastWriteTime = timestamp;
-                digestRow.md5 = publicDigest.value();
+                digestRow.digest = publicDigest.value();
                 digestRow.classname = _digestTable->getPoolString(classFileAnalyzer.getMainClassname());
                 digestRow.id = _digestTable->addOrUpdate(digestRow);
 

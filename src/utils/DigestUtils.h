@@ -25,7 +25,7 @@ inline std::vector<unsigned char> md5(const std::string &value) {
     return result;
 }
 
-inline std::vector<unsigned char> md5(const char *bytes, const int length) {
+inline std::vector<unsigned char> digest(const char *bytes, const int length) {
 
     Poco::MD5Engine md5;
     Poco::DigestOutputStream stream(md5);
@@ -69,6 +69,26 @@ inline std::string md5SetAsString(const std::set<std::string> &md5Set) {
     const std::string delim;
     const std::string methodsMd5 = stringUtils::join(md5Set, delim);
     auto result = md5AsString(methodsMd5);
+    return result;
+}
+
+inline std::string digestToString( const char* buffer, unsigned int length) {
+    Poco::MD5Engine md5;
+    Poco::DigestOutputStream stream(md5);
+    stream.write(buffer, length);
+    stream.close();
+    auto digest = md5.digest();
+    auto result = digestToString(digest);
+    return result;
+}
+
+inline std::string digestToString(const std::vector<unsigned char>& buffer){
+    auto result = digestToString(reinterpret_cast<const char*>(&*buffer.begin()), buffer.size());
+    return result;
+}
+
+inline std::string digestToString(const std::vector<char>& buffer) {
+    auto result = digestToString(&*buffer.begin(), buffer.size());
     return result;
 }
 

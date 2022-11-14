@@ -17,12 +17,12 @@ void ClassfilesTable::updateClassnameIndex(const ClassfileRow *pBeforeRow,
 void ClassfilesTable::updateDigestIndex(const ClassfileRow *pBeforeRow, 
     const ClassfileRow *pAfterRow) {
     if (pBeforeRow != nullptr) {
-        const auto digestHexString = stringUtils::bytesToHexString(pBeforeRow->md5.buf, MD5_DIGEST_LENGTH);
+        const auto digestHexString = stringUtils::bytesToHexString(pBeforeRow->digest.buf, MD5_DIGEST_LENGTH);
         const auto it = _digestIndex.find(digestHexString);
         if (it != _digestIndex.end()) {
             it->second.erase(pBeforeRow);
         }
     }
-    const auto digestHexString = stringUtils::bytesToHexString(pAfterRow->md5.buf, MD5_DIGEST_LENGTH);
+    const auto digestHexString = stringUtils::bytesToHexString(pAfterRow->digest.buf, MD5_DIGEST_LENGTH);
     _digestIndex[digestHexString].insert(pAfterRow);
 }
