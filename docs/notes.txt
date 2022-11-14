@@ -2,7 +2,7 @@
 Stats of parellelizing jar files and jar processing
 ===================================================
 params: 
-    3/4 of total thread for jars
+    3/4 of total hardware thread for jars
     1/4 of total hardware thread for classfiles inside jar
 
 classfiles: 570776 jars: 488
