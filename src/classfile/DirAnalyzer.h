@@ -38,7 +38,8 @@ private:
     std::shared_ptr<tables::StringPool> _stringPool;
     std::shared_ptr<tables::ClassfilesTable> _digestTable;
 
-    BS::thread_pool _jarThreadPool;
+    BS::thread_pool _jarThreadPool{ std::max<unsigned int>(1u, std::thread::hardware_concurrency() * 3 / 4) };
+    //BS::thread_pool _jarThreadPool{ std::max<unsigned int>(1u, std::thread::hardware_concurrency() - 2) };
 
     bool _isValid{true};
 

@@ -42,7 +42,8 @@ private:
     void waitForAvailableBuffer();
 
 
-    BS::thread_pool _threadPool;
+    BS::thread_pool _threadPool{ std::max<unsigned int>( 1u, std::thread::hardware_concurrency()*1/4) };
+    // BS::thread_pool _threadPool{ 2 };
     std::mutex _taskMutex;
     std::mutex _jarMutex;
     std::condition_variable _jarCv;

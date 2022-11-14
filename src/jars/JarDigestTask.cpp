@@ -66,11 +66,11 @@ void JarDigestTask::end() {
         return;
     }
 
-    vector<char> buffer;
+    digestUtils::DigestBuffer buffer;
     for (auto &[buf] : _digestMap | views::values) {
-        std::copy_n(buf, DIGEST_LENGTH, buffer.end());
+        buffer.append(buf, DIGEST_LENGTH);
     }
-    const auto digest = digestUtils::digest(&*buffer.begin(), buffer.size());
+    const auto digest = digestUtils::digest(buffer);
 
     const auto &filename = _options.jarFile;
     const auto isSameDigest = !_isNewJarFile && _jarFileRow->digest == digest;
