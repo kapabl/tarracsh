@@ -67,6 +67,7 @@ private:
 
     void initialize();
     void readConstPoolEntry( int& index);
+    bool canPrintConstantPool() const;
     void readConstantsPool();
     void readMainClassInfo();
     void readInterfaces();

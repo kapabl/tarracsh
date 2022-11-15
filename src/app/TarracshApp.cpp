@@ -1,5 +1,6 @@
 #include "TarracshApp.h"
 #include "../classfile/ClassFileAnalyzer.h"
+#include "../classfile/ConstantPoolPrinter.h"
 #include "../classfile/DirAnalyzer.h"
 #include "../jars/JarAnalyzerTask.h"
 #include "../classfile/readers/FileReader.h"
@@ -108,5 +109,5 @@ void TarracshApp::init() const {
 
     filesystem::create_directories(_options.outputDir);
     Log::emptyLogFile(_options.logFile);
-    ConstantPool::init();
+    ConstantPoolPrinter::init();
 }

@@ -11,7 +11,7 @@ classfiles:
         No        Ok     Error
      90855     90855         0
 jars:
-        No        Ok     Error
+        No        Ok     Erro
        488       488         0
 standalone classfile digest:
         No       New      Same      Diff Unchanged
@@ -32,6 +32,7 @@ total time: 111s
 Next possible optimization: parallelize standalone
 classfile processing
 
+=============================================
 =============================================
 
 
