@@ -616,6 +616,7 @@
     <ClCompile Include="src\classfile\ClassFileAnalyzer.cpp" />
     <ClCompile Include="src\classfile\ClassFileDigest.cpp" />
     <ClCompile Include="src\classfile\ConstantPool.cpp" />
+    <ClCompile Include="src\classfile\ConstantPoolPrinter.cpp" />
     <ClCompile Include="src\classfile\DirAnalyzer.cpp" />
     <ClCompile Include="src\classfile\ParserOutput.cpp" />
     <ClCompile Include="src\classfile\readers\ClassFileReader.cpp" />
@@ -647,6 +648,7 @@
     <ClInclude Include="src\classfile\ClassFileDigest.h" />
     <ClInclude Include="src\classfile\ClassFileStructures.h" />
     <ClInclude Include="src\classfile\ConstantPool.h" />
+    <ClInclude Include="src\classfile\ConstantPoolPrinter.h" />
     <ClInclude Include="src\classfile\DescriptorParser.h" />
     <ClInclude Include="src\classfile\DirAnalyzer.h" />
     <ClInclude Include="src\classfile\jars\JarAnalyzerTask.h" />

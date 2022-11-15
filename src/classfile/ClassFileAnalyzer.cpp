@@ -2,6 +2,7 @@
 #include "ClassFileAnalyzer.h"
 
 #include "ClassFileDigest.h"
+#include "ConstantPoolPrinter.h"
 #include "../tables/ClassfilesTable.h"
 
 #include "MethodDescriptorParser.h"
@@ -202,6 +203,11 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
 }
 
 
+bool ClassFileAnalyzer::canPrintConstantPool() const {
+    const auto result = !_options.classfileOption->empty() && _options.printConstantPool;
+    return result;
+}
+
 void ClassFileAnalyzer::readConstantsPool() {
     const u2 count = _reader.readU2();
     _constantPool.setCount(count);
@@ -212,8 +218,9 @@ void ClassFileAnalyzer::readConstantsPool() {
     }
     _constantPool.relocate();
 
-    if (_options.printConstantPool) {
-        _constantPool.print();
+    if (canPrintConstantPool()) {
+        const ConstantPoolPrinter printer(_constantPool);
+        printer.print();
     }
 }
 
