@@ -1,6 +1,6 @@
 #include "TarracshApp.h"
-#include "../classfile/ClassFileAnalyzer.h"
 #include "../classfile/ConstantPoolPrinter.h"
+#include "../classfile/ClassFileAnalyzer.h"
 #include "../classfile/DirAnalyzer.h"
 #include "../jars/JarAnalyzerTask.h"
 #include "../classfile/readers/FileReader.h"
@@ -94,6 +94,11 @@ int TarracshApp::parseCli(int argc, char **argv) {
 }
 
 #ifdef _WIN32
+void TarracshApp::prepareForUTF8() {
+    SetConsoleOutputCP(CP_UTF8);
+    setvbuf(stdout, nullptr, _IOFBF, 1000);
+}
+
 void TarracshApp::prepareConsoleForVT100() {
     const auto stdOutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleMode(stdOutHandle, ENABLE_VIRTUAL_TERMINAL_PROCESSING | ENABLE_PROCESSED_OUTPUT);
@@ -105,6 +110,7 @@ void TarracshApp::init() const {
 
 #ifdef _WIN32
     prepareConsoleForVT100();
+    prepareForUTF8();
 #endif
 
     filesystem::create_directories(_options.outputDir);

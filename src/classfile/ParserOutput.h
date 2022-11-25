@@ -38,11 +38,11 @@ private:
     void outputMethod(MethodInfo &methodInfo);
     void outputMethods();
 
-    [[nodiscard]] std::wstring getClassInfoName(const u2 index) const;
+    [[nodiscard]] std::string getClassInfoName(const u2 index) const;
 
-    void outputClass(const std::wstring &type);
+    void outputClass(const std::string &type);
     void outputClass();
-    std::wstring attributesToString(std::vector<attributes::AttributeInfo> &attributes);
+    std::string attributesToString(std::vector<attributes::AttributeInfo> &attributes);
     void outputField(FieldInfo &fieldInfo);
     void outputFields();
     void outputInterfaces();

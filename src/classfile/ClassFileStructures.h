@@ -1,7 +1,7 @@
+#ifndef TARRACSH_CLASSFILESTRUCTURE_H
+#define TARRACSH_CLASSFILESTRUCTURE_H
 
-#ifndef TARRASH_CLASSFILESTRUCTURE_H
-#define TARRASH_CLASSFILESTRUCTURE_H
-
+#include <unicode/unistr.h>
 #include "StructsCommon.h"
 #include "StackFrame.h"
 #include "AttributeStructures.h"
@@ -58,26 +58,38 @@ struct NameAndTypeInfo : ConstPoolBase {
 };
 
 
-struct FieldrefInfo : MemberInfo {};
-struct MethodrefInfo : MemberInfo {};
-struct InterfaceMethodrefInfo : MemberInfo {};
+struct FieldrefInfo : MemberInfo {
+};
+
+struct MethodrefInfo : MemberInfo {
+};
+
+struct InterfaceMethodrefInfo : MemberInfo {
+};
 
 struct Utf8Info : ConstPoolBase {
     u2 length;
     u1 bytes[1];
 
-    [[nodiscard]] std::wstring getValue(bool withEscaped = false) const {
-        auto result = stringUtils::utf82wstring(bytes, withEscaped);
-        return result;
-    }
-
-    [[nodiscard]] std::wstring getValueAsClassname(bool withEscaped = false) const {
-        auto result = getValue(withEscaped);
-        for (auto &wchar : result) {
-            if (wchar == L'/') {
-                wchar = L'.';
-            }
-        }
+    // [[nodiscard]] std::wstring getValue(bool withEscaped = false) const {
+    //     auto result = stringUtils::utf82wstring(bytes, withEscaped);
+    //     return result;
+    // }
+    //
+    // [[nodiscard]] std::wstring getValueAsClassname(bool withEscaped = false) const {
+    //     auto result = getValue(withEscaped);
+    //     for (auto &wchar : result) {
+    //         if (wchar == L'/') {
+    //             wchar = L'.';
+    //         }
+    //     }
+    //     return result;
+    // }
+    
+    [[nodiscard]] std::string getAsUtf8(bool withEscaped = false) const {
+        const icu::StringPiece stringPiece(reinterpret_cast<const char*>(bytes), length);
+        std::string result;
+        icu::UnicodeString::fromUTF8(stringPiece).toUTF8String(result);
         return result;
     }
 };
@@ -100,8 +112,9 @@ struct IntegerInfo : ConstPoolBase {
 
 struct FloatInfo : ConstPoolBase {
     u4 u4Value;
+
     [[nodiscard]] float getFloat() const {
-        const float result = *reinterpret_cast<const float*>(&u4Value);
+        const float result = *reinterpret_cast<const float *>(&u4Value);
         return result;
     }
 };
@@ -124,7 +137,7 @@ struct DoubleInfo : ConstPoolBase {
     [[nodiscard]] double getDouble() const {
         uint64_t uint64 = highBytes;
         uint64 = uint64 << 32 | lowBytes;
-        const double result = *reinterpret_cast<double*>(&uint64);
+        const double result = *reinterpret_cast<double *>(&uint64);
         return result;
     }
 };
@@ -138,6 +151,7 @@ struct DynamicInfo : ConstPoolBase {
     u2 bootstrapMethodAttrIndex;
     u2 nameAndTypeIndex;
 };
+
 struct PackageInfo : ConstPoolBase {
     u2 nameIndex;
 };
@@ -178,15 +192,17 @@ struct Descriptor {
     bool isArray;
     bool isClass;
     int dimensions;
-    std::wstring type;
+    std::string type;
 
-    Descriptor() : isArray(false), isClass(false), dimensions(0) {}
+    Descriptor()
+        : isArray(false), isClass(false), dimensions(0) {
+    }
 
-    std::wstring toString() const {
-        std::wstring result(type);
+    [[nodiscard]] std::string toString() const {
+        std::string result(type);
 
         for (int i = 0; i < dimensions; i++) {
-            result += L"[]";
+            result += "[]";
         }
 
         return result;
@@ -197,14 +213,14 @@ struct MethodDescriptor {
     std::vector<Descriptor> arguments;
     Descriptor returnType;
 
-    std::wstring argumentsToString() const {
-        std::vector<std::wstring> parts;
+    [[nodiscard]] std::string argumentsToString() const {
+        std::vector<std::string> parts;
 
         for (auto &descriptor : arguments) {
             parts.push_back(descriptor.toString());
         }
 
-        std::wstring result = L"(" + stringUtils::join<std::wstring>(parts, L", ") + L")";
+        std::string result = "(" + stringUtils::join<std::string>(parts, ", ") + ")";
 
         return result;
     }
@@ -213,4 +229,4 @@ struct MethodDescriptor {
 }
 #pragma pack(pop)
 
-#endif // TARRASH_CLASSFILESTRUCTURE_H
+#endif 

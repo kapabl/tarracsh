@@ -24,24 +24,24 @@ void ParserOutput::run() {
 }
 
 void ParserOutput::outputAccessModifiers(const u2 accessFlags) const {
-    wcout << _accessModifiers.toString(accessFlags) << " ";
+    cout << _accessModifiers.toString(accessFlags) << " ";
 }
 
 void ParserOutput::outputMethod(MethodInfo &methodInfo) {
     const auto accessModifiers = _accessModifiers.toString(methodInfo.accessFlags);
-    const auto name = _constantPool[methodInfo.nameIndex].utf8Info.getValue();
+    const auto name = _constantPool[methodInfo.nameIndex].utf8Info.getAsUtf8();
     const auto &utf8DDesc = _constantPool[methodInfo.descriptorIndex].utf8Info;
 
-    MethodDescriptorParser methodDescriptorParser(utf8DDesc.getValue());
+    MethodDescriptorParser methodDescriptorParser(utf8DDesc.getAsUtf8());
     auto &methodDescriptor = methodDescriptorParser.getDescriptor();
     const auto returnType = methodDescriptor.returnType.toString();
     const auto arguments = methodDescriptor.argumentsToString();
 
     const auto attributesString = attributesToString(methodInfo.attributes);
 
-    const vector parts{attributesString, accessModifiers, returnType, name + arguments};
+    const vector<string> parts{attributesString, accessModifiers, returnType, name + arguments};
 
-    wcout << stringUtils::join<wstring>(parts, L" ") << L";";
+    cout << stringUtils::join<string>(parts, " ") << ";";
     cout << endl;
 }
 
@@ -57,12 +57,12 @@ void ParserOutput::outputMethods() {
     cout << endl;
 }
 
-wstring ParserOutput::getClassInfoName(const u2 index) const {
+std::string ParserOutput::getClassInfoName(const u2 index) const {
     auto result = _constantPool.getClassInfoName(index);
     return result;
 }
 
-void ParserOutput::outputClass(const wstring &type) {
+void ParserOutput::outputClass(const string &type) {
     const auto& mainClassInfo = _classFileAnalyzer.getMainClassInfo();
     cout << endl;
     cout << "//Class " << endl;
@@ -71,11 +71,13 @@ void ParserOutput::outputClass(const wstring &type) {
 
     const auto attributesString = attributesToString(_classFileAnalyzer.getAttributes());
 
-    wcout << attributesString << accessModifiers << L" " << type << L" "
-        << getClassInfoName(mainClassInfo.thisClass);
+    cout << attributesString << accessModifiers << " " << type << " ";
+
+    const string classname = getClassInfoName(mainClassInfo.thisClass);
+    cout << classname;
 
     if (mainClassInfo.superClass != 0) {
-        wcout << L" extends " << getClassInfoName(mainClassInfo.superClass);
+        cout << " extends " << getClassInfoName(mainClassInfo.superClass);
     }
 
     // TODO implemented interfaces
@@ -83,13 +85,13 @@ void ParserOutput::outputClass(const wstring &type) {
 
 void ParserOutput::outputClass() {
 
-    outputClass(_classFileAnalyzer.getMainClassInfo().isInterface() ? L"interface" : L"class");
+    outputClass(_classFileAnalyzer.getMainClassInfo().isInterface() ? "interface" : "class");
     cout << endl;
 }
 
-wstring ParserOutput::attributesToString(vector<AttributeInfo> &attributes) {
+string ParserOutput::attributesToString(vector<AttributeInfo> &attributes) {
 
-    vector<wstring> parts;
+    vector<string> parts;
 
     parts.reserve(attributes.size());
     auto &attributesManager = _classFileAnalyzer.getAttributesManager();
@@ -97,24 +99,24 @@ wstring ParserOutput::attributesToString(vector<AttributeInfo> &attributes) {
         parts.push_back(attributesManager.toString(attribute));
     }
 
-    auto result = stringUtils::join<wstring>(parts, L"\n\n");
+    auto result = stringUtils::join<string>(parts, "\n\n");
     if (!result.empty()) {
-        result = L"/*\n" + result + L"\n*/\n";
+        result = "/*\n" + result + "\n*/\n";
     }
     return result;
 }
 
 void ParserOutput::outputField(FieldInfo &fieldInfo) {
     const auto accessModifiers = _accessModifiers.toString(fieldInfo.accessFlags);
-    const auto name = _constantPool[fieldInfo.nameIndex].utf8Info.getValue();
-    const auto descriptorString = _constantPool[fieldInfo.descriptorIndex].utf8Info.getValue();
+    const auto name = _constantPool[fieldInfo.nameIndex].utf8Info.getAsUtf8();
+    const auto descriptorString = _constantPool[fieldInfo.descriptorIndex].utf8Info.getAsUtf8();
     const auto descriptor = DescriptorParser(descriptorString).getDescriptor();
 
     const auto attributeString = attributesToString(fieldInfo.attributes);
 
-    const vector parts{attributeString, accessModifiers, descriptor.toString(), name};
+    const vector<string> parts{attributeString, accessModifiers, descriptor.toString(), name};
 
-    wcout << stringUtils::join<wstring>(parts, L" ") << ";";
+    cout << stringUtils::join<string>(parts, " ") << ";";
 }
 
 void ParserOutput::outputFields() {

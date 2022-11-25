@@ -1,0 +1,20 @@
+---
+templates:
+  console:
+    entry: "{{index}}\t{{name}}\t"
+    class-info: "idx:{{index}} {{value}}"
+    method-handle-info: "ref kind:{{kind}}, idx:{{index}}"
+    ref-extra-info: "idx:{{classIndex}}:{{nameAndTypeIndex}} {{classname}}: {{typeName}}:{{descriptor}}"
+    bootstrap: "Bootstrap MT idx:{{index}},N&T:{nameAndTypeIndex}  {{typeName}}:{{descriptor}}"
+    name-type-info: "idx:{{index}}:{{descriptorIndex}} {{typeName}}:{{descriptor}}"
+    utf8-info: "{{value}}"
+    string-info: "{{index}} {{value}}"
+#    integer-info: "{{value}}"
+#    long-info: "{{value}}"
+#    float-info: "{{value}}"
+    value: "{{value}}"
+
+  html:
+    entry: "<a href=#>{: <6} {: <22}</a>"
+
+

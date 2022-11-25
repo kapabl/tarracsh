@@ -14,25 +14,26 @@ public:
 
     }
 
-    [[nodiscard]] std::wstring toStringRuntimeAnnotations() const;
-    [[nodiscard]] std::wstring toStringRuntimeParameterAnnotations() const;
-    [[nodiscard]] std::wstring toStringRuntimeTypeAnnotations() const;
-    [[nodiscard]] std::wstring toStringAnnotationDefault() const;
+    [[nodiscard]] std::string toStringRuntimeAnnotations() const;
+    [[nodiscard]] std::string toStringRuntimeParameterAnnotations() const;
+    [[nodiscard]] std::string toStringRuntimeTypeAnnotations() const;
+    [[nodiscard]] std::string toStringAnnotationDefault() const;
 
 private:
     const ConstantPool &_constantPool;
     const attributes::AttributeInfo &_attribute;
     readers::VectorReader &_reader;
 
-    [[nodiscard]] std::wstring localVarAnnotationToString(const attributes::TypeAnnotation &typeAnnotation) const;
-    [[nodiscard]] std::wstring annotationToString(const attributes::AnnotationValuePair &annotationValuePair) const;
-    [[nodiscard]] std::wstring annotationToString(const attributes::Annotation &annotation) const;
-    [[nodiscard]] std::wstring annotationToString(const attributes::ParameterAnnotation &parameterAnnotation) const;
-    [[nodiscard]] std::wstring annotationsToString(const attributes::RuntimeAnnotations &annotations) const;
-    [[nodiscard]] std::wstring annotationsToString(const attributes::RuntimeParameterAnnotations &annotations) const;
-    [[nodiscard]] std::wstring elementValueToString(const attributes::ElementValue &elementValue) const;
-    [[nodiscard]] std::wstring annotationToString(const attributes::TypeAnnotation &typeAnnotation) const;
-    [[nodiscard]] std::wstring annotationsToString(const attributes::RuntimeTypeAnnotations &typeAnnotations) const;
+    [[nodiscard]] std::string localVarAnnotationToString(const attributes::TypeAnnotation &typeAnnotation) const;
+    [[nodiscard]] std::string annotationToString(const attributes::AnnotationValuePair &annotationValuePair) const;
+    [[nodiscard]] std::string annotationToString(const attributes::Annotation &annotation) const;
+    [[nodiscard]] std::string annotationToString(const attributes::ParameterAnnotation &parameterAnnotation) const;
+    [[nodiscard]] std::string annotationsToString(const attributes::RuntimeAnnotations &annotations) const;
+    [[nodiscard]] std::string annotationsToString(const attributes::RuntimeParameterAnnotations &annotations) const;
+    [[nodiscard]] std::string annotationToString(const attributes::TypeAnnotation &typeAnnotation) const;
+    [[nodiscard]] std::string annotationsToString(const attributes::RuntimeTypeAnnotations &typeAnnotations) const;
+
+    [[nodiscard]] std::string elementValueToString(const attributes::ElementValue& elementValue) const;
 
 
     void readElementValue(attributes::ElementValue &elementValue) const;

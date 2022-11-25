@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 
+
 #include "ConstantPool.h"
 
 #include <cassert>
@@ -20,7 +21,7 @@ void ConstantPool::addEmptyIndex() {
 
 ConstantPool::ConstantPool() {
     // _buffer.reserve(1024 * 10240);
-    _buffer = static_cast<u1*>(malloc(_size));
+    _buffer = static_cast<u1 *>(malloc(_size));
     _constantPoolIndex.reserve(20 * 1024);
     addEmptyIndex();
 }
@@ -44,25 +45,25 @@ ConstantPoolRecord &ConstantPool::operator[](const u2 index) const {
 }
 
 
-std::wstring ConstantPool::getClassInfoName(const u2 classInfoIndex) const {
-    if (classInfoIndex == 0) return L"";
+std::string ConstantPool::getClassInfoName(const u2 classInfoIndex) const {
+    if (classInfoIndex == 0) return "";
     const auto &classInfo = getEntry(classInfoIndex).classInfo;
-    auto name = getClassname(classInfo.nameIndex);
+    auto result = getClassname(classInfo.nameIndex);
+    return result;
+}
+
+std::string ConstantPool::getClassname(const u2 nameIndex) const {
+    if (nameIndex == 0) return "<anonymous>";
+    auto result = getEntry(nameIndex).utf8Info.getAsUtf8();
+    return result;
+}
+
+std::string ConstantPool::getString(const u2 stringIndex, const bool withEscaped) const {
+    auto name = getEntry(stringIndex).utf8Info.getAsUtf8(withEscaped);
     return name;
 }
 
-std::wstring ConstantPool::getClassname(const u2 nameIndex) const {
-    if (nameIndex == 0) return L"<anonymous>";
-    auto name = getEntry(nameIndex).utf8Info.getValueAsClassname();
-    return name;
-}
-
-std::wstring ConstantPool::getString(const u2 stringIndex, const bool withEscaped) const {
-    auto name = getEntry(stringIndex).utf8Info.getValue(withEscaped);
-    return name;
-}
-
-std::wstring ConstantPool::getTypeString(const u2 stringIndex) const {
+std::string ConstantPool::getTypeString(const u2 stringIndex) const {
 
     const auto type = getString(stringIndex);
 
@@ -72,30 +73,30 @@ std::wstring ConstantPool::getTypeString(const u2 stringIndex) const {
     return result;
 }
 
-std::wstring ConstantPool::getConstantValueString(const u2 constantIndex) const {
+std::string ConstantPool::getConstantValueString(const u2 constantIndex) const {
     const auto &constantPoolRecord = getEntry(constantIndex);
-    std::wstring result;
+    std::string result;
 
     switch (constantPoolRecord.base.tag) {
 
         case JVM_CONSTANT_Integer:
-            result = std::to_wstring(constantPoolRecord.integerInfo.value);
+            result = std::to_string(constantPoolRecord.integerInfo.value);
             break;
 
         case JVM_CONSTANT_Float:
-            result = std::to_wstring(constantPoolRecord.floatInfo.getFloat());
+            result = std::to_string(constantPoolRecord.floatInfo.getFloat());
             break;
 
         case JVM_CONSTANT_Long:
-            result = std::to_wstring(constantPoolRecord.longInfo.getLongLong());
+            result = std::to_string(constantPoolRecord.longInfo.getLongLong());
             break;
 
         case JVM_CONSTANT_Double:
-            result = std::to_wstring(constantPoolRecord.doubleInfo.getDouble());
+            result = std::to_string(constantPoolRecord.doubleInfo.getDouble());
             break;
 
         case JVM_CONSTANT_Utf8:
-            result = L"\"" + constantPoolRecord.utf8Info.getValue(true) + L"\"";
+            result = "\"" + constantPoolRecord.utf8Info.getAsUtf8(true) + "\"";
             break;
 
         case JVM_CONSTANT_String:

@@ -30,8 +30,8 @@ namespace org::kapa::tarracsh::attributes {
 
 
 #define START_ATTR_TO_STRING(AttributeName) \
-    std::wstring ATTR_TO_STRING_FUNC_NAME(AttributeName)(AttributeInfo & attribute) { \
-        std::wstring result = L"Attr - "#AttributeName; \
+    std::string ATTR_TO_STRING_FUNC_NAME(AttributeName)(AttributeInfo & attribute) { \
+        std::string result = "Attr - "#AttributeName; \
         readers::VectorReader reader(attribute.info, _isBigEndian);
 
 #define END_ATTR_TO_STRING() \
@@ -52,7 +52,7 @@ public:
 
     void setBigEndian(bool value) { _isBigEndian = value; }
 
-    [[nodiscard]] AttributeTag getTag(const std::wstring &stringTag) const {
+    [[nodiscard]] AttributeTag getTag(const std::string &stringTag) const {
         const auto it = _tagsMap.find(stringTag);
         if (it != _tagsMap.end()) {
             return it->second;
@@ -60,33 +60,33 @@ public:
         return AttributeTag::InvalidTag;
     }
 
-    [[nodiscard]] std::wstring toString(const AttributeInfo &attribute) const {
+    [[nodiscard]] std::string toString(const AttributeInfo &attribute) const {
 
-        const auto tagName = _constantPool[attribute.nameIndex].utf8Info.getValue();
+        const auto tagName = _constantPool[attribute.nameIndex].utf8Info.getAsUtf8();
 
         const auto tag = getTag(tagName);
         const auto it = _tags2ToStringFunc.find(tag);
 
         auto _this = const_cast<AttributesManager *>(this);
-        std::wstring result = (it != _tags2ToStringFunc.end())
+        std::string result = (it != _tags2ToStringFunc.end())
                                   ? (_this->*(it->second))(const_cast<AttributeInfo &>(attribute))
-                                  : (L"Invalid Attribute: " + tagName);
+                                  : ("Invalid Attribute: " + tagName);
 
         return result;
     }
 
 private:
-    typedef std::wstring (AttributesManager::*AttrToStringFunc)(AttributeInfo &);
+    typedef std::string (AttributesManager::*AttrToStringFunc)(AttributeInfo &);
 
     accessModifiers::AccessModifiers _accessModifiers;
 
-    std::unordered_map<std::wstring, AttributeTag> _tagsMap;
+    std::unordered_map<std::string, AttributeTag> _tagsMap;
     std::unordered_map<AttributeTag, AttrToStringFunc> _tags2ToStringFunc;
     const ConstantPool &_constantPool;
     bool _isBigEndian;
 
     START_ATTR_TO_STRING(ConstantValue)
-        result += L": ";
+        result += ": ";
 
         ConstantValue constantValue{{attribute.nameIndex, attribute.length}, reader.readU2(), {}};
 
@@ -96,34 +96,34 @@ private:
 
             case JVM_CONSTANT_Integer: {
                 constantValue.value.intValue = static_cast<IntegerInfo &>(constantValueEntry).value;
-                result += std::to_wstring(constantValue.value.intValue);
+                result += std::to_string(constantValue.value.intValue);
                 break;
             }
 
             case JVM_CONSTANT_Float: {
 
                 constantValue.value.floatValue = static_cast<FloatInfo &>(constantValueEntry).getFloat();
-                result += std::to_wstring(constantValue.value.floatValue);
+                result += std::to_string(constantValue.value.floatValue);
                 break;
             }
 
             case JVM_CONSTANT_Long: {
                 auto longInfo = static_cast<LongInfo &>(constantValueEntry);
                 constantValue.value.longValue = longInfo.getLongLong();
-                result += std::to_wstring(constantValue.value.longValue);
+                result += std::to_string(constantValue.value.longValue);
                 break;
             }
 
             case JVM_CONSTANT_Double: {
                 constantValue.value.doubleValue = static_cast<DoubleInfo &>(constantValueEntry).getDouble();
-                result += std::to_wstring(constantValue.value.doubleValue);
+                result += std::to_string(constantValue.value.doubleValue);
                 break;
             }
 
             case JVM_CONSTANT_String: {
                 auto &stringInfo = static_cast<StringInfo &>(constantValueEntry);
                 constantValue.value.string = _constantPool.getString(stringInfo.stringIndex);
-                result += std::to_wstring(constantValue.value.doubleValue);
+                result += std::to_string(constantValue.value.doubleValue);
                 break;
             }
 
@@ -148,10 +148,10 @@ private:
 
     START_ATTR_TO_STRING(SourceFile)
         const SourceFile sourceFile{{attribute.nameIndex, attribute.length}, reader.readU2()};
-        result += L": " + _constantPool[sourceFile.sourceFileIndex].utf8Info.getValue();
+        result += ": " + _constantPool[sourceFile.sourceFileIndex].utf8Info.getAsUtf8();
     END_ATTR_TO_STRING()
 
-    std::wstring innerClassToString(InnerClasses &innerClasses, readers::VectorReader &reader,
+    std::string innerClassToString(InnerClasses &innerClasses, readers::VectorReader &reader,
                                     u4 index) const {
 
         const InnerClass innerClass{
@@ -162,14 +162,17 @@ private:
 
         const auto innerClassname = _constantPool.getClassInfoName(innerClass.innerClassInfoIndex);
         const auto outerClassname = _constantPool.getClassInfoName(innerClass.outerClassInfoIndex);
+
+        // const auto name = _constantPool.getClassname(innerClass.innerNameIndex);
         const auto name = _constantPool.getClassname(innerClass.innerNameIndex);
 
         const auto accessModifier = _accessModifiers.toString(innerClass.innerClassAccessFlags);
-        std::wstring result =
-            accessModifier +
-            L" class: " + name +
-            L", outer class: " + outerClassname +
-            L", inner class: " + innerClassname;
+        const std::string classDecl =
+            " class: " + name +
+            ", outer class: " + outerClassname +
+            ", inner class: " + innerClassname;
+
+        std::string result = accessModifier + classDecl;
 
         return result;
     }
@@ -180,12 +183,12 @@ private:
         innerClasses.length = attribute.length;
         innerClasses.numberOfClasses = reader.readU2();
 
-        std::vector<std::wstring> parts;
+        std::vector<std::string> parts;
         parts.reserve(innerClasses.numberOfClasses);
         for (auto i = 0u; i < innerClasses.numberOfClasses; ++i) {
             parts.push_back(innerClassToString(innerClasses, reader, i));
         }
-        result += L"\n" + stringUtils::join<std::wstring>(parts, L"\n");
+        result += "\n" + stringUtils::join<std::string>(parts, "\n");
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(NestMembers)
@@ -220,7 +223,7 @@ private:
             exceptionTable.catchType = reader.readU2();
             codeAttribute.exceptionTable.push_back(exceptionTable);
         }
-        result += L" " + std::format(L"maxStack={}, maxLocals={}, codeLength={}, exceptionTableLength={}",
+        result += " " + std::format("maxStack={}, maxLocals={}, codeLength={}, exceptionTableLength={}",
                                      codeAttribute.maxStack, codeAttribute.maxLocals, codeAttribute.codeLength,
                                      codeAttribute.exceptionTableLength);
 
@@ -276,61 +279,61 @@ private:
         SourceDebugExtension sourceDebugExtension;
         sourceDebugExtension.nameIndex = attribute.nameIndex;
         sourceDebugExtension.length = attribute.length;
-        std::wstring value;
+        std::string value;
         for (auto i = 0u; i < sourceDebugExtension.length; i++) {
             const auto character = static_cast<char>(reader.readU1());
             sourceDebugExtension.debugExtensions.push_back(character);
             value.push_back(character);
         }
 
-        result += L" " + value;
+        result += " " + value;
 
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(Signature)
         const signatures::SignatureParser signatureParser(_constantPool, attribute, reader);
-        result += L" " + signatureParser.toString();
+        result += " " + signatureParser.toString();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(Record)
-        result += L" Attribute TODO: Record";
+        result += " Attribute TODO: Record";
     END_ATTR_TO_STRING()
 
 
     START_ATTR_TO_STRING(RuntimeVisibleAnnotations)
         const annotations::AnnotationsParser annotationsParser(_constantPool, attribute, reader);
-        result += L" " + annotationsParser.toStringRuntimeAnnotations();
+        result += " " + annotationsParser.toStringRuntimeAnnotations();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeInvisibleAnnotations)
         const annotations::AnnotationsParser annotationsParser(_constantPool, attribute, reader);
-        result += L" " + annotationsParser.toStringRuntimeAnnotations();
+        result += " " + annotationsParser.toStringRuntimeAnnotations();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeVisibleParameterAnnotations)
         const annotations::AnnotationsParser annotationsParser(_constantPool, attribute, reader);
-        result += L" " + annotationsParser.toStringRuntimeParameterAnnotations();
+        result += " " + annotationsParser.toStringRuntimeParameterAnnotations();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeInvisibleParameterAnnotations)
         const annotations::AnnotationsParser annotationsParser(_constantPool, attribute, reader);
-        result += L" " + annotationsParser.toStringRuntimeParameterAnnotations();
+        result += " " + annotationsParser.toStringRuntimeParameterAnnotations();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(AnnotationDefault)
         const annotations::AnnotationsParser annotationsParser(_constantPool, attribute, reader);
-        result += L" " + annotationsParser.toStringAnnotationDefault();
+        result += " " + annotationsParser.toStringAnnotationDefault();
 
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeVisibleTypeAnnotations)
         const annotations::AnnotationsParser annotationsParser(_constantPool, attribute, reader);
-        result += L" " + annotationsParser.toStringRuntimeTypeAnnotations();
+        result += " " + annotationsParser.toStringRuntimeTypeAnnotations();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(RuntimeInvisibleTypeAnnotations)
         const annotations::AnnotationsParser annotationsParser(_constantPool, attribute, reader);
-        result += L" " + annotationsParser.toStringRuntimeTypeAnnotations();
+        result += " " + annotationsParser.toStringRuntimeTypeAnnotations();
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(EnclosingMethod)

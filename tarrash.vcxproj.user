@@ -27,6 +27,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFile|x64'">
     <LocalDebuggerCommandArguments>--classfile D:\temp\reti\test-subjects\app\com\amazon\ion\impl\bin\IonRawBinaryWriter.class  --print-cpool=yes</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugJar|x64'">
     <LocalDebuggerCommandArguments>--classfile .\test-subjects\org\kapa\infrastructure\languages\kotlin\Event.class</LocalDebuggerCommandArguments>
@@ -47,5 +48,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel2|x64'">
     <LocalDebuggerCommandArguments>--dir D:\temp\reti\test-subjects\jars --generate-public-digest=yes --rebuild=no</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
 </Project>

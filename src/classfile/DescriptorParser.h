@@ -17,7 +17,7 @@ public:
     explicit DescriptorParser(std::shared_ptr<signatures::SignatureScanner> scanner)
         : _scanner(std::move(scanner)) { parse(); }
 
-    explicit DescriptorParser(const std::wstring &value)
+    explicit DescriptorParser(const std::string &value)
         : _scanner(new signatures::SignatureScanner(value)) {
         _scanner->step();
         parse();
@@ -58,39 +58,39 @@ private:
                 }
 
                 case JVM_SIGNATURE_BYTE:
-                    _descriptor.type = L"byte";
+                    _descriptor.type = "byte";
                     break;
 
                 case JVM_SIGNATURE_CHAR:
-                    _descriptor.type = L"char";
+                    _descriptor.type = "char";
                     break;
 
                 case JVM_SIGNATURE_FLOAT:
-                    _descriptor.type = L"float";
+                    _descriptor.type = "float";
                     break;
 
                 case JVM_SIGNATURE_BOOLEAN:
-                    _descriptor.type = L"boolean";
+                    _descriptor.type = "boolean";
                     break;
 
                 case JVM_SIGNATURE_DOUBLE:
-                    _descriptor.type = L"double";
+                    _descriptor.type = "double";
                     break;
 
                 case JVM_SIGNATURE_INT:
-                    _descriptor.type = L"int";
+                    _descriptor.type = "int";
                     break;
 
                 case JVM_SIGNATURE_LONG:
-                    _descriptor.type = L"long";
+                    _descriptor.type = "long";
                     break;
 
                 case JVM_SIGNATURE_SHORT:
-                    _descriptor.type = L"short";
+                    _descriptor.type = "short";
                     break;
 
                 case JVM_SIGNATURE_VOID:
-                    _descriptor.type = L"void";
+                    _descriptor.type = "void";
                     break;
 
                 default:

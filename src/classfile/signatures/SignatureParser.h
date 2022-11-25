@@ -22,14 +22,14 @@ public:
     void parse(const FieldSignature& signature, FieldTypeSignature& node) const;
 
 
-    std::wstring getString(const ClassSignature& signature) const;
-    std::wstring getString(const MethodSignature& signature) const;
-    std::wstring getString(const FieldSignature& signature) const;
+    std::string getString(const ClassSignature& signature) const;
+    std::string getString(const MethodSignature& signature) const;
+    std::string getString(const FieldSignature& signature) const;
 
-    std::wstring toString(const ClassSignature &signature) const;
-    std::wstring toString(const MethodSignature &signature) const;
-    std::wstring toString(const FieldSignature &signature) const;
-    std::wstring toString() const;
+    std::string toString(const ClassSignature &signature) const;
+    std::string toString(const MethodSignature &signature) const;
+    std::string toString(const FieldSignature &signature) const;
+    std::string toString() const;
 
 private:
     const ConstantPool &_constantPool;
