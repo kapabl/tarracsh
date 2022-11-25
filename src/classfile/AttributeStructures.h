@@ -49,7 +49,7 @@ struct ConstantValue : AttributeBase {
             std::byte byteValue;
         };
 
-        std::wstring string;
+        std::string string;
     } value;
 };
 

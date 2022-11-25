@@ -54,13 +54,6 @@ optional<tables::DigestColumn> ClassFileAnalyzer::getPublicDigest() {
     return result;
 }
 
-wstring ClassFileAnalyzer::getClassInfoName(const u2 index) const {
-    const ClassInfo &classInfo = _constantPool[index].classInfo;
-    const auto &classname = _constantPool[classInfo.nameIndex].utf8Info;
-    auto result = classname.getValueAsClassname();
-    return result;
-}
-
 void ClassFileAnalyzer::initialize() {
     _attributesManager.setBigEndian(_reader.isBigEndian());
 }

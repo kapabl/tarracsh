@@ -3,6 +3,9 @@
 
 
 #include <cstring>
+#include <map>
+#include <unordered_map>
+#include <yaml-cpp/node/node.h>
 
 #include "ClassFileStructures.h"
 #include "ConstantPool.h"
@@ -15,7 +18,11 @@ public:
     ~ConstantPoolPrinter() = default;
 
     void print() const;
+    static void readSubTemplates();
     static void init();
+
+
+    typedef std::unordered_map< std::string, std::string> OutputSubTemplates;
 
 
 private:
@@ -25,26 +32,33 @@ private:
     static std::vector<std::string> _poolTagToString;
     static std::vector<std::string> _refKindToString;
 
+
+    // static YAML::Node  _outputTemplates;
+    static std::unordered_map<std::string,std::string>  _templateFragments;
+    
+    // static std::unordered_map<std::string, OutputSubTemplates > _outputTemplates;
+
     static std::string tagToString(ConstantPoolTag tag);
     static std::string refKindToString(MethodHandleSubtypes tag);
-    void printEntry(const ConstPoolBase &entry, int index) const;
-    void printEntry(const Utf8Info &entry, int index) const;
-    void printEntry(const StringInfo &entry, int index) const;
-    void printEntry(const LongInfo &entry, int index) const;
-    void printEntry(const DoubleInfo &entry, int index) const;
-    void printEntry(const IntegerInfo &entry, int index) const;
-    void printEntry(const FloatInfo &entry, int index) const;
-    void printEntry(const ClassInfo &entry, int index) const;
-    void printEntry(const MethodrefInfo &entry, int index) const;
-    void printEntry(const MethodHandleInfo &entry, int index) const;
-    void printEntry(const MethodTypeInfo &entry, int index) const;
+    static void printHeader(const ConstPoolBase &entry, int index);
+    static void printUtf8Info(const Utf8Info &entry, int index);
+    void printStringInfo(const StringInfo &entry, int index) const;
+    static void printLongInfo(const LongInfo &entry, int index);
+    static void printDoubleInfo(const DoubleInfo &entry, int index);
+    static void printIntegerInfo(const IntegerInfo &entry, int index);
+    static void printFloatInfo(const FloatInfo &entry, int index);
+    void printClassInfo(const ClassInfo &entry, int index) const;
+    void printMethodrefInfo(const MethodrefInfo &entry, int index) const;
+    static void printMethodHandleInfo(const MethodHandleInfo &entry, int index);
+    void printMethodTypeInfo(const MethodTypeInfo &entry, int index) const;
     void printEntry(const FieldrefInfo &entry, int index) const;
-    void printEntry(const ModuleInfo &entry, int index) const;
+    void printModuleInfo(const ModuleInfo &entry, int index) const;
     void printRefExtraInfo(const MemberInfo &entry) const;
-    void printEntry(const InterfaceMethodrefInfo &entry, int index) const;
-    void printEntry(const InvokeDynamicInfo &entry, int index) const;
-    void printEntry(const NameAndTypeInfo &entry, int index) const;
+    void printInterfaceMethodrefInfo(const InterfaceMethodrefInfo &entry, int index) const;
+    void printInvokeDynamicInfo(const InvokeDynamicInfo &entry, int index) const;
+    void printNameAndTypeInfo(const NameAndTypeInfo &entry, int index) const;
     void printEntry(const ConstantPoolRecord &entry, int index) const;
+
 
 };
 

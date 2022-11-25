@@ -87,40 +87,40 @@ void SignatureParser::read(FieldSignature &signature) const {
     signature.signatureIndex = _reader.readU2();
 }
 
-std::wstring SignatureParser::getString(const ClassSignature & signature) const {
+std::string SignatureParser::getString(const ClassSignature & signature) const {
     const auto result = _constantPool.getString(signature.signatureIndex);
     return result;
 
 }
 
-std::wstring SignatureParser::getString(const MethodSignature &signature) const {
+std::string SignatureParser::getString(const MethodSignature &signature) const {
     const auto result = _constantPool.getString(signature.signatureIndex);
     return result;
 }
 
-std::wstring SignatureParser::getString(const FieldSignature &signature) const {
+std::string SignatureParser::getString(const FieldSignature &signature) const {
     const auto result = _constantPool.getString(signature.signatureIndex);
     return result;
 
 }
 
-wstring SignatureParser::toString(const ClassSignature &signature) const {
-    wstring result; //TODO
+string SignatureParser::toString(const ClassSignature &signature) const {
+    string result; //TODO
     return result;
 }
 
-wstring SignatureParser::toString(const MethodSignature &signature) const {
-    wstring result; // TODO
+string SignatureParser::toString(const MethodSignature &signature) const {
+    string result; // TODO
     return result;
 }
 
-wstring SignatureParser::toString(const FieldSignature &signature) const {
-    wstring result; // TODO
+string SignatureParser::toString(const FieldSignature &signature) const {
+    string result; // TODO
     return result;
 }
 
-wstring SignatureParser::toString() const {
-    wstring result;
+string SignatureParser::toString() const {
+    string result;
 
     switch (_attribute.owner) {
 

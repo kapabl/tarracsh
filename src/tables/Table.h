@@ -185,11 +185,6 @@ public:
         return result;
     }
 
-    [[nodiscard]] StringPoolItem getPoolString(const std::wstring &value) const {
-        const auto result = _stringPool->add(value);
-        return result;
-    }
-
 
     const T *findByKey(const K &key) {
         std::shared_lock lock(_mutex);

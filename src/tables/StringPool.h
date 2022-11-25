@@ -61,13 +61,6 @@ public:
         return result;
     }
 
-    StringPoolItem add(const std::wstring &wStringValue) {
-        const std::string stringValue = stringUtils::utf16ToUtf8(wStringValue);
-        const auto result = internalAdd(stringValue);
-        return result;
-    }
-
-
     StringPoolItem add(const std::string &stringValue) {
         const auto result = internalAdd(stringValue);
         return result;

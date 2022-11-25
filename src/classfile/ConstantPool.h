@@ -1,7 +1,7 @@
 #ifndef TARRACSH_CONSTANT_POOL_H
 #define TARRACSH_CONSTANT_POOL_H
 
-
+#include <unicode/unistr.h>
 #include <cstring>
 
 #include "ClassFileStructures.h"
@@ -44,11 +44,11 @@ public:
         add(data, size);
     }
 
-    [[nodiscard]] std::wstring getClassInfoName(const u2 classInfoIndex) const;
-    [[nodiscard]] std::wstring getClassname(const u2 nameIndex) const;
-    [[nodiscard]] std::wstring getString(const u2 stringIndex, const bool withEscaped = false) const;
-    [[nodiscard]] std::wstring getTypeString(const u2 stringIndex) const;
-    [[nodiscard]] std::wstring getConstantValueString(const u2 constantIndex) const;
+    [[nodiscard]] std::string getClassInfoName(const u2 classInfoIndex) const;
+    [[nodiscard]] std::string getClassname(const u2 nameIndex) const;
+    [[nodiscard]] std::string getString(const u2 stringIndex, const bool withEscaped = false) const;
+    [[nodiscard]] std::string getTypeString(const u2 stringIndex) const;
+    [[nodiscard]] std::string getConstantValueString(const u2 constantIndex) const;
 
     void addEmptyIndex();
 

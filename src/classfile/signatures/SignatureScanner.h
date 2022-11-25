@@ -2,8 +2,8 @@
 // Created by xman on 6/28/2022.
 //
 
-#ifndef TARRASH_DESCRIPTORSCANNER_H
-#define TARRASH_DESCRIPTORSCANNER_H
+#ifndef TARRACSH_DESCRIPTORSCANNER_H
+#define TARRACSH_DESCRIPTORSCANNER_H
 
 #include <string>
 
@@ -12,7 +12,7 @@ namespace org::kapa::tarracsh::signatures {
 class SignatureScanner {
 
 public:
-    explicit SignatureScanner(std::wstring signatureString)
+    explicit SignatureScanner(std::string signatureString)
         : _signatureString(std::move(signatureString)),
           _size(static_cast<int>(_signatureString.size())) {
     }
@@ -81,7 +81,7 @@ public:
         return result;
     }
 
-    [[nodiscard]] std::wstring getSignatureString() const { return _signatureString; }
+    [[nodiscard]] std::string getSignatureString() const { return _signatureString; }
 
     [[nodiscard]] bool isEOF() const { return _position >= _size; }
 
@@ -89,7 +89,7 @@ public:
     void reset(const int position) { _position = position; }
 
 private:
-    std::wstring _signatureString;
+    std::string _signatureString;
     int _position{-1};
     int _size{0};
 };

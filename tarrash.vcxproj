@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\vcpkg.D.dev.kapa.repos.vcpkg.1.0.0\build\native\vcpkg.D.dev.kapa.repos.vcpkg.props" Condition="Exists('packages\vcpkg.D.dev.kapa.repos.vcpkg.1.0.0\build\native\vcpkg.D.dev.kapa.repos.vcpkg.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DbDirMd5|Win32">
       <Configuration>DbDirMd5</Configuration>
@@ -706,7 +707,27 @@
     <ClInclude Include="src\includes\visit_struct\visit_struct_boost_hana.hpp" />
     <ClInclude Include="src\includes\visit_struct\visit_struct_intrusive.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="src\resources\constant-pool\sub-templates.yaml">
+      <DeploymentContent>true</DeploymentContent>
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="src\resources\HTMLPage.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\vcpkg.D.dev.kapa.repos.vcpkg.1.0.0\build\native\vcpkg.D.dev.kapa.repos.vcpkg.targets" Condition="Exists('packages\vcpkg.D.dev.kapa.repos.vcpkg.1.0.0\build\native\vcpkg.D.dev.kapa.repos.vcpkg.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\vcpkg.D.dev.kapa.repos.vcpkg.1.0.0\build\native\vcpkg.D.dev.kapa.repos.vcpkg.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\vcpkg.D.dev.kapa.repos.vcpkg.1.0.0\build\native\vcpkg.D.dev.kapa.repos.vcpkg.props'))" />
+    <Error Condition="!Exists('packages\vcpkg.D.dev.kapa.repos.vcpkg.1.0.0\build\native\vcpkg.D.dev.kapa.repos.vcpkg.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\vcpkg.D.dev.kapa.repos.vcpkg.1.0.0\build\native\vcpkg.D.dev.kapa.repos.vcpkg.targets'))" />
+  </Target>
 </Project>

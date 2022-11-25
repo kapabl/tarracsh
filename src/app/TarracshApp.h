@@ -23,6 +23,7 @@ private:
     int parseCli(int argc, char** argv);
 #ifdef _WIN32
     static void prepareConsoleForVT100();
+    static void prepareForUTF8();
 #endif
 
     void init() const;

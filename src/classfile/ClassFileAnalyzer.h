@@ -42,8 +42,8 @@ public:
     std::vector<attributes::AttributeInfo> &getAttributes() { return _attributes; }
     std::vector<FieldInfo> &getFields() { return _fields; }
 
-    [[nodiscard]] std::wstring getMainClassname() const {
-        std::wstring result = _constantPool.getClassInfoName(_mainClassInfo.thisClass);
+    [[nodiscard]] std::string getMainClassname() const {
+        std::string result = _constantPool.getClassInfoName(_mainClassInfo.thisClass);
         return result;
     }
 
@@ -61,9 +61,6 @@ private:
 
     attributes::AttributesManager _attributesManager;
     accessModifiers::AccessModifiers _accessModifiers;
-
-
-    [[nodiscard]] std::wstring getClassInfoName(const u2 index) const;
 
     void initialize();
     void readConstPoolEntry( int& index);

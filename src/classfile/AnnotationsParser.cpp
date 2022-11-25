@@ -11,66 +11,67 @@ using namespace org::kapa::tarracsh::attributes;
 using namespace org::kapa::tarracsh::stringUtils;
 using namespace std;
 
-wstring AnnotationsParser::toStringRuntimeAnnotations() const {
+string AnnotationsParser::toStringRuntimeAnnotations() const {
     RuntimeVisibleAnnotations annotations;
     annotations.nameIndex = _attribute.nameIndex;
     annotations.length = _attribute.length;
     annotations.count = _reader.readU2();
     readAnnotations(annotations);
-    wstring result = annotationsToString(annotations);
+    string result = annotationsToString(annotations);
     return result;
 }
 
-wstring AnnotationsParser::toStringRuntimeParameterAnnotations() const {
+string AnnotationsParser::toStringRuntimeParameterAnnotations() const {
     RuntimeVisibleParameterAnnotations annotations;
     annotations.nameIndex = _attribute.nameIndex;
     annotations.length = _attribute.length;
     annotations.parameterCount = _reader.readU1();
     readAnnotations(annotations);
-    wstring result = annotationsToString(annotations);
+    string result = annotationsToString(annotations);
     return result;
 
 }
 
 
-wstring AnnotationsParser::localVarAnnotationToString(const TypeAnnotation &typeAnnotation) const {
-    std::vector<wstring> locations;
+string AnnotationsParser::localVarAnnotationToString(const TypeAnnotation &typeAnnotation) const {
+    std::vector<string> locations;
     for (const auto &[startPC, length, index] : typeAnnotation.local_var_target.items) {
         locations.push_back(
-            format(L"(start_pc:{},length:{},index:{})", startPC, length, index));
+            format("(start_pc:{},length:{},index:{})", startPC, length, index));
     }
-    auto locationTables = join<wstring>(locations, L",");
-    return format(L"local var locations: {}", locationTables);
+    auto locationTables = join<string>(locations, ",");
+    const auto string = format("local var locations: {}", locationTables);
+    return string;
 }
 
-wstring AnnotationsParser::annotationToString(
+string AnnotationsParser::annotationToString(
     const attributes::TypeAnnotation &typeAnnotation) const {
 
-    wstring result;
+    string result;
     //TODO
     switch (typeAnnotation.targetType) {
         case 0x00:
-            result = format(L"index: {} class/interface",
+            result = format("index: {} class/interface",
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
 
         case 0x01:
-            result = format(L"index: {} method/constructor",
+            result = format("index: {} method/constructor",
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
 
         case 0x10:
-            result = format(L"index: {} super-type", typeAnnotation.targetInfo.supertype_target);
+            result = format("index: {} super-type", typeAnnotation.targetInfo.supertype_target);
             break;
 
         case 0x11:
-            result = format(L"index, bound: {},{} class/interface",
+            result = format("index, bound: {},{} class/interface",
                             typeAnnotation.targetInfo.type_parameter_bound_target.type_parameter_index,
                             typeAnnotation.targetInfo.type_parameter_bound_target.bound_index);
             break;
 
         case 0x12:
-            result = format(L"index, bound: {},{} method/constructor",
+            result = format("index, bound: {},{} method/constructor",
                             typeAnnotation.targetInfo.type_parameter_bound_target.type_parameter_index,
                             typeAnnotation.targetInfo.type_parameter_bound_target.bound_index);
             break;
@@ -78,73 +79,73 @@ wstring AnnotationsParser::annotationToString(
         case 0x13:
         case 0x14:
         case 0x15:
-            result = format(L"field");
+            result = format("field");
             break;
 
         case 0x16:
-            result = format(L"param index: {}",
+            result = format("param index: {}",
                             typeAnnotation.targetInfo.formal_parameter_target.formal_parameter_index);
             break;
 
         case 0x17:
-            result = format(L"exception index: {}",
+            result = format("exception index: {}",
                             typeAnnotation.targetInfo.throws_target.throws_type_index);
             break;
 
         case 0x40:
-            result = format(L"local var: {}", localVarAnnotationToString(typeAnnotation));
+            result = format("local var: {}", localVarAnnotationToString(typeAnnotation));
             break;
 
         case 0x41:
-            result = format(L"local res var: {}", localVarAnnotationToString(typeAnnotation));
+            result = format("local res var: {}", localVarAnnotationToString(typeAnnotation));
             break;
 
         case 0x42:
-            result = format(L"type exception param index: {}",
+            result = format("type exception param index: {}",
                             typeAnnotation.targetInfo.catch_target.exception_table_index);
             break;
 
         case 0x43:
-            result = format(L"instanceof bytecode offset: {}",
+            result = format("instanceof bytecode offset: {}",
                             typeAnnotation.targetInfo.offset_target.offset);
             break;
         case 0x44:
-            result = format(L"new bytecode offset: {}",
+            result = format("new bytecode offset: {}",
                             typeAnnotation.targetInfo.offset_target.offset);
             break;
         case 0x45:
-            result = format(L"methodref ::new bytecode offset: {}",
+            result = format("methodref ::new bytecode offset: {}",
                             typeAnnotation.targetInfo.offset_target.offset);
             break;
         case 0x46:
-            result = format(L"methodref ::Identifier bytecode offset: {}",
+            result = format("methodref ::Identifier bytecode offset: {}",
                             typeAnnotation.targetInfo.offset_target.offset);
             break;
 
         case 0x47:
-            result = format(L"type-cast bytecode offset: {}, index: {}",
+            result = format("type-cast bytecode offset: {}, index: {}",
                             typeAnnotation.targetInfo.type_argument_target.offset,
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
 
         case 0x48:
-            result = format(L"arg. gen constructor bytecode offset: {}, index: {}",
+            result = format("arg. gen constructor bytecode offset: {}, index: {}",
                             typeAnnotation.targetInfo.type_argument_target.offset,
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
 
         case 0x49:
-            result = format(L"arg. gen method call bytecode offset: {}, index: {}",
+            result = format("arg. gen method call bytecode offset: {}, index: {}",
                             typeAnnotation.targetInfo.type_argument_target.offset,
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
         case 0x4A:
-            result = format(L"arg. gen constructor methodref ::new bytecode offset: {}, index: {}",
+            result = format("arg. gen constructor methodref ::new bytecode offset: {}, index: {}",
                             typeAnnotation.targetInfo.type_argument_target.offset,
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
         case 0x4B:
-            result = format(L"arg. gen constructor methodref ::Identifier bytecode offset: {}, index: {}",
+            result = format("arg. gen constructor methodref ::Identifier bytecode offset: {}, index: {}",
                             typeAnnotation.targetInfo.type_argument_target.offset,
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
@@ -157,95 +158,95 @@ wstring AnnotationsParser::annotationToString(
     return result;
 }
 
-std::wstring AnnotationsParser::annotationsToString(
+std::string AnnotationsParser::annotationsToString(
     const attributes::RuntimeTypeAnnotations &typeAnnotations) const {
-    vector<wstring> parts;
+    vector<string> parts;
     for (auto &typeAnnotation : typeAnnotations.items) {
         parts.push_back(annotationToString(typeAnnotation));
     }
 
-    auto result = join<wstring>(parts, L"|");
+    auto result = join<string>(parts, "|");
 
     return result;
 }
 
-wstring AnnotationsParser::toStringRuntimeTypeAnnotations() const {
+string AnnotationsParser::toStringRuntimeTypeAnnotations() const {
     RuntimeTypeAnnotations typeAnnotations;
     typeAnnotations.nameIndex = _attribute.nameIndex;
     typeAnnotations.length = _attribute.length;
     typeAnnotations.count = _reader.readU2();
     readAnnotations(typeAnnotations);
-    wstring result = annotationsToString(typeAnnotations);
+    string result = annotationsToString(typeAnnotations);
     return result;
 
 }
 
-std::wstring AnnotationsParser::toStringAnnotationDefault() const {
+std::string AnnotationsParser::toStringAnnotationDefault() const {
     AnnotationDefault annotation;
     annotation.nameIndex = _attribute.nameIndex;
     annotation.length = _attribute.length;
     readElementValue(annotation.defaultValue);
     const auto name = _constantPool.getString(annotation.nameIndex);
     const auto value = elementValueToString(annotation.defaultValue);
-    wstring result = format(L"{}={}", name, value);
+    string result = format("{}={}", name, value);
     return result;
 }
 
-wstring AnnotationsParser::annotationToString(
+string AnnotationsParser::annotationToString(
     const AnnotationValuePair &annotationValuePair) const {
     const auto name = _constantPool.getString(annotationValuePair.nameIndex);
     const auto value = elementValueToString(annotationValuePair.value);
-    wstring result = format(L"{}=({})", name, value);
+    string result = format("{}=({})", name, value);
     return result;
 }
 
-wstring AnnotationsParser::annotationToString(const Annotation &annotation) const {
+string AnnotationsParser::annotationToString(const Annotation &annotation) const {
     const auto typeString = _constantPool.getTypeString(annotation.typeIndex);
-    vector<wstring> valuePairs;
+    vector<string> valuePairs;
 
     for (auto &annotationValuePair : annotation.values) {
         valuePairs.push_back(annotationToString(annotationValuePair));
     }
 
-    auto result = format(L"{}: ({})", typeString, join<wstring>(valuePairs, L", "));
+    auto result = format("{}: ({})", typeString, join<string>(valuePairs, ", "));
 
     return result;
 }
 
-wstring AnnotationsParser::annotationToString(const ParameterAnnotation &parameterAnnotation) const {
-    vector<wstring> valuePairs;
+string AnnotationsParser::annotationToString(const ParameterAnnotation &parameterAnnotation) const {
+    vector<string> valuePairs;
 
     for (auto &annotation : parameterAnnotation.items) {
         valuePairs.push_back(annotationToString(annotation));
     }
-    auto result = join<wstring>(valuePairs, L", ");
+    auto result = join<string>(valuePairs, ", ");
 
     return result;
 }
 
-wstring AnnotationsParser::annotationsToString(const RuntimeAnnotations &annotations) const {
+string AnnotationsParser::annotationsToString(const RuntimeAnnotations &annotations) const {
 
-    vector<wstring> parts;
+    vector<string> parts;
     for (auto &annotation : annotations.items) {
         parts.push_back(annotationToString(annotation));
     }
-    auto result = join<wstring>(parts, L", ");
+    auto result = join<string>(parts, ", ");
     return result;
 }
 
-wstring AnnotationsParser::annotationsToString(const RuntimeParameterAnnotations &annotations) const {
+string AnnotationsParser::annotationsToString(const RuntimeParameterAnnotations &annotations) const {
 
-    vector<wstring> parts;
+    vector<string> parts;
     for (auto &parameterAnnotation : annotations.items) {
         parts.push_back(annotationToString(parameterAnnotation));
     }
-    auto result = format(L"({})", join<wstring>(parts, L", "));
+    auto result = format("({})", join<string>(parts, ", "));
     return result;
 }
 
 void AnnotationsParser::readElementValue(ElementValue &elementValue) const {
     elementValue.tag = static_cast<SignatureTypes>(_reader.readU1());
-    wstring result;
+    string result;
     switch (elementValue.tag) {
 
         case JVM_SIGNATURE_ARRAY:
@@ -432,18 +433,18 @@ void AnnotationsParser::readAnnotations(RuntimeTypeAnnotations &runtimeTypeAnnot
     }
 }
 
-wstring AnnotationsParser::elementValueToString(const ElementValue &elementValue) const {
-    wstring result;
+string AnnotationsParser::elementValueToString(const ElementValue &elementValue) const {
+    string result;
     const auto &[constValueIndex, enumConstValue, classInfoIndex, annotationValue, arrayValues] =
         elementValue.value;
 
     switch (elementValue.tag) {
         case JVM_SIGNATURE_ARRAY: {
-            vector<wstring> parts;
+            vector<string> parts;
             for (auto &child : arrayValues.values) {
                 parts.push_back(elementValueToString(*child));
             }
-            result = join<wstring>(parts, L",");
+            result = join<string>(parts, ",");
             break;
         }
 
@@ -459,9 +460,10 @@ wstring AnnotationsParser::elementValueToString(const ElementValue &elementValue
             result = _constantPool.getConstantValueString(constValueIndex);
             break;
 
-        case JVM_SIGNATURE_CLASS2:
+        case JVM_SIGNATURE_CLASS2: {
             result = _constantPool.getClassname(classInfoIndex);
-            break;
+        }
+        break;
 
         case JVM_SIGNATURE_ANNOTATION: {
             result = annotationToString(*annotationValue);
@@ -469,7 +471,7 @@ wstring AnnotationsParser::elementValueToString(const ElementValue &elementValue
         }
 
         case JVM_SIGNATURE_ENUM2: {
-            result = format(L"{}={}",
+            result = format("{}={}",
                             _constantPool.getString(enumConstValue.typeNameIndex),
                             _constantPool.getConstantValueString(enumConstValue.constNameIndex));
             break;
