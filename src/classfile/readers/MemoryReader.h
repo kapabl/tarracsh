@@ -28,10 +28,14 @@ public:
 
 
     void readBytes(char *buffer, const unsigned int count) override {
-        for (int i = 0; i < count; i++) {
-            buffer[i] = _buffer[_position];
-            _position++;
-        }
+
+        memcpy(buffer, &_buffer[_position], count);
+        //
+        // for (int i = 0; i < count; i++) {
+        //     buffer[i] = _buffer[_position];
+        //     _position++;
+        // }
+        _position += count;
         _lastReadCount = count;
     }
 

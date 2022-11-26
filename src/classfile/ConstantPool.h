@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include "ClassFileStructures.h"
+#include "readers/ClassFileReader.h"
 
 namespace org::kapa::tarracsh {
 
@@ -20,15 +21,16 @@ public:
 
     template <typename T>
     void add(T &data, const int size) {
+        reserve(size);
+        memcpy(&_buffer[_position], &data, size);
+        _position += size;
 
+    }
+    void reserve(const int size) {
         if (size + _position >= _size) {
             _size <<= 1;
             _buffer = static_cast<u1 *>(realloc(_buffer, _size));
         }
-
-        memcpy(&_buffer[_position], &data, size);
-        _position += size;
-
     }
 
     template <typename T>
@@ -51,6 +53,7 @@ public:
     [[nodiscard]] std::string getConstantValueString(const u2 constantIndex) const;
 
     void addEmptyIndex();
+    void addUtf8Record(u2 length, readers::ClassFileReader & reader);
 
 private:
     [[maybe_unused]] u2 _count{};

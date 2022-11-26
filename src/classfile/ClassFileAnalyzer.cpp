@@ -65,16 +65,18 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
     switch (tag) {
         case JVM_CONSTANT_Utf8: {
             const u2 length = _reader.readU2();
-            const auto recordSize = length + sizeof(Utf8Info);
-            Utf8Info &utf8Info = *static_cast<Utf8Info *>(malloc(recordSize));
-            utf8Info.tag = tag;
-            utf8Info.length = length;
-            const auto data = reinterpret_cast<u1 *>(utf8Info.bytes);
-            _reader.readRaw(*data, utf8Info.length);
-            utf8Info.bytes[length] = 0;
-            _constantPool.addRecord(utf8Info, static_cast<int>(recordSize));
+            // const auto recordSize = length + sizeof(Utf8Info);
+            // Utf8Info &utf8Info = *static_cast<Utf8Info *>(alloca(recordSize));
+            // utf8Info.tag = tag;
+            // utf8Info.length = length;
+            // const auto data = reinterpret_cast<u1 *>(utf8Info.bytes);
+            // _reader.readRaw(*data, utf8Info.length);
+            // utf8Info.bytes[length] = 0;
+            // _constantPool.addRecord(utf8Info, static_cast<int>(recordSize));
 
-            free(&utf8Info);
+            _constantPool.addUtf8Record(length,_reader );
+  
+            //free(&utf8Info);
 
             break;
         }
@@ -252,9 +254,13 @@ void ClassFileAnalyzer::readAttributesSection(vector<AttributeInfo> &attributes,
         attributeInfo.owner = owner;
         _reader.read(attributeInfo.nameIndex);
         _reader.read(attributeInfo.length);
-        for (auto length = 0u; length < attributeInfo.length; ++length) {
-            const auto byte = _reader.readU1();
-            attributeInfo.info.push_back(byte);
+
+        attributeInfo.info.resize(attributeInfo.length);
+        // const auto dest = reinterpret_cast<char *>(&*attributeInfo.info.begin());
+        // _reader.readRaw(dest, attributeInfo.length);
+
+        for (auto index = 0u; index < attributeInfo.length; ++index) {
+            attributeInfo.info[index ] = _reader.readU1();
         }
         attributes.push_back(attributeInfo);
     }

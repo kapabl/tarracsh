@@ -19,6 +19,20 @@ void ConstantPool::addEmptyIndex() {
         reinterpret_cast<ConstantPoolRecord *>(_position));
 }
 
+void ConstantPool::addUtf8Record(const u2 length, readers::ClassFileReader &reader) {
+    Utf8Info utf8Info{};
+    utf8Info.tag = JVM_CONSTANT_Utf8;
+    utf8Info.length = length;
+    addRecord(utf8Info, sizeof(utf8Info.tag) + sizeof(utf8Info.length));
+
+    reserve(length + 1);
+    reader.readRaw(_buffer[_position], length);
+    _position += length;
+
+    _buffer[_position] = 0;
+    _position++;
+}
+
 ConstantPool::ConstantPool() {
     // _buffer.reserve(1024 * 10240);
     _buffer = static_cast<u1 *>(malloc(_size));

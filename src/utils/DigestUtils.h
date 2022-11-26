@@ -18,8 +18,8 @@
     #include <Poco/DigestStream.h>
     #include <Poco/MD5Engine.h>
 #else
-    #define DIGEST_LENGTH SHA_256_DIGEST_LENGTH
-    #include <sodium/crypto_hash_sha256.h>
+#define DIGEST_LENGTH SHA_256_DIGEST_LENGTH
+#include <sodium/crypto_hash_sha256.h>
 #endif
 
 
@@ -30,21 +30,29 @@ namespace org::kapa::tarracsh::digestUtils {
 typedef std::vector<unsigned char> DigestVector;
 //typedef std::vector<unsigned char> DigestBuffer;
 
-struct DigestBuffer: std::vector<unsigned char> {
+struct DigestBuffer : std::vector<unsigned char> {
+
+    DigestBuffer()
+        : std::vector<unsigned char>() {
+    }
+
+    DigestBuffer(size_t size)
+        : std::vector<unsigned char>(size) {
+    }
 
     template <typename T>
-    DigestBuffer& append( const T& value ) {
+    DigestBuffer &append(const T &value) {
         std::ranges::copy(value, std::back_inserter(*this));
         return *this;
     }
 
     template <typename T>
-    DigestBuffer& append(const T& value, int size) {
+    DigestBuffer &append(const T &value, int size) {
         std::copy_n(value, DIGEST_LENGTH, std::back_inserter(*this));
         return *this;
     }
 
-    DigestBuffer& append(const unsigned short& value) {
+    DigestBuffer &append(const unsigned short &value) {
         push_back(static_cast<char>(value & 0x0ff));
         push_back(static_cast<char>(value >> 8));
         return *this;
@@ -76,11 +84,11 @@ inline DigestVector digest(const char *bytes, const int length) {
 //     return result;
 // }
 
-inline DigestVector digest(const std::vector<unsigned char>& buffer) {
+inline DigestVector digest(const std::vector<unsigned char> &buffer) {
     if (buffer.empty()) {
         return DigestVector(DIGEST_LENGTH);
     }
-    auto result = digest(reinterpret_cast<const char*>(&*buffer.begin()), buffer.size());
+    auto result = digest(reinterpret_cast<const char *>(&*buffer.begin()), buffer.size());
     return result;
 }
 
@@ -91,12 +99,17 @@ inline DigestVector digest(const std::vector<char> &buffer) {
 
 inline DigestVector digestSet(const std::set<DigestVector> &digestSet) {
 
-    if ( digestSet.empty()) {
+    if (digestSet.empty()) {
         return DigestVector(DIGEST_LENGTH);
     }
-    DigestBuffer buffer;
+    DigestBuffer buffer(DIGEST_LENGTH * digestSet.size());
+    auto index = 0u;
     for (auto &digest : digestSet) {
-        buffer.append(digest);
+        for (const auto byte : digest) {
+            buffer[index] = byte;
+            index++;
+        }
+        // buffer.append(digest);
     }
     auto result = digest(buffer);
     return result;

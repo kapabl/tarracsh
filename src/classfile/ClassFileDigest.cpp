@@ -68,6 +68,8 @@ DigestVector ClassFileDigest::digestPublicFields() const {
 DigestVector ClassFileDigest::digestField(const FieldInfo &fieldInfo) const {
 
     DigestBuffer buffer;
+    buffer.reserve(DIGEST_LENGTH * 4 + 256);
+
     buffer.append(digestUtf8Entry(fieldInfo.nameIndex))
           .append(digest(fieldInfo.attributes))
           .append(digest(fieldInfo.attributes))
@@ -99,6 +101,7 @@ DigestVector ClassFileDigest::digestInterface(const u2 interfaceIndex) const {
 
 DigestVector ClassFileDigest::digestMethod(const MethodInfo &methodInfo) const {
     DigestBuffer buffer;
+    buffer.reserve(DIGEST_LENGTH * 3 + 256);
     buffer.append(digestUtf8Entry(methodInfo.nameIndex))
           .append(digest(methodInfo.attributes))
           .append(_constantPool[methodInfo.descriptorIndex].utf8Info.bytes)
@@ -114,6 +117,7 @@ tables::DigestColumn ClassFileDigest::digest() const {
     const auto &attributes = _classFileAnalyzer.getAttributes();
 
     DigestBuffer buffer;
+    buffer.reserve(DIGEST_LENGTH * 6 + 256);
     buffer
         .append(digestClassInfo(mainClassInfo.thisClass))
         .append(digestClassInfo(mainClassInfo.superClass))
@@ -121,7 +125,7 @@ tables::DigestColumn ClassFileDigest::digest() const {
         .append(digestPublicMethods())
         .append(digestPublicFields())
         .append(digestInterfaces())
-        .append(mainClassInfo.accessFlags);;
+        .append(mainClassInfo.accessFlags);
 
     const auto digest = digestUtils::digest(reinterpret_cast<const char *>(&*buffer.begin()), buffer.size());
     tables::DigestColumn result;
