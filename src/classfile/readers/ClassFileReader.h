@@ -32,20 +32,20 @@ public:
     [[nodiscard]] uint64_t isBigEndian() const { return _isBigEndian; }
     [[nodiscard]] uint64_t getLastReadCount() const { return _lastReadCount; }
 
-    template <typename T> void readRaw(T &buffer, const unsigned int count) {
 
-        // assert(_bytesRead + count <= _size);
+    void readRaw(char* buffer, const unsigned int count) {
 
         if (_bytesRead + count > _size) {
-            // const auto errorMessage = std::format("Error - reading beyond size - {}", _options.classFilePath);
-            // _results.resultLog.writeln(errorMessage);
             throw std::runtime_error("Error reading beyond size");
         }
-        const auto charBuffer = reinterpret_cast<char *>(&buffer);
 
-        readBytes(charBuffer, count);
+        readBytes(buffer, count);
 
         _bytesRead += count;
+    }
+
+    template <typename T> void readRaw(T &buffer, const unsigned int count) {
+        readRaw(reinterpret_cast<char*>(&buffer), count);
     }
 
     template <typename T = u2>

@@ -1,4 +1,34 @@
 
+
+
+
+Eliminating use of std::wstring and keeping it all as utf-8
+===========================================================
+classfiles: 570860 jars: 488
+
+classfiles:
+        No        Ok     Error
+     90939     90939         0
+jars:
+        No        Ok     Error
+       488       488         0
+standalone classfile digest:
+        No       New      Same      Diff Unchanged
+     90939     90939         0         0         0
+jar digest:
+        No       New      Same      Diff Unchanged
+       488       488         0         0         0
+classfile inside jars digest:
+        No       New      Same      Diff Unchanged
+    479921    479921         0         0         0
+
+total classfiles: 570734
+
+16786.3 classfile/s:
+
+total time: 34s
+
+
 Stats of parellelizing jar files and jar processing
 ===================================================
 params: 
