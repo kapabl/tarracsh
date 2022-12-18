@@ -34,7 +34,7 @@ private:
     [[nodiscard]] std::vector<unsigned char> digestUtf8Entry(u2 index) const;
 
     [[nodiscard]] std::vector<unsigned char> digestAttribute(const attributes::AttributeInfo & attributeInfo) const;
-    [[nodiscard]] std::vector<unsigned char> digest(const std::vector<attributes::AttributeInfo>& attributeInfos) const;
+    [[nodiscard]] std::vector<unsigned char> digestAttributes(const std::vector<attributes::AttributeInfo>& attributeInfos) const;
     [[nodiscard]] std::vector<unsigned char> digestMethod(const MethodInfo& methodInfo) const;
     [[nodiscard]] std::vector<unsigned char> digestPublicMethods() const;
     [[nodiscard]] std::vector<unsigned char> digestPublicFields() const;

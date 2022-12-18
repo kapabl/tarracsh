@@ -52,31 +52,39 @@ public:
 
     void setBigEndian(bool value) { _isBigEndian = value; }
 
-    [[nodiscard]] AttributeTag getTag(const std::string &stringTag) const {
-        const auto it = _tagsMap.find(stringTag);
-        if (it != _tagsMap.end()) {
-            return it->second;
-        }
-        return AttributeTag::InvalidTag;
+    [[nodiscard]] auto getType(const AttributeInfo& attribute) const {
+
+        const auto tagName = _constantPool[attribute.nameIndex].utf8Info.getAsUtf8();
+        const auto result = getTag(tagName);
+      
+        return result;
     }
+
 
     [[nodiscard]] std::string toString(const AttributeInfo &attribute) const {
 
-        const auto tagName = _constantPool[attribute.nameIndex].utf8Info.getAsUtf8();
+        const auto type = getType(attribute);
 
-        const auto tag = getTag(tagName);
-        const auto it = _tags2ToStringFunc.find(tag);
+        const auto it = _tags2ToStringFunc.find(type);
 
         auto _this = const_cast<AttributesManager *>(this);
         std::string result = (it != _tags2ToStringFunc.end())
                                   ? (_this->*(it->second))(const_cast<AttributeInfo &>(attribute))
-                                  : ("Invalid Attribute: " + tagName);
+                                  : (std::format("Invalid Attribute:{} ", _constantPool[attribute.nameIndex].utf8Info.getAsUtf8()));
 
         return result;
     }
 
 private:
     typedef std::string (AttributesManager::*AttrToStringFunc)(AttributeInfo &);
+
+    [[nodiscard]] AttributeTag getTag(const std::string& stringTag) const {
+        const auto it = _tagsMap.find(stringTag);
+        if (it != _tagsMap.end()) {
+            return it->second;
+        }
+        return AttributeTag::InvalidTag;
+    }
 
     accessModifiers::AccessModifiers _accessModifiers;
 
