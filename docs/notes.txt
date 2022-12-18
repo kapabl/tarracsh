@@ -24,7 +24,7 @@ classfile inside jars digest:
 
 total classfiles: 570734
 
-16786.3 classfile/s:
+16786.3 classfile/s
 
 total time: 34s
 

@@ -1,7 +1,7 @@
 #ifndef JAR_PROCESSOR_H
 #define JAR_PROCESSOR_H
 #include "../app/Tarracsh.h"
-#include "../classfile/Stats.h"
+#include "../app/Stats.h"
 
 #include "JarEntry.h"
 #include "JarTask.h"
@@ -38,7 +38,7 @@ private:
     bool _isValid{true};
     std::atomic<unsigned int> _classfileCount{0};
 
-    [[nodiscard]] tables::ClassfileRow* getRow(const JarEntry& jarEntry) const;
+    [[nodiscard]] db::tables::ClassfileRow* getRow(const JarEntry& jarEntry) const;
     void waitForAvailableBuffer();
 
 

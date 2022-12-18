@@ -28,8 +28,45 @@ struct ClassfileStats {
     PublicDigestResult digest;
 };
 
+struct Results;
+
+struct JarResult {
+    std::string filename;
+    bool isNew{ false };
+    bool isModified{ false };
+    bool isSamePublicDigest{ true };
+};
+
+struct ClassfileResult {
+    std::string filename;
+    std::string classname;
+    bool isNew{ false };
+    bool isModified{ false };
+    bool isSamePublicDigest{ false };
+};
+
+struct Report {
+    Results& results;
+    std::vector<JarResult> jarResults;
+    std::vector<ClassfileResult> classfileResults;
+
+    std::mutex mutex;
+    explicit Report(Results& results) : results(results) {}
+    void asNew(const std::string& filename);
+    void asModified(const std::string& filename, bool isSamePublicDigest );
+    void asUnchanged(const std::string& filename);
+
+    void asNewClass(const std::string& filename);
+    void asModifiedClass(const std::string& fullClassname, bool isSamePublicDigest);
+    void asUnchangedClass(const std::string& filename);
+
+    void print();
+};
+
 
 struct Results {
+
+    Results();
 
     ClassfileStats classfiles;
 
@@ -46,7 +83,7 @@ struct Results {
     FileTime classfileTime{};
     FileTime jarfileTime{};
 
-    Log resultLog;
+    Log log;
 
 
     void print(const Options &options) const;
@@ -54,7 +91,10 @@ struct Results {
 
     mutable std::chrono::time_point<std::chrono::steady_clock> lastPrint{ std::chrono::high_resolution_clock::now() };
 
+    Report report;
+
 };
+
 
 
 }

@@ -13,12 +13,28 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbDirMd5|x64'">
-    <LocalDebuggerCommandArguments>--dir D:\temp\reti\test-subjects\app --generate-public-digest=yes --rebuild=no</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--dir D:\temp\reti\test-subjects\app --public-digest=yes --rebuild=no</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbJarDirMd5|x64'">
-    <LocalDebuggerCommandArguments>--dir D:\temp\reti\test-subjects\jars --generate-public-digest=yes --rebuild=no</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--dir D:\temp\reti\test-subjects\jars --public-digest=yes --rebuild=no</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DCheckOnly|x64'">
+    <LocalDebuggerCommandArguments>--jar $(TARRACSH_TEST_SUBJECTS_DIR)/jars/tarracsh-lib2.jar --public-digest=yes --rebuild=no --check-only=yes</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DCheck|x64'">
+    <LocalDebuggerCommandArguments>--jar $(TARRACSH_TEST_SUBJECTS_DIR)/jars/tarracsh-lib1.jar --public-digest=yes --rebuild=no --check-only=no</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'">
+    <LocalDebuggerCommandArguments>--query schema --public-digest=yes</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelJarDirMd5|x64'">
     <LocalDebuggerCommandArguments>--dir D:\temp\reti\test-subjects\jars --generate-public-digest=yes --rebuild=no</LocalDebuggerCommandArguments>
@@ -46,7 +62,12 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel2|x64'">
-    <LocalDebuggerCommandArguments>--dir D:\temp\reti\test-subjects\jars --generate-public-digest=yes --rebuild=no</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--dir $(TARRACSH_TEST_SUBJECTS_DIR)/jars --public-digest=yes --rebuild=no</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RCheckOnly|x64'">
+    <LocalDebuggerCommandArguments>--jar $(TARRACSH_TEST_SUBJECTS_DIR)/jars/tarracsh-lib1.jar --public-digest=yes --rebuild=no --check-only=yes</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>

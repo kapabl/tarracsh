@@ -16,7 +16,7 @@ public:
     virtual ~JarTask() = default;
 
 protected:
-    tables::FileRow *_jarFileRow = nullptr;
+    db::tables::FileRow *_jarFileRow = nullptr;
     uintmax_t _jarSize{};
     long long _jarTimestamp{};
 };

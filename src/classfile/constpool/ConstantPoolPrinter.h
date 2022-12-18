@@ -6,8 +6,6 @@
 #include <map>
 #include <unordered_map>
 #include <yaml-cpp/node/node.h>
-
-#include "ClassFileStructures.h"
 #include "ConstantPool.h"
 
 namespace org::kapa::tarracsh {

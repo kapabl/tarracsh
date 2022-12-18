@@ -3,9 +3,10 @@
 
 #include <unicode/unistr.h>
 #include <cstring>
+#include "ConstantPool.h"
+#include "../readers/ClassFileReader.h"
 
-#include "ClassFileStructures.h"
-#include "readers/ClassFileReader.h"
+#include "ConstpoolStructures.h"
 
 namespace org::kapa::tarracsh {
 
@@ -61,9 +62,6 @@ private:
     u1 *_buffer;
     uint64_t _size{1024 * 1024};
     uint64_t _position{0};
-    static std::vector<std::string> _poolTagToString;
-    static std::vector<std::string> _refKindToString;
-
 
     std::vector<ConstantPoolRecord *> _constantPoolIndex;
 

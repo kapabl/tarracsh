@@ -11,7 +11,7 @@ using namespace libzippp;
 
 
 using namespace org::kapa::tarracsh;
-using namespace tables;
+using namespace db;
 using namespace stats;
 using namespace jar;
 using namespace std;

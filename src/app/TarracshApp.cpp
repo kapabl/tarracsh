@@ -1,9 +1,10 @@
 #include "TarracshApp.h"
-#include "../classfile/ConstantPoolPrinter.h"
+#include "../classfile/constpool/ConstantPoolPrinter.h"
 #include "../classfile/ClassFileAnalyzer.h"
-#include "../classfile/DirAnalyzer.h"
+#include "../classfile/Analyzer.h"
 #include "../jars/JarAnalyzerTask.h"
 #include "../classfile/readers/FileReader.h"
+#include "../tables/Query.h"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -12,7 +13,11 @@
 #endif
 
 using namespace org::kapa::tarracsh;
+using namespace db;
 using namespace std;
+
+
+stats::Results TarracshApp::_results;
 
 int TarracshApp::run(int argc, char *argv[]) {
 
@@ -30,55 +35,63 @@ int TarracshApp::start(int argc, char *argv[]) {
 
     init();
 
-    stats::Results results;
-    results.resultLog.setFile(_options.logFile);
+    _results.log.setFile(_options.logFile);
 
-    if (!_options.classfileOption->empty()) {
-        readers::FileReader reader(_options.classFilePath);
-        ClassFileAnalyzer classFileAnalyzer(reader, _options, results);
-        classFileAnalyzer.run();
-    } else if (!_options.jarOption->empty()) {
-        //TODO we need a class that takes the decision between analyze or digest
-        jar::JarAnalyzerTask jarAnalyzer(_options, results);
-        jarAnalyzer.run();
-    } else if (!_options.dirOption->empty()) {
-        dir::DirAnalyzer dirAnalyzer(_options);
+    if (!_options.jarOption->empty() || !_options.dirOption->empty() || !_options.classfileOption->empty()) {
+        dir::Analyzer dirAnalyzer(_options);
         dirAnalyzer.run();
+    }
+    if (!_options.queryOption->empty()) {
+        query::QueryCommand::run(_options, _results );
     } else {
-        std::cout << help();
+        //std::cout << help();
     }
 
     return 0;
 
 }
 
+
 void TarracshApp::setupCliOptions() {
     set_version_flag("-v,--version", "version " TARRACSH_VERSION);
 
+
+    _options.queryOption = add_option("--query", _options.queryValue, "queryValue");
     _options.classfileOption = add_option("--classfile", _options.classFilePath, " Input class file");
     _options.dirOption = add_option("--dir", _options.directory, "Input directory");
     _options.jarOption = add_option("--jar", _options.jarFile, "Input jar file");
 
+
     _options.classfileOption->excludes(_options.jarOption);
     _options.classfileOption->excludes(_options.dirOption);
-
+    _options.classfileOption->excludes(_options.queryOption);
+    
     _options.jarOption->excludes(_options.dirOption);
     _options.jarOption->excludes(_options.classfileOption);
-
+    _options.jarOption->excludes(_options.queryOption);
+    
     _options.dirOption->excludes(_options.jarOption);
     _options.dirOption->excludes(_options.classfileOption);
+    _options.dirOption->excludes(_options.queryOption);
+    
+    _options.queryOption->excludes(_options.jarOption);
+    _options.queryOption->excludes(_options.classfileOption);
+    _options.queryOption->excludes(_options.dirOption);
 
     add_flag("-c,--classpath", _options.classPath, "Class paths to look into.");
-    add_flag("--generate-public-digest", _options.generatePublicDigest, "yes/no - Default 'no'");
-    add_flag("--use-file-timestamp", _options.useFileTimestamp, "yes/no - Default 'yes'. User file timestamp and size to check if file was modified");
+    add_flag("--public-digest", _options.isPublicDigest, "yes/no - Default 'no'");
+    add_flag("--call-graph", _options.isCallGraph, "yes/no - Default 'no'");
+    add_flag("--use-file-timestamp", _options.useFileTimestamp,
+             "yes/no - Default 'yes'. Use file timestamp and size to check if a file was modified");
     add_flag("--rebuild", _options.rebuild, "yes/no - Default 'no'");
+    add_flag("--check-only", _options.checkOnly, "yes/no - Default 'yes'");
     add_flag("--print-class-parse", _options.printClassParse, "yes/no - Default 'no'");
     add_flag("--print-cpool", _options.printConstantPool, "yes/no - Default 'no'. Print Constant Pool");
     add_flag("--output-dir", _options.outputDir, "Output directory, default './output'");
     add_flag("--output-log-file", _options.logFile, "Log file, default './output/result.log");
 
-    const auto workers = add_flag("--workers", _options.workers, "Number of workers, default 4");
-    workers->default_val(_options.workers);
+    // const auto workers = add_flag("--workers", _options.workers, "Number of workers, default 4");
+    // workers->default_val(_options.workers);
 }
 
 int TarracshApp::parseCli(int argc, char **argv) {

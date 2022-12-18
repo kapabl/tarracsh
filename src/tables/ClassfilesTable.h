@@ -1,22 +1,21 @@
-#ifndef TARRACSH_DIGEST_TABLE_H
-#define TARRACSH_DIGEST_TABLE_H
+#ifndef TARRACSH_CLASSFILE_TABLE_H
+#define TARRACSH_CLASSFILE_TABLE_H
 #include <string>
-
-#include "FilesTable.h"
 #include "Table.h"
+#include "FilesTable.h"
+
 #pragma pack( push, 1 )
-namespace org::kapa::tarracsh::tables {
+namespace org::kapa::tarracsh::db::tables {
 
 
 struct ClassfileRow : AutoIncrementedRow {
-
-    ColumnRef file{};
-    StringPoolItem classname{0u};
-    StringPoolItem package{0u};
-    uint64_t lastWriteTime{};
-    uint64_t size{};
-    int crc{0};
-    DigestColumn digest{};
+    columns::RefCol file{};
+    columns::StringCol classname{};
+    columns::StringCol package{};
+    columns::UInt64Col lastWriteTime{};
+    columns::UInt64Col size{};
+    columns::Int32Col crc{};
+    columns::DigestCol digest{};
 
     ClassfileRow() = default;
 
@@ -26,35 +25,35 @@ struct ClassfileRow : AutoIncrementedRow {
 
 };
 
-class ClassfilesTable : public Table<ClassfileRow, std::string> {
+class ClassfilesTable : public Table<ClassfileRow> {
 
 public:
-    explicit ClassfilesTable(const std::string &filename,
-                             const std::shared_ptr<StringPool> stringPool, 
+    explicit ClassfilesTable(db::Database &db,
+                             const std::string &tablename,
                              std::shared_ptr<FilesTable> filesTable)
-        : Table(filename, stringPool), _filesTable(std::move(filesTable)) {
+        : Table(db, tablename), _filesTable(std::move(filesTable)) {
     }
 
-    [[nodiscard]] static std::string createKey(const char *filename, const char *classname) {
+    [[nodiscard]] static std::string getStrongClassname(const char *filename, const char *jvmClassname) {
         std::string result(filename);
 
-        if (classname != nullptr && classname[0] != 0) {
+        if (jvmClassname != nullptr && jvmClassname[0] != 0) {
             result += "@";
-            result += classname;
+            result += jvmClassname;
         }
 
         return result;
     }
 
-    [[nodiscard]] std::string createKey(const FileRow &fileRow, const char *classname) const {
-        std::string result(createKey(
+    [[nodiscard]] std::string getStrongClassname(const FileRow &fileRow, const char *classname) const {
+        std::string result(getStrongClassname(
             _stringPool->getCString(fileRow.filename), classname));
         return result;
     }
 
-    void updateClassnameIndex(const ClassfileRow *pBeforeRow, const ClassfileRow *pAfterRow);
-
-    void updateDigestIndex(const ClassfileRow *pBeforeRow, const ClassfileRow *pAfterRow);
+    // void updateClassnameIndex(const ClassfileRow *pBeforeRow, const ClassfileRow *pAfterRow);
+    //
+    // void updateDigestIndex(const ClassfileRow *pBeforeRow, const ClassfileRow *pAfterRow);
 
     void updateIndexes(const ClassfileRow *pBeforeRow, const ClassfileRow *pAfterRow) override {
         //TODO 
@@ -67,24 +66,25 @@ public:
 
 
     std::string getKey(const ClassfileRow &row) override {
-        return createKey(row);
+        return getStrongClassname(row);
     }
 
 
-    [[nodiscard]] std::string createKey(const ClassfileRow &row) const {
+    [[nodiscard]] std::string getStrongClassname(const ClassfileRow &row) const {
         const auto pFileRow = _filesTable->getRow(row.file.id);
 
-        auto result = createKey(*pFileRow, _stringPool->getCString(row.classname));
+        auto result = getStrongClassname(*pFileRow, _stringPool->getCString(row.classname));
         return result;
     }
 
+    void defineColumns() override;
+
 private:
     const std::shared_ptr<FilesTable> _filesTable;
-    std::unordered_map<StringPoolItem, std::set<const ClassfileRow *>> _jarIndex;
-    std::unordered_map<StringPoolItem, std::set<const ClassfileRow *>> _classnameIndex;
+    //std::unordered_map<StringCol, std::set<const ClassfileRow *>> _jarIndex;
+    // std::unordered_map<StringCol, std::set<const ClassfileRow *>> _classnameIndex;
+    //std::unordered_map<std::string, std::set<const ClassfileRow *>> _digestIndex;
 
-    //TODO 
-    std::unordered_map<std::string, std::set<const ClassfileRow *>> _digestIndex;
 };
 
 }

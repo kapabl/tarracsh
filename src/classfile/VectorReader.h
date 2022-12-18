@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <cassert>
-#include "StructsCommon.h"
+#include "constpool/StructsCommon.h"
 
 
 #include "../utils/StringUtils.h"

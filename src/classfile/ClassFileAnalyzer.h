@@ -2,16 +2,14 @@
 #define TARRACSH_CLASSFILEPARSER_H
 
 #include <filesystem>
-#include <fstream>
 #include <string>
 #include <vector>
 #include "../app/Tarracsh.h"
 
-#include "ClassFileStructures.h"
-#include "ConstantPool.h"
+#include "constpool/ConstantPool.h"
 #include "AttributesManager.h"
 #include "AccessModifiers.h"
-#include "Stats.h"
+#include "../app/Stats.h"
 #include "readers/ClassFileReader.h"
 #include "../tables/ClassfilesTable.h"
 
@@ -32,7 +30,7 @@ public:
 
     ~ClassFileAnalyzer() = default;
     bool run();
-    std::optional<tables::DigestColumn> getPublicDigest();
+    std::optional<db::tables::columns::DigestCol> getPublicDigest();
     attributes::AttributesManager &getAttributesManager() { return _attributesManager; }
     accessModifiers::AccessModifiers &getAccessModifiers() { return _accessModifiers; }
     ConstantPool &getConstantPool() { return _constantPool; }

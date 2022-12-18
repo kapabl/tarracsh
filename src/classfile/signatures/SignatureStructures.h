@@ -2,7 +2,7 @@
 #define SIGNATURE_STRUCTURES_H
 
 #include <vector>
-#include "../StructsCommon.h"
+#include "../constpool/StructsCommon.h"
 #include "rules/NodeTraits.h"
 #include "../AttributeStructures.h"
 #include "visit_struct/visit_struct_intrusive.hpp"

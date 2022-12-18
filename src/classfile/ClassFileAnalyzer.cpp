@@ -2,7 +2,7 @@
 #include "ClassFileAnalyzer.h"
 
 #include "ClassFileDigest.h"
-#include "ConstantPoolPrinter.h"
+#include "constpool/ConstantPoolPrinter.h"
 #include "../tables/ClassfilesTable.h"
 
 #include "MethodDescriptorParser.h"
@@ -34,19 +34,19 @@ bool ClassFileAnalyzer::run() {
         result = false;
         const auto errorMessage = format("Error parsing file: {}, msg:{}", _options.classFilePath,
                                          runtimeException.what());
-        _results.resultLog.writeln(errorMessage);
+        _results.log.writeln(errorMessage);
     }
     catch (...) {
         result = false;
         const auto errorMessage = format("Error parsing file: {}", _options.classFilePath);
-        _results.resultLog.writeln(errorMessage);
+        _results.log.writeln(errorMessage);
     }
 
     return result;
 }
 
-optional<tables::DigestColumn> ClassFileAnalyzer::getPublicDigest() {
-    optional<tables::DigestColumn> result;
+optional<db::tables::columns::DigestCol> ClassFileAnalyzer::getPublicDigest() {
+    optional<db::tables::columns::DigestCol> result;
     if (run()) {
         const ClassFileDigest classFileDigest(*this);
         result = classFileDigest.digest();
@@ -192,7 +192,7 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
         default: // NOLINT(clang-diagnostic-covered-switch-default)
             const auto errorMessage = format("Error - Invalid const-pool tag: {} {}", static_cast<int>(tag),
                                              _options.classFilePath);
-            _results.resultLog.writeln(errorMessage);
+            _results.log.writeln(errorMessage);
             throw runtime_error(errorMessage);
     }
 }

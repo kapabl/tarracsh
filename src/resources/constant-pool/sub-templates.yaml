@@ -16,5 +16,6 @@ templates:
 
   html:
     entry: "<a href=#>{: <6} {: <22}</a>"
+    #TODO finish this if we want to generate HTML
 
 

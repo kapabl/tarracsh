@@ -1,11 +1,143 @@
-#include "Stats.h"
+#include "../app/Stats.h"
 
 using namespace org::kapa::tarracsh::stats;
 
 
+void Report::asNew(const std::string &filename) {
+    ++results.jarfiles.digest.newFile;
+    std::unique_lock lock(mutex);
+    JarResult jarResult;
+    jarResult.isNew = true;
+    jarResult.isSamePublicDigest = false;
+    jarResult.filename = filename;
+    jarResults.push_back(jarResult);
+
+}
+
+void Report::asModified(const std::string &filename, bool isSamePublicDigest) {
+    if (isSamePublicDigest) {
+        ++results.jarfiles.digest.same;
+    } else {
+        ++results.jarfiles.digest.differentDigest;
+    }
+
+    std::unique_lock lock(mutex);
+    JarResult jarResult;
+    jarResult.filename = filename;
+    jarResult.isNew = false;
+    jarResult.isModified = true;
+    jarResult.isSamePublicDigest = isSamePublicDigest;
+    jarResults.push_back(jarResult);
+}
+
+
+void Report::asUnchanged(const std::string &filename) {
+    ++results.jarfiles.digest.unchangedCount;
+    std::unique_lock lock(mutex);
+    JarResult jarResult;
+    jarResult.isNew = false;
+    jarResult.isModified = false;
+    jarResult.isSamePublicDigest = true;
+    jarResult.filename = filename;
+    jarResults.push_back(jarResult);
+}
+
+void Report::asNewClass(const std::string &fullClassname) {
+    ++results.jarfiles.classfiles.digest.newFile;
+    std::unique_lock lock(mutex);
+    ClassfileResult classfileResult;
+    classfileResult.isNew = true;
+    classfileResult.isSamePublicDigest = false;
+    classfileResult.filename = fullClassname;
+    classfileResults.push_back(classfileResult);
+
+}
+
+void Report::asUnchangedClass(const std::string &fullClassname) {
+    ++results.jarfiles.classfiles.digest.unchangedCount;
+    std::unique_lock lock(mutex);
+    ClassfileResult classfileResult;
+    classfileResult.filename = fullClassname;
+    classfileResult.isNew = false;
+    classfileResult.isModified = false;
+    classfileResult.isSamePublicDigest = true;
+    classfileResults.push_back(classfileResult);
+}
+
+void Report::asModifiedClass(const std::string &fullClassname, bool isSamePublicDigest) {
+    if (isSamePublicDigest) {
+        ++results.jarfiles.classfiles.digest.same;
+    } else {
+        ++results.jarfiles.classfiles.digest.differentDigest;
+    }
+
+    std::unique_lock lock(mutex);
+    ClassfileResult classfileResult;
+    classfileResult.filename = fullClassname;
+    classfileResult.isModified = true;
+    classfileResult.isSamePublicDigest = isSamePublicDigest;
+    classfileResults.push_back(classfileResult);
+}
+
+void Report::print() {
+    std::cout << "Report:" << std::endl;
+    std::cout << "Legend: N - New file, C/U - Change/Unchanged, S/D - Same/Different public digest"
+        << std::endl
+        << std::endl;
+
+    std::cout << "Jars:" << std::endl;
+    for (auto &jarResult : jarResults) {
+        std::string flags;
+        if (jarResult.isNew) {
+            flags.push_back('N');
+        } else {
+            if (jarResult.isModified) {
+                flags.push_back('C');
+            } else {
+                flags.push_back('U');
+            }
+
+            if (jarResult.isSamePublicDigest) {
+                flags.push_back('S');
+            } else {
+                flags.push_back('D');
+            }
+        }
+
+        std::cout << jarResult.filename << "\t" << flags << std::endl;
+    }
+
+    std::cout << std::endl;
+    std::cout << "Class-files:" << std::endl;
+    for (auto &classfileResult : classfileResults) {
+        std::string flags;
+        if (classfileResult.isNew) {
+            flags.push_back('N');
+        } else {
+            if (classfileResult.isModified) {
+                flags.push_back('C');
+            } else {
+                flags.push_back('U');
+            }
+
+            if (classfileResult.isSamePublicDigest) {
+                flags.push_back('S');
+            } else {
+                flags.push_back('D');
+            }
+        }
+
+        std::cout << classfileResult.filename << "\t" << flags << std::endl;
+    }
+}
+
+Results::Results()
+    : report(*this) {
+}
+
 void Results::print(const Options &options) const {
     // cout << "\033[2K";
-    
+
     const auto result = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::high_resolution_clock::now() - lastPrint);
 
@@ -23,10 +155,10 @@ void Results::print(const Options &options) const {
         " jars: " << jarfiles.count;
 
     std::cout << std::flush;
-    
+
 }
 
-void Results::printAll(const Options& options) const {
+void Results::printAll(const Options &options) const {
 
     std::cout << std::endl << std::endl;
     std::cout << "classfiles:" << std::endl << std::right
@@ -58,7 +190,7 @@ void Results::printAll(const Options& options) const {
         << std::setw(10) << jarfiles.errors
         << std::endl;
 
-    if (options.generatePublicDigest) {
+    if (options.isPublicDigest) {
 
         std::cout << "standalone classfile digest:" << std::endl << std::right
             << std::setw(10) << "No"
@@ -121,7 +253,7 @@ void Results::printAll(const Options& options) const {
     }
 
     std::cout << std::endl << std::format("total classfiles: {}", classfiles.count +
-        jarfiles.classfileCount) << std::endl;
+                                                                  jarfiles.classfileCount) << std::endl;
 
     std::cout << "\r" << std::flush;
 }

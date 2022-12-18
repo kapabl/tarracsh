@@ -3,7 +3,7 @@
 
 #include <string>
 #include "VectorReader.h"
-#include "ConstantPool.h"
+#include "constpool/ConstantPool.h"
 
 namespace org::kapa::tarracsh::annotations {
 class AnnotationsParser {

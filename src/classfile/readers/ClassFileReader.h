@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "../ClassFileStructures.h"
+#include "../constpool/ConstpoolStructures.h"
 
 namespace org::kapa::tarracsh::readers {
 
