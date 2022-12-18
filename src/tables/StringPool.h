@@ -14,17 +14,19 @@
 
 #pragma pack( push, 1 )
 
-namespace org::kapa::tarracsh::tables {
+namespace org::kapa::tarracsh::db {
 
 
 constexpr const char *StringPoolExtension = ".string-pool";
 
-typedef uint64_t StringPoolItem;
-// struct StringPoolItem {
+namespace tables::columns {
+
+typedef uint64_t StringCol;
+// struct StringCol {
 //     //char* ptr;
 //     uint64_t offset{0u};
 // };
-
+}
 
 class StringPool {
 
@@ -61,7 +63,7 @@ public:
         return result;
     }
 
-    StringPoolItem add(const std::string &stringValue) {
+    tables::columns::StringCol add(const std::string &stringValue) {
         const auto result = internalAdd(stringValue);
         return result;
     }
@@ -99,11 +101,16 @@ public:
 
     }
 
-    void write() const {
+    [[nodiscard]] bool write() const {
+
+        if (!_isDirty) return true;
+
         fsUtils::backupPrevFile(_filename);
         std::ofstream file(_filename, std::ios::binary);
         file.unsetf(std::ios::skipws);
         file.write(_pool, _position);
+
+        return true;
     }
 
     [[nodiscard]] bool isDirty() const { return _isDirty; }
@@ -119,7 +126,7 @@ public:
         return result;
     }
 
-    [[nodiscard]] const char *getCString(const StringPoolItem &item) {
+    [[nodiscard]] const char *getCString(const tables::columns::StringCol &item) {
         std::shared_lock readersLock(_sharedMutex);
         const auto result = &_pool[item];
         return result;
@@ -138,10 +145,10 @@ private:
     std::shared_mutex _sharedMutex;
 
 
-    StringPoolItem internalAdd(const std::string &stringValue) {
+    tables::columns::StringCol internalAdd(const std::string &stringValue) {
         std::unique_lock writeLock(_sharedMutex);
 
-        StringPoolItem result;
+        tables::columns::StringCol result;
         const auto it = _hash.find(stringValue);
 
         if (it == _hash.end()) {

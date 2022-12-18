@@ -2,11 +2,11 @@
 // Created by xman on 6/28/2022.
 //
 
-#ifndef TARRASH_DESCRIPTORPARSER_H
-#define TARRASH_DESCRIPTORPARSER_H
+#ifndef TARRACSH_DESCRIPTORPARSER_H
+#define TARRACSH_DESCRIPTORPARSER_H
 
 #include "signatures/SignatureScanner.h"
-#include "ClassFileStructures.h"
+#include "constpool/ConstpoolStructures.h"
 #include <memory>
 
 

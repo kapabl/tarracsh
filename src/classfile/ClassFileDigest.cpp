@@ -111,7 +111,7 @@ DigestVector ClassFileDigest::digestMethod(const MethodInfo &methodInfo) const {
     return result;
 }
 
-tables::DigestColumn ClassFileDigest::digest() const {
+db::tables::columns::DigestCol ClassFileDigest::digest() const {
 
     const auto &mainClassInfo = _classFileAnalyzer.getMainClassInfo();
     const auto &attributes = _classFileAnalyzer.getAttributes();
@@ -128,7 +128,7 @@ tables::DigestColumn ClassFileDigest::digest() const {
         .append(mainClassInfo.accessFlags);
 
     const auto digest = digestUtils::digest(reinterpret_cast<const char *>(&*buffer.begin()), buffer.size());
-    tables::DigestColumn result;
+    db::tables::columns::DigestCol result;
     memcpy(result.buf, &*digest.begin(), MD5_DIGEST_LENGTH);
     return result;
 

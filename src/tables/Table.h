@@ -7,62 +7,84 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-
+#include "../app/TarracshApp.h"
+#include "Database.h"
 #include "StringPool.h"
 
 #include "../utils/DigestUtils.h"
+#include "columns/Columns.h"
 
 #pragma pack( push, 1 )
 
-namespace org::kapa::tarracsh::tables {
+namespace org::kapa::tarracsh::db::tables {
 
 
 constexpr const char *TableExtension = ".kapamd";
 
 
-struct AutoIncrementedRow {
-    uint64_t id{-1ull};
+struct Row {
 };
 
-struct ColumnRef {
-    uint64_t id;
+struct AutoIncrementedRow : Row {
+    columns::UInt64Col id{-1ull};
 };
 
+#define KAPA_TABLE_SIGNATURE 0xca5ab1a9ca
+#define MAX_TABLE_NAME 128
 
-struct DigestColumn {
-    unsigned char buf[DIGEST_LENGTH]{};
-    bool operator==(const DigestColumn &right) const = default;
+struct TableLayout {
 
-    bool operator==(const std::vector<unsigned char> &left) const {
-        if (left.size() != DIGEST_LENGTH) return false;
-        const auto result = memcmp(buf, &*left.begin(), DIGEST_LENGTH) == 0;
-        return result;
+    struct Header {
+        uint64_t signature{KAPA_TABLE_SIGNATURE};
+        char name[MAX_TABLE_NAME];
+        int columnCount{0};
+
+        Header() {
+            memset(&name, 0, MAX_TABLE_NAME);
+        }
+    } header;
+
+    columns::Properties columns[1];
+
+    TableLayout()
+        : columns{} {
+
     }
 
-    DigestColumn &operator=(const std::vector<unsigned char> &left) {
-        assert(left.size() == DIGEST_LENGTH);
-        memcpy(buf, &*left.begin(), DIGEST_LENGTH);
-        return *this;
-    }
 };
 
 
-enum EntryType { Classfile, Jar, Directory };
+#define DECLARE_COLUMN_PROP( name, storage, displayAs ) \
+    const Properties name##Prop( #name, storage, displayAs ); \
+    _columns.push_back( name##Prop ); \
+    _layout.header.columnCount = _columns.size()
+#define DECLARE_ROW_VALUE( dataType, columnName ) columns::dataType##Col columnName{};
+#define START_AUTOINCREMENT_ROW( tableName ) struct tableName##Row : AutoIncrementedRow {
 
-template <typename T, typename K>
+#define END_ROW };
+
+template <typename T>
 class Table {
 
 public:
-    virtual ~Table() = default;
+    explicit Table(db::Database &db, const std::string &tablename)
+        : _db(db),
+          _stringPool(db.getStringPool()) {
+        _layout.header.signature = KAPA_TABLE_SIGNATURE;
+        strcpy_s(_layout.header.name, tablename.c_str());
+        _filename = db.generateTableFilename(tablename);
 
-    explicit Table(std::string filename, const std::shared_ptr<StringPool> stringPool)
-        : _filename(std::move(filename)),
-          _stringPool(stringPool) {
     }
+
+    void init() {
+        defineColumns();
+    }
+
+    virtual ~Table() = default;
 
     [[nodiscard]] bool isDirty() const { return _isDirty; }
 
-    [[nodiscard]] std::optional<T> get(const K key) const {
+    [[nodiscard]] std::optional<T> get(std::string key) const {
         std::optional<T> result;
         const auto &it = _rows.find(key);
         if (it != _rows.end()) {
@@ -118,20 +140,19 @@ public:
 
     virtual std::string getKey(const T &row) = 0;
 
-    void write() {
+    bool write() {
+        if (!_isDirty) return true;
+
         std::lock_guard lock(_mutex);
         fsUtils::backupPrevFile(_filename);
 
         std::ofstream file(_filename, std::ios::binary);
         file.unsetf(std::ios::skipws);
 
-        // for (auto &[key, row] : _rows) {
-        //     file.write(reinterpret_cast<char *>(&row), _rowSize);
-        // }
-
-        for (auto pRow : _autoIncrementIndex) {
-            file.write(reinterpret_cast<const char *>(pRow), _rowSize);
-        }
+        writeHeader(file);
+        writeSchema(file);
+        writeRows(file);
+        return true;
     }
 
 
@@ -142,7 +163,7 @@ public:
         if (std::filesystem::exists(_filename)) {
             tableFileCleaned = std::filesystem::remove(_filename);
             if (!tableFileCleaned) {
-                std::cout << std::format("Error removing table file {}", _filename) << std::endl;
+                TarracshApp::logln(std::format("Error removing table file {}", _filename), true);
             }
         }
 
@@ -159,34 +180,15 @@ public:
         std::ifstream file(_filename, std::ios::binary);
         file.unsetf(std::ios::skipws);
 
-        while (!file.eof()) {
-            T rowBuffer;
-            file.read(reinterpret_cast<char *>(&rowBuffer), _rowSize);
-            const auto bytesRead = file.gcount();
-            if (bytesRead == 0) {
-                continue;
-            }
-
-            if (bytesRead != _rowSize) {
-                std::cout << std::format("Error reading table: {}", _filename) << std::endl;
-                return false;
-            }
-            internalAdd(rowBuffer);
-        }
-
-        return true;
+        const auto result = readHeader(file) &&
+                            readSchema(file) &&
+                            readRows(file);
+        return result;
     }
 
     std::shared_ptr<StringPool> getStringPool() { return _stringPool; }
 
-    [[nodiscard]] StringPoolItem getPoolString(const std::string &value) const {
-
-        const auto result = _stringPool->add(value);
-        return result;
-    }
-
-
-    const T *findByKey(const K &key) {
+    const T *findByKey(const std::string &key) {
         std::shared_lock lock(_mutex);
         T *result{};
         const auto it = _rows.find(key);
@@ -197,8 +199,14 @@ public:
     }
 
 
+    void printSchema() {
+        printLayout();
+    }
+
+
 protected:
-    std::unordered_map<K, T> _rows;
+    db::Database &_db;
+    std::unordered_map<std::string, T> _rows;
 
     std::vector<const T *> _autoIncrementIndex;
     std::unordered_map<const T *, uint64_t> _reverseAutoincrementIndex;
@@ -209,6 +217,93 @@ protected:
     std::shared_mutex _mutex;
 
     const std::shared_ptr<StringPool> _stringPool;
+
+
+    std::vector<columns::Properties> _columns;
+    TableLayout _layout;
+
+    virtual void defineColumns() {
+    }
+
+
+    void printLayout() {
+        std::cout << std::endl;
+        std::cout << std::format("table name: {}", _layout.header.name) << std::endl;
+        std::cout << std::format("column count: {}", _layout.header.columnCount) << std::endl;
+        std::cout << std::endl;
+        std::cout << "columns:" << std::endl;
+        auto index = 1u;
+        for (auto &column : _columns) {
+            std::cout << std::format("  no: {}", index) << std::endl;
+            std::cout << std::format("  name: {}", column.name) << std::endl;
+            std::cout << std::format("  type: {}", StorageTypeToString(column.type)) << std::endl;
+            std::cout << std::format("  display as: {}", DisplayAsToString(column.displayAs)) << std::endl;
+            std::cout << std::endl;
+            index++;
+        }
+
+    }
+
+    void writeRows(std::ofstream &file) {
+        for (auto pRow : _autoIncrementIndex) {
+            file.write(reinterpret_cast<const char *>(pRow), _rowSize);
+        }
+    }
+
+    void writeHeader(std::ofstream &file) {
+        _layout.header.columnCount = _columns.size();
+        file.write(reinterpret_cast<const char *>(&_layout.header), sizeof(TableLayout::Header));
+    }
+
+    void writeSchema(std::ofstream &file) const {
+        const auto buffer = reinterpret_cast<const char *>(&*_columns.begin());
+        file.write(buffer, _columns.size() * sizeof(columns::Properties));
+    }
+
+    bool readRows(std::ifstream &file) {
+        while (!file.eof()) {
+            T rowBuffer;
+            file.read(reinterpret_cast<char *>(&rowBuffer), _rowSize);
+            const auto bytesRead = file.gcount();
+            if (bytesRead == 0) {
+                continue;
+            }
+
+            if (bytesRead != _rowSize) {
+                TarracshApp::logln(std::format("Error reading table: {}", _filename), true);
+                return false;
+            }
+            internalAdd(rowBuffer);
+        }
+        return true;
+    }
+
+    bool readHeader(std::ifstream &file) {
+        file.read(reinterpret_cast<char *>(&_layout.header), sizeof(TableLayout::Header));
+
+        const auto result = file.gcount() == sizeof(TableLayout::Header)
+                            && _layout.header.signature == KAPA_TABLE_SIGNATURE;
+
+        if (!result) {
+            TarracshApp::logln(std::format("Invalid table format or signature:{}", _filename), true);
+        }
+
+        return result;
+    }
+
+    bool readSchema(std::ifstream &file) {
+        auto const bytesToRead = _layout.header.columnCount * sizeof(columns::Properties);
+        _columns.resize(_layout.header.columnCount);
+        file.read(reinterpret_cast<char *>(&*_columns.begin()), bytesToRead);
+        const auto result = bytesToRead == file.gcount();
+
+        if (!result) {
+            TarracshApp::logln(std::format("Invalid table schema:{}", _filename), true);
+        }
+
+        return result;
+
+    }
 
 
     uint64_t internalAdd(const T &row) {

@@ -10,15 +10,22 @@ namespace org::kapa::tarracsh::jar {
 class JarEntry {
 public:
     const char *ClassFileExt = ".class";
+    const int ExtensionLength = 6;
+
 
     JarEntry(const libzippp::ZipEntry &entry, char* buffer)
         : _entry(entry), _buffer(buffer) {
 
-        _isClassfile = _entry.isFile() && _entry.getName().ends_with(ClassFileExt);
+        const auto name = _entry.getName();
+        _isClassfile = _entry.isFile() && name.ends_with(ClassFileExt);
 
         const auto modifiedTime = std::chrono::system_clock::from_time_t(entry.getDate());
         _lastWriteTime = std::chrono::duration_cast<std::chrono::microseconds>(modifiedTime.time_since_epoch()).count();
-        _classname = stringUtils::pathToClassname(entry.getName());
+
+        if (_isClassfile) {
+            // _jvmClassname = stringUtils::pathToClassname(name.substr( 0, name.length() - ExtensionLength ));
+            _jvmClassname = name.substr( 0, name.length() - ExtensionLength );
+        }
 
     }
 
@@ -35,13 +42,13 @@ public:
     [[nodiscard]] uint64_t getLastWriteTime() const { return _lastWriteTime; }
 
     [[nodiscard]] bool isClassfile() const { return _isClassfile; }
-    [[nodiscard]] std::string getClassname() const { return _classname; }
+    [[nodiscard]] std::string getClassname() const { return _jvmClassname; }
 
 
 private:
     const libzippp::ZipEntry &_entry;
     bool _isClassfile;
-    std::string _classname;
+    std::string _jvmClassname;
     uint64_t _lastWriteTime{};
     char *_buffer{nullptr};
 

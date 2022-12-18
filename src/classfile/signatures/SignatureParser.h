@@ -4,7 +4,7 @@
 
 #include <string>
 #include "../VectorReader.h"
-#include "../ConstantPool.h"
+#include "../constpool/ConstantPool.h"
 #include "SignatureStructures.h"
 
 namespace org::kapa::tarracsh::signatures {

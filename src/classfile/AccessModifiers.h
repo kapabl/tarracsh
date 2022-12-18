@@ -6,7 +6,7 @@
 #include <array>
 
 #include "../utils/StringUtils.h"
-#include "StructsCommon.h"
+#include "constpool/StructsCommon.h"
 
 namespace org::kapa::tarracsh::accessModifiers {
 

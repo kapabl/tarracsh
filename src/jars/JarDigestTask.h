@@ -1,13 +1,15 @@
 #ifndef TARRACSH_JAR_DIGEST_H
 #define TARRACSH_JAR_DIGEST_H
 #include "../app/Tarracsh.h"
-#include "../classfile/Stats.h"
+#include "../app/Stats.h"
 #include <map>
 
 #include "JarEntry.h"
 #include "JarTask.h"
-#include "../tables/FilesTable.h"
+#include "../tables/Table.h"
+#include "../tables/DigestDb.h"
 #include "../tables/ClassfilesTable.h"
+#include "../classfile/ClassFileAnalyzer.h"
 
 namespace org::kapa::tarracsh::jar {
 
@@ -15,31 +17,36 @@ class JarDigestTask : public JarTask {
 public:
     explicit JarDigestTask(
         Options options, stats::Results &results,
-        std::shared_ptr<tables::ClassfilesTable> digestTable,
-        std::shared_ptr<tables::FilesTable> filesTable
+        db::DigestDb& digestDb
         );
 
+    [[ nodiscard ]] std::string getStrongClassname(const JarEntry &jarEntry) const;
+
     void processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) override;
+    void updateFileTableInMemory(org::kapa::tarracsh::digestUtils::DigestVector digest) const;
     bool start() override;
+    void updateClassfileTableInMemory(const JarEntry &jarEntry, const db::tables::columns::DigestCol& result,
+                  const ClassFileAnalyzer& classFileAnalyzer) const;
     void end() override;
 
 private:
-    std::shared_ptr<tables::ClassfilesTable> _digestTable;
-    std::shared_ptr<tables::FilesTable> _filesTable;
+    db::DigestDb& _digestDb;
+    // std::shared_ptr<db::ClassfilesTable> _digestTable;
+    // std::shared_ptr<db::FilesTable> _filesTable;
     stats::Results &_results;
     Options _options;
     bool _isFileUnchanged{false};
     bool _isNewJarFile{false};
-    std::map<std::string, tables::DigestColumn> _digestMap;
+    std::map<std::string, db::tables::columns::DigestCol> _digestMap;
+    std::string _strongClassname;
 
-    [[nodiscard]] std::optional<tables::DigestColumn> parseEntry(const JarEntry &jarEntry,
-                                                              const tables::ClassfileRow *row) const;
+    [[nodiscard]] std::optional<db::tables::columns::DigestCol> digestEntry(const JarEntry &jarEntry,
+                                                                            const db::tables::ClassfileRow *row) const;
 
-    [[nodiscard]] const tables::ClassfileRow *getClassfileRow(const JarEntry &jarEntry) const;
-    [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const tables::ClassfileRow *classRow);
+    [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const db::tables::ClassfileRow *classRow);
     [[nodiscard]] bool isFileUnchanged() const;
-    [[nodiscard]] const tables::FileRow *createJarFileRow(const std::string &filename) const;
-    [[nodiscard]] const tables::FileRow *getJarFileRow(const std::string &filename);
+    [[nodiscard]] const db::tables::FileRow *createJarFileRow(const std::string &filename) const;
+    [[nodiscard]] const db::tables::FileRow *getJarFileRow(const std::string &filename);
 
 };
 

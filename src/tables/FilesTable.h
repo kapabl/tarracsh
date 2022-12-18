@@ -3,28 +3,27 @@
 #include <string>
 #include "Table.h"
 #pragma pack( push, 1 )
-namespace org::kapa::tarracsh::tables {
+namespace org::kapa::tarracsh::db::tables {
 
 
-#define MD5_DIGEST_LENGTH 16
-struct FileRow: AutoIncrementedRow {
+START_AUTOINCREMENT_ROW(File)
+    DECLARE_ROW_VALUE(Int32, type)
+    DECLARE_ROW_VALUE(String, filename)
+    DECLARE_ROW_VALUE(UInt64, lastWriteTime)
+    DECLARE_ROW_VALUE(UInt64, fileSize)
+    DECLARE_ROW_VALUE(UInt32, classfileCount)
+    DECLARE_ROW_VALUE(Digest, digest)
 
-    EntryType type{Classfile};
-    StringPoolItem filename{0u};
-    uint64_t lastWriteTime{};
-    uint64_t fileSize{};
-    uint32_t classfileCount{};
-    DigestColumn digest{};
+    FileRow()
+        : type(columns::EntryType::Classfile) {}
 
-    // FileRow() = default;
-    // FileRow(  const File)
-};
+END_ROW
 
-class FilesTable : public Table<FileRow, std::string> {
+class FilesTable : public Table<FileRow> {
 
 public:
-    explicit FilesTable(const std::string& filename, std::shared_ptr<StringPool> stringPool)
-        : Table(filename, stringPool) {
+    explicit FilesTable(db::Database& db, const std::string& tablename)
+        : Table(db, tablename) {
     }
 
     [[nodiscard]] static std::string createKey(const char *filename) {
@@ -32,7 +31,7 @@ public:
         return result;
     }
 
-    [[nodiscard]] std::string createKey(const StringPoolItem &filename) const {
+    [[nodiscard]] std::string createKey(const columns::StringCol &filename) const {
         std::string result(createKey(_stringPool->getCString(filename)));
         return result;
     }
@@ -50,6 +49,10 @@ public:
         auto result = createKey(row.filename);
         return result;
     }
+
+
+protected:
+    void defineColumns() override;
 
 private:
 };

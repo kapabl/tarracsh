@@ -6,15 +6,11 @@
 
 #include <string>
 #include <vector>
-#include "../app/Tarracsh.h"
 
-#include "ClassFileStructures.h"
+#include "../app/Tarracsh.h"
 #include "ClassFileAnalyzer.h"
-#include "ConstantPool.h"
 #include "AttributesManager.h"
 #include "AccessModifiers.h"
-
-
 
 
 namespace org::kapa::tarracsh {

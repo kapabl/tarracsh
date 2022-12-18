@@ -1,14 +1,8 @@
 #ifndef TARRACSH_CLASSFILE_DIGEST_H
 #define TARRACSH_CLASSFILE_DIGEST_H
 
-#include <filesystem>
-#include <string>
 #include <vector>
-#include "../app/Tarracsh.h"
-#include "../utils/DigestUtils.h"
-
-#include "ClassFileStructures.h"
-#include "ConstantPool.h"
+#include "constpool/ConstantPool.h"
 #include "AttributesManager.h"
 #include "ClassFileAnalyzer.h"
 
@@ -29,7 +23,7 @@ public:
 
 
     ~ClassFileDigest() = default;
-    [[nodiscard]] tables::DigestColumn digest() const;
+    [[nodiscard]] db::tables::columns::DigestCol digest() const;
 
 
 private:

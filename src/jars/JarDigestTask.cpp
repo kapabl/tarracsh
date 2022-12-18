@@ -3,56 +3,64 @@
 #include <ranges>
 #include <utility>
 
-#include "../classfile/ClassFileAnalyzer.h"
+#include "../classfile/ClassFileDigest.h"
 #include "../classfile/readers/MemoryReader.h"
 #include "../utils/DigestUtils.h"
 #include "../utils/FilesystemUtils.h"
 
 using namespace org::kapa::tarracsh::jar;
-using namespace org::kapa::tarracsh::tables;
+using namespace org::kapa::tarracsh::db;
 using namespace org::kapa::tarracsh::stats;
 using namespace std;
 
 JarDigestTask::JarDigestTask(
     Options options, Results &results,
-    std::shared_ptr<ClassfilesTable> digestTable,
-    std::shared_ptr<FilesTable> filesTable
+    db::DigestDb &digestDb
     )
-    : _digestTable(std::move(digestTable)),
-      _filesTable(std::move(filesTable)),
+    : _digestDb(digestDb),
       _results(results),
       _options(move(options)) {
 }
 
-const ClassfileRow *JarDigestTask::getClassfileRow(const JarEntry &jarEntry) const {
-    const auto key = _digestTable->createKey(
-        *_jarFileRow,
-        jarEntry.getClassname().c_str());
-    const ClassfileRow *result = _digestTable->findByKey(key);
-
+string JarDigestTask::getStrongClassname(const JarEntry &jarEntry) const {
+    const auto result = _digestDb.getClassfiles()->getStrongClassname(
+        *_jarFileRow, jarEntry.getClassname().c_str());
     return result;
 }
 
 void JarDigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
+    _strongClassname = getStrongClassname(jarEntry);
+    const auto* classfileRow = _digestDb.getClassfiles()->findByKey(_strongClassname);
 
-    const auto *row = getClassfileRow(jarEntry);
+    const auto classExists = nullptr != classfileRow;
 
-    const auto isUnchanged = row != nullptr && isClassfileUnchanged(jarEntry, row);
-    const std::optional<DigestColumn> classDigest =
+    if (!classExists) {
+        ++_jarFileRow->classfileCount;
+    }
+
+    const auto isUnchanged = classExists && isClassfileUnchanged(jarEntry, classfileRow);
+    const std::optional<tables::columns::DigestCol> classDigest =
         isUnchanged
-            ? row->digest
-            : parseEntry(jarEntry, row);
+            ? classfileRow->digest
+            : digestEntry(jarEntry, classfileRow);
 
     ++_results.jarfiles.classfiles.count;
     ++_results.jarfiles.classfiles.digest.count;
 
     if (isUnchanged) {
-        ++_results.jarfiles.classfiles.digest.unchangedCount;
+        _results.report.asUnchangedClass(_strongClassname);
     }
-    ++_jarFileRow->classfileCount;
+
     std::unique_lock lock(taskMutex);
     _digestMap[jarEntry.getClassname()] = classDigest.value();
 
+}
+
+void JarDigestTask::updateFileTableInMemory(const digestUtils::DigestVector digest) const {
+    _jarFileRow->digest = digest;
+    _jarFileRow->lastWriteTime = _jarTimestamp;
+    _jarFileRow->fileSize = _jarSize;
+    _digestDb.getFiles()->update(*_jarFileRow);
 }
 
 void JarDigestTask::end() {
@@ -62,7 +70,7 @@ void JarDigestTask::end() {
     if (_isFileUnchanged) {
         _results.jarfiles.classfiles.digest.count += _jarFileRow->classfileCount;
         _results.jarfiles.classfiles.digest.unchangedCount += _jarFileRow->classfileCount;
-        ++_results.jarfiles.digest.unchangedCount;
+        _results.report.asUnchanged(_options.jarFile);
         return;
     }
 
@@ -73,20 +81,16 @@ void JarDigestTask::end() {
     const auto digest = digestUtils::digest(buffer);
 
     const auto &filename = _options.jarFile;
-    const auto isSameDigest = !_isNewJarFile && _jarFileRow->digest == digest;
 
-    if (isSameDigest) {
-        _results.resultLog.writeln(std::format("Same public digestEntry of changed jar file:{}", filename));
-        ++_results.jarfiles.digest.same;
+    if (_isNewJarFile) {
+        _results.report.asNew(filename);
     } else {
-        _jarFileRow->digest = digest;
-        if (_isNewJarFile) {
-            ++_results.jarfiles.digest.newFile;
-        } else {
-            ++_results.jarfiles.digest.differentDigest;
-        }
-    }
+        const auto isSameDigest = _jarFileRow->digest == digest;
+        _results.report.asModified(filename, isSameDigest);
 
+        updateFileTableInMemory(digest);
+        // updateClassfileTableInMemory(jarEntry, result.value(), classFileAnalyzer);
+    }
 }
 
 
@@ -97,20 +101,20 @@ bool JarDigestTask::isFileUnchanged() const {
     return result;
 }
 
-const FileRow *JarDigestTask::createJarFileRow(const std::string &filename) const {
-    FileRow jarFileRow;
-    jarFileRow.filename = _filesTable->getPoolString(filename);
-    jarFileRow.type = Jar;
+const tables::FileRow *JarDigestTask::createJarFileRow(const std::string &filename) const {
+    tables::FileRow jarFileRow;
+    jarFileRow.filename = _digestDb.getPoolString(filename);
+    jarFileRow.type = tables::columns::EntryType::Jar;
     jarFileRow.lastWriteTime = _jarTimestamp;
     jarFileRow.fileSize = _jarSize;
-    const auto id = _filesTable->add(jarFileRow);
-    const auto result = _filesTable->getRow(id);
+    const auto id = _digestDb.getFiles()->add(jarFileRow);
+    const auto result = _digestDb.getFiles()->getRow(id);
     return result;
 
 }
 
-const FileRow *JarDigestTask::getJarFileRow(const std::string &filename) {
-    auto result = _filesTable->findByKey(filename);
+const tables::FileRow *JarDigestTask::getJarFileRow(const std::string &filename) {
+    auto result = _digestDb.getFiles()->findByKey(filename);
     _isNewJarFile = result == nullptr;
 
     if (_isNewJarFile) {
@@ -124,56 +128,49 @@ bool JarDigestTask::start() {
     const auto &filename = _options.jarFile;
     _jarSize = filesystem::file_size(filename);
     _jarTimestamp = fsUtils::getLastWriteTimestamp(filename);
-    _jarFileRow = const_cast<FileRow *>(getJarFileRow(filename));
+    _jarFileRow = const_cast<tables::FileRow *>(getJarFileRow(filename));
     _isFileUnchanged = isFileUnchanged();
     const auto result = !_isFileUnchanged;
     return result;
 }
 
-optional<DigestColumn> JarDigestTask::parseEntry(const JarEntry &jarEntry,
-                                                 const ClassfileRow *row) const {
-    optional<DigestColumn> result;
-    Options classfileOptions(_options);
-    classfileOptions.classFilePath = jarEntry.getName();
+void JarDigestTask::updateClassfileTableInMemory(const JarEntry &jarEntry, const tables::columns::DigestCol &result,
+                                     const ClassFileAnalyzer &classFileAnalyzer) const {
+    const auto classname = classFileAnalyzer.getMainClassname();
+    tables::ClassfileRow classfileRow(*_jarFileRow);
+    classfileRow.lastWriteTime = jarEntry.getLastWriteTime();
+    classfileRow.size = jarEntry.getSize();
+    classfileRow.classname = _digestDb.getPoolString(classname);
+    classfileRow.digest = result;
+    classfileRow.crc = jarEntry.getCRC();
+    classfileRow.id = _digestDb.getClassfiles()->addOrUpdate(classfileRow);
+}
+
+optional<tables::columns::DigestCol> JarDigestTask::digestEntry(const JarEntry &jarEntry,
+                                                                const tables::ClassfileRow *row) const {
+    optional<tables::columns::DigestCol> result;
+
+    Options options(_options);
+    options.classFilePath = jarEntry.getName();
     readers::MemoryReader reader(jarEntry);
+    ClassFileAnalyzer classFileAnalyzer(reader, options, _results);
 
-    ClassFileAnalyzer classFileAnalyzer(reader, classfileOptions, _results);
-    const auto digest = classFileAnalyzer.getPublicDigest();
+    if (classFileAnalyzer.run()) {
+        const ClassFileDigest classFileDigest(classFileAnalyzer);
+        result = classFileDigest.digest();
 
-    if (digest.has_value()) {
-        const bool rowAlreadyExists = row != nullptr;
-        const auto isSameDigest = rowAlreadyExists && digest.value() == row->digest;
+        const bool classExists = row != nullptr;
 
-        if (isSameDigest) {
-
-            _results.resultLog.writeln(
-                std::format("Same public digestEntry of changed file:{}",
-                            _digestTable->createKey(*row)));
-            ++_results.jarfiles.classfiles.digest.same;
-
-            result = row->digest;
+        if (classExists) {
+            const auto isSameDigest = result.value() == row->digest;
+            _results.report.asModifiedClass(_strongClassname, isSameDigest);
         } else {
-
-            result = digest.value();
-
-            if (rowAlreadyExists) {
-                ++_results.jarfiles.classfiles.digest.differentDigest;
-            } else {
-                ++_results.jarfiles.classfiles.digest.newFile;
-            }
-
+            _results.report.asNewClass(_strongClassname);
         }
 
         ++_results.jarfiles.classfiles.parsedCount;
 
-        const auto classname = classFileAnalyzer.getMainClassname();
-        ClassfileRow digestRow(*_jarFileRow);
-        digestRow.lastWriteTime = jarEntry.getLastWriteTime();
-        digestRow.size = jarEntry.getSize();
-        digestRow.classname = _digestTable->getPoolString(classname);
-        digestRow.digest = digest.value();
-        digestRow.crc = jarEntry.getCRC();
-        digestRow.id = _digestTable->addOrUpdate(digestRow);
+        updateClassfileTableInMemory(jarEntry, result.value(), classFileAnalyzer);
 
     } else {
         ++_results.jarfiles.classfiles.errors;
@@ -182,7 +179,7 @@ optional<DigestColumn> JarDigestTask::parseEntry(const JarEntry &jarEntry,
 }
 
 
-bool JarDigestTask::isClassfileUnchanged(const JarEntry &jarEntry, const ClassfileRow *classRow) {
+bool JarDigestTask::isClassfileUnchanged(const JarEntry &jarEntry, const tables::ClassfileRow *classRow) {
     return classRow->size == jarEntry.getSize() &&
            classRow->crc == jarEntry.getCRC() &&
            classRow->lastWriteTime == jarEntry.getLastWriteTime();

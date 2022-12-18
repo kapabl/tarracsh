@@ -15,16 +15,20 @@ struct Options {
     CLI::Option *classfileOption;
     CLI::Option *dirOption;
     CLI::Option *jarOption;
+    CLI::Option *queryOption;
 
     std::string classFilePath;
     std::string directory;
     std::string jarFile;
     std::string classPath;
+    std::string queryValue;
     std::string outputDir{"./output"};
-    bool generatePublicDigest{false};
+    bool isPublicDigest{false};
+    bool isCallGraph{false};
     bool printClassParse{false};
     bool printConstantPool{false};
     bool rebuild{false};
+    bool checkOnly{true};
     std::string logFile{outputDir + "/result.log"};
     int workers{4};
     bool useFileTimestamp{true};
@@ -53,9 +57,14 @@ struct PrintTimeScope {
         return result;
     }
 
+    std::chrono::duration<long long, std::milli> getElapsedTimeMs() {
+        stop();
+        const auto result = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+        return result;
+    }
+
     void printElapsedTime() {
-        auto totalTime = getElapsedTime();
-        std::cout << std::endl << std::format("total time: {}", totalTime) << std::endl;
+        std::cout << std::endl << std::format("total time: {}", getElapsedTimeMs()) << std::endl;
     }
 
     ~PrintTimeScope() {

@@ -8,8 +8,8 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "StructsCommon.h"
-#include "StackFrame.h"
+#include "constpool/StructsCommon.h"
+#include "constpool/StackFrame.h"
 
 #pragma pack(push,1)
 

@@ -18,6 +18,22 @@
       <Configuration>DbJarDirMd5</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="DCheckOnly|Win32">
+      <Configuration>DCheckOnly</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DCheckOnly|x64">
+      <Configuration>DCheckOnly</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DCheck|Win32">
+      <Configuration>DCheck</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DCheck|x64">
+      <Configuration>DCheck</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="DebugDir|Win32">
       <Configuration>DebugDir</Configuration>
       <Platform>Win32</Platform>
@@ -45,6 +61,22 @@
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="QQuery|Win32">
+      <Configuration>QQuery</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="QQuery|x64">
+      <Configuration>QQuery</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RCheckOnly|Win32">
+      <Configuration>RCheckOnly</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RCheckOnly|x64">
+      <Configuration>RCheckOnly</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Rel2|Win32">
       <Configuration>Rel2</Configuration>
@@ -127,6 +159,21 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DCheckOnly|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DCheck|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='QQuery|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelJarDirMd5|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -148,6 +195,11 @@
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel2|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RCheckOnly|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -187,6 +239,21 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DCheckOnly|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DCheck|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelJarDirMd5|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -208,6 +275,11 @@
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel2|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RCheckOnly|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -244,6 +316,15 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DbJarDirMd5|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DCheckOnly|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DCheck|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='QQuery|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='RelJarDirMd5|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -259,6 +340,9 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel2|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='RCheckOnly|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDir|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -272,6 +356,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel2|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='RCheckOnly|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDir|x64'" Label="PropertySheets">
@@ -300,6 +387,18 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DCheckOnly|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DCheck|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='QQuery|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelJarDirMd5|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
@@ -317,6 +416,10 @@
     <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel2|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RCheckOnly|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
@@ -344,6 +447,15 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbJarDirMd5|x64'">
     <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DCheckOnly|x64'">
+    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DCheck|x64'">
+    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'">
+    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelJarDirMd5|x64'">
     <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
@@ -357,6 +469,9 @@
     <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel2|x64'">
+    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RCheckOnly|x64'">
     <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDir|x64'">
@@ -415,6 +530,48 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DbJarDirMd5|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DCheckOnly|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DCheck|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='QQuery|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -500,6 +657,21 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RCheckOnly|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDir|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -567,6 +739,27 @@
     </ClCompile>
     <Link />
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DCheckOnly|x64'">
+    <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DCheck|x64'">
+    <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'">
+    <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelJarDirMd5|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -595,6 +788,12 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RCheckOnly|x64'">
+    <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDir|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -616,9 +815,9 @@
     <ClCompile Include="src\classfile\AnnotationsParser.cpp" />
     <ClCompile Include="src\classfile\ClassFileAnalyzer.cpp" />
     <ClCompile Include="src\classfile\ClassFileDigest.cpp" />
-    <ClCompile Include="src\classfile\ConstantPool.cpp" />
-    <ClCompile Include="src\classfile\ConstantPoolPrinter.cpp" />
-    <ClCompile Include="src\classfile\DirAnalyzer.cpp" />
+    <ClCompile Include="src\classfile\constpool\ConstantPool.cpp" />
+    <ClCompile Include="src\classfile\constpool\ConstantPoolPrinter.cpp" />
+    <ClCompile Include="src\classfile\Analyzer.cpp" />
     <ClCompile Include="src\classfile\ParserOutput.cpp" />
     <ClCompile Include="src\classfile\readers\ClassFileReader.cpp" />
     <ClCompile Include="src\classfile\readers\FileReader.cpp" />
@@ -631,11 +830,15 @@
     <ClCompile Include="src\classfile\signatures\rules\Rule.cpp" />
     <ClCompile Include="src\classfile\signatures\rules\Terminal.cpp" />
     <ClCompile Include="src\classfile\signatures\SignatureParser.cpp" />
-    <ClCompile Include="src\classfile\Stats.cpp" />
+    <ClCompile Include="src\app\Stats.cpp" />
     <ClCompile Include="src\jars\JarAnalyzerTask.cpp" />
     <ClCompile Include="src\jars\JarDigestTask.cpp" />
+    <ClCompile Include="src\jars\JarGraphTask.cpp" />
     <ClCompile Include="src\jars\JarProcessor.cpp" />
+    <ClCompile Include="src\tables\CallGraphDb.cpp" />
     <ClCompile Include="src\tables\ClassfilesTable.cpp" />
+    <ClCompile Include="src\tables\Database.cpp" />
+    <ClCompile Include="src\tables\DigestDb.cpp" />
     <ClCompile Include="src\tables\FilesTable.cpp" />
     <ClCompile Include="src\tables\StringPool.cpp" />
     <ClCompile Include="src\tables\Table.cpp" />
@@ -647,11 +850,12 @@
     <ClInclude Include="src\classfile\AttributeStructures.h" />
     <ClInclude Include="src\classfile\ClassFileAnalyzer.h" />
     <ClInclude Include="src\classfile\ClassFileDigest.h" />
-    <ClInclude Include="src\classfile\ClassFileStructures.h" />
-    <ClInclude Include="src\classfile\ConstantPool.h" />
-    <ClInclude Include="src\classfile\ConstantPoolPrinter.h" />
+    <ClInclude Include="src\classfile\ClassFileInfo.h" />
+    <ClInclude Include="src\classfile\constpool\ConstpoolStructures.h" />
+    <ClInclude Include="src\classfile\constpool\ConstantPool.h" />
+    <ClInclude Include="src\classfile\constpool\ConstantPoolPrinter.h" />
     <ClInclude Include="src\classfile\DescriptorParser.h" />
-    <ClInclude Include="src\classfile\DirAnalyzer.h" />
+    <ClInclude Include="src\classfile\Analyzer.h" />
     <ClInclude Include="src\classfile\jars\JarAnalyzerTask.h" />
     <ClInclude Include="src\classfile\jars\JarDigestTask.h" />
     <ClInclude Include="src\classfile\jars\JarProcessor.h" />
@@ -673,7 +877,7 @@
     <ClInclude Include="src\classfile\signatures\SignatureParser.h" />
     <ClInclude Include="src\classfile\signatures\SignatureScanner.h" />
     <ClInclude Include="src\classfile\signatures\SignatureStructures.h" />
-    <ClInclude Include="src\classfile\Stats.h" />
+    <ClInclude Include="src\app\Stats.h" />
     <ClInclude Include="src\classfile\tables\ClassfilesTable.h" />
     <ClInclude Include="src\classfile\tables\FilesTable.h" />
     <ClInclude Include="src\classfile\tables\StringPool.h" />
@@ -682,10 +886,16 @@
     <ClInclude Include="src\jars\JarAnalyzerTask.h" />
     <ClInclude Include="src\jars\JarDigestTask.h" />
     <ClInclude Include="src\jars\JarEntry.h" />
+    <ClInclude Include="src\jars\JarGraphTask.h" />
     <ClInclude Include="src\jars\JarProcessor.h" />
     <ClInclude Include="src\jars\JarTask.h" />
+    <ClInclude Include="src\tables\CallGraphDb.h" />
     <ClInclude Include="src\tables\ClassfilesTable.h" />
+    <ClInclude Include="src\tables\columns\Columns.h" />
+    <ClInclude Include="src\tables\Database.h" />
+    <ClInclude Include="src\tables\DigestDb.h" />
     <ClInclude Include="src\tables\FilesTable.h" />
+    <ClInclude Include="src\tables\Query.h" />
     <ClInclude Include="src\tables\StringPool.h" />
     <ClInclude Include="src\tables\Table.h" />
     <ClInclude Include="src\utils\DigestUtils.h" />
@@ -699,8 +909,8 @@
     <ClInclude Include="src\includes\AttributeTags.h" />
     <ClInclude Include="src\includes\classfile_constants.h" />
     <ClInclude Include="src\classfile\MethodDescriptorParser.h" />
-    <ClInclude Include="src\classfile\StackFrame.h" />
-    <ClInclude Include="src\classfile\StructsCommon.h" />
+    <ClInclude Include="src\classfile\constpool\StackFrame.h" />
+    <ClInclude Include="src\classfile\constpool\StructsCommon.h" />
     <ClInclude Include="src\classfile\VectorReader.h" />
     <ClInclude Include="src\includes\visit_struct\visit_struct.hpp" />
     <ClInclude Include="src\includes\visit_struct\visit_struct_boost_fusion.hpp" />
