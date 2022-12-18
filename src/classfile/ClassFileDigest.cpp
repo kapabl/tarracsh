@@ -28,15 +28,19 @@ DigestVector ClassFileDigest::digestAttribute(const AttributeInfo &attributeInfo
     return result;
 }
 
-DigestVector ClassFileDigest::digest(
+DigestVector ClassFileDigest::digestAttributes(
     const vector<AttributeInfo> &attributeInfos) const {
-    set<DigestVector> disgests;
+    set<DigestVector> digests;
     for (auto &attributeInfo : attributeInfos) {
+        const auto attributeName = _constantPool[attributeInfo.nameIndex].utf8Info.getAsUtf8();
+        if (attributeName == CODE ) {
+            continue;
+        }
         if (!attributeInfo.info.empty()) {
-            disgests.insert(digestAttribute(attributeInfo));
+            digests.insert(digestAttribute(attributeInfo));
         }
     }
-    auto result = digestSet(disgests);
+    auto result = digestSet(digests);
 
     return result;
 }
@@ -71,8 +75,8 @@ DigestVector ClassFileDigest::digestField(const FieldInfo &fieldInfo) const {
     buffer.reserve(DIGEST_LENGTH * 4 + 256);
 
     buffer.append(digestUtf8Entry(fieldInfo.nameIndex))
-          .append(digest(fieldInfo.attributes))
-          .append(digest(fieldInfo.attributes))
+          .append(digestAttributes(fieldInfo.attributes))
+          .append(digestAttributes(fieldInfo.attributes))
           .append(_constantPool[fieldInfo.descriptorIndex].utf8Info.bytes)
           .append(fieldInfo.accessFlags);
 
@@ -103,7 +107,7 @@ DigestVector ClassFileDigest::digestMethod(const MethodInfo &methodInfo) const {
     DigestBuffer buffer;
     buffer.reserve(DIGEST_LENGTH * 3 + 256);
     buffer.append(digestUtf8Entry(methodInfo.nameIndex))
-          .append(digest(methodInfo.attributes))
+          .append(digestAttributes(methodInfo.attributes))
           .append(_constantPool[methodInfo.descriptorIndex].utf8Info.bytes)
           .append(methodInfo.accessFlags);
 
@@ -121,7 +125,7 @@ db::tables::columns::DigestCol ClassFileDigest::digest() const {
     buffer
         .append(digestClassInfo(mainClassInfo.thisClass))
         .append(digestClassInfo(mainClassInfo.superClass))
-        .append(digest(attributes))
+        .append(digestAttributes(attributes))
         .append(digestPublicMethods())
         .append(digestPublicFields())
         .append(digestInterfaces())
