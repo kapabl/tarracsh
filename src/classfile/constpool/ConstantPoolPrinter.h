@@ -6,13 +6,14 @@
 #include <map>
 #include <unordered_map>
 #include <yaml-cpp/node/node.h>
-#include "ConstantPool.h"
+#include "../ClassFileAnalyzer.h"
 
 namespace org::kapa::tarracsh {
+class ClassFileAnalyzer;
 
 class ConstantPoolPrinter {
 public:
-    ConstantPoolPrinter( const ConstantPool& constantPool);
+    ConstantPoolPrinter( const ClassFileAnalyzer& classFileAnalyzer);
     ~ConstantPoolPrinter() = default;
 
     void print() const;
@@ -25,6 +26,7 @@ public:
 
 private:
 
+    const ClassFileAnalyzer& _classFileAnalyzer;
     const ConstantPool& _constantPool;
 
     static std::vector<std::string> _poolTagToString;

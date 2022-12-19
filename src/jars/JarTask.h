@@ -7,13 +7,14 @@
 namespace org::kapa::tarracsh::jar {
 class JarTask {
 public:
-    virtual void processEntry(const JarEntry &jarEntry,
-                              std::mutex &taskMutex) = 0;
+    virtual void processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) = 0;
 
     virtual bool start() = 0;
     virtual void end() = 0;
     virtual uint32_t getCount() { return _jarFileRow->classfileCount; }
     virtual ~JarTask() = default;
+
+    [[nodiscard]] db::tables::FileRow &getJarFileRow() const { return *_jarFileRow; }
 
 protected:
     db::tables::FileRow *_jarFileRow = nullptr;

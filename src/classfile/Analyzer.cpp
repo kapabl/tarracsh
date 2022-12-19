@@ -163,8 +163,10 @@ void Analyzer::processJar(const std::string &filename) {
             jar::JarGraphTask jarGraphTask(jarOptions, _results, _callGraphDb);
             jar::JarProcessor jarProcessor(jarOptions, _results, jarGraphTask);
             jarProcessor.run();
-            //TODO
         } else {
+            jar::JarAnalyzerTask jarAnalyzerTask(jarOptions, _results);
+            jar::JarProcessor jarProcessor(jarOptions, _results, jarAnalyzerTask);
+            jarProcessor.run();
             //TODO
             // jar::JarAnalyzeTask jarAnalyzeTask(jarOptions, _results);
             // jar::JarProcessor jarProcessor(jarOptions, _results, jarAnalyzeTask);
@@ -232,8 +234,11 @@ void Analyzer::analyze() {
     }
 
     _jarThreadPool.wait_for_tasks();
-    _results.print(_options);
-    _results.printAll(_options);
+    if (!_options.printConstantPool)
+    {
+        _results.print(_options);
+        _results.printAll(_options);
+    }
 }
 
 
@@ -254,10 +259,13 @@ void Analyzer::run() {
         analyze();
         endAnalysis();
     }
-    cout << endl << ((1.0 * _results.classfiles.count +
-                      _results.jarfiles.classfileCount) / (timeScope.getElapsedTime().count() * 1.0))
-        << " classfile/s: " << endl << endl;
+    if (TarracshApp::getOptions().printDiffReport ) {
 
-    _results.report.print();
+        cout << endl << ((1.0 * _results.classfiles.count +
+            _results.jarfiles.classfileCount) / (timeScope.getElapsedTime().count() * 1.0))
+            << " classfile/s: " << endl << endl;
+
+        _results.report.print();
+    }
 
 }

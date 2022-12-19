@@ -1,10 +1,17 @@
 #include "../app/Stats.h"
 
+#include "TarracshApp.h"
+// #include "../app/TarracshApp.h"
+
 using namespace org::kapa::tarracsh::stats;
 
 
 void Report::asNew(const std::string &filename) {
     ++results.jarfiles.digest.newFile;
+    if (!TarracshApp::getOptions().doDiffReport) {
+        return;
+    }
+
     std::unique_lock lock(mutex);
     JarResult jarResult;
     jarResult.isNew = true;
@@ -21,6 +28,11 @@ void Report::asModified(const std::string &filename, bool isSamePublicDigest) {
         ++results.jarfiles.digest.differentDigest;
     }
 
+    if (!TarracshApp::getOptions().doDiffReport) {
+        return;
+    }
+
+
     std::unique_lock lock(mutex);
     JarResult jarResult;
     jarResult.filename = filename;
@@ -33,6 +45,11 @@ void Report::asModified(const std::string &filename, bool isSamePublicDigest) {
 
 void Report::asUnchanged(const std::string &filename) {
     ++results.jarfiles.digest.unchangedCount;
+
+    if (!TarracshApp::getOptions().doDiffReport) {
+        return;
+    }
+
     std::unique_lock lock(mutex);
     JarResult jarResult;
     jarResult.isNew = false;
@@ -44,6 +61,11 @@ void Report::asUnchanged(const std::string &filename) {
 
 void Report::asNewClass(const std::string &fullClassname) {
     ++results.jarfiles.classfiles.digest.newFile;
+
+    if (!TarracshApp::getOptions().doDiffReport) {
+        return;
+    }
+
     std::unique_lock lock(mutex);
     ClassfileResult classfileResult;
     classfileResult.isNew = true;
@@ -55,6 +77,11 @@ void Report::asNewClass(const std::string &fullClassname) {
 
 void Report::asUnchangedClass(const std::string &fullClassname) {
     ++results.jarfiles.classfiles.digest.unchangedCount;
+
+    if (!TarracshApp::getOptions().doDiffReport) {
+        return;
+    }
+
     std::unique_lock lock(mutex);
     ClassfileResult classfileResult;
     classfileResult.filename = fullClassname;
@@ -71,6 +98,10 @@ void Report::asModifiedClass(const std::string &fullClassname, bool isSamePublic
         ++results.jarfiles.classfiles.digest.differentDigest;
     }
 
+    if (!TarracshApp::getOptions().doDiffReport) {
+        return;
+    }
+
     std::unique_lock lock(mutex);
     ClassfileResult classfileResult;
     classfileResult.filename = fullClassname;
@@ -79,7 +110,7 @@ void Report::asModifiedClass(const std::string &fullClassname, bool isSamePublic
     classfileResults.push_back(classfileResult);
 }
 
-void Report::print() {
+void Report::print() const {
     std::cout << "Report:" << std::endl;
     std::cout << "Legend: N - New file, C/U - Change/Unchanged, S/D - Same/Different public digest"
         << std::endl

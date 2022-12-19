@@ -53,7 +53,10 @@ void JarProcessor::run() {
         for (auto& entry : entries) {
 
             if (index % 1000 == 0) {
-                _results.print(_options);
+                if (!_options.printConstantPool)
+                {
+                    _results.print(_options);
+                }
             }
 
             waitForAvailableBuffer();
@@ -85,7 +88,10 @@ void JarProcessor::run() {
     }
     _jarTask.end();
     ++_results.jarfiles.parsedCount;
-    _results.print(_options);
+    if (!_options.printConstantPool)
+    {
+        _results.print(_options);
+    }
 }
 
 

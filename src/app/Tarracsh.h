@@ -23,12 +23,15 @@ struct Options {
     std::string classPath;
     std::string queryValue;
     std::string outputDir{"./output"};
+    bool isParse{false};
     bool isPublicDigest{false};
     bool isCallGraph{false};
     bool printClassParse{false};
     bool printConstantPool{false};
     bool rebuild{false};
     bool checkOnly{true};
+    bool doDiffReport{true};
+    bool printDiffReport{false};
     std::string logFile{outputDir + "/result.log"};
     int workers{4};
     bool useFileTimestamp{true};

@@ -60,7 +60,7 @@ struct Report {
     void asModifiedClass(const std::string& fullClassname, bool isSamePublicDigest);
     void asUnchangedClass(const std::string& filename);
 
-    void print();
+    void print() const;
 };
 
 

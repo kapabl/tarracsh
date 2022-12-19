@@ -34,6 +34,16 @@ const tables::ClassfileRow *JarGraphTask::getClassfileRow(const JarEntry &jarEnt
     return nullptr;
 }
 
+bool JarGraphTask::start() {
+    const auto& filename = _options.jarFile;
+    _jarSize = filesystem::file_size(filename);
+    _jarTimestamp = fsUtils::getLastWriteTimestamp(filename);
+    _jarFileRow = const_cast<tables::FileRow*>(getJarFileRow(filename));
+    _isFileUnchanged = isFileUnchanged();
+    const auto result = !_isFileUnchanged;
+    return result;
+}
+
 void JarGraphTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
 
     const auto *row = getClassfileRow(jarEntry);
@@ -55,6 +65,7 @@ void JarGraphTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex)
     _digestMap[jarEntry.getClassname()] = classDigest.value();
 
 }
+
 
 void JarGraphTask::end() {
     ++_results.jarfiles.digest.count;
@@ -125,15 +136,7 @@ const tables::FileRow *JarGraphTask::getJarFileRow(const std::string &filename) 
     return nullptr;
 }
 
-bool JarGraphTask::start() {
-    const auto &filename = _options.jarFile;
-    _jarSize = filesystem::file_size(filename);
-    _jarTimestamp = fsUtils::getLastWriteTimestamp(filename);
-    _jarFileRow = const_cast<tables::FileRow *>(getJarFileRow(filename));
-    _isFileUnchanged = isFileUnchanged();
-    const auto result = !_isFileUnchanged;
-    return result;
-}
+
 
 optional<tables::columns::DigestCol> JarGraphTask::parseEntry(const JarEntry &jarEntry,
                                                               const tables::ClassfileRow *row) const {

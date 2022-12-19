@@ -12,6 +12,7 @@
 #include "../classfile/ClassFileAnalyzer.h"
 
 namespace org::kapa::tarracsh::jar {
+struct DigestEntryInfo;
 
 class JarDigestTask : public JarTask {
 public:
@@ -29,6 +30,8 @@ public:
                   const ClassFileAnalyzer& classFileAnalyzer) const;
     void end() override;
 
+    db::DigestDb& getDb() const { return _digestDb; }
+
 private:
     db::DigestDb& _digestDb;
     // std::shared_ptr<db::ClassfilesTable> _digestTable;
@@ -38,16 +41,28 @@ private:
     bool _isFileUnchanged{false};
     bool _isNewJarFile{false};
     std::map<std::string, db::tables::columns::DigestCol> _digestMap;
-    std::string _strongClassname;
 
-    [[nodiscard]] std::optional<db::tables::columns::DigestCol> digestEntry(const JarEntry &jarEntry,
+    [[nodiscard]] std::optional<db::tables::columns::DigestCol> digestEntry(const DigestEntryInfo& digestEntryInfo,
                                                                             const db::tables::ClassfileRow *row) const;
 
     [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const db::tables::ClassfileRow *classRow);
     [[nodiscard]] bool isFileUnchanged() const;
     [[nodiscard]] const db::tables::FileRow *createJarFileRow(const std::string &filename) const;
-    [[nodiscard]] const db::tables::FileRow *getJarFileRow(const std::string &filename);
+    [[nodiscard]] const db::tables::FileRow *getOrCreateFileRow(const std::string &filename);
 
+};
+
+struct DigestEntryInfo {
+    explicit DigestEntryInfo(const JarDigestTask& jarDigestTask, const JarEntry& jarEntry) :
+        jarEntry(jarEntry),
+        fileRow(jarDigestTask.getJarFileRow())
+    {
+        strongClassname = jarDigestTask.getDb().getClassfiles()->getStrongClassname(
+            fileRow, jarEntry.getClassname().c_str());
+    }
+    const JarEntry& jarEntry;
+    db::tables::FileRow& fileRow;
+    std::string strongClassname;
 };
 
 }
