@@ -18,6 +18,7 @@ public:
     int start(int argc, char *argv[]);
 
     static stats::Results &getResults() { return _results; }
+    static Options &getOptions() { return _options; }
 
     static void logln(const std::string &msg, bool doStdout = false) {
         _results.log.writeln(msg);
@@ -25,12 +26,11 @@ public:
             std::cout << msg << std::endl;
         }
     }
-
-
+    
     static void log(const std::string &msg) { _results.log.write(msg); }
 
 private:
-    Options _options{};
+    static Options _options;
     void setupCliOptions();
     int parseCli(int argc, char **argv);
 #ifdef _WIN32

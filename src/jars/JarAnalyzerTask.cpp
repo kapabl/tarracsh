@@ -22,49 +22,61 @@ JarAnalyzerTask::JarAnalyzerTask(Options options, Results &results)
       _options(std::move(options)) {
 }
 
-void JarAnalyzerTask::parseEntry(const JarEntry &jarEntry) const {
-    //TODO collect fore stats like total number of methods etc
+bool JarAnalyzerTask::start() {
+    return true;
+}
 
-    Options classfileOptions(_options);
-    classfileOptions.classFilePath = jarEntry.getName();
+void JarAnalyzerTask::parseEntry(const JarEntry &jarEntry) const {
+    Options options(_options);
+    options.classFilePath = jarEntry.getName();
     readers::MemoryReader reader(jarEntry);
 
-    ClassFileAnalyzer classFileAnalyzer(reader, classfileOptions, _results);
+    ClassFileAnalyzer classFileAnalyzer(reader, options, _results);
     if (classFileAnalyzer.run()) {
         ++_results.jarfiles.classfiles.parsedCount;
-
     } else {
         ++_results.jarfiles.classfiles.errors;
     }
 }
 
-void JarAnalyzerTask::analyze() {
-    //TODO
-    // ZipArchive zipArchive(_options.jarFile);
-    // zipArchive.open(ZipArchive::ReadOnly);
+void JarAnalyzerTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
+    parseEntry(jarEntry);
+}
+
+
+void JarAnalyzerTask::end() {
+    // ++_results.jarfiles.digest.count;
+    // _results.jarfiles.classfileCount += _jarFileRow->classfileCount;
     //
-    // const auto entries = zipArchive.getEntries();
-    // BS::thread_pool pool;
-    //
-    // for (auto &entry : entries) {
-    //     pool.push_task([this, entry] {
-    //         const JarEntry jarEntry(entry);
-    //         if (jarEntry.isClassfile()) {
-    //             cout << entry.getName() << endl;
-    //             _classfileCount++;
-    //             parseEntry(jarEntry);
-    //         }
-    //     });
+    // if (_isFileUnchanged) {
+    //     _results.jarfiles.classfiles.digest.count += _jarFileRow->classfileCount;
+    //     _results.jarfiles.classfiles.digest.unchangedCount += _jarFileRow->classfileCount;
+    //     ++_results.jarfiles.digest.unchangedCount;
+    //     return;
     // }
-    // pool.wait_for_tasks();
-}
+    //
+    // digestUtils::DigestBuffer buffer;
+    // for (auto& [buf] : _digestMap | views::values) {
+    //     buffer.append(buf, DIGEST_LENGTH);
+    // }
+    // const auto digest = digestUtils::digest(buffer);
+    //
+    // const auto& filename = _options.jarFile;
+    // const auto isSameDigest = !_isNewJarFile && _jarFileRow->digest == digest;
+    //
+    // if (isSameDigest) {
+    //     _results.log.writeln(std::format("Same public digestEntry of changed jar file:{}", filename));
+    //     ++_results.jarfiles.digest.same;
+    // }
+    // else {
+    //     _jarFileRow->digest = digest;
+    //     if (_isNewJarFile) {
+    //         ++_results.jarfiles.digest.newFile;
+    //     }
+    //     else {
+    //         ++_results.jarfiles.digest.differentDigest;
+    //     }
+    // }
+    //TODO
 
-
-void JarAnalyzerTask::run() {
-    analyze();
-}
-
-
-unsigned int JarAnalyzerTask::getClassfileCount() const {
-    return _classfileCount;
 }

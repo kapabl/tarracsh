@@ -29,8 +29,8 @@ string JarDigestTask::getStrongClassname(const JarEntry &jarEntry) const {
 }
 
 void JarDigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
-    _strongClassname = getStrongClassname(jarEntry);
-    const auto* classfileRow = _digestDb.getClassfiles()->findByKey(_strongClassname);
+    const DigestEntryInfo digestEntryInfo(*this, jarEntry);
+    const auto* classfileRow = _digestDb.getClassfiles()->findByKey(digestEntryInfo.strongClassname);
 
     const auto classExists = nullptr != classfileRow;
 
@@ -42,13 +42,13 @@ void JarDigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex
     const std::optional<tables::columns::DigestCol> classDigest =
         isUnchanged
             ? classfileRow->digest
-            : digestEntry(jarEntry, classfileRow);
+            : digestEntry(digestEntryInfo, classfileRow);
 
     ++_results.jarfiles.classfiles.count;
     ++_results.jarfiles.classfiles.digest.count;
 
     if (isUnchanged) {
-        _results.report.asUnchangedClass(_strongClassname);
+        _results.report.asUnchangedClass(digestEntryInfo.strongClassname);
     }
 
     std::unique_lock lock(taskMutex);
@@ -113,7 +113,7 @@ const tables::FileRow *JarDigestTask::createJarFileRow(const std::string &filena
 
 }
 
-const tables::FileRow *JarDigestTask::getJarFileRow(const std::string &filename) {
+const tables::FileRow *JarDigestTask::getOrCreateFileRow(const std::string &filename) {
     auto result = _digestDb.getFiles()->findByKey(filename);
     _isNewJarFile = result == nullptr;
 
@@ -128,7 +128,7 @@ bool JarDigestTask::start() {
     const auto &filename = _options.jarFile;
     _jarSize = filesystem::file_size(filename);
     _jarTimestamp = fsUtils::getLastWriteTimestamp(filename);
-    _jarFileRow = const_cast<tables::FileRow *>(getJarFileRow(filename));
+    _jarFileRow = const_cast<tables::FileRow *>(getOrCreateFileRow(filename));
     _isFileUnchanged = isFileUnchanged();
     const auto result = !_isFileUnchanged;
     return result;
@@ -146,10 +146,11 @@ void JarDigestTask::updateClassfileTableInMemory(const JarEntry &jarEntry, const
     classfileRow.id = _digestDb.getClassfiles()->addOrUpdate(classfileRow);
 }
 
-optional<tables::columns::DigestCol> JarDigestTask::digestEntry(const JarEntry &jarEntry,
+optional<tables::columns::DigestCol> JarDigestTask::digestEntry(const DigestEntryInfo& digestEntryInfo,
                                                                 const tables::ClassfileRow *row) const {
     optional<tables::columns::DigestCol> result;
 
+    const auto& jarEntry = digestEntryInfo.jarEntry;
     Options options(_options);
     options.classFilePath = jarEntry.getName();
     readers::MemoryReader reader(jarEntry);
@@ -163,9 +164,9 @@ optional<tables::columns::DigestCol> JarDigestTask::digestEntry(const JarEntry &
 
         if (classExists) {
             const auto isSameDigest = result.value() == row->digest;
-            _results.report.asModifiedClass(_strongClassname, isSameDigest);
+            _results.report.asModifiedClass(digestEntryInfo.strongClassname, isSameDigest);
         } else {
-            _results.report.asNewClass(_strongClassname);
+            _results.report.asNewClass(digestEntryInfo.strongClassname);
         }
 
         ++_results.jarfiles.classfiles.parsedCount;

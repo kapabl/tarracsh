@@ -34,6 +34,7 @@ public:
     attributes::AttributesManager &getAttributesManager() { return _attributesManager; }
     accessModifiers::AccessModifiers &getAccessModifiers() { return _accessModifiers; }
     ConstantPool &getConstantPool() { return _constantPool; }
+    [[nodiscard]] const ConstantPool &getConstantPool() const { return _constantPool; }
     std::vector<MethodInfo> &getMethods() { return _methods; }
     std::vector<u2> &getInterfaces() { return _interfaces; }
     MainClassInfo &getMainClassInfo() { return _mainClassInfo; }

@@ -23,12 +23,13 @@ std::unordered_map<std::string, std::string> ConstantPoolPrinter::_templateFragm
 // std::unordered_map<std::string, ConstantPoolPrinter::OutputSubTemplates > _outputTemplates;
 
 
-ConstantPoolPrinter::ConstantPoolPrinter(const ConstantPool &constantPool)
-    : _constantPool(constantPool) {
+ConstantPoolPrinter::ConstantPoolPrinter(const ClassFileAnalyzer &classFileAnalyzer)
+    : _classFileAnalyzer(classFileAnalyzer), _constantPool(classFileAnalyzer.getConstantPool()) {
 }
 
 
 void ConstantPoolPrinter::print() const {
+    cout << std::format("Constant pool for: {}", _classFileAnalyzer.getMainClassname()) << endl;
     for (u2 index = 1u; index < _constantPool.getPoolSize(); index++) {
         const auto &entry = _constantPool[index];
         printEntry(entry, index);

@@ -199,7 +199,7 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
 
 
 bool ClassFileAnalyzer::canPrintConstantPool() const {
-    const auto result = !_options.classfileOption->empty() && _options.printConstantPool;
+    const auto result = /*!_options.classfileOption->empty() &&*/ _options.printConstantPool;
     return result;
 }
 
@@ -212,11 +212,6 @@ void ClassFileAnalyzer::readConstantsPool() {
         index++;
     }
     _constantPool.relocate();
-
-    if (canPrintConstantPool()) {
-        const ConstantPoolPrinter printer(_constantPool);
-        printer.print();
-    }
 }
 
 void ClassFileAnalyzer::readMainClassInfo() {
@@ -287,7 +282,6 @@ void ClassFileAnalyzer::readAttributes() {
 
 
 void ClassFileAnalyzer::processFile() {
-
     if (!isValid()) return;
 
     initialize();
@@ -297,5 +291,10 @@ void ClassFileAnalyzer::processFile() {
     readFields();
     readMethods();
     readAttributes();
+
+    if (canPrintConstantPool()) {
+        const ConstantPoolPrinter printer(*this);
+        printer.print();
+    }
 
 }

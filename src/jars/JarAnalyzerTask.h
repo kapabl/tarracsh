@@ -3,25 +3,19 @@
 #include "../app/Tarracsh.h"
 #include "../app/Stats.h"
 #include "JarEntry.h"
+#include "JarTask.h"
 
 
 namespace org::kapa::tarracsh::jar {
-class JarAnalyzerTask {
+class JarAnalyzerTask: public JarTask {
 public:
-    explicit JarAnalyzerTask(Options options, stats::Results &results);
+    explicit JarAnalyzerTask(
+        Options options, stats::Results& results );
 
-    JarAnalyzerTask(const JarAnalyzerTask &) = delete;
-    JarAnalyzerTask(const JarAnalyzerTask &&) = delete;
-    JarAnalyzerTask &operator=(const JarAnalyzerTask &) = delete;
-    JarAnalyzerTask &operator=(const JarAnalyzerTask &&) = delete;
+    void processEntry(const JarEntry& jarEntry, std::mutex& taskMutex) override;
+    bool start() override;
+    void end() override;
 
-    [[nodiscard]] bool isValid() const { return _isValid; }
-
-    ~JarAnalyzerTask() = default;
-    void run();
-
-
-    [[nodiscard]] unsigned int getClassfileCount() const;
 
 
 private:
@@ -31,7 +25,6 @@ private:
     unsigned int _classfileCount{0};
 
     void parseEntry(const JarEntry &jarEntry) const;
-    void analyze();
 };
 }
 #endif
