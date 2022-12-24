@@ -234,7 +234,7 @@ void Analyzer::analyze() {
         processDir();
     } else if (isJarInput()) {
         processJar(_options.jarFile);
-    } else {
+    } else if (isClassfileInput())  {
         processClassfile(_options.classFilePath);
     }
 

@@ -33,10 +33,9 @@ private:
     static Options _options;
     void setupCliOptions();
 
-    CLI::Option_group* addParseOptions(CLI::Option* inputOption);
-    CLI::Option_group* addCallGraphOptions(CLI::Option *inputOption);
-    //CLI::Option_group* addPublicDigestOptions(CLI::Option *inputOption);
-    CLI::App* addPublicDigestOptions(CLI::Option *inputOption);
+    CLI::App* addParseSubCommand();
+    CLI::App* addCallGraphSubCommand();
+    CLI::App* addPublicDigestSubCommand();
 
     int parseCli(int argc, char **argv);
 #ifdef _WIN32
