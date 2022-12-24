@@ -12,12 +12,6 @@ using namespace org::kapa::tarracsh;
  */
 int main(int argc, char *argv[]) {
 
-    const auto exitCode = TarracshApp::run(argc, argv);
-      
-#if defined(_DEBUG) || true
-    cin.get();
-#endif
-
-
-    return exitCode;
+    const auto result = TarracshApp::run(argc, argv);
+    return result;
 }   

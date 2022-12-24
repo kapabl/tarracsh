@@ -15,9 +15,10 @@
 namespace org::kapa::tarracsh::dir {
 class Analyzer {
 public:
-    bool isJarOption() const;
-    bool isDirOption() const;
-    explicit Analyzer(Options options);
+    bool isJarInput() const;
+    bool isDirInput() const;
+    bool isClassfileInput() const;
+    explicit Analyzer(Options options, stats::Results& results );
 
     Analyzer(const Analyzer &) = delete;
     Analyzer(const Analyzer &&) = delete;
@@ -32,7 +33,7 @@ public:
 
 private:
     Options _options;
-    stats::Results _results;
+    stats::Results& _results;
     void processJar(const std::string &filename);
 
     db::DigestDb _digestDb;
@@ -45,13 +46,13 @@ private:
 
     bool initDb(db::Database &db);
     void processFile(const std::filesystem::directory_entry &dirEntry);
-    bool initDirAnalysis();
+    bool initAnalyzer();
     void processDir();
     void analyze();
     void endAnalysis();
 
     static bool isClassfile(std::filesystem::directory_entry const &dirEntry);
-    void analyze(const std::string& filename);
+    void analyze(const std::string& filename) const;
     bool isFileUnchanged(uintmax_t size, long long timestamp, const db::tables::FileRow *row) const;
     void updateDbInMemory(const ClassFileInfo &classFileInfo, const ClassFileAnalyzer &classFileAnalyzer,
                           const db::tables::columns::DigestCol &digest);

@@ -7,17 +7,16 @@
 
 #include "CLI11.hpp"
 #include "../classfile/Log.h"
+#include "../utils/FilesystemUtils.h"
 
 
 namespace org::kapa::tarracsh {
 
 struct Options {
-    CLI::Option *classfileOption;
-    CLI::Option *dirOption;
-    CLI::Option *jarOption;
-    CLI::Option *queryOption;
+    CLI::Option *inputOption;
 
     std::string classFilePath;
+    std::string input;
     std::string directory;
     std::string jarFile;
     std::string classPath;
@@ -29,54 +28,45 @@ struct Options {
     bool printClassParse{false};
     bool printConstantPool{false};
     bool rebuild{false};
-    bool checkOnly{true};
+    bool dryRun{false};
     bool doDiffReport{true};
     bool printDiffReport{false};
     std::string logFile{outputDir + "/result.log"};
     int workers{4};
     bool useFileTimestamp{true};
+    bool pause{false};
+    bool printProfiler{false};
 
-};
+    [[nodiscard]] bool canPrintProgress() const {
+        const auto result = !printClassParse && !printConstantPool;
+        return result;
+    }
 
-
-struct PrintTimeScope {
-    PrintTimeScope(const bool autoStart) {
-        if (autoStart) {
-            start();
+    bool processInput() {
+        auto result = true;
+        if (std::filesystem::is_directory(input)) {
+            directory = input;
         }
-    }
+        else if (std::filesystem::exists(input)) {
+            const auto path = std::filesystem::path(input);
+            if (fsUtils::isJar(path)) {
+                jarFile = input;
+            }
+            else if (fsUtils::isClassfile(path)) {
+                classFilePath = input;
+            }
+            else {
+                result = false;
+            }
+        }
+        else {
+            result = false;
+        }
 
-    void start() {
-        startTime = std::chrono::high_resolution_clock::now();
-    }
-
-    void stop() {
-        endTime = std::chrono::high_resolution_clock::now();
-    }
-
-    std::chrono::duration<long long> getElapsedTime() {
-        stop();
-        const auto result = std::chrono::duration_cast<std::chrono::seconds>(endTime - startTime);
         return result;
     }
 
-    std::chrono::duration<long long, std::milli> getElapsedTimeMs() {
-        stop();
-        const auto result = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
-        return result;
-    }
 
-    void printElapsedTime() {
-        std::cout << std::endl << std::format("total time: {}", getElapsedTimeMs()) << std::endl;
-    }
-
-    ~PrintTimeScope() {
-
-        printElapsedTime();
-    }
-
-    std::chrono::time_point<std::chrono::steady_clock> startTime{};
-    std::chrono::time_point<std::chrono::steady_clock> endTime{};
 
 };
 

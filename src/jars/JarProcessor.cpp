@@ -42,54 +42,52 @@ void JarProcessor::waitForAvailableBuffer() {
 }
 
 void JarProcessor::run() {
-    if ( _jarTask.start() ) {
+    if (_jarTask.start()) {
 
         ZipArchive zipArchive(_options.jarFile);
         zipArchive.open(ZipArchive::ReadOnly);
 
         const auto entries = zipArchive.getEntries();
-        std::atomic<int> index{ 0 };
+        std::atomic<int> index{0};
 
-        for (auto& entry : entries) {
+        for (auto &entry : entries) {
 
             if (index % 1000 == 0) {
-                if (!_options.printConstantPool)
-                {
+                if (_options.canPrintProgress()) {
                     _results.print(_options);
                 }
             }
 
             waitForAvailableBuffer();
 
-            auto buffer = static_cast<char*>(entry.readAsBinary());
+            auto buffer = static_cast<char *>(entry.readAsBinary());
             _inProgressBufferCount++;
 
             _threadPool.push_task([
                 this,
-                    entry,
-                    &index,
-                    buffer] {
-                    const JarEntry jarEntry(entry, buffer);
-                    if (jarEntry.isClassfile()) {
-                        ++_classfileCount;
-                        ++index;
-                        _jarTask.processEntry(jarEntry, _taskMutex);
-                    }
+                entry,
+                &index,
+                buffer] {
+                const JarEntry jarEntry(entry, buffer);
+                if (jarEntry.isClassfile()) {
+                    ++_classfileCount;
+                    ++index;
+                    _jarTask.processEntry(jarEntry, _taskMutex);
+                }
 
-                    {
-                        std::unique_lock jarLock(_jarMutex);
-                        _finishedBuffers.insert(buffer);
-                        _jarCv.notify_one();
-                    }
-                });
+                {
+                    std::unique_lock jarLock(_jarMutex);
+                    _finishedBuffers.insert(buffer);
+                    _jarCv.notify_one();
+                }
+            });
         }
 
         _threadPool.wait_for_tasks();
     }
     _jarTask.end();
     ++_results.jarfiles.parsedCount;
-    if (!_options.printConstantPool)
-    {
+    if (_options.canPrintProgress()) {
         _results.print(_options);
     }
 }

@@ -48,7 +48,7 @@ void JarDigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex
     ++_results.jarfiles.classfiles.digest.count;
 
     if (isUnchanged) {
-        _results.report.asUnchangedClass(digestEntryInfo.strongClassname);
+        _results.report->asUnchangedClass(digestEntryInfo.strongClassname);
     }
 
     std::unique_lock lock(taskMutex);
@@ -70,7 +70,7 @@ void JarDigestTask::end() {
     if (_isFileUnchanged) {
         _results.jarfiles.classfiles.digest.count += _jarFileRow->classfileCount;
         _results.jarfiles.classfiles.digest.unchangedCount += _jarFileRow->classfileCount;
-        _results.report.asUnchanged(_options.jarFile);
+        _results.report->asUnchanged(_options.jarFile);
         return;
     }
 
@@ -83,10 +83,10 @@ void JarDigestTask::end() {
     const auto &filename = _options.jarFile;
 
     if (_isNewJarFile) {
-        _results.report.asNew(filename);
+        _results.report->asNew(filename);
     } else {
         const auto isSameDigest = _jarFileRow->digest == digest;
-        _results.report.asModified(filename, isSameDigest);
+        _results.report->asModified(filename, isSameDigest);
 
         updateFileTableInMemory(digest);
         // updateClassfileTableInMemory(jarEntry, result.value(), classFileAnalyzer);
@@ -164,9 +164,9 @@ optional<tables::columns::DigestCol> JarDigestTask::digestEntry(const DigestEntr
 
         if (classExists) {
             const auto isSameDigest = result.value() == row->digest;
-            _results.report.asModifiedClass(digestEntryInfo.strongClassname, isSameDigest);
+            _results.report->asModifiedClass(digestEntryInfo.strongClassname, isSameDigest);
         } else {
-            _results.report.asNewClass(digestEntryInfo.strongClassname);
+            _results.report->asNewClass(digestEntryInfo.strongClassname);
         }
 
         ++_results.jarfiles.classfiles.parsedCount;

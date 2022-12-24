@@ -32,7 +32,7 @@
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'">
-    <LocalDebuggerCommandArguments> --parse --jar d:\temp\reti\test-subjects\jars\tarracsh-lib1.jar --print-cpool=yes</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--help</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
