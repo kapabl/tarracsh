@@ -63,47 +63,39 @@ int TarracshApp::start(int argc, char *argv[]) {
 }
 
 
-CLI::Option_group *TarracshApp::addParseOptions(CLI::Option *const inputOption) {
-    const auto result = add_option_group("Parse classfile(s)", "");
-    result->needs(inputOption);
-    const auto parse = result->add_flag("--parse", _options.isParse, "Parse jar, dirs or classfiles")->
-                               required();
+CLI::App *TarracshApp::addParseSubCommand() {
+    const auto result = add_subcommand("parse", "Parse class files, jar or directories");
+    result->add_option("--input,-i", _options.input, "Input: directory, jar file or class file")->required();
 
-    const auto printParse = result->add_flag("--print-class-parse", _options.printClassParse,
+    result->add_flag("--print-class-parse", _options.printClassParse,
                                              "Verbose print of classfile parse result to stdout");
-    printParse->needs(parse);
-
-    const auto printCPool = result->add_flag("--print-cpool", _options.printConstantPool,
+    result->add_flag("--print-cpool", _options.printConstantPool,
                                              "Printing const-pool to stdout. Similar to javap");
-
-    printCPool->needs(parse);
     return result;
 }
 
-CLI::Option_group* TarracshApp::addCallGraphOptions(CLI::Option * const inputOption) {
-    const auto result = add_option_group("Call/Class Graph", "Call Graph for jar or classfiles");
-    result->needs(inputOption);
-    result->add_flag("--call-graph", _options.isCallGraph, "Call Graph");
+CLI::App *TarracshApp::addCallGraphSubCommand() {
+    const auto result = add_subcommand("call-graph", "Call Graph for jar or classfiles");
+    result->add_option("--input,-i", _options.input, "Input: directory, jar file or class file")->required();
     return result;
 }
 
-//CLI::Option_group * TarracshApp::addPublicDigestOptions(CLI::Option *inputOption) {
-CLI::App * TarracshApp::addPublicDigestOptions(CLI::Option *inputOption) {
-    //const auto result = add_subcommand("Public Digest", "Public digest of jar files and classfiles");
+CLI::App *TarracshApp::addPublicDigestSubCommand() {
+
     const auto result = add_subcommand("public-digest", "Public digest of jar files and classfiles");
-    result->needs(inputOption);
+    result->add_option("--input,-i", _options.input, "Input: directory, jar file or class file")->required();
 
-    const auto digestFlag = result->add_flag("--public-digest", _options.isPublicDigest,
-        "Public digest command")->required();
+    // const auto digestFlag = result->add_flag("--public-digest", _options.isPublicDigest,
+    //     "Public digest command")->required();
     const auto rebuild = result->add_flag("--rebuild", _options.rebuild, "Rebuild Digest Db");
     const auto dryRun = result->add_flag("--dry-run", _options.dryRun,
-        "Check Against Digest Db, default behavior is check and add/update");
+                                         "Check Against Digest Db, default behavior is check and add/update");
 
     rebuild->excludes(dryRun);
 
     const auto diff = result->add_flag("--diff", _options.doDiffReport, "Create Diff report");
     result->add_flag("--print-diff", _options.printDiffReport,
-        "Print Diff report to stdout")->needs(diff);
+                     "Print Diff report to stdout")->needs(diff);
 
     result->add_option("--query", _options.queryValue, "TODO Query Help - schema");
     return result;
@@ -111,16 +103,15 @@ CLI::App * TarracshApp::addPublicDigestOptions(CLI::Option *inputOption) {
 
 void TarracshApp::setupCliOptions() {
     set_version_flag("-v,--version", "version " TARRACSH_VERSION);
+    set_help_all_flag("--help-all");
 
-    const auto inputOption = add_option("--input,-i", _options.input, "Input: directory, jar file or class file");
+    _options.subCommands.digest = addPublicDigestSubCommand();
+    _options.subCommands.callGraph = addCallGraphSubCommand();
+    _options.subCommands.parse = addParseSubCommand();
 
-    const auto digestOptionGroup = addPublicDigestOptions(inputOption);
-    const auto callGraphOptionGroup = addCallGraphOptions(inputOption);
-    const auto classfileOptionGroup = addParseOptions(inputOption);
-
-    classfileOptionGroup->excludes(digestOptionGroup);
-    classfileOptionGroup->excludes(callGraphOptionGroup);
-    digestOptionGroup->excludes(callGraphOptionGroup);
+    _options.subCommands.parse->excludes(_options.subCommands.digest);
+    _options.subCommands.parse->excludes(_options.subCommands.callGraph);
+    _options.subCommands.digest->excludes(_options.subCommands.callGraph);
 
     add_flag("--pause", _options.pause, "Pause and wait for enter before finishing process. Useful when debugging");
     add_flag("--output-dir", _options.outputDir, "Output directory, default './output'");
@@ -139,6 +130,25 @@ int TarracshApp::parseCli(int argc, char **argv) {
     setupCliOptions();
     try {
         parse(argc, argv);
+
+        if (got_subcommand(_options.subCommands.digest)) {
+            _options.isPublicDigest = true;
+        } else if (got_subcommand(_options.subCommands.callGraph)) {
+            _options.isCallGraph = true;
+
+        } else if (got_subcommand(_options.subCommands.parse)) {
+            _options.isParse = true;
+        }
+        else {
+            cout << std::format("Invalid sub-command") << endl;
+            result = 1;
+        }
+
+        if (result == 0 && !_options.processInput()) {
+            cout << std::format("Input should be a directory, jar or class file. Invalid input:{}", _options.input) << endl;
+            result = 1;
+        }
+
     } catch (const CLI::ParseError &e) {
         result = exit(e);
     }
@@ -161,6 +171,8 @@ void TarracshApp::prepareConsoleForVT100() {
 
 void TarracshApp::init() const {
 
+    auto result = true;
+
 #ifdef _WIN32
     prepareConsoleForVT100();
     prepareForUTF8();
@@ -171,5 +183,5 @@ void TarracshApp::init() const {
     ConstantPoolPrinter::init();
 
     _results.log.setFile(_options.logFile);
-    _options.processInput();
+
 }

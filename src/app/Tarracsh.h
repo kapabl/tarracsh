@@ -37,6 +37,13 @@ struct Options {
     bool pause{false};
     bool printProfiler{false};
 
+    struct SubCommands {
+        CLI::App* digest;
+        CLI::App* callGraph;
+        CLI::App* parse;
+    } subCommands;
+
+
     [[nodiscard]] bool canPrintProgress() const {
         const auto result = !printClassParse && !printConstantPool;
         return result;
