@@ -1,0 +1,111 @@
+#include "Stats.h"
+
+
+// #include "../app/TarracshApp.h"
+
+using namespace org::kapa::tarracsh::stats;
+
+
+Results::Results(){
+    report = std::make_unique<report::Report>(*this);
+    profileData = std::make_unique<profiler::ProfileData>(*this);
+}
+
+void Results::print(const Options &options) const {
+    // cout << "\033[2K";
+
+    const auto result = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::high_resolution_clock::now() - lastPrint);
+
+    if (result.count() < 500) return;
+
+    lastPrint = std::chrono::high_resolution_clock::now();
+
+    printf("\033[2J");
+    printf("\033[%d;%dH", 0, 0);
+
+    std::cout << "\r";
+
+    std::cout << "classfiles: " <<
+        classfiles.count + jarfiles.classfiles.count <<
+        " jars: " << jarfiles.count;
+
+    std::cout << std::flush;
+
+}
+
+void Results::printAll(const Options &options) const {
+
+    std::cout << std::endl << std::endl;
+    std::cout << "classfiles:" << std::endl << std::right
+        << std::setw(10) << "No"
+        << std::setw(10) << "Ok"
+        << std::setw(10) << "Error"
+        << std::endl
+        << std::setw(10) << classfiles.count
+        << std::setw(10) << classfiles.parsedCount
+        << std::setw(10) << classfiles.errors
+        << std::endl;
+
+    std::cout << "jars:" << std::endl << std::right
+        << std::setw(10) << "No"
+        << std::setw(10) << "Ok"
+        << std::setw(10) << "Error"
+        << std::endl
+        << std::setw(10) << jarfiles.count
+        << std::setw(10) << jarfiles.parsedCount
+        << std::setw(10) << jarfiles.errors
+        << std::endl;
+
+    if (options.isPublicDigest) {
+
+        std::cout << "standalone classfile digest:" << std::endl << std::right
+            << std::setw(10) << "No"
+            << std::setw(10) << "New"
+            << std::setw(10) << "Same"
+            << std::setw(10) << "Diff"
+            << std::setw(10) << "Unchanged"
+            << std::endl
+            << std::setw(10) << classfiles.digest.count
+            << std::setw(10) << classfiles.digest.newFile
+            << std::setw(10) << classfiles.digest.same
+            << std::setw(10) << classfiles.digest.differentDigest
+            << std::setw(10) << classfiles.digest.unchangedCount
+            << std::endl;
+
+        std::cout << "jar digest:" << std::endl << std::right
+            << std::setw(10) << "No"
+            << std::setw(10) << "New"
+            << std::setw(10) << "Same"
+            << std::setw(10) << "Diff"
+            << std::setw(10) << "Unchanged"
+            << std::endl
+            << std::setw(10) << jarfiles.digest.count
+            << std::setw(10) << jarfiles.digest.newFile
+            << std::setw(10) << jarfiles.digest.same
+            << std::setw(10) << jarfiles.digest.differentDigest
+            << std::setw(10) << jarfiles.digest.unchangedCount
+            << std::endl;
+
+        std::cout << "classfile inside jars digest:" << std::endl << std::right
+            << std::setw(10) << "No"
+            << std::setw(10) << "New"
+            << std::setw(10) << "Same"
+            << std::setw(10) << "Diff"
+            << std::setw(10) << "Unchanged"
+            << std::endl
+            << std::setw(10) << jarfiles.classfiles.digest.count
+            << std::setw(10) << jarfiles.classfiles.digest.newFile
+            << std::setw(10) << jarfiles.classfiles.digest.same
+            << std::setw(10) << jarfiles.classfiles.digest.differentDigest
+            << std::setw(10) << jarfiles.classfiles.digest.unchangedCount
+            << std::endl;
+    }
+
+    long long totalClassfiles = classfiles.count + jarfiles.classfileCount;
+    std::cout << std::endl << std::format("total classfiles: {}", totalClassfiles) << std::endl;
+
+    std::cout << std::endl << std::format("speed: {:.3f} classfile/s", 1000.0 * totalClassfiles / profileData->analyzerTime.count()) << std::endl;
+
+    std::cout << "\r" << std::flush;
+}

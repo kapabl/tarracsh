@@ -811,6 +811,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\app\Main.cpp" />
+    <ClCompile Include="src\app\stats\ProfileData.cpp" />
+    <ClCompile Include="src\app\stats\Report.cpp" />
+    <ClCompile Include="src\app\stats\ScopedTimer.cpp" />
+    <ClCompile Include="src\app\stats\Stats.cpp" />
     <ClCompile Include="src\app\TarracshApp.cpp" />
     <ClCompile Include="src\classfile\AnnotationsParser.cpp" />
     <ClCompile Include="src\classfile\ClassFileAnalyzer.cpp" />
@@ -830,7 +834,6 @@
     <ClCompile Include="src\classfile\signatures\rules\Rule.cpp" />
     <ClCompile Include="src\classfile\signatures\rules\Terminal.cpp" />
     <ClCompile Include="src\classfile\signatures\SignatureParser.cpp" />
-    <ClCompile Include="src\app\Stats.cpp" />
     <ClCompile Include="src\jars\JarAnalyzerTask.cpp" />
     <ClCompile Include="src\jars\JarDigestTask.cpp" />
     <ClCompile Include="src\jars\JarGraphTask.cpp" />
@@ -842,6 +845,10 @@
     <ClCompile Include="src\tables\FilesTable.cpp" />
     <ClCompile Include="src\tables\StringPool.cpp" />
     <ClCompile Include="src\tables\Table.cpp" />
+    <ClInclude Include="src\app\stats\ProfileData.h" />
+    <ClInclude Include="src\app\stats\Report.h" />
+    <ClInclude Include="src\app\stats\ScopedTimer.h" />
+    <ClInclude Include="src\app\stats\Stats.h" />
     <ClInclude Include="src\app\Tarracsh.h" />
     <ClInclude Include="src\app\TarracshApp.h" />
     <ClInclude Include="src\classfile\AccessModifiers.h" />
@@ -877,7 +884,6 @@
     <ClInclude Include="src\classfile\signatures\SignatureParser.h" />
     <ClInclude Include="src\classfile\signatures\SignatureScanner.h" />
     <ClInclude Include="src\classfile\signatures\SignatureStructures.h" />
-    <ClInclude Include="src\app\Stats.h" />
     <ClInclude Include="src\classfile\tables\ClassfilesTable.h" />
     <ClInclude Include="src\classfile\tables\FilesTable.h" />
     <ClInclude Include="src\classfile\tables\StringPool.h" />

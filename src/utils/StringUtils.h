@@ -163,8 +163,6 @@ inline std::string pathToClassname(std::string path) {
     std::ranges::replace(path, '/', '.');
     return path;
 }
-
-
 inline std::string bytesToHexString(const unsigned char *bytes, int length) {
     std::string result;
     for (int i = 0; i < length; i++) {

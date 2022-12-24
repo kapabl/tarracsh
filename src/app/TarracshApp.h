@@ -2,7 +2,7 @@
 #define TARRACSH_APP_H
 
 #include "Tarracsh.h"
-#include "Stats.h"
+#include "stats/Stats.h"
 
 namespace org::kapa::tarracsh {
 
@@ -32,6 +32,12 @@ public:
 private:
     static Options _options;
     void setupCliOptions();
+
+    CLI::Option_group* addParseOptions(CLI::Option* inputOption);
+    CLI::Option_group* addCallGraphOptions(CLI::Option *inputOption);
+    //CLI::Option_group* addPublicDigestOptions(CLI::Option *inputOption);
+    CLI::App* addPublicDigestOptions(CLI::Option *inputOption);
+
     int parseCli(int argc, char **argv);
 #ifdef _WIN32
     static void prepareConsoleForVT100();

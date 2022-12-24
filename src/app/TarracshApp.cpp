@@ -24,6 +24,11 @@ int TarracshApp::run(int argc, char *argv[]) {
 
     TarracshApp app("", "Tarracsh");
     const auto result = app.start(argc, argv);
+
+    if (_options.pause) {
+        cin.get();
+    }
+
     return result;
 }
 
@@ -36,89 +41,97 @@ int TarracshApp::start(int argc, char *argv[]) {
 
     init();
 
-    _results.log.setFile(_options.logFile);
-
     if (_options.isPublicDigest) {
-        if (_options.queryOption->empty()) {
-            dir::Analyzer analyzer(_options);
+        if (_options.queryValue.empty()) {
+            dir::Analyzer analyzer(_options, _results);
             analyzer.run();
         } else {
             query::QueryCommand::run(_options, _results);
         }
     } else if (_options.isCallGraph) {
-        //TODO check if we need more
-        dir::Analyzer analyzer(_options);
+        dir::Analyzer analyzer(_options, _results);
         analyzer.run();
     } else if (_options.isParse) {
-        dir::Analyzer analyzer(_options);
+        dir::Analyzer analyzer(_options, _results);
         analyzer.run();
     }
+
+    _results.profileData->output(_options);
 
     return 0;
 
 }
 
 
+CLI::Option_group *TarracshApp::addParseOptions(CLI::Option *const inputOption) {
+    const auto result = add_option_group("Parse classfile(s)", "");
+    result->needs(inputOption);
+    const auto parse = result->add_flag("--parse", _options.isParse, "Parse jar, dirs or classfiles")->
+                               required();
+
+    const auto printParse = result->add_flag("--print-class-parse", _options.printClassParse,
+                                             "Verbose print of classfile parse result to stdout");
+    printParse->needs(parse);
+
+    const auto printCPool = result->add_flag("--print-cpool", _options.printConstantPool,
+                                             "Printing const-pool to stdout. Similar to javap");
+
+    printCPool->needs(parse);
+    return result;
+}
+
+CLI::Option_group* TarracshApp::addCallGraphOptions(CLI::Option * const inputOption) {
+    const auto result = add_option_group("Call/Class Graph", "Call Graph for jar or classfiles");
+    result->needs(inputOption);
+    result->add_flag("--call-graph", _options.isCallGraph, "Call Graph");
+    return result;
+}
+
+//CLI::Option_group * TarracshApp::addPublicDigestOptions(CLI::Option *inputOption) {
+CLI::App * TarracshApp::addPublicDigestOptions(CLI::Option *inputOption) {
+    //const auto result = add_subcommand("Public Digest", "Public digest of jar files and classfiles");
+    const auto result = add_subcommand("public-digest", "Public digest of jar files and classfiles");
+    result->needs(inputOption);
+
+    const auto digestFlag = result->add_flag("--public-digest", _options.isPublicDigest,
+        "Public digest command")->required();
+    const auto rebuild = result->add_flag("--rebuild", _options.rebuild, "Rebuild Digest Db");
+    const auto dryRun = result->add_flag("--dry-run", _options.dryRun,
+        "Check Against Digest Db, default behavior is check and add/update");
+
+    rebuild->excludes(dryRun);
+
+    const auto diff = result->add_flag("--diff", _options.doDiffReport, "Create Diff report");
+    result->add_flag("--print-diff", _options.printDiffReport,
+        "Print Diff report to stdout")->needs(diff);
+
+    result->add_option("--query", _options.queryValue, "TODO Query Help - schema");
+    return result;
+}
+
 void TarracshApp::setupCliOptions() {
     set_version_flag("-v,--version", "version " TARRACSH_VERSION);
 
-    const auto digestOptionGroup = add_option_group("Public Digest", "Public digest of jar files and classfiles");
-    digestOptionGroup->add_flag("--public-digest", _options.isPublicDigest, "Public digest command");
-    digestOptionGroup->add_flag("--rebuild", _options.rebuild, "Rebuild Digest Db");
-    digestOptionGroup->add_flag("--check-only", _options.checkOnly,
-                                "Check Against Digest Db, default behavior is check and add/update");
-    digestOptionGroup->add_flag("--diff", _options.doDiffReport, "Create Diff report");
-    digestOptionGroup->add_flag("--print-diff", _options.printDiffReport, "Print Diff report to stdout");
-    _options.queryOption = digestOptionGroup->add_option("--query", _options.queryValue, "queryValue");
+    const auto inputOption = add_option("--input,-i", _options.input, "Input: directory, jar file or class file");
 
-    const auto callGraphOptionGroup = add_option_group("Call/Class Graph", "Call Graph for jar or classfiles");
-    callGraphOptionGroup->add_flag("--call-graph", _options.isCallGraph, "Call Graph");
-    // callGraphOptionGroup->add_option(useFileTimeStamp);
-    //TODO more options
-
-    const auto classfileOptionGroup = add_option_group("Parse classfile(s)", "");
-    classfileOptionGroup->add_flag("--parse", _options.isParse, "Parse jar, dirs or classfiles");
-    classfileOptionGroup->add_flag("--print-class-parse", _options.printClassParse,
-                                   "Verbose print of classfile parse result to stdout");
-    classfileOptionGroup->add_flag("--print-cpool", _options.printConstantPool,
-                                   "Printing const-pool to stdout. Similar to javap");
+    const auto digestOptionGroup = addPublicDigestOptions(inputOption);
+    const auto callGraphOptionGroup = addCallGraphOptions(inputOption);
+    const auto classfileOptionGroup = addParseOptions(inputOption);
 
     classfileOptionGroup->excludes(digestOptionGroup);
     classfileOptionGroup->excludes(callGraphOptionGroup);
-
-    digestOptionGroup->excludes(classfileOptionGroup);
     digestOptionGroup->excludes(callGraphOptionGroup);
 
-    callGraphOptionGroup->excludes(classfileOptionGroup);
-    callGraphOptionGroup->excludes(digestOptionGroup);
-
-    _options.classfileOption = add_option("--classfile", _options.classFilePath, " Input class file");
-    _options.dirOption = add_option("--dir", _options.directory, "Input directory");
-    _options.jarOption = add_option("--jar", _options.jarFile, "Input jar file");
-
-    _options.classfileOption->excludes(_options.jarOption);
-    _options.classfileOption->excludes(_options.dirOption);
-    _options.classfileOption->excludes(_options.queryOption);
-
-    _options.jarOption->excludes(_options.dirOption);
-    _options.jarOption->excludes(_options.classfileOption);
-    _options.jarOption->excludes(_options.queryOption);
-
-    _options.dirOption->excludes(_options.jarOption);
-    _options.dirOption->excludes(_options.classfileOption);
-    _options.dirOption->excludes(_options.queryOption);
-
-    _options.queryOption->excludes(_options.jarOption);
-    _options.queryOption->excludes(_options.classfileOption);
-    _options.queryOption->excludes(_options.dirOption);
-
+    add_flag("--pause", _options.pause, "Pause and wait for enter before finishing process. Useful when debugging");
     add_flag("--output-dir", _options.outputDir, "Output directory, default './output'");
     add_flag("--output-log-file", _options.logFile, "Log file, default './output/result.log");
+    add_flag("--print-profiler", _options.printProfiler, "Print '[output]/profiler.txt");
     add_flag("--use-file-timestamp", _options.useFileTimestamp,
              "yes/no - Default 'yes'. Use file timestamp and size to check if a file was modified");
 
     // const auto workers = add_flag("--workers", _options.workers, "Number of workers, default 4");
     // workers->default_val(_options.workers);
+
 }
 
 int TarracshApp::parseCli(int argc, char **argv) {
@@ -156,4 +169,7 @@ void TarracshApp::init() const {
     filesystem::create_directories(_options.outputDir);
     Log::emptyLogFile(_options.logFile);
     ConstantPoolPrinter::init();
+
+    _results.log.setFile(_options.logFile);
+    _options.processInput();
 }

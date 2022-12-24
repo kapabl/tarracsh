@@ -1,7 +1,7 @@
 #ifndef TARRACSH_JAR_GRAPH_H
 #define TARRACSH_JAR_GRAPH_H
 #include "../app/Tarracsh.h"
-#include "../app/Stats.h"
+#include "../app/stats/Stats.h"
 #include <map>
 
 #include "JarEntry.h"

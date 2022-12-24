@@ -9,7 +9,7 @@
 #include "constpool/ConstantPool.h"
 #include "AttributesManager.h"
 #include "AccessModifiers.h"
-#include "../app/Stats.h"
+#include "../app/stats/Stats.h"
 #include "readers/ClassFileReader.h"
 #include "../tables/ClassfilesTable.h"
 

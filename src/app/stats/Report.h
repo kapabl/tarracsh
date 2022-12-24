@@ -1,0 +1,54 @@
+#ifndef TARRACSH_REPORT_H
+#define TARRACSH_REPORT_H
+
+#include <string>
+
+#include "../app/Tarracsh.h"
+#include "../utils/FilesystemUtils.h"
+
+
+namespace org::kapa::tarracsh::stats {
+struct Results;
+}
+
+namespace org::kapa::tarracsh::stats::report {
+
+struct JarResult {
+    std::string filename;
+    bool isNew{false};
+    bool isModified{false};
+    bool isSamePublicDigest{true};
+};
+
+struct ClassfileResult {
+    std::string filename;
+    std::string classname;
+    bool isNew{false};
+    bool isModified{false};
+    bool isSamePublicDigest{false};
+};
+
+struct Report {
+    Results &results;
+    std::vector<JarResult> jarResults;
+    std::vector<ClassfileResult> classfileResults;
+
+    std::mutex mutex;
+
+    explicit Report(Results &results);
+
+    void asNew(const std::string &filename);
+    void asModified(const std::string &filename, bool isSamePublicDigest);
+    void asUnchanged(const std::string &filename);
+
+    void asNewClass(const std::string &fullClassname);
+    void asModifiedClass(const std::string &fullClassname, bool isSamePublicDigest);
+    void asUnchangedClass(const std::string &fullClassname);
+
+    void print() const;
+};
+
+
+}
+
+#endif

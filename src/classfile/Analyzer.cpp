@@ -14,36 +14,38 @@
 #include "../jars/JarProcessor.h"
 #include "readers/FileReader.h"
 #include "../tables/FilesTable.h"
+#include "../app/stats/Stats.h"
+#include "../app/stats/ScopedTimer.h"
 
 
-using namespace org::kapa::tarracsh::dir;
-using namespace org::kapa::tarracsh::db;
+using namespace org::kapa::tarracsh;
+using namespace stats;
+using namespace profiler;
+using namespace dir;
+using namespace db;
+
 using namespace std;
 
-bool Analyzer::isJarOption() const {
-    return !_options.jarOption->empty();
+bool Analyzer::isJarInput() const {
+    return !_options.jarFile.empty();
 }
 
-bool Analyzer::isDirOption() const {
-    return !_options.dirOption->empty();
+bool Analyzer::isDirInput() const {
+    return !_options.directory.empty();
 }
 
-Analyzer::Analyzer(Options options)
-    : _options(move(options)),
+bool Analyzer::isClassfileInput() const {
+    return !_options.directory.empty();
+}
+
+Analyzer::Analyzer(Options options, stats::Results &results)
+    : _options(move(options)), _results(results),
       _digestDb(_options.outputDir),
       _callGraphDb(_options.outputDir) {
 
 }
 
-bool Analyzer::isJar(filesystem::directory_entry const &dirEntry) {
-    return dirEntry.path().extension() == ".jar";
-}
-
-bool Analyzer::isClassfile(filesystem::directory_entry const &dirEntry) {
-    return dirEntry.path().extension() == ".class";
-}
-
-void Analyzer::analyze(const std::string &filename) {
+void Analyzer::analyze(const std::string &filename) const {
     Options options(_options);
     options.classFilePath = filename;
 
@@ -67,8 +69,8 @@ bool Analyzer::isFileUnchanged(const uintmax_t size, const long long timestamp, 
 }
 
 void Analyzer::updateDbInMemory(const ClassFileInfo &classFileInfo,
-                                   const ClassFileAnalyzer &classFileAnalyzer,
-                                   const tables::columns::DigestCol &digest) {
+                                const ClassFileAnalyzer &classFileAnalyzer,
+                                const tables::columns::DigestCol &digest) {
     const auto files = _digestDb.getFiles();
     tables::FileRow fileRow;
     fileRow.filename = _digestDb.getPoolString(classFileInfo.filename);
@@ -178,6 +180,8 @@ void Analyzer::processJar(const std::string &filename) {
 
 
 bool Analyzer::initDb(db::Database &db) {
+
+    ScopedTimer timer(&_results.profileData->initDb);
     auto result = true;
 
     db.init();
@@ -193,14 +197,15 @@ bool Analyzer::initDb(db::Database &db) {
 
 
 void Analyzer::processFile(const filesystem::directory_entry &dirEntry) {
-    if (isJar(dirEntry)) {
+    if (fsUtils::isJar(dirEntry)) {
         processJar(dirEntry.path().string());
-    } else if (isClassfile(dirEntry)) {
+    } else if (fsUtils::isClassfile(dirEntry)) {
         processClassfile(dirEntry.path().string());
     }
 }
 
-bool Analyzer::initDirAnalysis() {
+bool Analyzer::initAnalyzer() {
+    ScopedTimer timer(&_results.profileData->initAnalyzer);
     _results.log.setFile(_options.logFile);
 
     if (_options.isPublicDigest) {
@@ -225,47 +230,48 @@ void Analyzer::processDir() {
 }
 
 void Analyzer::analyze() {
-    if (isDirOption()) {
+    if (isDirInput()) {
         processDir();
-    } else if (isJarOption()) {
+    } else if (isJarInput()) {
         processJar(_options.jarFile);
     } else {
         processClassfile(_options.classFilePath);
     }
 
     _jarThreadPool.wait_for_tasks();
-    if (!_options.printConstantPool)
-    {
-        _results.print(_options);
-        _results.printAll(_options);
-    }
 }
 
 
 void Analyzer::endAnalysis() {
 
-    if (!_options.checkOnly) {
+    if (!_options.dryRun) {
         if (_options.isPublicDigest) {
+            ScopedTimer timer(&_results.profileData->writeDigestDb);
             _digestDb.write();
+        } else if (_options.isCallGraph) {
+            ScopedTimer timer(&_results.profileData->writeCallGraphDb);
+            _callGraphDb.write();
         }
     }
 }
 
 void Analyzer::run() {
+    {
+        ScopedTimer timer(&_results.profileData->analyzerTime);
 
-    PrintTimeScope timeScope(true);
-
-    if (initDirAnalysis()) {
-        analyze();
-        endAnalysis();
+        if (initAnalyzer()) {
+            analyze();
+            endAnalysis();
+        }
     }
-    if (TarracshApp::getOptions().printDiffReport ) {
 
-        cout << endl << ((1.0 * _results.classfiles.count +
-            _results.jarfiles.classfileCount) / (timeScope.getElapsedTime().count() * 1.0))
-            << " classfile/s: " << endl << endl;
+    if (_options.canPrintProgress()) {
+        _results.print(_options);
+        _results.printAll(_options);
+    }
 
-        _results.report.print();
+    if (_options.printDiffReport) {
+        _results.report->print();
     }
 
 }

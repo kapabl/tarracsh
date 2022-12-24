@@ -199,7 +199,7 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
 
 
 bool ClassFileAnalyzer::canPrintConstantPool() const {
-    const auto result = /*!_options.classfileOption->empty() &&*/ _options.printConstantPool;
+    const auto result = _options.printConstantPool;
     return result;
 }
 
