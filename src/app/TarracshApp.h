@@ -20,30 +20,32 @@ public:
     static stats::Results &getResults() { return _results; }
     static Options &getOptions() { return _options; }
 
-    static void logln(const std::string &msg, bool doStdout = false) {
+    static void logln(const std::string &msg, const bool doStdout = false) {
         _results.log.writeln(msg);
         if (doStdout) {
             std::cout << msg << std::endl;
         }
     }
-    
+
     static void log(const std::string &msg) { _results.log.write(msg); }
 
 private:
     static Options _options;
     void setupCliOptions();
 
-    CLI::App* addParseSubCommand();
-    CLI::App* addCallGraphSubCommand();
-    CLI::App* addPublicDigestSubCommand();
+    CLI::App *addParseSubCommand();
+    CLI::App *addCallGraphSubCommand();
+    CLI::App *addPublicDigestSubCommand();
 
     int parseCli(int argc, char **argv);
 #ifdef _WIN32
     static void prepareConsoleForVT100();
+    void initCPoolPrinter() const;
     static void prepareForUTF8();
 #endif
     static stats::Results _results;
 
+    static bool isCPoolPrinterNeeded();
     void init() const;
 };
 

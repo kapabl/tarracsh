@@ -9,6 +9,7 @@
 #include <ostream>
 #include <regex>
 #include <yaml-cpp/yaml.h>
+#include "../utils/StringUtils.h"
 
 
 using namespace org::kapa::tarracsh;
@@ -16,11 +17,11 @@ using namespace std;
 using namespace inja;
 
 
-std::vector<std::string> ConstantPoolPrinter::_poolTagToString;
-std::vector<std::string> ConstantPoolPrinter::_refKindToString;
-std::unordered_map<std::string, std::string> ConstantPoolPrinter::_templateFragments;
-// YAML::Node  ConstantPoolPrinter::_outputTemplates;
-// std::unordered_map<std::string, ConstantPoolPrinter::OutputSubTemplates > _outputTemplates;
+vector<string> ConstantPoolPrinter::_poolTagToString;
+vector<string> ConstantPoolPrinter::_refKindToString;
+unordered_map<string, string> ConstantPoolPrinter::_templateFragments;
+string ConstantPoolPrinter::_templateType;
+
 
 
 ConstantPoolPrinter::ConstantPoolPrinter(const ClassFileAnalyzer &classFileAnalyzer)
@@ -28,102 +29,188 @@ ConstantPoolPrinter::ConstantPoolPrinter(const ClassFileAnalyzer &classFileAnaly
 }
 
 
-void ConstantPoolPrinter::print() const {
-    cout << std::format("Constant pool for: {}", _classFileAnalyzer.getMainClassname()) << endl;
+void ConstantPoolPrinter::printTitle() {
+    json data;
+    data["title"] = _classFileAnalyzer.getMainClassname();
+    _currentLine += render(_templateFragments["header"], data);
+}
+
+void ConstantPoolPrinter::printToConsole() {
+    printTitle();
+    cout << _currentLine << endl;
     for (u2 index = 1u; index < _constantPool.getPoolSize(); index++) {
         const auto &entry = _constantPool[index];
+        _currentLine.clear();
         printEntry(entry, index);
-        cout << endl;
+        cout << _currentLine << endl;
     }
+}
+
+filesystem::path ConstantPoolPrinter::getClassHtmlIndexFilename() const {
+    const auto dir = filesystem::path(TarracshApp::getOptions().outputDir) /
+        "nav" /
+        getNavClassRelDir();
+
+    auto result = dir / "index.html";
+    return result;
+}
+
+json::string_t::const_pointer ConstantPoolPrinter::getImplLinks() {
+    return "TODO impls. links";
+}
+
+std::vector<std::string> ConstantPoolPrinter::renderHtmlClassIndex() {
+    vector<string> result;
+    json data;
+    data["classname"] = _classFileAnalyzer.getMainClassname();
+    data["implementations"] = getImplLinks();
+    result.emplace_back( render(_templateFragments["index-html"], data));
+    return result;
+}
+
+void ConstantPoolPrinter::mainClassToHtmlIndex() {
+    const auto filename = getClassHtmlIndexFilename();
+    const auto htmlLines = renderHtmlClassIndex();
+    fsUtils::writeLines(filename.string(), htmlLines);
+}
+
+string ConstantPoolPrinter::getNavClassRelDir() const {
+    auto result = _classFileAnalyzer.getMainClassname();
+    return result;
+}
+
+string ConstantPoolPrinter::getNavImplRelDir() const {
+    auto result = filesystem::path(_classFileAnalyzer.getContainingFile()).filename().string();
+    return result;
+}
+
+filesystem::path ConstantPoolPrinter::getHtmlCPoolFilename() const {
+    const auto dir = filesystem::path(TarracshApp::getOptions().outputDir) /
+                     "nav" /
+                     getNavClassRelDir() /
+                     getNavImplRelDir();
+    fsUtils::ensureDir(dir);
+
+    auto result = dir / "cpool.html";
+    return result;
+}
+
+vector<string> ConstantPoolPrinter::renderCPoolHtml(const vector<string> &lines) const {
+    vector<string> result;
+    json data;
+    data["classname"] = _classFileAnalyzer.getMainClassname();
+    data["cpoolEntries"] = stringUtils::join(lines, string("<br>"));
+    result.emplace_back(render(_templateFragments["cpool-html"], data));
+    return result;
+}
+
+void ConstantPoolPrinter::linesToHtmlFile(const vector<string> &lines) {
+    const auto filename = getHtmlCPoolFilename();
+    const auto htmlLines = renderCPoolHtml(lines);
+    fsUtils::writeLines(filename.string(), htmlLines);
+}
+
+void ConstantPoolPrinter::printToHtmlNav() {
+    printTitle();
+    vector<string> lines;
+    lines.emplace_back(_currentLine);
+
+    for (u2 index = 1u; index < _constantPool.getPoolSize(); index++) {
+        const auto &entry = _constantPool[index];
+        _currentLine.clear();
+        printEntry(entry, index);
+        lines.emplace_back(_currentLine);
+    }
+    linesToHtmlFile(lines);
+    mainClassToHtmlIndex();
+
 }
 
 void ConstantPoolPrinter::readSubTemplates() {
     auto subTemplates = YAML::LoadFile("sub-templates.yaml");
-    const auto &outputTemplates = subTemplates["templates"]["console"];
+    const auto &outputTemplates = subTemplates["templates"][_templateType];
 
     for (auto it = outputTemplates.begin(); it != outputTemplates.end(); ++it) {
         auto templateFragment = it->second.as<string>();
-        templateFragment = std::regex_replace(templateFragment, std::regex("\\t"), "\t");
+        templateFragment = regex_replace(templateFragment, regex("\\t"), "\t");
         _templateFragments[it->first.as<string>()] = templateFragment;
     }
 }
 
 
-std::string ConstantPoolPrinter::tagToString(ConstantPoolTag tag) {
+string ConstantPoolPrinter::tagToString(ConstantPoolTag tag) {
     if (tag < _poolTagToString.size()) return _poolTagToString[tag];
-    return std::format("Invalid pool tag:{}", static_cast<unsigned char>(tag));
+    return format("Invalid pool tag:{}", static_cast<unsigned char>(tag));
 }
 
-std::string ConstantPoolPrinter::refKindToString(MethodHandleSubtypes tag) {
+string ConstantPoolPrinter::refKindToString(MethodHandleSubtypes tag) {
     if (tag < _refKindToString.size()) return _refKindToString[tag];
-    return std::format("Invalid MethodHandleSubtypes tag:{}", static_cast<unsigned char>(tag));
+    return format("Invalid MethodHandleSubtypes tag:{}", static_cast<unsigned char>(tag));
 }
 
 void ConstantPoolPrinter::printHeader(const ConstPoolBase &entry, int index) {
     json data;
     data["index"] = index;
     data["name"] = tagToString(entry.tag);
-    cout << render(_templateFragments["entry"], data);
+    _currentLine += render(_templateFragments["entry"], data);
 }
 
 void ConstantPoolPrinter::printUtf8Info(const Utf8Info &entry, int index) {
     printHeader(static_cast<ConstPoolBase>(entry), index);
-
     json data;
     data["value"] = entry.getAsUtf8(true);
-    const auto output = render(_templateFragments["utf8-info"], data);
-    cout << output;
+    _currentLine += render(_templateFragments["utf8-info"], data);
 }
 
-inline void ConstantPoolPrinter::printStringInfo(const StringInfo &entry, int index) const {
+inline void ConstantPoolPrinter::printStringInfo(const StringInfo &entry, int index) {
     printHeader(static_cast<ConstPoolBase>(entry), index);
 
     json data;
     data["index"] = entry.stringIndex;
     data["value"] = _constantPool.getString(entry.stringIndex, true);
-    cout << render(_templateFragments["string-info"], data);
+    _currentLine += render(_templateFragments["string-info"], data);
 }
 
 inline void ConstantPoolPrinter::printLongInfo(const LongInfo &entry, int index) {
     printHeader(static_cast<ConstPoolBase>(entry), index);
     json data;
     data["value"] = entry.getLongLong();
-    cout << render(_templateFragments["value"], data);
+    _currentLine += render(_templateFragments["value"], data);
 }
 
 inline void ConstantPoolPrinter::printDoubleInfo(const DoubleInfo &entry, int index) {
     printHeader(static_cast<ConstPoolBase>(entry), index);
     json data;
     data["value"] = entry.getDouble();
-    cout << render(_templateFragments["value"], data);
+    _currentLine += render(_templateFragments["value"], data);
 }
 
 inline void ConstantPoolPrinter::printIntegerInfo(const IntegerInfo &entry, int index) {
     printHeader(static_cast<ConstPoolBase>(entry), index);
     json data;
     data["value"] = entry.value;
-    cout << render(_templateFragments["value"], data);
+    _currentLine += render(_templateFragments["value"], data);
 }
 
 inline void ConstantPoolPrinter::printFloatInfo(const FloatInfo &entry, int index) {
     printHeader(static_cast<ConstPoolBase>(entry), index);
-    cout << entry.getFloat();
+    _outputLines.push_back(to_string(entry.getFloat()));
 
     json data;
     data["value"] = entry.getFloat();
-    cout << render(_templateFragments["value"], data);
+    _currentLine += render(_templateFragments["value"], data);
 }
 
-inline void ConstantPoolPrinter::printClassInfo(const ClassInfo &entry, int index) const {
+inline void ConstantPoolPrinter::printClassInfo(const ClassInfo &entry, int index) {
     printHeader(static_cast<ConstPoolBase>(entry), index);
 
     json data;
     data["index"] = entry.nameIndex;
     data["value"] = _constantPool.getClassname(entry.nameIndex);
-    cout << render(_templateFragments["class-info"], data);
+    _currentLine += render(_templateFragments["class-info"], data);
 }
 
-inline void ConstantPoolPrinter::printMethodrefInfo(const MethodrefInfo &entry, int index) const {
+inline void ConstantPoolPrinter::printMethodrefInfo(const MethodrefInfo &entry, int index) {
     printHeader(static_cast<ConstPoolBase>(entry), index);
     printRefExtraInfo(entry);
 }
@@ -135,29 +222,29 @@ inline void ConstantPoolPrinter::printMethodHandleInfo(const MethodHandleInfo &e
     json data;
     data["index"] = entry.referenceIndex;
     data["kind"] = refKindToString(entry.referenceKind);
-    cout << render(_templateFragments["method-handle-info"], data);
+    _currentLine += render(_templateFragments["method-handle-info"], data);
 }
 
-inline void ConstantPoolPrinter::printMethodTypeInfo(const MethodTypeInfo &entry, int index) const {
+inline void ConstantPoolPrinter::printMethodTypeInfo(const MethodTypeInfo &entry, int index) {
     printHeader(static_cast<ConstPoolBase>(entry), index);
     json data;
     data["value"] = _constantPool[entry.descriptorIndex].utf8Info.getAsUtf8();
-    cout << render(_templateFragments["value"], data);
+    _currentLine += render(_templateFragments["value"], data);
 }
 
-inline void ConstantPoolPrinter::printEntry(const FieldrefInfo &entry, int index) const {
+inline void ConstantPoolPrinter::printFieldrefInfo(const FieldrefInfo &entry, int index) {
     printHeader(static_cast<ConstPoolBase>(entry), index);
     printRefExtraInfo(entry);
 }
 
-inline void ConstantPoolPrinter::printModuleInfo(const ModuleInfo &entry, int index) const {
+inline void ConstantPoolPrinter::printModuleInfo(const ModuleInfo &entry, int index) {
     printHeader(static_cast<ConstPoolBase>(entry), index);
     json data;
     data["value"] = _constantPool[entry.nameIndex].utf8Info.getAsUtf8();
-    cout << render(_templateFragments["value"], data);
+    _currentLine += render(_templateFragments["value"], data);
 }
 
-void ConstantPoolPrinter::printRefExtraInfo(const MemberInfo &entry) const {
+void ConstantPoolPrinter::printRefExtraInfo(const MemberInfo &entry) {
     const auto &nameAndTypeInfo = _constantPool[entry.nameAndTypeIndex].nameAndTypeInfo;
 
     json data;
@@ -168,15 +255,15 @@ void ConstantPoolPrinter::printRefExtraInfo(const MemberInfo &entry) const {
 
     data["typeName"] = _constantPool.getString(nameAndTypeInfo.nameIndex);
     data["descriptor"] = _constantPool.getString(nameAndTypeInfo.descriptorIndex);
-    cout << render(_templateFragments["ref-extra-info"], data);
+    _currentLine += render(_templateFragments["ref-extra-info"], data);
 }
 
-inline void ConstantPoolPrinter::printInterfaceMethodrefInfo(const InterfaceMethodrefInfo &entry, int index) const {
+inline void ConstantPoolPrinter::printInterfaceMethodrefInfo(const InterfaceMethodrefInfo &entry, int index) {
     printHeader(static_cast<ConstPoolBase>(entry), index);
     printRefExtraInfo(entry);
 }
 
-inline void ConstantPoolPrinter::printInvokeDynamicInfo(const InvokeDynamicInfo &entry, int index) const {
+inline void ConstantPoolPrinter::printInvokeDynamicInfo(const InvokeDynamicInfo &entry, int index) {
     printHeader(static_cast<ConstPoolBase>(entry), index);
 
     const auto &nameAndTypeInfo = _constantPool[entry.nameAndTypeIndex].nameAndTypeInfo;
@@ -185,11 +272,11 @@ inline void ConstantPoolPrinter::printInvokeDynamicInfo(const InvokeDynamicInfo 
     data["nameAndTypeIndex"] = entry.nameAndTypeIndex;
     data["typeName"] = _constantPool.getString(nameAndTypeInfo.nameIndex);
     data["descriptor"] = _constantPool.getString(nameAndTypeInfo.descriptorIndex);
-    cout << render(_templateFragments["bootstrap"], data);
+    _currentLine += render(_templateFragments["bootstrap"], data);
 
 }
 
-inline void ConstantPoolPrinter::printNameAndTypeInfo(const NameAndTypeInfo &entry, int index) const {
+inline void ConstantPoolPrinter::printNameAndTypeInfo(const NameAndTypeInfo &entry, int index) {
     printHeader(static_cast<ConstPoolBase>(entry), index);
 
     json data;
@@ -197,12 +284,12 @@ inline void ConstantPoolPrinter::printNameAndTypeInfo(const NameAndTypeInfo &ent
     data["descriptorIndex"] = entry.descriptorIndex;
     data["typeName"] = _constantPool.getString(entry.nameIndex);
     data["descriptor"] = _constantPool.getString(entry.descriptorIndex);
-    cout << render(_templateFragments["name-type-info"], data);
+    _currentLine += render(_templateFragments["name-type-info"], data);
 
 }
 
 
-inline void ConstantPoolPrinter::printEntry(const ConstantPoolRecord &entry, int index) const {
+inline void ConstantPoolPrinter::printEntry(const ConstantPoolRecord &entry, int index) {
     switch (entry.base.tag) {
         case JVM_CONSTANT_Utf8:
             printUtf8Info(entry.utf8Info, index);
@@ -253,7 +340,7 @@ inline void ConstantPoolPrinter::printEntry(const ConstantPoolRecord &entry, int
             break;
 
         case JVM_CONSTANT_Fieldref:
-            printEntry(entry.fieldrefInfo, index);
+            printFieldrefInfo(entry.fieldrefInfo, index);
             break;
 
         case JVM_CONSTANT_InterfaceMethodref:
@@ -271,16 +358,16 @@ inline void ConstantPoolPrinter::printEntry(const ConstantPoolRecord &entry, int
 
         // case JVM_CONSTANT_ExternalMax:
         case JVM_CONSTANT_Unicode:
-            cout << "Unused Cool Entry type found: JVM_CONSTANT_Unicode";
+            _currentLine = "Unused Cool Entry type found: JVM_CONSTANT_Unicode";
             break;
 
         case JVM_CONSTANT_Empty:
-            cout << "empty entry";
+            _currentLine = "empty entry";
             break;
     }
 }
 
-void ConstantPoolPrinter::init() {
+void ConstantPoolPrinter::initStringMaps() {
     _poolTagToString.resize(JVM_CONSTANT_ExternalMax + 1);
 
     _poolTagToString[JVM_CONSTANT_Empty] = "empty";
@@ -313,7 +400,11 @@ void ConstantPoolPrinter::init() {
     _refKindToString[JVM_REF_invokeSpecial] = "REF_invokeSpecial";
     _refKindToString[JVM_REF_newInvokeSpecial] = "REF_newInvokeSpecial";
     _refKindToString[JVM_REF_invokeInterface] = "REF_invokeInterface";
+}
 
+void ConstantPoolPrinter::init(const string &templateType) {
+    _templateType = templateType;
+    initStringMaps();
     readSubTemplates();
 
 }

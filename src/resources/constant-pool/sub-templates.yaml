@@ -1,7 +1,8 @@
 ---
 templates:
   console:
-    entry: "{{index}}\t{{name}}\t"
+    header: "Constant Pool for: {{title}}"
+    entry: "{{index}}\t{{name}}\t\t"
     class-info: "idx:{{index}} {{value}}"
     method-handle-info: "ref kind:{{kind}}, idx:{{index}}"
     ref-extra-info: "idx:{{classIndex}}:{{nameAndTypeIndex}} {{classname}}: {{typeName}}:{{descriptor}}"
@@ -9,13 +10,66 @@ templates:
     name-type-info: "idx:{{index}}:{{descriptorIndex}} {{typeName}}:{{descriptor}}"
     utf8-info: "{{value}}"
     string-info: "{{index}} {{value}}"
-#    integer-info: "{{value}}"
-#    long-info: "{{value}}"
-#    float-info: "{{value}}"
     value: "{{value}}"
 
   html:
-    entry: "<a href=#>{: <6} {: <22}</a>"
     #TODO finish this if we want to generate HTML
+    #entry: "<a href=#>{: <6} {: <22}</a>"
+    header: "Constant Pool for: {{title}}"
+    entry: "{{index}}\t{{name}}\t\t"
+    class-info: "idx:{{index}} {{value}}"
+    method-handle-info: "ref kind:{{kind}}, idx:{{index}}"
+    ref-extra-info: "idx:{{classIndex}}:{{nameAndTypeIndex}} {{classname}}: {{typeName}}:{{descriptor}}"
+    bootstrap: "Bootstrap MT idx:{{index}},N&T:{nameAndTypeIndex}  {{typeName}}:{{descriptor}}"
+    name-type-info: "idx:{{index}}:{{descriptorIndex}} {{typeName}}:{{descriptor}}"
+    utf8-info: "{{value}}"
+    string-info: "{{index}} {{value}}"
+    value: "{{value}}"
+
+    cpool-html: |
+        <!doctype html>
+
+        <html lang="en">
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+
+          <title>Consant Pool View - {{classname}}</title>
+          <meta name="description" content="A simple HTML5 Template for new projects.">
+          <meta name="author" content="Tarracsh">
+        </head>
+
+        <body>
+            <div>
+                Constant Pool View - {{classname}}
+            </div>
+            <div>
+                {{cpoolEntries}}
+            </div>
+        </body>
+        </html>
+
+    index-html: |
+        <!doctype html>
+
+        <html lang="en">
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+
+          <title>Class - {{classname}}</title>
+          <meta name="description" content="A simple HTML5 Template for new projects.">
+          <meta name="author" content="Tarracsh">
 
 
+        </head>
+
+        <body>
+             <div>
+                Implementations - {{classname}}
+            </div>
+            <div>
+                {{implementations}}
+            </div>
+        </body>
+        </html>

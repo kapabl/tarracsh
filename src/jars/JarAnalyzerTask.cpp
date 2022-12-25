@@ -17,9 +17,9 @@ using namespace jar;
 using namespace std;
 
 
-JarAnalyzerTask::JarAnalyzerTask(Options options, Results &results)
+JarAnalyzerTask::JarAnalyzerTask(Options jarOptions, Results &results)
     : _results(results),
-      _options(std::move(options)) {
+      _jarOptions(std::move(jarOptions)) {
 }
 
 bool JarAnalyzerTask::start() {
@@ -27,8 +27,9 @@ bool JarAnalyzerTask::start() {
 }
 
 void JarAnalyzerTask::parseEntry(const JarEntry &jarEntry) const {
-    Options options(_options);
+    Options options(_jarOptions);
     options.classFilePath = jarEntry.getName();
+    options.jarFile = _jarOptions.jarFile;
     readers::MemoryReader reader(jarEntry);
 
     ClassFileAnalyzer classFileAnalyzer(reader, options, _results);

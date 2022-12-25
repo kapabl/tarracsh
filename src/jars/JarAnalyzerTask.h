@@ -10,7 +10,7 @@ namespace org::kapa::tarracsh::jar {
 class JarAnalyzerTask: public JarTask {
 public:
     explicit JarAnalyzerTask(
-        Options options, stats::Results& results );
+        Options jarOptions, stats::Results& results );
 
     void processEntry(const JarEntry& jarEntry, std::mutex& taskMutex) override;
     bool start() override;
@@ -20,7 +20,7 @@ public:
 
 private:
     stats::Results &_results;
-    Options _options;
+    Options _jarOptions;
     bool _isValid{true};
     unsigned int _classfileCount{0};
 

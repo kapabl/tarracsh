@@ -34,7 +34,7 @@ public:
 private:
     JarTask& _jarTask;
     stats::Results &_results;
-    Options _options;
+    Options _jarOptions;
     bool _isValid{true};
     std::atomic<unsigned int> _classfileCount{0};
 
