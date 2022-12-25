@@ -20,7 +20,7 @@ JarProcessor::JarProcessor(Options options, Results &results,
                            JarTask &jarTask)
     : _jarTask(jarTask),
       _results(results),
-      _options(std::move(options)) {
+      _jarOptions(std::move(options)) {
 }
 
 constexpr int MaxConcurrentBuffers = 40;
@@ -44,7 +44,7 @@ void JarProcessor::waitForAvailableBuffer() {
 void JarProcessor::run() {
     if (_jarTask.start()) {
 
-        ZipArchive zipArchive(_options.jarFile);
+        ZipArchive zipArchive(_jarOptions.jarFile);
         zipArchive.open(ZipArchive::ReadOnly);
 
         const auto entries = zipArchive.getEntries();
@@ -53,8 +53,8 @@ void JarProcessor::run() {
         for (auto &entry : entries) {
 
             if (index % 1000 == 0) {
-                if (_options.canPrintProgress()) {
-                    _results.print(_options);
+                if (_jarOptions.canPrintProgress()) {
+                    _results.print(_jarOptions);
                 }
             }
 
@@ -87,8 +87,8 @@ void JarProcessor::run() {
     }
     _jarTask.end();
     ++_results.jarfiles.parsedCount;
-    if (_options.canPrintProgress()) {
-        _results.print(_options);
+    if (_jarOptions.canPrintProgress()) {
+        _results.print(_jarOptions);
     }
 }
 

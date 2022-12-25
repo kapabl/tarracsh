@@ -67,10 +67,17 @@ CLI::App *TarracshApp::addParseSubCommand() {
     const auto result = add_subcommand("parse", "Parse class files, jar or directories");
     result->add_option("--input,-i", _options.input, "Input: directory, jar file or class file")->required();
 
-    result->add_flag("--print-class-parse", _options.printClassParse,
-                                             "Verbose print of classfile parse result to stdout");
-    result->add_flag("--print-cpool", _options.printConstantPool,
+    const auto printClassParse = result->add_flag("--print-class-parse", _options.printClassParse,
+                                                  "Verbose print of classfile parse result to stdout");
+    const auto printCPool = result->add_flag("--print-cpool", _options.printConstantPool,
                                              "Printing const-pool to stdout. Similar to javap");
+
+    const auto htmlNav = result->add_flag("--html-nav", _options.printCPoolHtmlNav,
+                                          "Generate Constant pool navigable file");
+
+    htmlNav->excludes(printCPool)
+           ->excludes(printClassParse);
+
     return result;
 }
 
@@ -84,9 +91,6 @@ CLI::App *TarracshApp::addPublicDigestSubCommand() {
 
     const auto result = add_subcommand("public-digest", "Public digest of jar files and classfiles");
     result->add_option("--input,-i", _options.input, "Input: directory, jar file or class file")->required();
-
-    // const auto digestFlag = result->add_flag("--public-digest", _options.isPublicDigest,
-    //     "Public digest command")->required();
     const auto rebuild = result->add_flag("--rebuild", _options.rebuild, "Rebuild Digest Db");
     const auto dryRun = result->add_flag("--dry-run", _options.dryRun,
                                          "Check Against Digest Db, default behavior is check and add/update");
@@ -135,17 +139,16 @@ int TarracshApp::parseCli(int argc, char **argv) {
             _options.isPublicDigest = true;
         } else if (got_subcommand(_options.subCommands.callGraph)) {
             _options.isCallGraph = true;
-
         } else if (got_subcommand(_options.subCommands.parse)) {
             _options.isParse = true;
-        }
-        else {
+        } else {
             cout << std::format("Invalid sub-command") << endl;
             result = 1;
         }
 
         if (result == 0 && !_options.processInput()) {
-            cout << std::format("Input should be a directory, jar or class file. Invalid input:{}", _options.input) << endl;
+            cout << std::format("Input should be a directory, jar or class file. Invalid input:{}",
+                                _options.input) << endl;
             result = 1;
         }
 
@@ -169,6 +172,11 @@ void TarracshApp::prepareConsoleForVT100() {
 #endif
 
 
+bool TarracshApp::isCPoolPrinterNeeded() {
+    const auto result = _options.printConstantPool || _options.printCPoolHtmlNav;
+    return result;
+}
+
 void TarracshApp::init() const {
 
     auto result = true;
@@ -180,8 +188,10 @@ void TarracshApp::init() const {
 
     filesystem::create_directories(_options.outputDir);
     Log::emptyLogFile(_options.logFile);
-    ConstantPoolPrinter::init();
 
+    if (isCPoolPrinterNeeded()) {
+        ConstantPoolPrinter::init(_options.printCPoolHtmlNav ? "html" : "console");
+    }
     _results.log.setFile(_options.logFile);
 
 }

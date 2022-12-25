@@ -19,7 +19,7 @@ inline bool isJar(const std::filesystem::path &path) {
     return result;
 }
 
-inline bool isJMod(const std::filesystem::path& path) {
+inline bool isJMod(const std::filesystem::path &path) {
     auto const result = path.extension() == ".jmod";
     return result;
 }
@@ -66,6 +66,18 @@ inline auto stdoutFile(const std::string &filename) {
     }
 }
 
+inline auto stdoutLines(const std::vector<std::string> &lines) {
+
+    for (auto &line : lines) {
+        std::cout << line << std::endl;
+    }
+}
+
+inline void ensureDir(const std::filesystem::path &dir) {
+    if (!std::filesystem::exists(dir)) {
+        std::filesystem::create_directories(dir);
+    }
+}
 }
 
 

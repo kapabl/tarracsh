@@ -18,7 +18,7 @@ public:
     ConstantPoolRecord &operator[](const u2 index) const;
     void setCount(const u2 count) { _count = count; }
     [[nodiscard]] u2 getCount() const { return _count; }
-    [[nodiscard]] int getPoolSize() const { return _constantPoolIndex.size(); }
+    [[nodiscard]] u2 getPoolSize() const { return static_cast<u2>(_constantPoolIndex.size()); }
 
     template <typename T>
     void add(T &data, const int size) {

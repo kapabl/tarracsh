@@ -43,7 +43,8 @@ struct Options {
         CLI::App* parse;
     } subCommands;
 
-
+    bool printCPoolHtmlNav{false};
+    
     [[nodiscard]] bool canPrintProgress() const {
         const auto result = !printClassParse && !printConstantPool;
         return result;

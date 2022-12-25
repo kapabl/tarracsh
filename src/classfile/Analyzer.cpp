@@ -35,7 +35,7 @@ bool Analyzer::isDirInput() const {
 }
 
 bool Analyzer::isClassfileInput() const {
-    return !_options.directory.empty();
+    return !_options.classFilePath.empty();
 }
 
 Analyzer::Analyzer(Options options, stats::Results &results)

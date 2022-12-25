@@ -19,7 +19,7 @@ namespace org::kapa::tarracsh {
 class ClassFileAnalyzer final {
 
 public:
-    explicit ClassFileAnalyzer(readers::ClassFileReader& reader, Options &options, stats::Results &results);
+    explicit ClassFileAnalyzer(readers::ClassFileReader &reader, Options &options, stats::Results &results);
 
     ClassFileAnalyzer(const ClassFileAnalyzer &) = delete;
     ClassFileAnalyzer(const ClassFileAnalyzer &&) = delete;
@@ -46,10 +46,13 @@ public:
         return result;
     }
 
+    Options& getOptions() { return _options; }
+    std::string getContainingFile() const;
+
 private:
     Options _options;
     stats::Results &_results;
-    readers::ClassFileReader& _reader;
+    readers::ClassFileReader &_reader;
 
     ConstantPool _constantPool;
     MainClassInfo _mainClassInfo{};
@@ -62,8 +65,7 @@ private:
     accessModifiers::AccessModifiers _accessModifiers;
 
     void initialize();
-    void readConstPoolEntry( int& index);
-    bool canPrintConstantPool() const;
+    void readConstPoolEntry(int &index);
     void readConstantsPool();
     void readMainClassInfo();
     void readInterfaces();

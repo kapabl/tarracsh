@@ -54,6 +54,14 @@ optional<db::tables::columns::DigestCol> ClassFileAnalyzer::getPublicDigest() {
     return result;
 }
 
+std::string ClassFileAnalyzer::getContainingFile() const {
+    std::string result(!_options.jarFile.empty()
+                           ? _options.jarFile
+                           : _options.classFilePath);
+
+    return result;
+}
+
 void ClassFileAnalyzer::initialize() {
     _attributesManager.setBigEndian(_reader.isBigEndian());
 }
@@ -74,8 +82,8 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
             // utf8Info.bytes[length] = 0;
             // _constantPool.addRecord(utf8Info, static_cast<int>(recordSize));
 
-            _constantPool.addUtf8Record(length,_reader );
-  
+            _constantPool.addUtf8Record(length, _reader);
+
             //free(&utf8Info);
 
             break;
@@ -198,11 +206,6 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
 }
 
 
-bool ClassFileAnalyzer::canPrintConstantPool() const {
-    const auto result = _options.printConstantPool;
-    return result;
-}
-
 void ClassFileAnalyzer::readConstantsPool() {
     const u2 count = _reader.readU2();
     _constantPool.setCount(count);
@@ -255,7 +258,7 @@ void ClassFileAnalyzer::readAttributesSection(vector<AttributeInfo> &attributes,
         // _reader.readRaw(dest, attributeInfo.length);
 
         for (auto index = 0u; index < attributeInfo.length; ++index) {
-            attributeInfo.info[index ] = _reader.readU1();
+            attributeInfo.info[index] = _reader.readU1();
         }
         attributes.push_back(attributeInfo);
     }
@@ -292,9 +295,12 @@ void ClassFileAnalyzer::processFile() {
     readMethods();
     readAttributes();
 
-    if (canPrintConstantPool()) {
-        const ConstantPoolPrinter printer(*this);
-        printer.print();
+    if (_options.printConstantPool) {
+        ConstantPoolPrinter printer(*this);
+        printer.printToConsole();
+    } else if (_options.printCPoolHtmlNav) {
+        ConstantPoolPrinter printer(*this);
+        printer.printToHtmlNav();
     }
 
 }
