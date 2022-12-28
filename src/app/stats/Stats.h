@@ -51,10 +51,11 @@ struct Results {
     FileTime classfileTime{};
     FileTime jarfileTime{};
 
-    Log log;
+    log::Log log;
 
 
     void print(const Options &options) const;
+    void forcePrint(const Options &options) const;
     void printAll(const Options &options) const;
 
     mutable std::chrono::time_point<std::chrono::steady_clock> lastPrint{std::chrono::high_resolution_clock::now()};

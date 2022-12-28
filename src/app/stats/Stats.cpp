@@ -6,13 +6,12 @@
 using namespace org::kapa::tarracsh::stats;
 
 
-Results::Results(){
+Results::Results() {
     report = std::make_unique<report::Report>(*this);
     profileData = std::make_unique<profiler::ProfileData>(*this);
 }
 
 void Results::print(const Options &options) const {
-    // cout << "\033[2K";
 
     const auto result = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::high_resolution_clock::now() - lastPrint);
@@ -20,7 +19,11 @@ void Results::print(const Options &options) const {
     if (result.count() < 500) return;
 
     lastPrint = std::chrono::high_resolution_clock::now();
+    forcePrint(options);
 
+}
+
+void Results::forcePrint(const Options &options) const {
     printf("\033[2J");
     printf("\033[%d;%dH", 0, 0);
 
@@ -31,7 +34,6 @@ void Results::print(const Options &options) const {
         " jars: " << jarfiles.count;
 
     std::cout << std::flush;
-
 }
 
 void Results::printAll(const Options &options) const {
@@ -105,7 +107,8 @@ void Results::printAll(const Options &options) const {
     long long totalClassfiles = classfiles.count + jarfiles.classfileCount;
     std::cout << std::endl << std::format("total classfiles: {}", totalClassfiles) << std::endl;
 
-    std::cout << std::endl << std::format("speed: {:.3f} classfile/s", 1000.0 * totalClassfiles / profileData->analyzerTime.count()) << std::endl;
+    std::cout << std::endl << std::format("speed: {:.3f} classfile/s",
+                                          1000.0 * totalClassfiles / profileData->analyzerTime.count()) << std::endl;
 
     std::cout << "\r" << std::flush;
 }

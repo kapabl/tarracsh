@@ -3,7 +3,7 @@
 
 #include "Tarracsh.h"
 #include "stats/Stats.h"
-
+#include <CLI11.hpp>
 namespace org::kapa::tarracsh {
 
 
@@ -36,6 +36,11 @@ private:
     CLI::App *addParseSubCommand();
     CLI::App *addCallGraphSubCommand();
     CLI::App *addPublicDigestSubCommand();
+    
+    CLI::App *_digest;
+    CLI::App *_callGraph;
+    CLI::App *_parse;
+
 
     int parseCli(int argc, char **argv);
 #ifdef _WIN32

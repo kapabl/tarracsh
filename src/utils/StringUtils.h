@@ -11,6 +11,7 @@
 #include <locale>
 #include <codecvt>
 #include <format>
+#include <cstdarg>
 #include <unicode/unistr.h>
 
 
