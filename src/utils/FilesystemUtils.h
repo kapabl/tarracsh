@@ -4,6 +4,7 @@
 #include <fstream>
 #include <filesystem>
 #include <chrono>
+#include <iostream>
 
 
 namespace org::kapa::tarracsh::fsUtils {

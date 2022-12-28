@@ -1,10 +1,9 @@
 #include <filesystem>
-#include <iostream>
 #include <utility>
 #include <string>
 
-#include "ClassFileInfo.h"
-#include "ClassFileAnalyzer.h"
+#include "../classfile/ClassFileInfo.h"
+#include "../classfile/ClassFileAnalyzer.h"
 #include "../jars/JarAnalyzerTask.h"
 #include "Analyzer.h"
 
@@ -12,10 +11,11 @@
 #include "../jars/JarDigestTask.h"
 #include "../jars/JarGraphTask.h"
 #include "../jars/JarProcessor.h"
-#include "readers/FileReader.h"
+#include "../classfile/readers/FileReader.h"
 #include "../tables/FilesTable.h"
 #include "../app/stats/Stats.h"
 #include "../app/stats/ScopedTimer.h"
+#include "../nav/IndexHtmlGen.h"
 
 
 using namespace org::kapa::tarracsh;
@@ -46,12 +46,12 @@ Analyzer::Analyzer(Options options, stats::Results &results)
 }
 
 void Analyzer::analyze(const std::string &filename) const {
-    Options options(_options);
-    options.classFilePath = filename;
+    Options classfileOptions(_options);
+    classfileOptions.classFilePath = filename;
 
-    readers::FileReader reader(options.classFilePath);
+    readers::FileReader reader(classfileOptions.classFilePath);
 
-    ClassFileAnalyzer classFileAnalyzer(reader, options, _results);
+    ClassFileAnalyzer classFileAnalyzer(reader, classfileOptions, _results);
     if (classFileAnalyzer.run()) {
         ++_results.classfiles.parsedCount;
 
@@ -135,20 +135,26 @@ void Analyzer::digestClassfile(const string &filename) {
 }
 
 void Analyzer::processClassfile(const string &filename) {
-    ++_results.classfiles.count;
-    if (_options.isPublicDigest) {
-        digestClassfile(filename);
-    } else if (_options.isCallGraph) {
-        //TODO
-        //digestClassfile(dirEntry);
-    } else {
-        analyze(filename);
-    }
+    _fileThreadPool.push_task([this, filename] {
+        ++_results.classfiles.count;
+        if (_options.isPublicDigest) {
+            digestClassfile(filename);
+        } else if (_options.isCallGraph) {
+            //TODO
+            //callGraph(dirEntry);
+        } else {
+            analyze(filename);
+        }
+
+        if (_options.canPrintProgress()) {
+            _results.print(_options);
+        }
+    });
 
 }
 
 void Analyzer::processJar(const std::string &filename) {
-    _jarThreadPool.push_task([this,filename] {
+    _fileThreadPool.push_task([this,filename] {
         Options jarOptions(_options);
         // jarOptions.jarFile = dirEntry.path().string();
         jarOptions.jarFile = filename;
@@ -216,15 +222,11 @@ bool Analyzer::initAnalyzer() {
     return true;
 }
 
+
 void Analyzer::processDir() {
-    auto count = 0u;
     for (auto const &dirEntry : filesystem::recursive_directory_iterator(_options.directory)) {
         if (dirEntry.is_regular_file()) {
             processFile(dirEntry);
-        }
-        count++;
-        if (count % 1000 == 0) {
-            _results.print(_options);
         }
     }
 }
@@ -234,24 +236,33 @@ void Analyzer::analyze() {
         processDir();
     } else if (isJarInput()) {
         processJar(_options.jarFile);
-    } else if (isClassfileInput())  {
+    } else if (isClassfileInput()) {
         processClassfile(_options.classFilePath);
     }
 
-    _jarThreadPool.wait_for_tasks();
+    _fileThreadPool.wait_for_tasks();
 }
 
+
+void Analyzer::updateDbs() {
+    if (_options.isPublicDigest) {
+        ScopedTimer timer(&_results.profileData->writeDigestDb);
+        _digestDb.write();
+    } else if (_options.isCallGraph) {
+        ScopedTimer timer(&_results.profileData->writeCallGraphDb);
+        _callGraphDb.write();
+    }
+}
 
 void Analyzer::endAnalysis() {
 
     if (!_options.dryRun) {
-        if (_options.isPublicDigest) {
-            ScopedTimer timer(&_results.profileData->writeDigestDb);
-            _digestDb.write();
-        } else if (_options.isCallGraph) {
-            ScopedTimer timer(&_results.profileData->writeCallGraphDb);
-            _callGraphDb.write();
-        }
+        updateDbs();
+    }
+
+    if ( _options.printCPoolHtmlNav ) {
+       nav::IndexHtmlGen indexHtmlGen;
+       indexHtmlGen.generate();
     }
 }
 
@@ -266,7 +277,7 @@ void Analyzer::run() {
     }
 
     if (_options.canPrintProgress()) {
-        _results.print(_options);
+        _results.forcePrint(_options);
         _results.printAll(_options);
     }
 

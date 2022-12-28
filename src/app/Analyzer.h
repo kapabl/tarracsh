@@ -39,8 +39,8 @@ private:
     db::DigestDb _digestDb;
     db::CallGraphDb _callGraphDb;
 
-    BS::thread_pool _jarThreadPool{std::max<unsigned int>(1u, std::thread::hardware_concurrency() * 3 / 4)};
-    //BS::thread_pool _jarThreadPool{ std::max<unsigned int>(1u, std::thread::hardware_concurrency() - 2) };
+    BS::thread_pool _fileThreadPool{std::max<unsigned int>(1u, std::thread::hardware_concurrency() * 3 / 4)};
+    //BS::thread_pool _fileThreadPool{ std::max<unsigned int>(1u, std::thread::hardware_concurrency() - 2) };
 
     bool _isValid{true};
 
@@ -49,16 +49,15 @@ private:
     bool initAnalyzer();
     void processDir();
     void analyze();
+    void updateDbs();
     void endAnalysis();
 
-    static bool isClassfile(std::filesystem::directory_entry const &dirEntry);
     void analyze(const std::string& filename) const;
     bool isFileUnchanged(uintmax_t size, long long timestamp, const db::tables::FileRow *row) const;
     void updateDbInMemory(const ClassFileInfo &classFileInfo, const ClassFileAnalyzer &classFileAnalyzer,
                           const db::tables::columns::DigestCol &digest);
     void digestClassfile(const std::string& filename);
     void processClassfile(const std::string& filename);
-    static bool isJar(std::filesystem::directory_entry const &dirEntry);
 };
 }
 #endif

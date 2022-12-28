@@ -1,12 +1,19 @@
+// #include "../app/Tarracsh.h"
+
+
+#include "../app/Options.h"
+#include "../nav/HtmlGen.h"
 #include <iostream>
+#include "constpool/ConstantPoolPrinter.h"
 #include "ClassFileAnalyzer.h"
 
+
 #include "ClassFileDigest.h"
-#include "constpool/ConstantPoolPrinter.h"
 #include "../tables/ClassfilesTable.h"
 
 #include "MethodDescriptorParser.h"
 #include "ParserOutput.h"
+
 
 using namespace org::kapa::tarracsh;
 using namespace attributes;
@@ -297,10 +304,10 @@ void ClassFileAnalyzer::processFile() {
 
     if (_options.printConstantPool) {
         ConstantPoolPrinter printer(*this);
-        printer.printToConsole();
+        printer.print();
     } else if (_options.printCPoolHtmlNav) {
-        ConstantPoolPrinter printer(*this);
-        printer.printToHtmlNav();
+        nav::HtmlGen printer(*this);
+        printer.print();
     }
 
 }

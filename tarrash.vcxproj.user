@@ -17,7 +17,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbJarDirMd5|x64'">
-    <LocalDebuggerCommandArguments>--dir $(TARRACSH_TEST_SUBJECTS_DIR)/jars --public-digest=yes --rebuild=no</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>public-digest --input $(TARRACSH_TEST_SUBJECTS_DIR)/jars --rebuild=yes</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
@@ -62,7 +62,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel2|x64'">
-    <LocalDebuggerCommandArguments>--dir $(TARRACSH_TEST_SUBJECTS_DIR)/jars --public-digest=yes --rebuild=no</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>parse --html-nav --input=d:\temp\jmod-17\java.base</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>

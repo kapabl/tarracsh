@@ -1,9 +1,8 @@
 #include "TarracshApp.h"
 #include "../classfile/constpool/ConstantPoolPrinter.h"
 #include "../classfile/ClassFileAnalyzer.h"
-#include "../classfile/Analyzer.h"
+#include "Analyzer.h"
 #include "../jars/JarAnalyzerTask.h"
-#include "../classfile/readers/FileReader.h"
 #include "../tables/Query.h"
 
 #ifdef _WIN32
@@ -109,13 +108,13 @@ void TarracshApp::setupCliOptions() {
     set_version_flag("-v,--version", "version " TARRACSH_VERSION);
     set_help_all_flag("--help-all");
 
-    _options.subCommands.digest = addPublicDigestSubCommand();
-    _options.subCommands.callGraph = addCallGraphSubCommand();
-    _options.subCommands.parse = addParseSubCommand();
+    _digest = addPublicDigestSubCommand();
+    _callGraph = addCallGraphSubCommand();
+    _parse = addParseSubCommand();
 
-    _options.subCommands.parse->excludes(_options.subCommands.digest);
-    _options.subCommands.parse->excludes(_options.subCommands.callGraph);
-    _options.subCommands.digest->excludes(_options.subCommands.callGraph);
+    _parse->excludes(_digest);
+    _parse->excludes(_callGraph);
+    _digest->excludes(_callGraph);
 
     add_flag("--pause", _options.pause, "Pause and wait for enter before finishing process. Useful when debugging");
     add_flag("--output-dir", _options.outputDir, "Output directory, default './output'");
@@ -135,11 +134,11 @@ int TarracshApp::parseCli(int argc, char **argv) {
     try {
         parse(argc, argv);
 
-        if (got_subcommand(_options.subCommands.digest)) {
+        if (got_subcommand(_digest)) {
             _options.isPublicDigest = true;
-        } else if (got_subcommand(_options.subCommands.callGraph)) {
+        } else if (got_subcommand(_callGraph)) {
             _options.isCallGraph = true;
-        } else if (got_subcommand(_options.subCommands.parse)) {
+        } else if (got_subcommand(_parse)) {
             _options.isParse = true;
         } else {
             cout << std::format("Invalid sub-command") << endl;
@@ -186,12 +185,12 @@ void TarracshApp::init() const {
     prepareForUTF8();
 #endif
 
-    filesystem::create_directories(_options.outputDir);
-    Log::emptyLogFile(_options.logFile);
+    fsUtils::ensureDir(_options.outputDir);
+    _results.log.init(_options.logFile);
 
     if (isCPoolPrinterNeeded()) {
         ConstantPoolPrinter::init(_options.printCPoolHtmlNav ? "html" : "console");
     }
-    _results.log.setFile(_options.logFile);
+
 
 }

@@ -810,7 +810,10 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\app\Analyzer.cpp" />
+    <ClCompile Include="src\app\log\Log.cpp" />
     <ClCompile Include="src\app\Main.cpp" />
+    <ClCompile Include="src\app\Options.cpp" />
     <ClCompile Include="src\app\stats\ProfileData.cpp" />
     <ClCompile Include="src\app\stats\Report.cpp" />
     <ClCompile Include="src\app\stats\ScopedTimer.cpp" />
@@ -821,7 +824,6 @@
     <ClCompile Include="src\classfile\ClassFileDigest.cpp" />
     <ClCompile Include="src\classfile\constpool\ConstantPool.cpp" />
     <ClCompile Include="src\classfile\constpool\ConstantPoolPrinter.cpp" />
-    <ClCompile Include="src\classfile\Analyzer.cpp" />
     <ClCompile Include="src\classfile\ParserOutput.cpp" />
     <ClCompile Include="src\classfile\readers\ClassFileReader.cpp" />
     <ClCompile Include="src\classfile\readers\FileReader.cpp" />
@@ -838,6 +840,8 @@
     <ClCompile Include="src\jars\JarDigestTask.cpp" />
     <ClCompile Include="src\jars\JarGraphTask.cpp" />
     <ClCompile Include="src\jars\JarProcessor.cpp" />
+    <ClCompile Include="src\nav\HtmlGen.cpp" />
+    <ClCompile Include="src\nav\IndexHtmlGen.cpp" />
     <ClCompile Include="src\tables\CallGraphDb.cpp" />
     <ClCompile Include="src\tables\ClassfilesTable.cpp" />
     <ClCompile Include="src\tables\Database.cpp" />
@@ -845,6 +849,9 @@
     <ClCompile Include="src\tables\FilesTable.cpp" />
     <ClCompile Include="src\tables\StringPool.cpp" />
     <ClCompile Include="src\tables\Table.cpp" />
+    <ClInclude Include="src\app\Analyzer.h" />
+    <ClInclude Include="src\app\log\Log.h" />
+    <ClInclude Include="src\app\Options.h" />
     <ClInclude Include="src\app\stats\ProfileData.h" />
     <ClInclude Include="src\app\stats\Report.h" />
     <ClInclude Include="src\app\stats\ScopedTimer.h" />
@@ -862,7 +869,6 @@
     <ClInclude Include="src\classfile\constpool\ConstantPool.h" />
     <ClInclude Include="src\classfile\constpool\ConstantPoolPrinter.h" />
     <ClInclude Include="src\classfile\DescriptorParser.h" />
-    <ClInclude Include="src\classfile\Analyzer.h" />
     <ClInclude Include="src\classfile\jars\JarAnalyzerTask.h" />
     <ClInclude Include="src\classfile\jars\JarDigestTask.h" />
     <ClInclude Include="src\classfile\jars\JarProcessor.h" />
@@ -887,7 +893,6 @@
     <ClInclude Include="src\classfile\tables\ClassfilesTable.h" />
     <ClInclude Include="src\classfile\tables\FilesTable.h" />
     <ClInclude Include="src\classfile\tables\StringPool.h" />
-    <ClCompile Include="src\classfile\Log.cpp" />
     <ClInclude Include="src\classfile\tables\Table.h" />
     <ClInclude Include="src\jars\JarAnalyzerTask.h" />
     <ClInclude Include="src\jars\JarDigestTask.h" />
@@ -895,6 +900,8 @@
     <ClInclude Include="src\jars\JarGraphTask.h" />
     <ClInclude Include="src\jars\JarProcessor.h" />
     <ClInclude Include="src\jars\JarTask.h" />
+    <ClInclude Include="src\nav\HtmlGen.h" />
+    <ClInclude Include="src\nav\IndexHtmlGen.h" />
     <ClInclude Include="src\tables\CallGraphDb.h" />
     <ClInclude Include="src\tables\ClassfilesTable.h" />
     <ClInclude Include="src\tables\columns\Columns.h" />
@@ -909,7 +916,6 @@
     <ClInclude Include="src\utils\StringUtils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\classfile\Log.h" />
     <ClInclude Include="src\includes\CLI11.hpp" />
     <ClInclude Include="src\classfile\SignatureScanner.h" />
     <ClInclude Include="src\includes\AttributeTags.h" />
