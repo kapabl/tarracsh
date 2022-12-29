@@ -207,3 +207,4 @@ void HtmlGen::printHeader(const ConstPoolBase &entry, int index) {
                                 index,
                                 tagToString(entry.tag));
 }
+
