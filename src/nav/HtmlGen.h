@@ -12,11 +12,7 @@ class HtmlGen final: public ConstantPoolPrinter {
 public:
     explicit HtmlGen(const ClassFileAnalyzer &classFileAnalyzer);
     ~HtmlGen() override = default;
-
     void print() override;
-
-    typedef std::unordered_map<std::string, std::string> OutputSubTemplates;
-
 
 protected:
     void printHeader(const ConstPoolBase& entry, int index) override;
@@ -36,20 +32,24 @@ protected:
     void printInterfaceMethodrefInfo(const InterfaceMethodrefInfo &entry, int index) override;
     void printInvokeDynamicInfo(const InvokeDynamicInfo &entry, int index) override;
     void printNameAndTypeInfo(const NameAndTypeInfo &entry, int index) override;
-    // void printEntry(const ConstantPoolRecord &entry, int index) override;
     void printTitle() override;
+
 
     [[nodiscard]] std::filesystem::path getClassHtmlIndexFilename() const;
     std::string  getImplLinks();
     std::vector<std::string> renderHtmlClassIndex();
     void mainClassToHtmlIndex();
     [[nodiscard]] std::string getNavClassRelDir() const;
-    [[nodiscard]] std::string getNavImplRelDir() const;
     [[nodiscard]] std::filesystem::path getHtmlCPoolFilename() const;
     [[nodiscard]] std::vector<std::string> renderCPoolHtml(const std::vector<std::string>& lines) const;
     void linesToHtmlFile(const std::vector<std::string>& lines);
 
+private:
+    std::string _mainClassname;
+    std::string _implementation;
 
+    [[nodiscard]] std::string generateEntryLink(int index) const;
+    [[nodiscard]] std::string generateLink(const std::string& classname) const;
 };
 
 

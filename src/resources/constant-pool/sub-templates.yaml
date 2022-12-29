@@ -13,21 +13,70 @@ templates:
           <meta name="viewport" content="width=device-width, initial-scale=1">
 
           <title>Consant Pool View - {{classname}}</title>
-          <meta name="description" content="A simple HTML5 Template for new projects.">
+
+          <meta name="description" content="Constant Pool Navigator">
           <meta name="author" content="Tarracsh">
-          <style>
-              body {
-                font-family:  -apple-system, BlinkMacSystemFont, 
-                              'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-              }
-          </style>
+             <style>
+                html {
+                    background-color: #2B2B2B;
+                    color: #A9B7C6;
+                }
+
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont,
+                    'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                }
+
+                span.link {
+                    cursor: pointer;
+                    font-weight: bold;
+                    color: #287BDE;
+                }
+                span.type {
+                    color: #a86aef;
+                    display:inline-block;
+                    width: 8em;
+                }
+
+                span.index {
+                    color: #dec17a;
+                    width: 4em;
+                    font-weight: bold;
+                    display: inline-block;
+                }
+                div.cpool-table {
+                    font-size: 1.2em;
+                }
+                a {
+                    color: #287BDE;
+                    text-decoration: none;
+                }
+                a.entry-link {
+                    color: #dec17a;
+                    text-decoration: underline;
+                }
+            </style>
+            <script>
+                const classname = 'java/lang/Object';
+                const implementation = 'Object.class';
+                const relUrl = classname + '/' + implementation + '/cpool.html'
+
+                function navigateTo(destClassname) {
+                    let dest = window.top.location.href;
+                    dest = dest.substr(0, dest.indexOf(relUrl)) + destClassname + '/index.html';
+                    window.top.location.replace(dest);
+                    return true
+                }
+            </script>
+
+
         </head>
 
         <body>
             <div>
                 <h1>Constant Pool View - {{classname}}</h1>
             </div>
-            <div>
+            <div class='cpool-table'>
                 {{cpoolEntries}}
             </div>
         </body>
@@ -42,6 +91,9 @@ templates:
           <meta name="viewport" content="width=device-width, initial-scale=1">
 
           <title>Class - {{classname}}</title>
+
+          <base href="{{baseUrl}}" />
+
           <meta name="description" content="A simple HTML5 Template for new projects.">
           <meta name="author" content="Tarracsh">
           <style>
