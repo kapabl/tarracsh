@@ -8,8 +8,7 @@ namespace org::kapa::tarracsh::nav {
 
 class IndexHtmlGen {
 public:
- 
-
+    void generate();
 };
 
 
