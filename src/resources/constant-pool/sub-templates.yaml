@@ -92,8 +92,6 @@ templates:
 
           <title>Class - {{classname}}</title>
 
-          <base href="{{baseUrl}}" />
-
           <meta name="description" content="A simple HTML5 Template for new projects.">
           <meta name="author" content="Tarracsh">
           <style>

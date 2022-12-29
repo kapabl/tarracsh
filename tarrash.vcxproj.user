@@ -32,7 +32,7 @@
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'">
-    <LocalDebuggerCommandArguments>parse --html-nav --input=D:\temp\jmod-17\java.base\java\lang\Object.class</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>parse --html-nav --input=D:\temp\jmod-17\java.base</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
