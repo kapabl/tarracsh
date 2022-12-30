@@ -13,6 +13,7 @@ public:
     explicit HtmlGen(const ClassFileAnalyzer &classFileAnalyzer);
     ~HtmlGen() override = default;
     void print() override;
+    static void init();
 
 protected:
     void printHeader(const ConstPoolBase& entry, int index) override;
@@ -34,22 +35,30 @@ protected:
     void printNameAndTypeInfo(const NameAndTypeInfo &entry, int index) override;
     void printTitle() override;
 
+private:
+    std::string _mainClassname;
+    std::string _implementation;
+    std::filesystem::path _classRootDir;
+    static inja::Template _implementationsTemplate;
+    static inja::Template _cpoolTemplate;
+    static inja::Environment _environment;
+
+    [[nodiscard]] std::string generateEntryLink(int index) const;
+    [[nodiscard]] std::string generateLink(const std::string& classname) const;
+    [[nodiscard]] std::filesystem::path getClassRootDir() const;
+
+
 
     [[nodiscard]] std::filesystem::path getClassHtmlIndexFilename() const;
-    std::string  getImplLinks();
-    std::vector<std::string> renderHtmlClassIndex();
+    [[nodiscard]] std::vector<std::string> getImplementations() const;
+    [[nodiscard]] std::vector<std::string> renderHtmlClassIndex();
     void mainClassToHtmlIndex();
     [[nodiscard]] std::string getNavClassRelDir() const;
     [[nodiscard]] std::filesystem::path getHtmlCPoolFilename() const;
     [[nodiscard]] std::vector<std::string> renderCPoolHtml(const std::vector<std::string>& lines) const;
-    void linesToHtmlFile(const std::vector<std::string>& lines);
+    void linesToHtmlFile(const std::vector<std::string>& lines) const;
 
-private:
-    std::string _mainClassname;
-    std::string _implementation;
-
-    [[nodiscard]] std::string generateEntryLink(int index) const;
-    [[nodiscard]] std::string generateLink(const std::string& classname) const;
+    static std::string render(const inja::Template& compiledTemplate, const inja::json& json);
 };
 
 

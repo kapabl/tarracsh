@@ -7,20 +7,10 @@
 #include <format>
 
 
-#define MD5_DIGEST_LENGTH 16
 #define SHA_256_DIGEST_LENGTH 40
-
-#define DIGEST_LENGTH SHA_256_DIGEST_LENGTH
-// #define USE_POCO
-
-#ifdef USE_POCO
-    #define DIGEST_LENGTH MD5_DIGEST_LENGTH
-    #include <Poco/DigestStream.h>
-    #include <Poco/MD5Engine.h>
-#else
 #define DIGEST_LENGTH SHA_256_DIGEST_LENGTH
 #include <sodium/crypto_hash_sha256.h>
-#endif
+
 
 
 #include "StringUtils.h"
@@ -58,17 +48,6 @@ struct DigestBuffer : std::vector<unsigned char> {
         return *this;
     }
 };
-
-#ifdef USE_POCO
-inline DigestVector digest(const char *bytes, const int length) {
-    Poco::MD5Engine md5;
-    Poco::DigestOutputStream stream(md5);
-    stream.write(bytes, length);
-    stream.close();
-    auto result = md5.digest();
-    return result;
-}
-#else
 inline DigestVector digest(const char *bytes, const int length) {
     DigestVector result(DIGEST_LENGTH);
     crypto_hash_sha256(
@@ -77,8 +56,6 @@ inline DigestVector digest(const char *bytes, const int length) {
         length);
     return result;
 }
-#endif
-
 // inline DigestVector digest(const DigestBuffer &buffer) {
 //     auto result = digest(reinterpret_cast<const char *>(&*buffer.begin()), buffer.size());
 //     return result;

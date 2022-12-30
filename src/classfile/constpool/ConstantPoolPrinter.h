@@ -1,6 +1,5 @@
 #ifndef TARRACSH_CONSTANT_POOL_PRINTER_H
 #define TARRACSH_CONSTANT_POOL_PRINTER_H
-#include <inja/inja.hpp>
 #include <unordered_map>
 #include "../ClassFileAnalyzer.h"
 
@@ -14,7 +13,7 @@ public:
 
     virtual void print();
 
-    static void init(const std::string& templateType);
+    static void init();
     typedef std::unordered_map<std::string, std::string> OutputSubTemplates;
 
 
@@ -22,19 +21,12 @@ protected:
     const ClassFileAnalyzer &_classFileAnalyzer;
     const ConstantPool &_constantPool;
     std::string _currentLine;
-    static std::string _templateType;
 
     static std::vector<std::string> _poolTagToString;
     static std::vector<std::string> _refKindToString;
 
     std::vector<std::string> _outputLines;
 
-
-    static std::unordered_map<std::string, inja::Template> _templateFragments;
-    static inja::Environment _environment;
-    [[nodiscard]] static std::string render(const inja::Template& compiledTemplate, const inja::json& json);
-
-    static void readSubTemplates();
 
     static std::string tagToString(ConstantPoolTag tag);
     static std::string refKindToString(MethodHandleSubtypes tag);

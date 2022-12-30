@@ -1,0 +1,69 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Class - {{classname}}</title>
+
+    <meta name="description" content="A simple HTML5 Template for new projects.">
+    <meta name="author" content="Tarracsh">
+    <style>
+        html {
+            background-color: #2B2B2B;
+            color: #A9B7C6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue',
+                         Helvetica, Arial, sans-serif;
+        }
+
+        a {
+            color: #287BDE;
+            text-decoration: none;
+        }
+
+        div.link {
+            cursor: pointer;
+            font-weight: bold;
+            color: #287BDE;
+            padding: 0.2em 0;
+        }
+    </style>
+    <script>
+        const classname = '{{classname}}';
+        const impls = [];
+
+##  for implementation in implementations
+        impls.push("{{implementation}}");
+##  endfor
+
+        function navigateToImpl( implementation ) {
+            let dest = window.top.location.href;
+            dest = dest.substr(0, dest.indexOf('/index.html')) + '/' + implementation + '/cpool.html';
+            window.top.location.replace(dest);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            if ( impls.length == 1 && window.top.location.href.indexOf('#try-impl') >= 0) {
+                navigateToImpl( impls[0] );
+            }
+        });
+
+    </script>
+
+</head>
+
+<body>
+<div>
+    <h1>Implementations - {{classname}}</h1>
+</div>
+<div class="impl-table">
+{% for implementation in implementations %}
+    <div class='link' onclick='navigateToImpl("{{implementation}}")'>{{implementation}}</div>
+{% endfor %}
+</div>
+</body>
+</html>

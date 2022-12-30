@@ -133,7 +133,7 @@ db::tables::columns::DigestCol ClassFileDigest::digest() const {
 
     const auto digest = digestUtils::digest(reinterpret_cast<const char *>(&*buffer.begin()), buffer.size());
     db::tables::columns::DigestCol result;
-    memcpy(result.buf, &*digest.begin(), MD5_DIGEST_LENGTH);
+    memcpy(result.buf, &*digest.begin(), DIGEST_LENGTH);
     return result;
 
 }

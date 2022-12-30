@@ -52,9 +52,15 @@ inline auto writeLines(const std::string &filename, const std::vector<std::strin
         file << line << std::endl;
     }
 }
+inline auto readFileContent(const std::string& filename) -> std::string {
+    const std::ifstream file(filename);
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    auto result = buffer.str();
+    return result;
+}
 
 inline auto stdoutFile(const std::string &filename) {
-
     std::ifstream file;
     file.open(filename, std::ios::in);
 

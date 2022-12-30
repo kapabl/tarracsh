@@ -1,0 +1,107 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Constant Pool View - {{classname}}</title>
+
+    <meta name="description" content="Constant Pool Navigator">
+    <meta name="author" content="Tarracsh">
+    <style>
+        html {
+            background-color: #2B2B2B;
+            color: #A9B7C6;
+        }
+
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+
+        span.link {
+            cursor: pointer;
+            font-weight: bold;
+            color: #287BDE;
+        }
+
+        span.type {
+            color: #a86aef;
+            display: inline-block;
+            width: 8em;
+        }
+
+        span.index {
+            color: #dec17a;
+            width: 4em;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        div.entry-line {
+            border-color: #3b3b3b;
+            border-width: 1px 0 0 0;
+            border-style: solid;
+            padding: 0.2em;
+        }
+
+        div.entry-line.selected {
+            background-color: #3b3b3b;
+        }
+
+        div.cpool-table { font-size: 1.2em; }
+
+        a {
+            color: #287BDE;
+            text-decoration: none;
+        }
+
+        a.entry-link {
+            color: #dec17a;
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        const classname = '{{classname}}';
+        const implementation = '{{implementation}}';
+        const relUrl = classname + '/' + implementation + '/cpool.html'
+
+        function navigateTo(destClassname) {
+            let dest = window.top.location.href;
+            dest = dest.substr(0, dest.indexOf(relUrl)) + destClassname + '/index.html#try-impl';
+            window.top.location.replace(dest);
+            return true
+        }
+
+        function selectEntry(entryLine) {
+            document.querySelectorAll('div.entry-line').forEach(div => {
+                div.classList.remove('selected');
+            });
+            entryLine.classList.add('selected');
+        }
+
+        function selectEntryById(id) {
+            const entryLine = document.getElmentById(id);
+            selectEntry(entryLine);
+        }
+
+        document.addEventListener('click', (event => {
+            const entryLine = event.target.closest(".entry-line");
+            if (entryLine) {
+                selectEntry(entryLine);
+            }
+        }), true);
+    </script>
+
+
+</head>
+
+<body>
+<div>
+    <h1>Constant Pool View - {{classname}}</h1>
+</div>
+<div class='cpool-table'>
+    {{cpoolEntries}}
+</div>
+
+</body>
+
+</html>

@@ -4,9 +4,6 @@
 
 #include "../tables/ClassfilesTable.h"
 
-#include "Poco/MD5Engine.h"
-#include "Poco/DigestStream.h"
-#include "Poco/StreamCopier.h"
 
 #include <iostream>
 #include <string>

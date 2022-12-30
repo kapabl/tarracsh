@@ -15,7 +15,6 @@
 #include "../tables/FilesTable.h"
 #include "../app/stats/Stats.h"
 #include "../app/stats/ScopedTimer.h"
-#include "../nav/IndexHtmlGen.h"
 
 
 using namespace org::kapa::tarracsh;
@@ -175,11 +174,6 @@ void Analyzer::processJar(const std::string &filename) {
             jar::JarAnalyzerTask jarAnalyzerTask(jarOptions, _results);
             jar::JarProcessor jarProcessor(jarOptions, _results, jarAnalyzerTask);
             jarProcessor.run();
-            //TODO
-            // jar::JarAnalyzeTask jarAnalyzeTask(jarOptions, _results);
-            // jar::JarProcessor jarProcessor(jarOptions, _results, jarAnalyzeTask);
-            // jarProcessor.run();
-            //_results.jarfiles.classfileCount += jarAnalyzer.getClassfileCount();
         }
     });
 }
@@ -255,14 +249,8 @@ void Analyzer::updateDbs() {
 }
 
 void Analyzer::endAnalysis() {
-
     if (!_options.dryRun) {
         updateDbs();
-    }
-
-    if ( _options.printCPoolHtmlNav ) {
-       nav::IndexHtmlGen indexHtmlGen;
-       indexHtmlGen.generate();
     }
 }
 
