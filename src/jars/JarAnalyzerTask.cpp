@@ -31,7 +31,7 @@ void JarAnalyzerTask::parseEntry(const JarEntry &jarEntry) const {
     options.classFilePath = jarEntry.getName();
     options.jarFile = _jarOptions.jarFile;
     readers::MemoryReader reader(jarEntry);
-
+    ++_results.jarfiles.classfiles.count;
     ClassFileAnalyzer classFileAnalyzer(reader, options, _results);
     if (classFileAnalyzer.run()) {
         ++_results.jarfiles.classfiles.parsedCount;

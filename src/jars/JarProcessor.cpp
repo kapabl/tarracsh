@@ -52,7 +52,7 @@ void JarProcessor::run() {
 
         for (auto &entry : entries) {
 
-            if (index % 1000 == 0) {
+            if (index % 100 == 0) {
                 if (_jarOptions.canPrintProgress()) {
                     _results.print(_jarOptions);
                 }
