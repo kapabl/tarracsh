@@ -27,6 +27,8 @@ Global
 		QQuery|x86 = QQuery|x86
 		RCheckOnly|x64 = RCheckOnly|x64
 		RCheckOnly|x86 = RCheckOnly|x86
+		RDigest|x64 = RDigest|x64
+		RDigest|x86 = RDigest|x86
 		Rel2|x64 = Rel2|x64
 		Rel2|x86 = Rel2|x86
 		RelDirMd5|x64 = RelDirMd5|x64
@@ -77,6 +79,10 @@ Global
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.RCheckOnly|x64.Build.0 = RCheckOnly|x64
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.RCheckOnly|x86.ActiveCfg = RCheckOnly|Win32
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.RCheckOnly|x86.Build.0 = RCheckOnly|Win32
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.RDigest|x64.ActiveCfg = RDigest|x64
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.RDigest|x64.Build.0 = RDigest|x64
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.RDigest|x86.ActiveCfg = RDigest|Win32
+		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.RDigest|x86.Build.0 = RDigest|Win32
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Rel2|x64.ActiveCfg = Rel2|x64
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Rel2|x64.Build.0 = Rel2|x64
 		{2A3A1CB3-01D6-41FE-9E4D-9E4FBFA482B6}.Rel2|x86.ActiveCfg = Rel2|Win32

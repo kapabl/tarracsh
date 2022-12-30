@@ -2,6 +2,10 @@
 #include <iostream>
 #include "TarracshApp.h"
 
+#ifndef _DEBUG
+#pragma comment(linker, "/include:__tcmalloc")
+#pragma comment(lib, "libtcmalloc_minimal.lib")
+#endif
 
 using namespace std;
 using namespace std::filesystem;

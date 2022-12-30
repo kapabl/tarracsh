@@ -32,7 +32,7 @@
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'">
-    <LocalDebuggerCommandArguments>parse --html-nav --input=d:\temp\jmod-17\java.base\java\lang\Object.class</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--output-dir=d:\temp\maven\tarracsh\output parse --html-nav --input=d:\temp\maven\guava</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
@@ -62,7 +62,12 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel2|x64'">
-    <LocalDebuggerCommandArguments>parse --html-nav --input=d:\temp\jmod-17\java.base\java\lang\Object</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--output-dir=d:\temp\maven\tarracsh\output parse --html-nav --input=d:\temp\maven\guava</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RDigest|x64'">
+    <LocalDebuggerCommandArguments>--output-dir=d:\temp\tarracsh\output public-digest --input $(TARRACSH_TEST_SUBJECTS_DIR)/jars --rebuild=yes</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
