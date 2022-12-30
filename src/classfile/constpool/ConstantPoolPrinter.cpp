@@ -2,22 +2,15 @@
 #include <vector>
 #include <iostream>
 #include <ostream>
-#include <regex>
-#include <yaml-cpp/yaml.h>
 #include "../utils/StringUtils.h"
 #include "ConstantPoolPrinter.h"
 
 using namespace org::kapa::tarracsh;
 using namespace std;
-// using namespace inja;
 
 
 vector<string> ConstantPoolPrinter::_poolTagToString;
 vector<string> ConstantPoolPrinter::_refKindToString;
-unordered_map<string, inja::Template> ConstantPoolPrinter::_templateFragments;
-
-inja::Environment ConstantPoolPrinter::_environment;
-string ConstantPoolPrinter::_templateType;
 
 
 ConstantPoolPrinter::ConstantPoolPrinter(const ClassFileAnalyzer &classFileAnalyzer)
@@ -43,24 +36,6 @@ void ConstantPoolPrinter::print() {
 }
 
 
-std::string ConstantPoolPrinter::render(const inja::Template &compiledTemplate, const inja::json &json) {
-    const auto result = _environment.render(compiledTemplate, json);
-    // const auto result = inja::Environment().render(compiledTemplate, json);
-    return result;
-}
-
-void ConstantPoolPrinter::readSubTemplates() {
-    auto subTemplates = YAML::LoadFile("sub-templates.yaml");
-    const auto &outputTemplates = subTemplates["templates"][_templateType];
-
-    for (auto it = outputTemplates.begin(); it != outputTemplates.end(); ++it) {
-        auto templateFragment = it->second.as<string>();
-        templateFragment = regex_replace(templateFragment, regex("\\t"), "\t");
-        _templateFragments[it->first.as<string>()] = _environment.parse(templateFragment);
-    }
-}
-
-
 string ConstantPoolPrinter::tagToString(ConstantPoolTag tag) {
     if (tag < _poolTagToString.size()) return _poolTagToString[tag];
     return format("Invalid pool tag:{}", static_cast<unsigned char>(tag));
@@ -72,10 +47,6 @@ string ConstantPoolPrinter::refKindToString(MethodHandleSubtypes tag) {
 }
 
 void ConstantPoolPrinter::printHeader(const ConstPoolBase &entry, int index) {
-    // std::stringstream stream;
-    // stream << index << "\t" << tagToString(entry.tag) << "\t";
-    // _currentLine += stream.str();
-    // _currentLine += std::format("{}\t{}\t", index, tagToString(entry.tag));
     _currentLine += std::to_string(index) + "\t" + tagToString(entry.tag) + "\t";
 }
 
@@ -278,9 +249,6 @@ void ConstantPoolPrinter::initStringMaps() {
     _refKindToString[JVM_REF_invokeInterface] = "REF_invokeInterface";
 }
 
-void ConstantPoolPrinter::init(const string &templateType) {
-    _templateType = templateType;
+void ConstantPoolPrinter::init() {
     initStringMaps();
-    readSubTemplates();
-
 }

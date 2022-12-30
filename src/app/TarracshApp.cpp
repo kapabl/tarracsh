@@ -1,5 +1,5 @@
 #include "TarracshApp.h"
-#include "../classfile/constpool/ConstantPoolPrinter.h"
+#include "../nav/HtmlGen.h"
 #include "../classfile/ClassFileAnalyzer.h"
 #include "Analyzer.h"
 #include "../jars/JarAnalyzerTask.h"
@@ -189,7 +189,10 @@ void TarracshApp::init() const {
     _results.log.init(_options.logFile);
 
     if (isCPoolPrinterNeeded()) {
-        ConstantPoolPrinter::init(_options.printCPoolHtmlNav ? "html" : "console");
+        ConstantPoolPrinter::init();
+        if (_options.printCPoolHtmlNav ) {
+            nav::HtmlGen::init();
+        }
     }
 
 

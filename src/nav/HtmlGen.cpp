@@ -9,11 +9,17 @@ using namespace std;
 // using namespace inja;
 
 
+inja::Template HtmlGen::_cpoolTemplate;
+inja::Template HtmlGen::_implementationsTemplate;
+inja::Environment HtmlGen::_environment;
+
+
 HtmlGen::HtmlGen(const ClassFileAnalyzer &classFileAnalyzer)
     : ConstantPoolPrinter(classFileAnalyzer) {
 
     _mainClassname = classFileAnalyzer.getMainClassname();
     _implementation = filesystem::path(_classFileAnalyzer.getContainingFile()).filename().string();
+    _classRootDir = getClassRootDir();
 }
 
 
@@ -21,25 +27,34 @@ void HtmlGen::printTitle() {
     _currentLine += std::format("Constant Pool for: {}", _mainClassname);
 }
 
-filesystem::path HtmlGen::getClassHtmlIndexFilename() const {
-    const auto dir = filesystem::path(TarracshApp::getOptions().outputDir) /
-                     "nav" /
-                     getNavClassRelDir();
-
-    auto result = dir / "index.html";
+filesystem::path HtmlGen::getClassRootDir() const {
+    auto result = filesystem::path(TarracshApp::getOptions().outputDir) /
+                  "nav" /
+                  getNavClassRelDir();
     return result;
 }
 
-std::string HtmlGen::getImplLinks() {
-    return "TODO impls. links";
+filesystem::path HtmlGen::getClassHtmlIndexFilename() const {
+    auto result = _classRootDir / "index.html";
+    return result;
+}
+
+vector<string> HtmlGen::getImplementations() const {
+    vector<string> result;
+    for (auto const &dirEntry : filesystem::directory_iterator(_classRootDir)) {
+        if (dirEntry.is_directory()) {
+            result.emplace_back(dirEntry.path().filename().string());
+        }
+    }
+    return result;
 }
 
 std::vector<std::string> HtmlGen::renderHtmlClassIndex() {
     vector<string> result;
     inja::json data;
     data["classname"] = _mainClassname;
-    data["implementations"] = getImplLinks();
-    result.emplace_back(render(_templateFragments["index-html"], data));
+    data["implementations"] = getImplementations();
+    result.emplace_back(render(_implementationsTemplate, data));
     return result;
 }
 
@@ -51,6 +66,12 @@ void HtmlGen::mainClassToHtmlIndex() {
 
 string HtmlGen::getNavClassRelDir() const {
     auto result = _mainClassname;
+    return result;
+}
+
+
+std::string HtmlGen::render(const inja::Template& compiledTemplate, const inja::json& json) {
+    const auto result = _environment.render(compiledTemplate, json);
     return result;
 }
 
@@ -71,12 +92,13 @@ vector<string> HtmlGen::renderCPoolHtml(const vector<string> &lines) const {
     inja::json data;
     data["classname"] = _mainClassname;
     data["implementation"] = _implementation;
-    data["cpoolEntries"] = stringUtils::join(lines, string("<br>"));
-    result.emplace_back(render(_templateFragments["cpool-html"], data));
+    data["cpoolEntries"] = stringUtils::join(lines, string("\n"));
+
+    result.emplace_back(render(_cpoolTemplate, data));
     return result;
 }
 
-void HtmlGen::linesToHtmlFile(const vector<string> &lines) {
+void HtmlGen::linesToHtmlFile(const vector<string> &lines) const {
     const auto filename = getHtmlCPoolFilename();
     const auto htmlLines = renderCPoolHtml(lines);
     fsUtils::writeLines(filename.string(), htmlLines);
@@ -90,11 +112,15 @@ void HtmlGen::print() {
         _currentLine.clear();
         printHeader(entry.base, index);
         printEntry(entry, index);
-        lines.emplace_back(_currentLine);
+        lines.emplace_back(std::format("<div id='entry-{}' class='entry-line'>{}</div>", index, _currentLine));
     }
     linesToHtmlFile(lines);
     mainClassToHtmlIndex();
+}
 
+void HtmlGen::init() {
+    _cpoolTemplate = _environment.parse(fsUtils::readFileContent("./cpool-tmpl.html"));
+    _implementationsTemplate = _environment.parse(fsUtils::readFileContent("./impl-index-tmpl.html"));
 }
 
 void HtmlGen::printUtf8Info(const Utf8Info &entry, int index) {
@@ -105,7 +131,7 @@ void HtmlGen::printUtf8Info(const Utf8Info &entry, int index) {
 inline void HtmlGen::printStringInfo(const StringInfo &entry, int index) {
 
     _currentLine += std::format("{} {}",
-                                generateEntryLink( entry.stringIndex ),
+                                generateEntryLink(entry.stringIndex),
                                 _constantPool.getString(entry.stringIndex, true));
 }
 
@@ -131,6 +157,7 @@ std::string HtmlGen::generateLink(const std::string &classname) const {
 }
 
 inline void HtmlGen::printClassInfo(const ClassInfo &entry, int index) {
+
     const auto classname = _constantPool.getClassname(entry.nameIndex);
     _currentLine += std::format("{} <span class='link' onclick='navigateTo(\"{}\")'>{}</span>",
                                 generateEntryLink(entry.nameIndex),
@@ -163,8 +190,8 @@ inline void HtmlGen::printModuleInfo(const ModuleInfo &entry, int index) {
 void HtmlGen::printRefExtraInfo(const MemberInfo &entry) {
     const auto &nameAndTypeInfo = _constantPool[entry.nameAndTypeIndex].nameAndTypeInfo;
 
-    _currentLine += std::format("{}:{} {}: {}:{}", 
-                                generateEntryLink(entry.classIndex), 
+    _currentLine += std::format("{}:{} {}: {}:{}",
+                                generateEntryLink(entry.classIndex),
                                 generateEntryLink(entry.nameAndTypeIndex),
                                 _constantPool.getClassInfoName(entry.classIndex),
                                 _constantPool.getString(nameAndTypeInfo.nameIndex),
@@ -176,16 +203,18 @@ inline void HtmlGen::printInterfaceMethodrefInfo(const InterfaceMethodrefInfo &e
 }
 
 std::string HtmlGen::generateEntryLink(int index) const {
-    auto result = std::format("<a class='entry-link' href='#entry-{}'>{}</a>", index, index);
+    auto result = std::format("<a class='entry-link' href='#entry-{}' onclick='selectEntryById(\"entry-{}\");'>{}</a>", 
+        index, 
+        index, 
+        index);
     return result;
 
 }
 
 inline void HtmlGen::printInvokeDynamicInfo(const InvokeDynamicInfo &entry, int index) {
     const auto &nameAndTypeInfo = _constantPool[entry.nameAndTypeIndex].nameAndTypeInfo;
-
     _currentLine += std::format("Bootstrap MT {}, N&T:{} {}:{}",
-        generateEntryLink(entry.bootstrapMethodAttrIndex),
+                                generateEntryLink(entry.bootstrapMethodAttrIndex),
                                 generateEntryLink(entry.nameAndTypeIndex),
                                 _constantPool.getString(nameAndTypeInfo.nameIndex),
                                 _constantPool.getString(nameAndTypeInfo.descriptorIndex));
@@ -201,10 +230,7 @@ inline void HtmlGen::printNameAndTypeInfo(const NameAndTypeInfo &entry, int inde
 }
 
 void HtmlGen::printHeader(const ConstPoolBase &entry, int index) {
-    //_currentLine += std::to_string(index) + "\t" + tagToString(entry.tag) + "\t";
-    _currentLine += std::format("<span id='entry-{}' class='index'>{}</span><span class='type'>{}</span>",
-                                index,
+    _currentLine += std::format("<span class='index'>{}</span><span class='type'>{}</span>",
                                 index,
                                 tagToString(entry.tag));
 }
-

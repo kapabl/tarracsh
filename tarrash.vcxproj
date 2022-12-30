@@ -841,7 +841,6 @@
     <ClCompile Include="src\jars\JarGraphTask.cpp" />
     <ClCompile Include="src\jars\JarProcessor.cpp" />
     <ClCompile Include="src\nav\HtmlGen.cpp" />
-    <ClCompile Include="src\nav\IndexHtmlGen.cpp" />
     <ClCompile Include="src\tables\CallGraphDb.cpp" />
     <ClCompile Include="src\tables\ClassfilesTable.cpp" />
     <ClCompile Include="src\tables\Database.cpp" />
@@ -901,7 +900,6 @@
     <ClInclude Include="src\jars\JarProcessor.h" />
     <ClInclude Include="src\jars\JarTask.h" />
     <ClInclude Include="src\nav\HtmlGen.h" />
-    <ClInclude Include="src\nav\IndexHtmlGen.h" />
     <ClInclude Include="src\tables\CallGraphDb.h" />
     <ClInclude Include="src\tables\ClassfilesTable.h" />
     <ClInclude Include="src\tables\columns\Columns.h" />
@@ -940,6 +938,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <CopyFileToFolders Include="src\resources\constant-pool\impl-index-tmpl.html">
+      <DeploymentContent>true</DeploymentContent>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'">false</ExcludedFromBuild>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="src\resources\constant-pool\cpool-tmpl.html">
+      <DeploymentContent>true</DeploymentContent>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'">false</ExcludedFromBuild>
+    </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
