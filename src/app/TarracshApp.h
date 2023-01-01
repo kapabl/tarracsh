@@ -45,8 +45,7 @@ private:
     int parseCli(int argc, char **argv);
 #ifdef _WIN32
     static void prepareConsoleForVT100();
-    void initCPoolPrinter() const;
-    static void prepareForUTF8();
+    static void prepareConsoleForUTF8();
 #endif
     static stats::Results _results;
 

@@ -7,9 +7,9 @@
 
 
 namespace org::kapa::tarracsh::jar {
-class JarAnalyzerTask: public JarTask {
+class JarParserTask: public JarTask {
 public:
-    explicit JarAnalyzerTask(
+    explicit JarParserTask(
         Options jarOptions, stats::Results& results );
 
     void processEntry(const JarEntry& jarEntry, std::mutex& taskMutex) override;

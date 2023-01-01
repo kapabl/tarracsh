@@ -146,7 +146,7 @@ optional<tables::columns::DigestCol> JarGraphTask::parseEntry(const JarEntry &ja
     readers::MemoryReader reader(jarEntry);
 
     ClassFileAnalyzer classFileAnalyzer(reader, classfileOptions, _results);
-    if (classFileAnalyzer.run()) {
+    if (classFileAnalyzer.analyze()) {
         const ClassFileDigest classFileDigest(classFileAnalyzer);
         result = classFileDigest.digest();
 

@@ -28,25 +28,22 @@ public:
     [[nodiscard]] bool isValid() const { return _reader.isValid(); }
 
     ~ClassFileAnalyzer() = default;
-    bool run();
-    std::optional<db::tables::columns::DigestCol> getPublicDigest();
-    attributes::AttributesManager &getAttributesManager() { return _attributesManager; }
-    accessModifiers::AccessModifiers &getAccessModifiers() { return _accessModifiers; }
-    ConstantPool &getConstantPool() { return _constantPool; }
+    [[nodiscard]] bool analyze();
+    [[nodiscard]] std::optional<db::tables::columns::DigestCol> getPublicDigest();
+    [[nodiscard]] attributes::AttributesManager &getAttributesManager() { return _attributesManager; }
+    [[nodiscard]] accessModifiers::AccessModifiers &getAccessModifiers() { return _accessModifiers; }
+    [[nodiscard]] ConstantPool &getConstantPool() { return _constantPool; }
     [[nodiscard]] const ConstantPool &getConstantPool() const { return _constantPool; }
-    std::vector<MethodInfo> &getMethods() { return _methods; }
-    std::vector<u2> &getInterfaces() { return _interfaces; }
-    MainClassInfo &getMainClassInfo() { return _mainClassInfo; }
-    std::vector<attributes::AttributeInfo> &getAttributes() { return _attributes; }
-    std::vector<FieldInfo> &getFields() { return _fields; }
+    [[nodiscard]] std::vector<MethodInfo> &getMethods() { return _methods; }
+    [[nodiscard]] std::vector<u2> &getInterfaces() { return _interfaces; }
+    [[nodiscard]] MainClassInfo &getMainClassInfo() { return _mainClassInfo; }
+    [[nodiscard]] std::vector<attributes::AttributeInfo> &getAttributes() { return _attributes; }
+    [[nodiscard]] std::vector<FieldInfo> &getFields() { return _fields; }
 
-    [[nodiscard]] std::string getMainClassname() const {
-        std::string result = _constantPool.getClassInfoName(_mainClassInfo.thisClass);
-        return result;
-    }
+    [[nodiscard]] std::string getMainClassname() const;
 
     Options& getOptions() { return _options; }
-    std::string getContainingFile() const;
+    [[nodiscard]] std::string getContainingFile() const;
 
 private:
     Options _options;
@@ -62,6 +59,8 @@ private:
 
     attributes::AttributesManager _attributesManager;
     accessModifiers::AccessModifiers _accessModifiers;
+
+    bool internalAnalyze();
 
     void initialize();
     void readConstPoolEntry(int &index);

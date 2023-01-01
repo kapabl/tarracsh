@@ -26,8 +26,8 @@ void ConstantPoolPrinter::printTitle() {
 void ConstantPoolPrinter::print() {
     printTitle();
     cout << _currentLine << endl;
-    for (u2 index = 1u; index < _constantPool.getPoolSize(); index++) {
-        const auto &entry = _constantPool[index];
+    for (u2 index = 1u; index < _constantPool.getPoolSize(); index = _constantPool.getNextIndex(index)) {
+        const auto &entry = _constantPool.getEntry(index);
         _currentLine.clear();
         printHeader(entry.base, index);
         printEntry(entry, index);
@@ -94,7 +94,7 @@ inline void ConstantPoolPrinter::printMethodHandleInfo(const MethodHandleInfo &e
 }
 
 inline void ConstantPoolPrinter::printMethodTypeInfo(const MethodTypeInfo &entry, int index) {
-    _currentLine += _constantPool[entry.descriptorIndex].utf8Info.getAsUtf8();
+    _currentLine += _constantPool.getEntry(entry.descriptorIndex).utf8Info.getAsUtf8();
 }
 
 inline void ConstantPoolPrinter::printFieldrefInfo(const FieldrefInfo &entry, int index) {
@@ -102,11 +102,11 @@ inline void ConstantPoolPrinter::printFieldrefInfo(const FieldrefInfo &entry, in
 }
 
 inline void ConstantPoolPrinter::printModuleInfo(const ModuleInfo &entry, int index) {
-    _currentLine += _constantPool[entry.nameIndex].utf8Info.getAsUtf8();
+    _currentLine += _constantPool.getEntry(entry.nameIndex).utf8Info.getAsUtf8();
 }
 
 void ConstantPoolPrinter::printRefExtraInfo(const MemberInfo &entry) {
-    const auto &nameAndTypeInfo = _constantPool[entry.nameAndTypeIndex].nameAndTypeInfo;
+    const auto &nameAndTypeInfo = _constantPool.getEntry(entry.nameAndTypeIndex).nameAndTypeInfo;
 
     _currentLine += std::format("{}:{} {}: {}:{}", entry.classIndex, entry.nameAndTypeIndex,
                                 _constantPool.getClassInfoName(entry.classIndex),
@@ -119,7 +119,7 @@ inline void ConstantPoolPrinter::printInterfaceMethodrefInfo(const InterfaceMeth
 }
 
 inline void ConstantPoolPrinter::printInvokeDynamicInfo(const InvokeDynamicInfo &entry, int index) {
-    const auto &nameAndTypeInfo = _constantPool[entry.nameAndTypeIndex].nameAndTypeInfo;
+    const auto &nameAndTypeInfo = _constantPool.getEntry(entry.nameAndTypeIndex).nameAndTypeInfo;
 
     _currentLine += std::format("Bootstrap MT idx:{},N&T:{} {}:{}",
                                 entry.bootstrapMethodAttrIndex,

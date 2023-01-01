@@ -1,5 +1,28 @@
 
+12-29-2022
+Using TCMalloc from google gpertools library
+===========================================================
+classfiles: 570863 jars: 490
 
+classfiles:
+        No        Ok     Error
+     90940     90940         0
+jars:
+        No        Ok     Error
+       490       490         0
+standalone classfile digest:
+        No       New      Same      Diff Unchanged
+     90940     90940         0         0         0
+jar digest:
+        No       New      Same      Diff Unchanged
+       490       490         0         0         0
+classfile inside jars digest:
+        No       New      Same      Diff Unchanged
+    479923    479075         9       839         0
+
+classfiles: 569754:L
+speed: 77412.23 classfile/s
+total time: 7360ms
 
 
 Eliminating use of std::wstring and keeping it all as utf-8
@@ -122,3 +145,14 @@ total classfiles: 570774
 total time: 229s
 
 =============================
+
+
+Long files names in Windows 10
+==============================
+The solution that worked for me was to edit the registry key to enable long path behaviour, setting the value to 1. This is a new opt-in feature for Windows 10
+
+HKLM\SYSTEM\CurrentControlSet\Control\FileSystem LongPathsEnabled (Type: REG_DWORD)
+
+https://stackoverflow.com/questions/8745215/best-way-to-resolve-file-path-too-long-exception
+
+https://learn.microsoft.com/windows/desktop/FileIO/naming-a-file#maximum-path-length-limitation

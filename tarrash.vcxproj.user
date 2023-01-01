@@ -13,11 +13,11 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbDirMd5|x64'">
-    <LocalDebuggerCommandArguments>--dir D:\temp\reti\test-subjects\app --public-digest=yes --rebuild=no</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--output-dir=d:\temp\tarracsh\output parse --html-nav --input D:\temp\reti\test-subjects\jars\com\intellij\ide\g\</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbJarDirMd5|x64'">
-    <LocalDebuggerCommandArguments>public-digest --input $(TARRACSH_TEST_SUBJECTS_DIR)/jars --rebuild=yes</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--output-dir=d:\temp\tarracsh\output public-digest --input D:\temp\reti\test-subjects\jars\ --rebuild=yes</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
@@ -62,7 +62,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel2|x64'">
-    <LocalDebuggerCommandArguments>--output-dir=d:\temp\maven\tarracsh\output parse --html-nav --input=d:\temp\maven\guava</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--output-dir=d:\temp\tarracsh\output public-digest --input D:\temp\reti\test-subjects\jars\ --rebuild=yes</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>

@@ -2,7 +2,7 @@
 #include "../nav/HtmlGen.h"
 #include "../classfile/ClassFileAnalyzer.h"
 #include "Analyzer.h"
-#include "../jars/JarAnalyzerTask.h"
+#include "../jars/JarParserTask.h"
 #include "../tables/Query.h"
 
 #ifdef _WIN32
@@ -159,7 +159,7 @@ int TarracshApp::parseCli(int argc, char **argv) {
 }
 
 #ifdef _WIN32
-void TarracshApp::prepareForUTF8() {
+void TarracshApp::prepareConsoleForUTF8() {
     SetConsoleOutputCP(CP_UTF8);
     setvbuf(stdout, nullptr, _IOFBF, 1000);
 }
@@ -182,7 +182,7 @@ void TarracshApp::init() const {
 
 #ifdef _WIN32
     prepareConsoleForVT100();
-    prepareForUTF8();
+    prepareConsoleForUTF8();
 #endif
 
     fsUtils::ensureDir(_options.outputDir);

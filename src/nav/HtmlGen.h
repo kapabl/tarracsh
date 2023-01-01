@@ -39,6 +39,7 @@ private:
     std::string _mainClassname;
     std::string _implementation;
     std::filesystem::path _classRootDir;
+    std::filesystem::path _classRelDir;
     static inja::Template _implementationsTemplate;
     static inja::Template _cpoolTemplate;
     static inja::Environment _environment;
@@ -53,7 +54,6 @@ private:
     [[nodiscard]] std::vector<std::string> getImplementations() const;
     [[nodiscard]] std::vector<std::string> renderHtmlClassIndex();
     void mainClassToHtmlIndex();
-    [[nodiscard]] std::string getNavClassRelDir() const;
     [[nodiscard]] std::filesystem::path getHtmlCPoolFilename() const;
     [[nodiscard]] std::vector<std::string> renderCPoolHtml(const std::vector<std::string>& lines) const;
     void linesToHtmlFile(const std::vector<std::string>& lines) const;
