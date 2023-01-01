@@ -19,6 +19,7 @@ HtmlGen::HtmlGen(const ClassFileAnalyzer &classFileAnalyzer)
 
     _mainClassname = classFileAnalyzer.getMainClassname();
     _implementation = filesystem::path(_classFileAnalyzer.getContainingFile()).filename().string();
+    _classRelDir = fsUtils::classnameToPath(_mainClassname);
     _classRootDir = getClassRootDir();
 }
 
@@ -30,7 +31,7 @@ void HtmlGen::printTitle() {
 filesystem::path HtmlGen::getClassRootDir() const {
     auto result = filesystem::path(TarracshApp::getOptions().outputDir) /
                   "nav" /
-                  getNavClassRelDir();
+        _classRelDir;
     return result;
 }
 
@@ -64,11 +65,6 @@ void HtmlGen::mainClassToHtmlIndex() {
     fsUtils::writeLines(filename.string(), htmlLines);
 }
 
-string HtmlGen::getNavClassRelDir() const {
-    auto result = _mainClassname;
-    return result;
-}
-
 
 std::string HtmlGen::render(const inja::Template& compiledTemplate, const inja::json& json) {
     const auto result = _environment.render(compiledTemplate, json);
@@ -78,7 +74,7 @@ std::string HtmlGen::render(const inja::Template& compiledTemplate, const inja::
 filesystem::path HtmlGen::getHtmlCPoolFilename() const {
     const auto dir = filesystem::path(TarracshApp::getOptions().outputDir) /
                      "nav" /
-                     getNavClassRelDir() /
+                      _classRelDir /
                      _implementation;
 
     fsUtils::ensureDir(dir);
@@ -107,8 +103,8 @@ void HtmlGen::linesToHtmlFile(const vector<string> &lines) const {
 void HtmlGen::print() {
     vector<string> lines;
 
-    for (u2 index = 1u; index < _constantPool.getPoolSize(); index++) {
-        const auto &entry = _constantPool[index];
+    for (u2 index = 1u; index < _constantPool.getPoolSize(); index = _constantPool.getNextIndex(index)) {
+        const auto &entry = _constantPool.getEntry(index);
         _currentLine.clear();
         printHeader(entry.base, index);
         printEntry(entry, index);
@@ -176,7 +172,7 @@ inline void HtmlGen::printMethodHandleInfo(const MethodHandleInfo &entry, int in
 }
 
 inline void HtmlGen::printMethodTypeInfo(const MethodTypeInfo &entry, int index) {
-    _currentLine += _constantPool[entry.descriptorIndex].utf8Info.getAsUtf8();
+    _currentLine += _constantPool.getEntry(entry.descriptorIndex).utf8Info.getAsUtf8();
 }
 
 inline void HtmlGen::printFieldrefInfo(const FieldrefInfo &entry, int index) {
@@ -184,11 +180,11 @@ inline void HtmlGen::printFieldrefInfo(const FieldrefInfo &entry, int index) {
 }
 
 inline void HtmlGen::printModuleInfo(const ModuleInfo &entry, int index) {
-    _currentLine += _constantPool[entry.nameIndex].utf8Info.getAsUtf8();
+    _currentLine += _constantPool.getEntry(entry.nameIndex).utf8Info.getAsUtf8();
 }
 
 void HtmlGen::printRefExtraInfo(const MemberInfo &entry) {
-    const auto &nameAndTypeInfo = _constantPool[entry.nameAndTypeIndex].nameAndTypeInfo;
+    const auto &nameAndTypeInfo = _constantPool.getEntry(entry.nameAndTypeIndex).nameAndTypeInfo;
 
     _currentLine += std::format("{}:{} {}: {}:{}",
                                 generateEntryLink(entry.classIndex),
@@ -212,7 +208,7 @@ std::string HtmlGen::generateEntryLink(int index) const {
 }
 
 inline void HtmlGen::printInvokeDynamicInfo(const InvokeDynamicInfo &entry, int index) {
-    const auto &nameAndTypeInfo = _constantPool[entry.nameAndTypeIndex].nameAndTypeInfo;
+    const auto &nameAndTypeInfo = _constantPool.getEntry(entry.nameAndTypeIndex).nameAndTypeInfo;
     _currentLine += std::format("Bootstrap MT {}, N&T:{} {}:{}",
                                 generateEntryLink(entry.bootstrapMethodAttrIndex),
                                 generateEntryLink(entry.nameAndTypeIndex),
