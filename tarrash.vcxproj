@@ -784,6 +784,11 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link />
+    <Link>
+      <ImportLibrary>
+      </ImportLibrary>
+      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DCheckOnly|x64'">
     <ClCompile>
@@ -888,7 +893,7 @@
     <ClCompile Include="src\classfile\signatures\rules\Rule.cpp" />
     <ClCompile Include="src\classfile\signatures\rules\Terminal.cpp" />
     <ClCompile Include="src\classfile\signatures\SignatureParser.cpp" />
-    <ClCompile Include="src\jars\JarAnalyzerTask.cpp" />
+    <ClCompile Include="src\jars\JarParserTask.cpp" />
     <ClCompile Include="src\jars\JarDigestTask.cpp" />
     <ClCompile Include="src\jars\JarGraphTask.cpp" />
     <ClCompile Include="src\jars\JarProcessor.cpp" />
@@ -945,7 +950,7 @@
     <ClInclude Include="src\classfile\tables\FilesTable.h" />
     <ClInclude Include="src\classfile\tables\StringPool.h" />
     <ClInclude Include="src\classfile\tables\Table.h" />
-    <ClInclude Include="src\jars\JarAnalyzerTask.h" />
+    <ClInclude Include="src\jars\JarParserTask.h" />
     <ClInclude Include="src\jars\JarDigestTask.h" />
     <ClInclude Include="src\jars\JarEntry.h" />
     <ClInclude Include="src\jars\JarGraphTask.h" />
