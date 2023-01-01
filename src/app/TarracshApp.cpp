@@ -151,6 +151,11 @@ int TarracshApp::parseCli(int argc, char **argv) {
             result = 1;
         }
 
+        if ( _options.logFile.empty()) {
+            const auto logFile = std::filesystem::path(_options.outputDir) / "output.log";
+            _options.logFile = logFile.string();
+        }
+
     } catch (const CLI::ParseError &e) {
         result = exit(e);
     }

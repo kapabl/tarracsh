@@ -56,7 +56,7 @@ struct Results {
 
     void print(const Options &options) const;
     void forcePrint(const Options &options) const;
-    void printAll(const Options &options) const;
+    void printAll(const Options &options);
 
     mutable std::chrono::time_point<std::chrono::steady_clock> lastPrint{std::chrono::high_resolution_clock::now()};
 

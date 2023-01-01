@@ -36,7 +36,7 @@ void Results::forcePrint(const Options &options) const {
     std::cout << std::flush;
 }
 
-void Results::printAll(const Options &options) const {
+void Results::printAll(const Options &options) {
 
     std::cout << std::endl << std::endl;
     std::cout << "classfiles:" << std::endl << std::right
@@ -106,12 +106,11 @@ void Results::printAll(const Options &options) const {
 
     long long totalClassfiles = classfiles.count + jarfiles.classfileCount;
     const auto totalTime = profileData->analyzerTime.count();
-    std::cout << std::endl << std::format("classfiles: {}:L", totalClassfiles) << std::endl;
-
-    std::cout << std::format("speed: {:.2f} classfile/s",
-                                          1000.0 * totalClassfiles / totalTime) << std::endl;
-
-    std::cout << std::format("total time: {}", profileData->analyzerTime) << std::endl;
+    std::cout << std::endl;
+    log.writeln(std::format("classfiles: {:L}", totalClassfiles), true);
+    log.writeln(std::format("speed: {:.2f} classfile/s",
+        1000.0 * totalClassfiles / totalTime), true);
+    log.writeln(std::format("total time: {}", profileData->analyzerTime), true);
 
     std::cout << "\r" << std::flush;
 }

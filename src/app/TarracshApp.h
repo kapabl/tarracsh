@@ -21,7 +21,7 @@ public:
     static Options &getOptions() { return _options; }
 
     static void logln(const std::string &msg, const bool doStdout = false) {
-        _results.log.writeln(msg);
+        _results.log.writeln(msg, doStdout );
         if (doStdout) {
             std::cout << msg << std::endl;
         }
