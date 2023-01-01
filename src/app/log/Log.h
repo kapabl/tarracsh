@@ -14,10 +14,10 @@ class Log {
 public:
     Log() = default;
 
-    void write(const std::string &value);
-    void writeln(const std::string &value);
+    void write(const std::string &value, bool doStdout = false);
+    void writeln(const std::string &value, bool doStdout = false);
     void setFile(std::string logFile);
-    void init(const std::string logFile);
+    void init(const std::string &logFile);
     static void emptyLogFile(const std::string &file);
 
 private:

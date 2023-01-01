@@ -22,7 +22,7 @@ struct Options {
     bool dryRun{false};
     bool doDiffReport{true};
     bool printDiffReport{false};
-    std::string logFile{outputDir + "/result.log"};
+    std::string logFile;
     int workers{4};
     bool useFileTimestamp{true};
     bool pause{false};
