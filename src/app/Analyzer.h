@@ -44,15 +44,17 @@ private:
 
     bool _isValid{true};
 
-    bool initDb(db::Database &db);
+    bool initDb(db::Database &db) const;
     void processFile(const std::filesystem::directory_entry &dirEntry);
     bool initAnalyzer();
-    void processDir();
-    void analyze();
+    void processDirInput();
+    void processJarInput();
+    void processClassfileInput();
+    void analyzeInput();
     void updateDbs();
     void endAnalysis();
 
-    void analyze(const std::string& filename) const;
+    void analyzeClassfile(const std::string& filename) const;
     bool isFileUnchanged(uintmax_t size, long long timestamp, const db::tables::FileRow *row) const;
     void updateDbInMemory(const ClassFileInfo &classFileInfo, const ClassFileAnalyzer &classFileAnalyzer,
                           const db::tables::columns::DigestCol &digest);

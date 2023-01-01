@@ -30,6 +30,7 @@ private:
 
     ClassFileAnalyzer& _classFileAnalyzer;
     ConstantPool& _constantPool;
+    static std::vector<unsigned char> _emptyDigestVector;
     [[nodiscard]] std::vector<unsigned char> digestClassInfo(u2 classInfoIndex) const;
     [[nodiscard]] std::vector<unsigned char> digestUtf8Entry(u2 index) const;
 

@@ -148,15 +148,15 @@ void JarDigestTask::updateClassfileTableInMemory(const JarEntry &jarEntry, const
 
 optional<tables::columns::DigestCol> JarDigestTask::digestEntry(const DigestEntryInfo& digestEntryInfo,
                                                                 const tables::ClassfileRow *row) const {
-    optional<tables::columns::DigestCol> result;
-
     const auto& jarEntry = digestEntryInfo.jarEntry;
     Options options(_options);
     options.classFilePath = jarEntry.getName();
     readers::MemoryReader reader(jarEntry);
     ClassFileAnalyzer classFileAnalyzer(reader, options, _results);
 
-    if (classFileAnalyzer.run()) {
+    auto result = classFileAnalyzer.getPublicDigest();
+
+    if (result.has_value()) {
         const ClassFileDigest classFileDigest(classFileAnalyzer);
         result = classFileDigest.digest();
 

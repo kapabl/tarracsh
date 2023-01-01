@@ -28,15 +28,23 @@ ClassFileAnalyzer::ClassFileAnalyzer(readers::ClassFileReader &reader, Options &
 }
 
 
-bool ClassFileAnalyzer::run() {
+bool ClassFileAnalyzer::analyze() {
+
+    const auto result = internalAnalyze();
+
+    if (result && _options.printClassParse) {
+        ParserOutput parserOutput(*this);
+        parserOutput.run();
+    }
+
+    return result;
+}
+
+bool ClassFileAnalyzer::internalAnalyze() {
 
     auto result = true;
     try {
         processFile();
-        if (_options.printClassParse) {
-            ParserOutput parserOutput(*this);
-            parserOutput.run();
-        }
     } catch (const runtime_error &runtimeException) {
         result = false;
         const auto errorMessage = format("Error parsing file: {}, msg:{}", _options.classFilePath,
@@ -54,10 +62,15 @@ bool ClassFileAnalyzer::run() {
 
 optional<db::tables::columns::DigestCol> ClassFileAnalyzer::getPublicDigest() {
     optional<db::tables::columns::DigestCol> result;
-    if (run()) {
+    if (internalAnalyze()) {
         const ClassFileDigest classFileDigest(*this);
         result = classFileDigest.digest();
     }
+    return result;
+}
+
+std::string ClassFileAnalyzer::getMainClassname() const {
+    std::string result = _constantPool.getClassInfoName(_mainClassInfo.thisClass);
     return result;
 }
 
@@ -79,20 +92,7 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
 
     switch (tag) {
         case JVM_CONSTANT_Utf8: {
-            const u2 length = _reader.readU2();
-            // const auto recordSize = length + sizeof(Utf8Info);
-            // Utf8Info &utf8Info = *static_cast<Utf8Info *>(alloca(recordSize));
-            // utf8Info.tag = tag;
-            // utf8Info.length = length;
-            // const auto data = reinterpret_cast<u1 *>(utf8Info.bytes);
-            // _reader.readRaw(*data, utf8Info.length);
-            // utf8Info.bytes[length] = 0;
-            // _constantPool.addRecord(utf8Info, static_cast<int>(recordSize));
-
-            _constantPool.addUtf8Record(length, _reader);
-
-            //free(&utf8Info);
-
+            _constantPool.addUtf8Record(_reader);
             break;
         }
 
@@ -215,13 +215,13 @@ void ClassFileAnalyzer::readConstPoolEntry(int &index) {
 
 void ClassFileAnalyzer::readConstantsPool() {
     const u2 count = _reader.readU2();
-    _constantPool.setCount(count);
+    // _constantPool.setCount(count);
     int index = 1;
     while (index < count) {
         readConstPoolEntry(index);
         index++;
     }
-    _constantPool.relocate();
+    // _constantPool.relocate();
 }
 
 void ClassFileAnalyzer::readMainClassInfo() {

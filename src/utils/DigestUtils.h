@@ -18,7 +18,6 @@
 namespace org::kapa::tarracsh::digestUtils {
 
 typedef std::vector<unsigned char> DigestVector;
-//typedef std::vector<unsigned char> DigestBuffer;
 
 struct DigestBuffer : std::vector<unsigned char> {
 

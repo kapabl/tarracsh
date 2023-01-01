@@ -51,7 +51,7 @@ public:
 
     [[nodiscard]] auto getType(const AttributeInfo& attribute) const {
 
-        const auto tagName = _constantPool[attribute.nameIndex].utf8Info.getAsUtf8();
+        const auto tagName = _constantPool.getEntry(attribute.nameIndex).utf8Info.getAsUtf8();
         const auto result = getTag(tagName);
       
         return result;
@@ -67,7 +67,7 @@ public:
         auto _this = const_cast<AttributesManager *>(this);
         std::string result = (it != _tags2ToStringFunc.end())
                                   ? (_this->*(it->second))(const_cast<AttributeInfo &>(attribute))
-                                  : (std::format("Invalid Attribute:{} ", _constantPool[attribute.nameIndex].utf8Info.getAsUtf8()));
+                                  : (std::format("Invalid Attribute:{} ", _constantPool.getEntry(attribute.nameIndex).utf8Info.getAsUtf8()));
 
         return result;
     }
@@ -95,7 +95,7 @@ private:
 
         ConstantValue constantValue{{attribute.nameIndex, attribute.length}, reader.readU2(), {}};
 
-        auto &constantValueEntry = _constantPool[constantValue.constantValueIndex].base;
+        auto &constantValueEntry = _constantPool.getEntry(constantValue.constantValueIndex).base;
 
         switch (constantValueEntry.tag) {
 
@@ -153,7 +153,7 @@ private:
 
     START_ATTR_TO_STRING(SourceFile)
         const SourceFile sourceFile{{attribute.nameIndex, attribute.length}, reader.readU2()};
-        result += ": " + _constantPool[sourceFile.sourceFileIndex].utf8Info.getAsUtf8();
+        result += ": " + _constantPool.getEntry(sourceFile.sourceFileIndex).utf8Info.getAsUtf8();
     END_ATTR_TO_STRING()
 
     std::string innerClassToString(InnerClasses &innerClasses, readers::VectorReader &reader,

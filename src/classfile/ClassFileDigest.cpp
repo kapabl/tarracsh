@@ -5,6 +5,9 @@ using namespace attributes;
 using namespace digestUtils;
 using namespace std;
 
+
+std::vector<unsigned char> ClassFileDigest::_emptyDigestVector(DIGEST_LENGTH, 0);
+
 ClassFileDigest::ClassFileDigest(ClassFileAnalyzer &classFileAnalyzer)
     : _classFileAnalyzer(classFileAnalyzer),
       _constantPool(classFileAnalyzer.getConstantPool()) {
@@ -12,14 +15,18 @@ ClassFileDigest::ClassFileDigest(ClassFileAnalyzer &classFileAnalyzer)
 
 
 DigestVector ClassFileDigest::digestUtf8Entry(u2 index) const {
-    const auto &utf8Info = _constantPool[index].utf8Info;
+    const auto &utf8Info = _constantPool.getEntry(index).utf8Info;
     auto result = digestUtils::digest(reinterpret_cast<const char *>(utf8Info.bytes), utf8Info.length);
     return result;
 }
 
 DigestVector ClassFileDigest::digestClassInfo(u2 classInfoIndex) const {
-    const auto &classInfo = _constantPool[classInfoIndex].classInfo;
+    if (classInfoIndex == 0) {
+        return _emptyDigestVector;
+    }
+    const auto &classInfo = _constantPool.getEntry(classInfoIndex).classInfo;
     auto result = digestUtf8Entry(classInfo.nameIndex);
+
     return result;
 }
 
@@ -32,8 +39,8 @@ DigestVector ClassFileDigest::digestAttributes(
     const vector<AttributeInfo> &attributeInfos) const {
     set<DigestVector> digests;
     for (auto &attributeInfo : attributeInfos) {
-        const auto attributeName = _constantPool[attributeInfo.nameIndex].utf8Info.getAsUtf8();
-        if (attributeName == CODE ) {
+        const auto attributeName = _constantPool.getEntry(attributeInfo.nameIndex).utf8Info.getAsUtf8();
+        if (attributeName == CODE) {
             continue;
         }
         if (!attributeInfo.info.empty()) {
@@ -77,7 +84,7 @@ DigestVector ClassFileDigest::digestField(const FieldInfo &fieldInfo) const {
     buffer.append(digestUtf8Entry(fieldInfo.nameIndex))
           .append(digestAttributes(fieldInfo.attributes))
           .append(digestAttributes(fieldInfo.attributes))
-          .append(_constantPool[fieldInfo.descriptorIndex].utf8Info.bytes)
+          .append(_constantPool.getEntry(fieldInfo.descriptorIndex).utf8Info.bytes)
           .append(fieldInfo.accessFlags);
 
     auto result = digestUtils::digest(buffer);
@@ -97,8 +104,8 @@ DigestVector ClassFileDigest::digestInterfaces() const {
 
 DigestVector ClassFileDigest::digestInterface(const u2 interfaceIndex) const {
     DigestBuffer buffer;
-    const auto &classInfo = _constantPool[interfaceIndex].classInfo;
-    buffer.append(_constantPool[classInfo.nameIndex].utf8Info.bytes);
+    const auto &classInfo = _constantPool.getEntry(interfaceIndex).classInfo;
+    buffer.append(_constantPool.getEntry(classInfo.nameIndex).utf8Info.bytes);
     auto result = digestUtils::digest(buffer);
     return result;
 }
@@ -108,7 +115,7 @@ DigestVector ClassFileDigest::digestMethod(const MethodInfo &methodInfo) const {
     buffer.reserve(DIGEST_LENGTH * 3 + 256);
     buffer.append(digestUtf8Entry(methodInfo.nameIndex))
           .append(digestAttributes(methodInfo.attributes))
-          .append(_constantPool[methodInfo.descriptorIndex].utf8Info.bytes)
+          .append(_constantPool.getEntry(methodInfo.descriptorIndex).utf8Info.bytes)
           .append(methodInfo.accessFlags);
 
     auto result = digestUtils::digest(buffer);

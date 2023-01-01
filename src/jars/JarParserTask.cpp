@@ -1,4 +1,4 @@
-#include "JarAnalyzerTask.h"
+#include "JarParserTask.h"
 
 
 #include <libzippp/libzippp.h>
@@ -17,35 +17,35 @@ using namespace jar;
 using namespace std;
 
 
-JarAnalyzerTask::JarAnalyzerTask(Options jarOptions, Results &results)
+JarParserTask::JarParserTask(Options jarOptions, Results &results)
     : _results(results),
       _jarOptions(std::move(jarOptions)) {
 }
 
-bool JarAnalyzerTask::start() {
+bool JarParserTask::start() {
     return true;
 }
 
-void JarAnalyzerTask::parseEntry(const JarEntry &jarEntry) const {
+void JarParserTask::parseEntry(const JarEntry &jarEntry) const {
     Options options(_jarOptions);
     options.classFilePath = jarEntry.getName();
     options.jarFile = _jarOptions.jarFile;
     readers::MemoryReader reader(jarEntry);
     ++_results.jarfiles.classfiles.count;
     ClassFileAnalyzer classFileAnalyzer(reader, options, _results);
-    if (classFileAnalyzer.run()) {
+    if (classFileAnalyzer.analyze()) {
         ++_results.jarfiles.classfiles.parsedCount;
     } else {
         ++_results.jarfiles.classfiles.errors;
     }
 }
 
-void JarAnalyzerTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
+void JarParserTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
     parseEntry(jarEntry);
 }
 
 
-void JarAnalyzerTask::end() {
+void JarParserTask::end() {
     // ++_results.jarfiles.digest.count;
     // _results.jarfiles.classfileCount += _jarFileRow->classfileCount;
     //

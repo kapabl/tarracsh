@@ -15,49 +15,89 @@ using namespace org::kapa::tarracsh;
 using namespace std;
 
 void ConstantPool::addEmptyIndex() {
-    _constantPoolIndex.push_back(
-        reinterpret_cast<ConstantPoolRecord *>(_position));
+    // _constantPoolIndex.push_back(
+    //     reinterpret_cast<ConstantPoolRecord *>(_position));
+    _constantPoolIndex.push_back(nullptr);
 }
 
-void ConstantPool::addUtf8Record(const u2 length, readers::ClassFileReader &reader) {
-    Utf8Info utf8Info{};
-    utf8Info.tag = JVM_CONSTANT_Utf8;
-    utf8Info.length = length;
-    addRecord(utf8Info, sizeof(utf8Info.tag) + sizeof(utf8Info.length));
+// void ConstantPool::addUtf8Record(const u2 length, readers::ClassFileReader &reader) {
+//     ConstantPoolRecord record{};
+//     // record.Utf8Info utf8Info{};
+//     record.utf8Info.tag = JVM_CONSTANT_Utf8;
+//     record.utf8Info.length = length;
+//     addRecord(record, sizeof(record.utf8Info.tag) + sizeof(record.utf8Info.length));
+//
+//     reserve(length + 1);
+//     reader.readRaw(_buffer[_position], length);
+//     _position += length;
+//
+//     _buffer[_position] = 0;
+//     _position++;
+// }
 
-    reserve(length + 1);
-    reader.readRaw(_buffer[_position], length);
-    _position += length;
+// void ConstantPool::addUtf8Record(const u2 length, readers::ClassFileReader& reader) {
+//     ConstantPoolRecord record{};
+//     // record.Utf8Info utf8Info{};
+//     record.utf8Info.tag = JVM_CONSTANT_Utf8;
+//     record.utf8Info.length = length;
+//     addRecord(record, sizeof(record.utf8Info.tag) + sizeof(record.utf8Info.length));
+//
+//     reserve(length + 1);
+//     reader.readRaw(_buffer[_position], length);
+//     _position += length;
+//
+//     _buffer[_position] = 0;
+//     _position++;
+// }
 
-    _buffer[_position] = 0;
-    _position++;
+void ConstantPool::addUtf8Record( readers::ClassFileReader& reader) {
+    const u2 length = reader.readU2();
+    const auto size = sizeof(ConstantPoolRecord::utf8Info.tag) + sizeof(ConstantPoolRecord::utf8Info.length) + length + 1;
+    const auto utf8Record = static_cast<ConstantPoolRecord*>(malloc(size));
+    utf8Record->utf8Info.tag = JVM_CONSTANT_Utf8;
+    utf8Record->utf8Info.length = length;
+    reader.readRaw(reinterpret_cast<char *>(&(utf8Record->utf8Info.bytes[0])), length);
+    utf8Record->utf8Info.bytes[length] = 0;
+
+    _constantPoolIndex.push_back(utf8Record);
+
+}
+
+u2 ConstantPool::getNextIndex(u2 index) const {
+    while (index < _constantPoolIndex.size()) {
+        ++index;
+        if (index >= _constantPoolIndex.size() || _constantPoolIndex[index] != nullptr) {
+            break;
+        }
+    }
+    return index;
 }
 
 ConstantPool::ConstantPool() {
-    // _buffer.reserve(1024 * 10240);
-    _buffer = static_cast<u1 *>(malloc(_size));
-    _constantPoolIndex.reserve(20 * 1024);
+    _constantPoolIndex.reserve(64*1024+1);
     addEmptyIndex();
 }
 
 ConstantPool::~ConstantPool() {
-    free(_buffer);
-    _buffer = nullptr;
-}
-
-void ConstantPool::relocate() {
-    //const auto baseAddress = reinterpret_cast<u1 *>(_buffer.data());
-    const auto baseAddress = reinterpret_cast<u1 *>(_buffer);
-    for (auto &pConstantPoolRecord : _constantPoolIndex) {
-        const auto offset = reinterpret_cast<std::intptr_t>(pConstantPoolRecord);
-        pConstantPoolRecord = reinterpret_cast<ConstantPoolRecord *>(baseAddress + offset);
+    for(const auto constPoolRecordPtr: _constantPoolIndex ) {
+        free(constPoolRecordPtr);
     }
+    _constantPoolIndex.clear();
+
 }
 
-ConstantPoolRecord &ConstantPool::operator[](const u2 index) const {
-    return getEntry(index);
+
+ConstantPoolRecord* ConstantPool::add(const ConstantPoolRecord& data, const int size) {
+    auto * result = static_cast<ConstantPoolRecord*>(malloc(size));
+    memcpy(result, &data, size);
+    return result;
 }
 
+void ConstantPool::addRecord(ConstantPoolRecord &data, int size) {
+    const auto newRecord = add(data, size);
+    _constantPoolIndex.push_back(newRecord);
+
+}
 
 std::string ConstantPool::getClassInfoName(const u2 classInfoIndex) const {
     if (classInfoIndex == 0) return "";

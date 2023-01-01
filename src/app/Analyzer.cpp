@@ -4,7 +4,7 @@
 
 #include "../classfile/ClassFileInfo.h"
 #include "../classfile/ClassFileAnalyzer.h"
-#include "../jars/JarAnalyzerTask.h"
+#include "../jars/JarParserTask.h"
 #include "Analyzer.h"
 
 #include "../utils/FilesystemUtils.h"
@@ -44,14 +44,14 @@ Analyzer::Analyzer(Options options, stats::Results &results)
 
 }
 
-void Analyzer::analyze(const std::string &filename) const {
+void Analyzer::analyzeClassfile(const std::string &filename) const {
     Options classfileOptions(_options);
     classfileOptions.classFilePath = filename;
 
     readers::FileReader reader(classfileOptions.classFilePath);
 
     ClassFileAnalyzer classFileAnalyzer(reader, classfileOptions, _results);
-    if (classFileAnalyzer.run()) {
+    if (classFileAnalyzer.analyze()) {
         ++_results.classfiles.parsedCount;
 
     } else {
@@ -142,7 +142,7 @@ void Analyzer::processClassfile(const string &filename) {
             //TODO
             //callGraph(dirEntry);
         } else {
-            analyze(filename);
+            analyzeClassfile(filename);
         }
 
         if (_options.canPrintProgress()) {
@@ -163,23 +163,20 @@ void Analyzer::processJar(const std::string &filename) {
             jar::JarDigestTask jarDigestTask(jarOptions, _results, _digestDb);
             jar::JarProcessor jarProcessor(jarOptions, _results, jarDigestTask);
             jarProcessor.run();
-            //_results.jarfiles.classfileCount += jarProcessor.getClassfileCount();
-
         } else if (_options.isCallGraph) {
-
             jar::JarGraphTask jarGraphTask(jarOptions, _results, _callGraphDb);
             jar::JarProcessor jarProcessor(jarOptions, _results, jarGraphTask);
             jarProcessor.run();
         } else {
-            jar::JarAnalyzerTask jarAnalyzerTask(jarOptions, _results);
-            jar::JarProcessor jarProcessor(jarOptions, _results, jarAnalyzerTask);
+            jar::JarParserTask jarParserTask(jarOptions, _results);
+            jar::JarProcessor jarProcessor(jarOptions, _results, jarParserTask);
             jarProcessor.run();
         }
     });
 }
 
 
-bool Analyzer::initDb(db::Database &db) {
+bool Analyzer::initDb(db::Database &db) const {
 
     ScopedTimer timer(&_results.profileData->initDb);
     auto result = true;
@@ -217,7 +214,7 @@ bool Analyzer::initAnalyzer() {
 }
 
 
-void Analyzer::processDir() {
+void Analyzer::processDirInput() {
     for (auto const &dirEntry : filesystem::recursive_directory_iterator(_options.directory)) {
         if (dirEntry.is_regular_file()) {
             processFile(dirEntry);
@@ -225,13 +222,21 @@ void Analyzer::processDir() {
     }
 }
 
-void Analyzer::analyze() {
+void Analyzer::processJarInput() {
+    processJar(_options.jarFile);
+}
+
+void Analyzer::processClassfileInput() {
+    processClassfile(_options.classFilePath);
+}
+
+void Analyzer::analyzeInput() {
     if (isDirInput()) {
-        processDir();
+        processDirInput();
     } else if (isJarInput()) {
-        processJar(_options.jarFile);
+        processJarInput();
     } else if (isClassfileInput()) {
-        processClassfile(_options.classFilePath);
+        processClassfileInput();
     }
 
     _fileThreadPool.wait_for_tasks();
@@ -259,7 +264,7 @@ void Analyzer::run() {
         ScopedTimer timer(&_results.profileData->analyzerTime);
 
         if (initAnalyzer()) {
-            analyze();
+            analyzeInput();
             endAnalysis();
         }
     }

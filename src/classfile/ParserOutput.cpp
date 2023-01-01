@@ -29,8 +29,8 @@ void ParserOutput::outputAccessModifiers(const u2 accessFlags) const {
 
 void ParserOutput::outputMethod(MethodInfo &methodInfo) {
     const auto accessModifiers = _accessModifiers.toString(methodInfo.accessFlags);
-    const auto name = _constantPool[methodInfo.nameIndex].utf8Info.getAsUtf8();
-    const auto &utf8DDesc = _constantPool[methodInfo.descriptorIndex].utf8Info;
+    const auto name = _constantPool.getEntry(methodInfo.nameIndex).utf8Info.getAsUtf8();
+    const auto &utf8DDesc = _constantPool.getEntry(methodInfo.descriptorIndex).utf8Info;
 
     MethodDescriptorParser methodDescriptorParser(utf8DDesc.getAsUtf8());
     auto &methodDescriptor = methodDescriptorParser.getDescriptor();
@@ -108,8 +108,8 @@ string ParserOutput::attributesToString(vector<AttributeInfo> &attributes) {
 
 void ParserOutput::outputField(FieldInfo &fieldInfo) {
     const auto accessModifiers = _accessModifiers.toString(fieldInfo.accessFlags);
-    const auto name = _constantPool[fieldInfo.nameIndex].utf8Info.getAsUtf8();
-    const auto descriptorString = _constantPool[fieldInfo.descriptorIndex].utf8Info.getAsUtf8();
+    const auto name = _constantPool.getEntry(fieldInfo.nameIndex).utf8Info.getAsUtf8();
+    const auto descriptorString = _constantPool.getEntry(fieldInfo.descriptorIndex).utf8Info.getAsUtf8();
     const auto descriptor = DescriptorParser(descriptorString).getDescriptor();
 
     const auto attributeString = attributesToString(fieldInfo.attributes);
