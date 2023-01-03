@@ -37,6 +37,7 @@ public:
     [[nodiscard]] std::vector<MethodInfo> &getMethods() { return _methods; }
     [[nodiscard]] std::vector<u2> &getInterfaces() { return _interfaces; }
     [[nodiscard]] MainClassInfo &getMainClassInfo() { return _mainClassInfo; }
+    [[nodiscard]] u2 getSuperClassIndex() const { return _mainClassInfo.superClass; }
     [[nodiscard]] std::vector<attributes::AttributeInfo> &getAttributes() { return _attributes; }
     [[nodiscard]] std::vector<FieldInfo> &getFields() { return _fields; }
 

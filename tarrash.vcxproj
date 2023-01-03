@@ -905,6 +905,7 @@
     <ClCompile Include="src\tables\FilesTable.cpp" />
     <ClCompile Include="src\tables\StringPool.cpp" />
     <ClCompile Include="src\tables\Table.cpp" />
+    <ClCompile Include="src\utils\FilesystemUtils.cpp" />
     <ClInclude Include="src\app\Analyzer.h" />
     <ClInclude Include="src\app\log\Log.h" />
     <ClInclude Include="src\app\Options.h" />

@@ -24,6 +24,5 @@ bool Options::processInput() {
     } else {
         result = false;
     }
-
     return result;
 }

@@ -21,9 +21,11 @@ protected:
     const ClassFileAnalyzer &_classFileAnalyzer;
     const ConstantPool &_constantPool;
     std::string _currentLine;
+    static std::mutex _cpoolStdoutMutex;
 
-    static std::vector<std::string> _poolTagToString;
+    static std::vector<std::vector<std::string>> _poolTagToString;
     static std::vector<std::string> _refKindToString;
+    static int _cpoolStringIndex;
 
     std::vector<std::string> _outputLines;
 

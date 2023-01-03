@@ -43,7 +43,7 @@
         function navigateToImpl( implementation ) {
             let dest = window.top.location.href;
             dest = dest.substr(0, dest.indexOf('/index.html')) + '/' + implementation + '/cpool.html';
-            window.top.location.replace(dest);
+            window.top.location.href = dest;
         }
 
         document.addEventListener("DOMContentLoaded", function() {
