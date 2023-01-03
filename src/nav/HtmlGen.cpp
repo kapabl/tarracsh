@@ -6,17 +6,15 @@
 using namespace org::kapa::tarracsh;
 using namespace nav;
 using namespace std;
-// using namespace inja;
 
 
-inja::Template HtmlGen::_cpoolTemplate;
+inja::Template HtmlGen::_classTemplate;
 inja::Template HtmlGen::_implementationsTemplate;
-inja::Environment HtmlGen::_environment;
+inja::Environment HtmlGen::_injaEnvironment;
 
 
 HtmlGen::HtmlGen(const ClassFileAnalyzer &classFileAnalyzer)
     : ConstantPoolPrinter(classFileAnalyzer) {
-
     _mainClassname = classFileAnalyzer.getMainClassname();
     _implementation = filesystem::path(_classFileAnalyzer.getContainingFile()).filename().string();
     _classRelDir = fsUtils::classnameToPath(_mainClassname);
@@ -31,7 +29,7 @@ void HtmlGen::printTitle() {
 filesystem::path HtmlGen::getClassRootDir() const {
     auto result = filesystem::path(TarracshApp::getOptions().outputDir) /
                   "nav" /
-        _classRelDir;
+                  _classRelDir;
     return result;
 }
 
@@ -59,64 +57,92 @@ std::vector<std::string> HtmlGen::renderHtmlClassIndex() {
     return result;
 }
 
-void HtmlGen::mainClassToHtmlIndex() {
+void HtmlGen::generateImplIndexHtml() {
     const auto filename = getClassHtmlIndexFilename();
     const auto htmlLines = renderHtmlClassIndex();
     fsUtils::writeLines(filename.string(), htmlLines);
 }
 
-
-std::string HtmlGen::render(const inja::Template& compiledTemplate, const inja::json& json) {
-    const auto result = _environment.render(compiledTemplate, json);
+std::string HtmlGen::render(const inja::Template &compiledTemplate, const inja::json &json) {
+    const auto result = _injaEnvironment.render(compiledTemplate, json);
     return result;
 }
 
-filesystem::path HtmlGen::getHtmlCPoolFilename() const {
+filesystem::path HtmlGen::getClassHtmlFilename() const {
     const auto dir = filesystem::path(TarracshApp::getOptions().outputDir) /
                      "nav" /
-                      _classRelDir /
+                     _classRelDir /
                      _implementation;
 
     fsUtils::ensureDir(dir);
-
     auto result = dir / "cpool.html";
     return result;
 }
 
-vector<string> HtmlGen::renderCPoolHtml(const vector<string> &lines) const {
-    vector<string> result;
-    inja::json data;
-    data["classname"] = _mainClassname;
-    data["implementation"] = _implementation;
-    data["cpoolEntries"] = stringUtils::join(lines, string("\n"));
-
-    result.emplace_back(render(_cpoolTemplate, data));
+string HtmlGen::generateSuperclassInfo() const {
+    const auto index = _classFileAnalyzer.getSuperClassIndex();
+    auto result = index > 0
+                      ? "Superclass: " + generateClassLink(
+                            _constantPool.getClassInfoName(_classFileAnalyzer.getSuperClassIndex()))
+                      : "";
     return result;
 }
 
-void HtmlGen::linesToHtmlFile(const vector<string> &lines) const {
-    const auto filename = getHtmlCPoolFilename();
-    const auto htmlLines = renderCPoolHtml(lines);
-    fsUtils::writeLines(filename.string(), htmlLines);
+void HtmlGen::renderClassHtml() {
+    inja::json data;
+    data["classname"] = _mainClassname;
+    data["superClass"] = generateSuperclassInfo();
+    data["implementation"] = _implementation;
+    data["cpoolEntries"] = stringUtils::join(_cpoolHtmlEntries, string("\n"));
+    data["classRefs"] = stringUtils::join(_classRefsHtml, string("\n"));
+    _htmlOutput.emplace_back(render(_classTemplate, data));
 }
 
-void HtmlGen::print() {
-    vector<string> lines;
+void HtmlGen::generateCPoolEntries() {
 
-    for (u2 index = 1u; index < _constantPool.getPoolSize(); index = _constantPool.getNextIndex(index)) {
+    u2 index = 1u;
+    while (index < _constantPool.getPoolSize()) {
         const auto &entry = _constantPool.getEntry(index);
         _currentLine.clear();
         printHeader(entry.base, index);
         printEntry(entry, index);
-        lines.emplace_back(std::format("<div id='entry-{}' class='entry-line'>{}</div>", index, _currentLine));
+        _cpoolHtmlEntries.emplace_back(std::format("<div id='entry-{}' class='entry-line'>{}</div>", index,
+                                                   _currentLine));
+        index = _constantPool.getNextIndex(index);
     }
-    linesToHtmlFile(lines);
-    mainClassToHtmlIndex();
+}
+
+string HtmlGen::generateClassLink(const set<string>::value_type &classname) const {
+    return std::format("<span class='link' onclick='navigateTo(\"{}\")'>{}</span>",
+                       classname,
+                       classname);
+}
+
+void HtmlGen::generateClassRefs() {
+    for (auto &classname : _classRefSet) {
+        if (classname == _mainClassname) {
+            continue;
+        }
+        _classRefsHtml.push_back(std::format("<div>{}</div>", generateClassLink(classname)));
+    }
+}
+
+void HtmlGen::generateClassHtml() {
+    generateCPoolEntries();
+    generateClassRefs();
+    renderClassHtml();
+    const auto filename = getClassHtmlFilename();
+    fsUtils::writeLines(filename.string(), _htmlOutput);
+}
+
+void HtmlGen::print() {
+    generateClassHtml();
+    generateImplIndexHtml();
 }
 
 void HtmlGen::init() {
-    _cpoolTemplate = _environment.parse(fsUtils::readFileContent("./cpool-tmpl.html"));
-    _implementationsTemplate = _environment.parse(fsUtils::readFileContent("./impl-index-tmpl.html"));
+    _classTemplate = _injaEnvironment.parse(fsUtils::readFileContent("./cpool-tmpl.html"));
+    _implementationsTemplate = _injaEnvironment.parse(fsUtils::readFileContent("./impl-index-tmpl.html"));
 }
 
 void HtmlGen::printUtf8Info(const Utf8Info &entry, int index) {
@@ -147,18 +173,12 @@ inline void HtmlGen::printFloatInfo(const FloatInfo &entry, int index) {
     _currentLine += std::to_string(entry.getFloat());
 }
 
-std::string HtmlGen::generateLink(const std::string &classname) const {
-    std::string result = std::format("{}", classname);
-    return result;
-}
-
 inline void HtmlGen::printClassInfo(const ClassInfo &entry, int index) {
-
     const auto classname = _constantPool.getClassname(entry.nameIndex);
-    _currentLine += std::format("{} <span class='link' onclick='navigateTo(\"{}\")'>{}</span>",
+    _currentLine += std::format("{} {}",
                                 generateEntryLink(entry.nameIndex),
-                                classname,
-                                classname);
+                                generateClassLink(classname));
+    _classRefSet.insert(classname);
 }
 
 inline void HtmlGen::printMethodrefInfo(const MethodrefInfo &entry, int index) {
@@ -199,10 +219,10 @@ inline void HtmlGen::printInterfaceMethodrefInfo(const InterfaceMethodrefInfo &e
 }
 
 std::string HtmlGen::generateEntryLink(int index) const {
-    auto result = std::format("<a class='entry-link' href='#entry-{}' onclick='selectEntryById(\"entry-{}\");'>{}</a>", 
-        index, 
-        index, 
-        index);
+    auto result = std::format("<a class='entry-link' href='#entry-{}' onclick='selectEntryById(\"entry-{}\");'>{}</a>",
+                              index,
+                              index,
+                              index);
     return result;
 
 }

@@ -1,5 +1,7 @@
 #include "ScopedTimer.h"
 
+#include <iostream>
+
 
 using namespace org::kapa::tarracsh::stats::profiler;
 

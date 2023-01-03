@@ -12,7 +12,7 @@ struct Options {
     std::string jarFile;
     std::string classPath;
     std::string queryValue;
-    std::string outputDir{"./output"};
+    std::string outputDir;
     bool isParse{false};
     bool isPublicDigest{false};
     bool isCallGraph{false};
@@ -27,12 +27,10 @@ struct Options {
     bool useFileTimestamp{true};
     bool pause{false};
     bool printProfiler{false};
-
     bool printCPoolHtmlNav{false};
-    
+    bool descriptiveCPoolEntries{true};
     [[nodiscard]] bool canPrintProgress() const;
-
-    bool processInput();
+    [[nodiscard]] bool processInput();
 
 
 };

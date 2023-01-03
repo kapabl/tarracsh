@@ -71,6 +71,9 @@ CLI::App *TarracshApp::addParseSubCommand() {
     const auto printCPool = result->add_flag("--print-cpool", _options.printConstantPool,
                                              "Printing const-pool to stdout. Similar to javap");
 
+    result->add_flag("--descriptive-cpool", _options.descriptiveCPoolEntries,
+        "Descriptive CPool Entries. e.g: 'UTF8 String' in place of 'utf8'");
+
     const auto htmlNav = result->add_flag("--html-nav", _options.printCPoolHtmlNav,
                                           "Generate Constant pool navigable file");
 
@@ -117,8 +120,8 @@ void TarracshApp::setupCliOptions() {
     _digest->excludes(_callGraph);
 
     add_flag("--pause", _options.pause, "Pause and wait for enter before finishing process. Useful when debugging");
-    add_flag("--output-dir", _options.outputDir, "Output directory, default './output'");
-    add_flag("--output-log-file", _options.logFile, "Log file, default './output/result.log");
+    add_flag("--output-dir", _options.outputDir, "Output directory, default '%HOME%/tarracsh/output'");
+    add_flag("--output-log-file", _options.logFile, "Log file, default '[output]/result.log");
     add_flag("--print-profiler", _options.printProfiler, "Print '[output]/profiler.txt");
     add_flag("--use-file-timestamp", _options.useFileTimestamp,
              "yes/no - Default 'yes'. Use file timestamp and size to check if a file was modified");
@@ -145,11 +148,16 @@ int TarracshApp::parseCli(int argc, char **argv) {
             result = 1;
         }
 
+        if ( _options.outputDir.empty()) {
+            _options.outputDir = (fsUtils::getUserHomeDir() / "tarracsh" / "output").string();
+        }
+
         if (result == 0 && !_options.processInput()) {
             cout << std::format("Input should be a directory, jar or class file. Invalid input:{}",
                                 _options.input) << endl;
             result = 1;
         }
+
 
         if ( _options.logFile.empty()) {
             const auto logFile = std::filesystem::path(_options.outputDir) / "output.log";

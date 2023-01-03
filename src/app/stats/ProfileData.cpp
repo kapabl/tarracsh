@@ -1,4 +1,7 @@
+#include <iostream>
 #include "ProfileData.h"
+
+
 #include "../../utils/FilesystemUtils.h"
 
 using namespace org::kapa::tarracsh::stats::profiler;

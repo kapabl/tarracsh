@@ -2,6 +2,8 @@
 #define TARRACSH_HTML_CPOOL_GEN_H
 #include <inja/inja.hpp>
 #include <unordered_map>
+#include <unordered_set>
+
 #include "../classfile/ClassFileAnalyzer.h"
 #include "../classfile/constpool/ConstantPoolPrinter.h"
 
@@ -41,22 +43,31 @@ private:
     std::filesystem::path _classRootDir;
     std::filesystem::path _classRelDir;
     static inja::Template _implementationsTemplate;
-    static inja::Template _cpoolTemplate;
-    static inja::Environment _environment;
+    static inja::Template _classTemplate;
+    static inja::Environment _injaEnvironment;
+    // std::unordered_set<std::string> _classRefSet;
+    std::set<std::string> _classRefSet;
+    std::vector<std::string> _htmlOutput;
+    std::vector<std::string> _cpoolHtmlEntries;
+    std::vector<std::string> _classRefsHtml;
 
     [[nodiscard]] std::string generateEntryLink(int index) const;
-    [[nodiscard]] std::string generateLink(const std::string& classname) const;
     [[nodiscard]] std::filesystem::path getClassRootDir() const;
-
-
+    
 
     [[nodiscard]] std::filesystem::path getClassHtmlIndexFilename() const;
     [[nodiscard]] std::vector<std::string> getImplementations() const;
     [[nodiscard]] std::vector<std::string> renderHtmlClassIndex();
-    void mainClassToHtmlIndex();
-    [[nodiscard]] std::filesystem::path getHtmlCPoolFilename() const;
-    [[nodiscard]] std::vector<std::string> renderCPoolHtml(const std::vector<std::string>& lines) const;
-    void linesToHtmlFile(const std::vector<std::string>& lines) const;
+    void generateImplIndexHtml();
+    [[nodiscard]] std::filesystem::path getClassHtmlFilename() const;
+    std::string generateSuperclassInfo() const;
+
+    void renderClassHtml();
+    void generateCPoolEntries();
+    std::string generateClassLink(const std::string &classname) const;
+    void generateClassRefs();
+    void generateClassHtml();
+
 
     static std::string render(const inja::Template& compiledTemplate, const inja::json& json);
 };

@@ -9,8 +9,10 @@ using namespace org::kapa::tarracsh;
 using namespace std;
 
 
-vector<string> ConstantPoolPrinter::_poolTagToString;
+vector<vector<string>> ConstantPoolPrinter::_poolTagToString;
 vector<string> ConstantPoolPrinter::_refKindToString;
+int ConstantPoolPrinter::_cpoolStringIndex = 1;
+mutex ConstantPoolPrinter::_cpoolStdoutMutex;
 
 
 ConstantPoolPrinter::ConstantPoolPrinter(const ClassFileAnalyzer &classFileAnalyzer)
@@ -24,20 +26,30 @@ void ConstantPoolPrinter::printTitle() {
 }
 
 void ConstantPoolPrinter::print() {
-    printTitle();
-    cout << _currentLine << endl;
-    for (u2 index = 1u; index < _constantPool.getPoolSize(); index = _constantPool.getNextIndex(index)) {
-        const auto &entry = _constantPool.getEntry(index);
-        _currentLine.clear();
-        printHeader(entry.base, index);
-        printEntry(entry, index);
-        cout << _currentLine << endl;
+    {
+        unique_lock lock(_cpoolStdoutMutex);
+        try {
+            printTitle();
+            cout << _currentLine << endl;
+            for (u2 index = 1u; index < _constantPool.getPoolSize(); index = _constantPool.getNextIndex(index)) {
+                const auto& entry = _constantPool.getEntry(index);
+                _currentLine.clear();
+                printHeader(entry.base, index);
+                printEntry(entry, index);
+                cout << _currentLine << endl;
+            }
+        }
+        catch(...) {
+            cout << "Exception printing constant pool" << endl;
+        }
     }
 }
 
 
 string ConstantPoolPrinter::tagToString(ConstantPoolTag tag) {
-    if (tag < _poolTagToString.size()) return _poolTagToString[tag];
+    if (tag < _poolTagToString.size()) {
+        return _poolTagToString[tag][_cpoolStringIndex];
+    }
     return format("Invalid pool tag:{}", static_cast<unsigned char>(tag));
 }
 
@@ -217,25 +229,25 @@ inline void ConstantPoolPrinter::printEntry(const ConstantPoolRecord &entry, int
 void ConstantPoolPrinter::initStringMaps() {
     _poolTagToString.resize(JVM_CONSTANT_ExternalMax + 1);
 
-    _poolTagToString[JVM_CONSTANT_Empty] = "empty";
-    _poolTagToString[JVM_CONSTANT_Utf8] = "utf8";
-    _poolTagToString[JVM_CONSTANT_Unicode] = "unicode";
-    _poolTagToString[JVM_CONSTANT_Integer] = "int";
-    _poolTagToString[JVM_CONSTANT_Float] = "float";
-    _poolTagToString[JVM_CONSTANT_Long] = "long";
-    _poolTagToString[JVM_CONSTANT_Double] = "double";
-    _poolTagToString[JVM_CONSTANT_Class] = "class";
-    _poolTagToString[JVM_CONSTANT_String] = "string";
-    _poolTagToString[JVM_CONSTANT_Fieldref] = "fieldref";
-    _poolTagToString[JVM_CONSTANT_Methodref] = "methodref";
-    _poolTagToString[JVM_CONSTANT_InterfaceMethodref] = "iface-methodref";
-    _poolTagToString[JVM_CONSTANT_NameAndType] = "name-type";
-    _poolTagToString[JVM_CONSTANT_MethodHandle] = "method-handle";
-    _poolTagToString[JVM_CONSTANT_MethodType] = "method-type";
-    _poolTagToString[JVM_CONSTANT_Dynamic] = "dynamic";
-    _poolTagToString[JVM_CONSTANT_InvokeDynamic] = "invk-dynamic";
-    _poolTagToString[JVM_CONSTANT_Module] = "module";
-    _poolTagToString[JVM_CONSTANT_Package] = "package";
+    _poolTagToString[JVM_CONSTANT_Empty] = {"empty", "Empty" };
+    _poolTagToString[JVM_CONSTANT_Utf8] = { "utf8", "UTF8 String" };
+    _poolTagToString[JVM_CONSTANT_Unicode] = { "unicode", "Unicode" };
+    _poolTagToString[JVM_CONSTANT_Integer] = { "int", "Int" };
+    _poolTagToString[JVM_CONSTANT_Float] = { "float", "Float" };
+    _poolTagToString[JVM_CONSTANT_Long] = { "long", "Long" };
+    _poolTagToString[JVM_CONSTANT_Double] = { "double", "Double" };
+    _poolTagToString[JVM_CONSTANT_Class] = { "class", "Class Ref" };
+    _poolTagToString[JVM_CONSTANT_String] = { "string", "String" };
+    _poolTagToString[JVM_CONSTANT_Fieldref] = { "fieldref", "Field Ref" };
+    _poolTagToString[JVM_CONSTANT_Methodref] = { "methodref", "Method Ref" };
+    _poolTagToString[JVM_CONSTANT_InterfaceMethodref] = { "iface-methodref", "IFACE Method Ref" };
+    _poolTagToString[JVM_CONSTANT_NameAndType] = { "name-type", "Name & Type" };
+    _poolTagToString[JVM_CONSTANT_MethodHandle] = { "method-handle", "Method Handle" };
+    _poolTagToString[JVM_CONSTANT_MethodType] = { "method-type", "Method Type" };
+    _poolTagToString[JVM_CONSTANT_Dynamic] = { "dynamic", "Dynamic" };
+    _poolTagToString[JVM_CONSTANT_InvokeDynamic] = { "invk-dynamic", "Invoke Dynamic" };
+    _poolTagToString[JVM_CONSTANT_Module] = { "module", "Module" };
+    _poolTagToString[JVM_CONSTANT_Package] = { "package", "Package"};
 
     _refKindToString.resize(JVM_REF_LIMIT);
     _refKindToString[JVM_REF_getField] = "REF_getField";
@@ -251,4 +263,5 @@ void ConstantPoolPrinter::initStringMaps() {
 
 void ConstantPoolPrinter::init() {
     initStringMaps();
+    _cpoolStringIndex = TarracshApp::getOptions().descriptiveCPoolEntries ? 1 : 0;
 }
