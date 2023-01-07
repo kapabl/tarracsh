@@ -867,6 +867,9 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\server\proto\PublicDigestServer.grpc.pb.cc" />
+    <ClCompile Include="src\server\proto\PublicDigestServer.pb.cc" />
+    <ClCompile Include="src\server\PublicDigestServiceImpl.cpp" />
     <ClCompile Include="src\app\Analyzer.cpp" />
     <ClCompile Include="src\app\log\Log.cpp" />
     <ClCompile Include="src\app\Main.cpp" />
@@ -906,6 +909,9 @@
     <ClCompile Include="src\tables\StringPool.cpp" />
     <ClCompile Include="src\tables\Table.cpp" />
     <ClCompile Include="src\utils\FilesystemUtils.cpp" />
+    <ClInclude Include="src\server\proto\PublicDigestServer.grpc.pb.h" />
+    <ClInclude Include="src\server\proto\PublicDigestServer.pb.h" />
+    <ClInclude Include="src\server\PublicDigestServiceImpl.h" />
     <ClInclude Include="src\app\Analyzer.h" />
     <ClInclude Include="src\app\log\Log.h" />
     <ClInclude Include="src\app\Options.h" />
@@ -1004,6 +1010,7 @@
       <DeploymentContent>true</DeploymentContent>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'">false</ExcludedFromBuild>
     </CopyFileToFolders>
+    <None Include="server-proto-build.bat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

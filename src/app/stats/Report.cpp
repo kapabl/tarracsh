@@ -113,13 +113,21 @@ void Report::asModifiedClass(const std::string &fullClassname, bool isSamePublic
     classfileResults.push_back(classfileResult);
 }
 
-void Report::print() const {
-    std::cout << "Report:" << std::endl;
-    std::cout << "Legend: N - New file, C/U - Change/Unchanged, S/D - Same/Different public digest"
-        << std::endl
-        << std::endl;
+void Report::print( const Options& options) const {
+    if (options.verbose) {
+        std::cout << R"legend(Legend:
+    N - New file
+    C - Changed
+    U - Unchanged,
+    S - Same Public Digest
+    D - Different Public Digest)legend"
+            << std::endl
+            << std::endl;
+    }
 
-    std::cout << "Jars:" << std::endl;
+    if (options.verbose) {
+        std::cout << "Jars:" << std::endl;
+    }
     for (auto &jarResult : jarResults) {
         std::string flags;
         if (jarResult.isNew) {
@@ -142,7 +150,9 @@ void Report::print() const {
     }
 
     std::cout << std::endl;
-    std::cout << "Class-files:" << std::endl;
+    if (options.verbose) {
+        std::cout << "Class-files:" << std::endl;
+    }
     for (auto &classfileResult : classfileResults) {
         std::string flags;
         if (classfileResult.isNew) {

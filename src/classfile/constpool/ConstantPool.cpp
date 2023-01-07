@@ -15,40 +15,8 @@ using namespace org::kapa::tarracsh;
 using namespace std;
 
 void ConstantPool::addEmptyIndex() {
-    // _constantPoolIndex.push_back(
-    //     reinterpret_cast<ConstantPoolRecord *>(_position));
-    _constantPoolIndex.push_back(nullptr);
+     _constantPoolIndex.push_back(nullptr);
 }
-
-// void ConstantPool::addUtf8Record(const u2 length, readers::ClassFileReader &reader) {
-//     ConstantPoolRecord record{};
-//     // record.Utf8Info utf8Info{};
-//     record.utf8Info.tag = JVM_CONSTANT_Utf8;
-//     record.utf8Info.length = length;
-//     addRecord(record, sizeof(record.utf8Info.tag) + sizeof(record.utf8Info.length));
-//
-//     reserve(length + 1);
-//     reader.readRaw(_buffer[_position], length);
-//     _position += length;
-//
-//     _buffer[_position] = 0;
-//     _position++;
-// }
-
-// void ConstantPool::addUtf8Record(const u2 length, readers::ClassFileReader& reader) {
-//     ConstantPoolRecord record{};
-//     // record.Utf8Info utf8Info{};
-//     record.utf8Info.tag = JVM_CONSTANT_Utf8;
-//     record.utf8Info.length = length;
-//     addRecord(record, sizeof(record.utf8Info.tag) + sizeof(record.utf8Info.length));
-//
-//     reserve(length + 1);
-//     reader.readRaw(_buffer[_position], length);
-//     _position += length;
-//
-//     _buffer[_position] = 0;
-//     _position++;
-// }
 
 void ConstantPool::addUtf8Record( readers::ClassFileReader& reader) {
     const u2 length = reader.readU2();
@@ -113,8 +81,8 @@ std::string ConstantPool::getClassname(const u2 nameIndex) const {
 }
 
 std::string ConstantPool::getString(const u2 stringIndex, const bool withEscaped) const {
-    auto name = getEntry(stringIndex).utf8Info.getAsUtf8(withEscaped);
-    return name;
+    auto result = getEntry(stringIndex).utf8Info.getAsUtf8(withEscaped);
+    return result;
 }
 
 std::string ConstantPool::getTypeString(const u2 stringIndex) const {

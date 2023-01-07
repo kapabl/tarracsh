@@ -155,7 +155,6 @@ void Analyzer::processClassfile(const string &filename) {
 void Analyzer::processJar(const std::string &filename) {
     _fileThreadPool.push_task([this,filename] {
         Options jarOptions(_options);
-        // jarOptions.jarFile = dirEntry.path().string();
         jarOptions.jarFile = filename;
 
         ++_results.jarfiles.count;
@@ -275,7 +274,7 @@ void Analyzer::run() {
     }
 
     if (_options.printDiffReport) {
-        _results.report->print();
+        _results.report->print( _options );
     }
 
 }

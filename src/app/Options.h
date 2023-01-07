@@ -1,6 +1,7 @@
 #ifndef TARRACSH_OPTIONS_H
 #define TARRACSH_OPTIONS_H
 
+#include <functional>
 #include <string>
 
 namespace org::kapa::tarracsh {
@@ -29,6 +30,9 @@ struct Options {
     bool printProfiler{false};
     bool printCPoolHtmlNav{false};
     bool descriptiveCPoolEntries{true};
+    bool verbose{false};
+    bool server{false};
+    int port{ 0xCA9A };
     [[nodiscard]] bool canPrintProgress() const;
     [[nodiscard]] bool processInput();
 
