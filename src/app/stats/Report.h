@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "../app/Tarracsh.h"
+#include "../Options.h"
 #include "../utils/FilesystemUtils.h"
 
 
@@ -45,7 +45,7 @@ struct Report {
     void asModifiedClass(const std::string &fullClassname, bool isSamePublicDigest);
     void asUnchangedClass(const std::string &fullClassname);
 
-    void print() const;
+    void print(const Options& options) const;
 };
 
 

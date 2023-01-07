@@ -1,7 +1,7 @@
 #ifndef TARRACSH_APP_H
 #define TARRACSH_APP_H
 
-#include "Tarracsh.h"
+#include "Options.h"
 #include "stats/Stats.h"
 #include <CLI11.hpp>
 namespace org::kapa::tarracsh {
@@ -32,6 +32,7 @@ public:
 private:
     static Options _options;
     void setupCliOptions();
+    bool isValidInput() const;
 
     CLI::App *addParseSubCommand();
     CLI::App *addCallGraphSubCommand();

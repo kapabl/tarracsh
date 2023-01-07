@@ -2,9 +2,10 @@
 #define TARRACSH_STATS_H
 
 #include <string>
+#include "../log/Log.h"
+#include "../Options.h"
 #include "Report.h"
 #include "ProfileData.h"
-#include "../Tarracsh.h"
 #include "../../utils/FilesystemUtils.h"
 
 

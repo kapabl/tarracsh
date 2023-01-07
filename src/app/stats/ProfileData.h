@@ -2,7 +2,7 @@
 #define TARRACSH_PROFILE_DATA_H
 
 #include <chrono>
-#include "../app/Tarracsh.h"
+#include "../app/Options.h"
 
 namespace org::kapa::tarracsh::stats {
 struct Results;
