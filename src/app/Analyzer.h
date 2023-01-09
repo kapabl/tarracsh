@@ -5,20 +5,20 @@
 #include <string>
 #include <BS_thread_pool.hpp>
 
-#include "../app/Tarracsh.h"
 #include "../tables/DigestDb.h"
 #include "../tables/CallGraphDb.h"
+#include "../classfile/ClassFileAnalyzer.h"
 #include "../classfile/ClassFileInfo.h"
 #include "../tables/FilesTable.h"
 
 
-namespace org::kapa::tarracsh::dir {
+namespace org::kapa::tarracsh::app {
 class Analyzer {
 public:
     bool isJarInput() const;
     bool isDirInput() const;
     bool isClassfileInput() const;
-    explicit Analyzer(Options options, stats::Results& results );
+    explicit Analyzer(Config& config );
 
     Analyzer(const Analyzer &) = delete;
     Analyzer(const Analyzer &&) = delete;
@@ -39,7 +39,8 @@ private:
     db::DigestDb _digestDb;
     db::CallGraphDb _callGraphDb;
 
-    BS::thread_pool _fileThreadPool{std::max<unsigned int>(1u, std::thread::hardware_concurrency() * 3 / 4)};
+    BS::thread_pool _fileThreadPool{std::max<unsigned int>(1u, std::thread::hardware_concurrency() * 4 / 5)};
+    // BS::thread_pool _fileThreadPool{std::max<unsigned int>(1u, std::thread::hardware_concurrency() * 3 / 4)};
     //BS::thread_pool _fileThreadPool{ std::max<unsigned int>(1u, std::thread::hardware_concurrency() - 2) };
 
     bool _isValid{true};

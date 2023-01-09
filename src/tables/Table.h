@@ -7,7 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "../app/TarracshApp.h"
+#include "../app/App.h"
 #include "Database.h"
 #include "StringPool.h"
 
@@ -156,21 +156,7 @@ public:
     }
 
 
-    bool clean() {
-        std::lock_guard lock(_mutex);
-        const auto stringPoolCleaned = _stringPool->clean();
-        auto tableFileCleaned = true;
-        if (std::filesystem::exists(_filename)) {
-            tableFileCleaned = std::filesystem::remove(_filename);
-            if (!tableFileCleaned) {
-                TarracshApp::logln(std::format("Error removing table file {}", _filename), true);
-            }
-        }
-
-        const auto result = stringPoolCleaned && tableFileCleaned;
-
-        return result;
-    }
+    bool clean();
 
     bool read() {
         std::lock_guard lock(_mutex);
@@ -186,7 +172,7 @@ public:
         return result;
     }
 
-    std::shared_ptr<StringPool> getStringPool() { return _stringPool; }
+    std::shared_ptr<StringPool> getStringPool() const;
 
     const T *findByKey(const std::string &key) {
         std::shared_lock lock(_mutex);
@@ -202,6 +188,8 @@ public:
     void printSchema() {
         printLayout();
     }
+
+    uint64_t size() { return _rows.size(); }
 
 
 protected:
@@ -270,7 +258,7 @@ protected:
             }
 
             if (bytesRead != _rowSize) {
-                TarracshApp::logln(std::format("Error reading table: {}", _filename), true);
+                app::App::logln(std::format("Error reading table: {}", _filename), true);
                 return false;
             }
             internalAdd(rowBuffer);
@@ -285,7 +273,7 @@ protected:
                             && _layout.header.signature == KAPA_TABLE_SIGNATURE;
 
         if (!result) {
-            TarracshApp::logln(std::format("Invalid table format or signature:{}", _filename), true);
+            app::App::logln(std::format("Invalid table format or signature:{}", _filename), true);
         }
 
         return result;
@@ -298,7 +286,7 @@ protected:
         const auto result = bytesToRead == file.gcount();
 
         if (!result) {
-            TarracshApp::logln(std::format("Invalid table schema:{}", _filename), true);
+            app::App::logln(std::format("Invalid table schema:{}", _filename), true);
         }
 
         return result;
@@ -331,6 +319,26 @@ protected:
         return result;
     }
 };
+
+template <typename T> bool Table<T>::clean() {
+    std::lock_guard lock(_mutex);
+    const auto stringPoolCleaned = _stringPool->clean();
+    auto tableFileCleaned = true;
+    if (std::filesystem::exists(_filename)) {
+        tableFileCleaned = std::filesystem::remove(_filename);
+        if (!tableFileCleaned) {
+            app::App::logln(std::format("Error removing table file {}", _filename), true);
+        }
+    }
+
+    const auto result = stringPoolCleaned && tableFileCleaned;
+
+    return result;
+}
+
+template <typename T> std::shared_ptr<StringPool> Table<T>::getStringPool() const {
+    return _stringPool;
+}
 
 
 }

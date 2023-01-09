@@ -1,6 +1,6 @@
 #ifndef TARRACSH_COLUMNS_H
 #define TARRACSH_COLUMNS_H
-#include "../../app/TarracshApp.h"
+#include "../../app/App.h"
 #include "../../utils/DigestUtils.h"
 
 #pragma pack( push, 1 )

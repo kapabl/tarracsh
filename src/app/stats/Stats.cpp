@@ -8,7 +8,7 @@
 using namespace org::kapa::tarracsh::stats;
 
 
-Results::Results() {
+Results::Results(Options& options): options(options) {
     report = std::make_unique<report::Report>(*this);
     profileData = std::make_unique<profiler::ProfileData>(*this);
 }

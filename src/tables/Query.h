@@ -13,19 +13,19 @@ namespace org::kapa::tarracsh::db::query {
 
 class QueryCommand {
 public:
-    static void run(Options &options, stats::Results& results) {
-        QueryCommand queryCommand(options, results);
+    static void run(app::Config& config) {
+        const QueryCommand queryCommand(config);
         queryCommand.execute();
     }
 
 private:
-    QueryCommand(Options &options, stats::Results& results)
-        : _options(options), _results( results ) {
+    QueryCommand(app::Config& config)
+        : _options(config.getOptions()), _results(config.getResults()) {
 
-        if (options.isPublicDigest) {
-            _db = std::make_unique<DigestDb>(options.outputDir);
+        if (_options.isPublicDigest) {
+            _db = std::make_unique<DigestDb>(_options.outputDir);
         } else {
-            _db = std::make_unique<CallGraphDb>(options.outputDir);
+            _db = std::make_unique<CallGraphDb>(_options.outputDir);
         }
         _db->init();
 

@@ -6,6 +6,7 @@
 #include "ConstantPoolPrinter.h"
 
 using namespace org::kapa::tarracsh;
+using namespace app;
 using namespace std;
 
 
@@ -263,5 +264,5 @@ void ConstantPoolPrinter::initStringMaps() {
 
 void ConstantPoolPrinter::init() {
     initStringMaps();
-    _cpoolStringIndex = TarracshApp::getOptions().descriptiveCPoolEntries ? 1 : 0;
+    _cpoolStringIndex = App::getGlobalOptions().descriptiveCPoolEntries ? 1 : 0;
 }

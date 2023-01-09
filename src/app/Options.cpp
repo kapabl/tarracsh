@@ -26,3 +26,13 @@ bool Options::processInput() {
     }
     return result;
 }
+
+std::string ServerOptions::getListenServerAddress() const {
+    auto result = format("{}:{}", listenAddress, port);
+    return result;
+}
+
+std::string ServerOptions::getServerAddress() const {
+    auto result = format("{}:{}", host, port);
+    return result;
+}
