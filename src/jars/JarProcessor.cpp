@@ -54,7 +54,7 @@ void JarProcessor::run() {
 
             if (index % 100 == 0) {
                 if (_jarOptions.canPrintProgress()) {
-                    _results.print(_jarOptions);
+                    _results.print();
                 }
             }
 
@@ -88,7 +88,7 @@ void JarProcessor::run() {
     _jarTask.end();
     ++_results.jarfiles.parsedCount;
     if (_jarOptions.canPrintProgress()) {
-        _results.print(_jarOptions);
+        _results.print();
     }
 }
 
