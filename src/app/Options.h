@@ -4,7 +4,21 @@
 #include <functional>
 #include <string>
 
+#include "CLI11.hpp"
+
 namespace org::kapa::tarracsh {
+struct Options;
+
+struct ServerOptions {
+    bool enabled{false};
+    int port{0xCA9A};
+    bool stopServer{false};
+    std::string listenAddress{"0.0.0.0"};
+    std::string host{"localhost"};
+
+    [[nodiscard]] std::string getListenServerAddress() const;
+    [[nodiscard]] std::string getServerAddress() const;
+};
 
 struct Options {
     std::string classFilePath;
@@ -31,13 +45,15 @@ struct Options {
     bool printCPoolHtmlNav{false};
     bool descriptiveCPoolEntries{true};
     bool verbose{false};
-    bool server{false};
-    int port{ 0xCA9A };
+    ServerOptions digestServer;
+    bool isServerMode{false};
+
     [[nodiscard]] bool canPrintProgress() const;
     [[nodiscard]] bool processInput();
 
 
 };
+
 
 }
 

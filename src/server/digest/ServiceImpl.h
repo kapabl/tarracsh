@@ -1,29 +1,31 @@
 #ifndef TARRACSH_SERVER_H
 #define TARRACSH_SERVER_H
 #include "../app/Options.h"
-#include <grpc/grpc.h>
 #include <grpcpp/security/server_credentials.h>
 #include <grpcpp/server.h>
-#include <grpcpp/server_builder.h>
-#include "proto/PublicDigestServer.grpc.pb.h"
+#include "proto/Server.grpc.pb.h"
+#include "../tables/DigestDb.h"
 
 using grpc::Status;
 using grpc::ServerContext;
 using grpc::ServerReader;
 using grpc::ServerReaderWriter;
 
-namespace org::kapa::tarracsh::server {
+namespace org::kapa::tarracsh::server::digest {
 
 
-class PublicDigestServiceImpl: public PublicDigest::Service {
+class ServiceImpl: public PublicDigest::Service {
 public:
-    static void start( const Options& options);
+    static void start(app::Config& config);
 
+    explicit ServiceImpl(app::Config& config);
 
-    explicit PublicDigestServiceImpl(const Options& options);
+    Status Quit(ServerContext* context, const Empty* request, Empty* response) override;
+    Status Check(ServerContext* context, const DigestRequest* request, DigestResponse* response) override;
 
     Status GetFeature(grpc::ServerContext* context, const Point* point,
                       Feature* feature) override;
+
 
     Status ListFeatures(grpc::ServerContext* context,
                         const Rectangle* rectangle,
@@ -35,15 +37,31 @@ public:
     Status RouteChat(ServerContext* context,
                      ServerReaderWriter<RouteNote, RouteNote>* stream) override;
 
+
+
 private:
+    db::DigestDb _db;
+
     std::vector<Feature> feature_list_;
     std::mutex mu_;
     std::vector<RouteNote> received_notes_;
 
-    const Options& _options;
+    // const Options& _options;
+    app::Config& _config;
+    std::unique_ptr<grpc::Server> _server;
+    std::mutex _mutex;
+    std::condition_variable _cv;
+    bool _quickReceived{ false };
+
+    bool initDb();
+    void startServer();
+    void waitForShutDown();
+    void init();
+    void requestToOptions(const DigestRequest& request, Options& requestOptions) const;
+    void reportToResponse(const std::unique_ptr<stats::report::Report>& report, DigestResponse& response);
 
     std::string GetFeatureName(const Point& point,
-        const std::vector<Feature>& feature_list) {
+                               const std::vector<Feature>& feature_list) {
         for (const Feature& f : feature_list) {
             if (f.location().latitude() == point.latitude() &&
                 f.location().longitude() == point.longitude()) {

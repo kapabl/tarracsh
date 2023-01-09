@@ -18,9 +18,9 @@
 
 
 using namespace org::kapa::tarracsh;
+using namespace app;
 using namespace stats;
 using namespace profiler;
-using namespace dir;
 using namespace db;
 
 using namespace std;
@@ -37,8 +37,8 @@ bool Analyzer::isClassfileInput() const {
     return !_options.classFilePath.empty();
 }
 
-Analyzer::Analyzer(Options options, stats::Results &results)
-    : _options(move(options)), _results(results),
+Analyzer::Analyzer(Config& config)
+    : _options(config.getOptions()), _results(config.getResults()),
       _digestDb(_options.outputDir),
       _callGraphDb(_options.outputDir) {
 
@@ -274,7 +274,7 @@ void Analyzer::run() {
     }
 
     if (_options.printDiffReport) {
-        _results.report->print( _options );
+        _results.report->print();
     }
 
 }

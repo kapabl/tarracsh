@@ -867,9 +867,14 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\server\proto\PublicDigestServer.grpc.pb.cc" />
-    <ClCompile Include="src\server\proto\PublicDigestServer.pb.cc" />
-    <ClCompile Include="src\server\PublicDigestServiceImpl.cpp" />
+    <ClCompile Include="src\app\commands\CallGraph.cpp" />
+    <ClCompile Include="src\app\commands\Command.cpp" />
+    <ClCompile Include="src\app\commands\Parse.cpp" />
+    <ClCompile Include="src\app\commands\PublicDigest.cpp" />
+    <ClCompile Include="src\server\digest\proto\Server.grpc.pb.cc" />
+    <ClCompile Include="src\server\digest\proto\Server.pb.cc" />
+    <ClCompile Include="src\server\digest\ServiceImpl.cpp" />
+    <ClCompile Include="src\server\digest\ServerCommand.cpp" />
     <ClCompile Include="src\app\Analyzer.cpp" />
     <ClCompile Include="src\app\log\Log.cpp" />
     <ClCompile Include="src\app\Main.cpp" />
@@ -878,7 +883,7 @@
     <ClCompile Include="src\app\stats\Report.cpp" />
     <ClCompile Include="src\app\stats\ScopedTimer.cpp" />
     <ClCompile Include="src\app\stats\Stats.cpp" />
-    <ClCompile Include="src\app\TarracshApp.cpp" />
+    <ClCompile Include="src\app\App.cpp" />
     <ClCompile Include="src\classfile\AnnotationsParser.cpp" />
     <ClCompile Include="src\classfile\ClassFileAnalyzer.cpp" />
     <ClCompile Include="src\classfile\ClassFileDigest.cpp" />
@@ -909,9 +914,15 @@
     <ClCompile Include="src\tables\StringPool.cpp" />
     <ClCompile Include="src\tables\Table.cpp" />
     <ClCompile Include="src\utils\FilesystemUtils.cpp" />
-    <ClInclude Include="src\server\proto\PublicDigestServer.grpc.pb.h" />
-    <ClInclude Include="src\server\proto\PublicDigestServer.pb.h" />
-    <ClInclude Include="src\server\PublicDigestServiceImpl.h" />
+    <ClInclude Include="src\app\commands\CallGraph.h" />
+    <ClInclude Include="src\app\commands\Command.h" />
+    <ClInclude Include="src\app\commands\Parse.h" />
+    <ClInclude Include="src\app\commands\PublicDigest.h" />
+    <ClInclude Include="src\app\Config.h" />
+    <ClInclude Include="src\server\digest\proto\Server.grpc.pb.h" />
+    <ClInclude Include="src\server\digest\proto\Server.pb.h" />
+    <ClInclude Include="src\server\digest\ServiceImpl.h" />
+    <ClInclude Include="src\server\digest\ServerCommand.h" />
     <ClInclude Include="src\app\Analyzer.h" />
     <ClInclude Include="src\app\log\Log.h" />
     <ClInclude Include="src\app\Options.h" />
@@ -920,7 +931,7 @@
     <ClInclude Include="src\app\stats\ScopedTimer.h" />
     <ClInclude Include="src\app\stats\Stats.h" />
     <ClInclude Include="src\app\Tarracsh.h" />
-    <ClInclude Include="src\app\TarracshApp.h" />
+    <ClInclude Include="src\app\App.h" />
     <ClInclude Include="src\classfile\AccessModifiers.h" />
     <ClInclude Include="src\classfile\AnnotationsParser.h" />
     <ClInclude Include="src\classfile\AttributesManager.h" />
@@ -964,6 +975,7 @@
     <ClInclude Include="src\jars\JarProcessor.h" />
     <ClInclude Include="src\jars\JarTask.h" />
     <ClInclude Include="src\nav\HtmlGen.h" />
+    <ClInclude Include="src\server\RequestConfig.h" />
     <ClInclude Include="src\tables\CallGraphDb.h" />
     <ClInclude Include="src\tables\ClassfilesTable.h" />
     <ClInclude Include="src\tables\columns\Columns.h" />
@@ -1011,6 +1023,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'">false</ExcludedFromBuild>
     </CopyFileToFolders>
     <None Include="server-proto-build.bat" />
+    <None Include="src\server\digest\proto\Server.proto" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

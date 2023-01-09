@@ -34,7 +34,7 @@ public:
 
 private:
     db::DigestDb& _digestDb;
-    // std::shared_ptr<db::ClassfilesTable> _digestTable;
+    // std::shared_ptr<db::ClassfilesTable> _classfilesTable;
     // std::shared_ptr<db::FilesTable> _filesTable;
     stats::Results &_results;
     Options _options;

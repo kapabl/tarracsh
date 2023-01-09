@@ -6,7 +6,6 @@
 #include "../Options.h"
 #include "Report.h"
 #include "ProfileData.h"
-#include "../../utils/FilesystemUtils.h"
 
 
 namespace org::kapa::tarracsh::stats {
@@ -34,7 +33,8 @@ struct ClassfileStats {
 
 struct Results {
 
-    Results();
+    Options& options;
+    explicit Results(Options& options);
 
     ClassfileStats classfiles;
 

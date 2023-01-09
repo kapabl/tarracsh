@@ -15,7 +15,6 @@ class DigestDb : public Database {
 public:
     DigestDb(const std::string &dataDir)
         : Database(dataDir) {
-
     }
 
     void init() override;
@@ -26,10 +25,11 @@ public:
     void printSchema() override;
 
     auto getFiles() { return _filesTable; }
-    std::shared_ptr<tables::ClassfilesTable> getClassfiles() { return _digestTable; }
+    std::shared_ptr<tables::ClassfilesTable> getClassfiles() { return _classfilesTable; }
+    void outputStats() const;
 private:
     std::shared_ptr<tables::FilesTable> _filesTable;
-    std::shared_ptr<tables::ClassfilesTable> _digestTable;
+    std::shared_ptr<tables::ClassfilesTable> _classfilesTable;
 };
 
 

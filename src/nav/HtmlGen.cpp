@@ -4,6 +4,7 @@
 #include "HtmlGen.h"
 
 using namespace org::kapa::tarracsh;
+using namespace app;
 using namespace nav;
 using namespace std;
 
@@ -27,7 +28,7 @@ void HtmlGen::printTitle() {
 }
 
 filesystem::path HtmlGen::getClassRootDir() const {
-    auto result = filesystem::path(TarracshApp::getOptions().outputDir) /
+    auto result = filesystem::path(App::getGlobalOptions().outputDir) /
                   "nav" /
                   _classRelDir;
     return result;
@@ -69,7 +70,7 @@ std::string HtmlGen::render(const inja::Template &compiledTemplate, const inja::
 }
 
 filesystem::path HtmlGen::getClassHtmlFilename() const {
-    const auto dir = filesystem::path(TarracshApp::getOptions().outputDir) /
+    const auto dir = filesystem::path(App::getGlobalOptions().outputDir) /
                      "nav" /
                      _classRelDir /
                      _implementation;

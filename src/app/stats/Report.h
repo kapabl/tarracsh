@@ -30,6 +30,7 @@ struct ClassfileResult {
 
 struct Report {
     Results &results;
+    Options &options;
     std::vector<JarResult> jarResults;
     std::vector<ClassfileResult> classfileResults;
 
@@ -45,7 +46,7 @@ struct Report {
     void asModifiedClass(const std::string &fullClassname, bool isSamePublicDigest);
     void asUnchangedClass(const std::string &fullClassname);
 
-    void print(const Options& options) const;
+    void print() const;
 };
 
 

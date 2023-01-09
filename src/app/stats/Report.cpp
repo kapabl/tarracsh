@@ -1,17 +1,18 @@
 #include "Report.h"
 #include "Stats.h"
-#include "../TarracshApp.h"
+#include "../App.h"
+
+using namespace org::kapa::tarracsh;
+using namespace app;
+using namespace stats::report;
 
 
-using namespace org::kapa::tarracsh::stats::report;
-
-
-Report::Report(Results &results): results(results) {
+Report::Report(Results& results): results(results), options(results.options) {
 }
 
 void Report::asNew(const std::string &filename) {
     ++results.jarfiles.digest.newFile;
-    if (!TarracshApp::getOptions().doDiffReport) {
+    if (!options.doDiffReport) {
         return;
     }
 
@@ -31,7 +32,7 @@ void Report::asModified(const std::string &filename, bool isSamePublicDigest) {
         ++results.jarfiles.digest.differentDigest;
     }
 
-    if (!TarracshApp::getOptions().doDiffReport) {
+    if (!options.doDiffReport) {
         return;
     }
 
@@ -49,7 +50,7 @@ void Report::asModified(const std::string &filename, bool isSamePublicDigest) {
 void Report::asUnchanged(const std::string &filename) {
     ++results.jarfiles.digest.unchangedCount;
 
-    if (!TarracshApp::getOptions().doDiffReport) {
+    if (!options.doDiffReport) {
         return;
     }
 
@@ -65,7 +66,7 @@ void Report::asUnchanged(const std::string &filename) {
 void Report::asNewClass(const std::string &fullClassname) {
     ++results.jarfiles.classfiles.digest.newFile;
 
-    if (!TarracshApp::getOptions().doDiffReport) {
+    if (!options.doDiffReport) {
         return;
     }
 
@@ -81,7 +82,7 @@ void Report::asNewClass(const std::string &fullClassname) {
 void Report::asUnchangedClass(const std::string &fullClassname) {
     ++results.jarfiles.classfiles.digest.unchangedCount;
 
-    if (!TarracshApp::getOptions().doDiffReport) {
+    if (!options.doDiffReport) {
         return;
     }
 
@@ -101,7 +102,7 @@ void Report::asModifiedClass(const std::string &fullClassname, bool isSamePublic
         ++results.jarfiles.classfiles.digest.differentDigest;
     }
 
-    if (!TarracshApp::getOptions().doDiffReport) {
+    if (!options.doDiffReport) {
         return;
     }
 
@@ -113,7 +114,7 @@ void Report::asModifiedClass(const std::string &fullClassname, bool isSamePublic
     classfileResults.push_back(classfileResult);
 }
 
-void Report::print( const Options& options) const {
+void Report::print() const {
     if (options.verbose) {
         std::cout << R"legend(Legend:
     N - New file

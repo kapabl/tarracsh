@@ -1,4 +1,4 @@
-#include "TarracshApp.h"
+#include "App.h"
 
 
 
@@ -9,12 +9,12 @@
 
 
 using namespace org::kapa::tarracsh;
+using namespace app;
 
 /**
  *
  */
 int main(int argc, char *argv[]) {
-    //mi_version();
-    const auto result = TarracshApp::run(argc, argv);
+    const auto result = App::run(argc, argv);
     return result;
 }   

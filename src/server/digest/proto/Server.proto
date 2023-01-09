@@ -19,7 +19,8 @@ option java_package = "io.grpc.examples.routeguide";
 option java_outer_classname = "RouteGuideProto";
 option objc_class_prefix = "RTG";
 
-package org.kapa.tarracsh.server;
+
+package org.kapa.tarracsh.server.digest;
 
 // Interface exported by the server.
 service PublicDigest {
@@ -50,6 +51,29 @@ service PublicDigest {
   // Accepts a stream of RouteNotes sent while a route is being traversed,
   // while receiving other RouteNotes (e.g. from other users).
   rpc RouteChat(stream RouteNote) returns (stream RouteNote) {}
+
+
+  rpc Quit(Empty) returns (Empty) {}
+  rpc Check(DigestRequest) returns (DigestResponse) {}
+}
+
+message Empty {}
+
+message DigestRequest {
+    string input = 1;
+    bool dryRun = 2;
+}
+
+message FileDigestResult {
+    string filename = 1;
+    bool isNew = 2;
+    bool isChanged = 3;
+    bool isSameDigest = 4;
+}
+
+message DigestResponse {
+    repeated FileDigestResult jars = 1;
+    repeated FileDigestResult classfiles = 2;
 }
 
 // Points are represented as latitude-longitude pairs in the E7 representation
