@@ -55,9 +55,9 @@ struct Results {
     log::Log log;
 
 
-    void print(const Options &options) const;
-    void forcePrint(const Options &options) const;
-    void printAll(const Options &options);
+    void print() const;
+    void forcePrint() const;
+    void printAll();
 
     mutable std::chrono::time_point<std::chrono::steady_clock> lastPrint{std::chrono::high_resolution_clock::now()};
 

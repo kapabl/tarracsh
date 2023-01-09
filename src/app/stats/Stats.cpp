@@ -13,7 +13,7 @@ Results::Results(Options& options): options(options) {
     profileData = std::make_unique<profiler::ProfileData>(*this);
 }
 
-void Results::print(const Options &options) const {
+void Results::print() const {
 
     const auto result = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::high_resolution_clock::now() - lastPrint);
@@ -21,11 +21,11 @@ void Results::print(const Options &options) const {
     if (result.count() < 500) return;
 
     lastPrint = std::chrono::high_resolution_clock::now();
-    forcePrint(options);
+    forcePrint();
 
 }
 
-void Results::forcePrint(const Options &options) const {
+void Results::forcePrint() const {
     printf("\033[2J");
     printf("\033[%d;%dH", 0, 0);
 
@@ -38,7 +38,7 @@ void Results::forcePrint(const Options &options) const {
     std::cout << std::flush;
 }
 
-void Results::printAll(const Options &options) {
+void Results::printAll() {
 
     std::cout << std::endl << std::endl;
     std::cout << "classfiles:" << std::endl << std::right

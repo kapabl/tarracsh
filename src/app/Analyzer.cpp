@@ -146,7 +146,7 @@ void Analyzer::processClassfile(const string &filename) {
         }
 
         if (_options.canPrintProgress()) {
-            _results.print(_options);
+            _results.print();
         }
     });
 
@@ -269,8 +269,8 @@ void Analyzer::run() {
     }
 
     if (_options.canPrintProgress()) {
-        _results.forcePrint(_options);
-        _results.printAll(_options);
+        _results.forcePrint();
+        _results.printAll();
     }
 
     if (_options.printDiffReport) {
