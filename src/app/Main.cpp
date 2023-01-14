@@ -8,7 +8,7 @@
 // #endif
 
 
-using namespace org::kapa::tarracsh;
+using namespace kapa::tarracsh;
 using namespace app;
 
 /**

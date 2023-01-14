@@ -1,29 +1,28 @@
 #include <filesystem>
-#include <utility>
 #include <string>
-
-#include "../classfile/ClassFileInfo.h"
-#include "../classfile/ClassFileAnalyzer.h"
-#include "../jars/JarParserTask.h"
 #include "Analyzer.h"
+#include "../infrastructure/filesystem/FilesystemUtils.h"
+#include "../infrastructure/db/Database.h"
 
-#include "../utils/FilesystemUtils.h"
-#include "../jars/JarDigestTask.h"
-#include "../jars/JarGraphTask.h"
-#include "../jars/JarProcessor.h"
-#include "../classfile/readers/FileReader.h"
-#include "../tables/FilesTable.h"
-#include "../app/stats/Stats.h"
-#include "../app/stats/ScopedTimer.h"
-
-
-using namespace org::kapa::tarracsh;
-using namespace app;
-using namespace stats;
-using namespace profiler;
-using namespace db;
+#include "../domain/classfile/ClassFileInfo.h"
+#include "../domain/classfile/ClassFileAnalyzer.h"
+#include "jars/ParserTask.h"
+#include "jars/DigestTask.h"
+#include "jars/GraphTask.h"
+#include "jars/Processor.h"
+#include "../domain/classfile/readers/FileReader.h"
+#include "../db/table/FilesTable.h"
+#include "stats/Stats.h"
+#include "stats/ScopedTimer.h"
 
 using namespace std;
+
+using namespace kapa::tarracsh::app;
+using namespace kapa::tarracsh::db;
+using namespace digest;
+using namespace callgraph;
+using namespace kapa::tarracsh::stats::profiler;
+
 
 bool Analyzer::isJarInput() const {
     return !_options.jarFile.empty();
@@ -38,9 +37,10 @@ bool Analyzer::isClassfileInput() const {
 }
 
 Analyzer::Analyzer(Config& config)
-    : _options(config.getOptions()), _results(config.getResults()),
-      _digestDb(_options.outputDir),
-      _callGraphDb(_options.outputDir) {
+    : _options(config.getOptions()),
+      _results(config.getResults()),
+      _digestDb(_options.outputDir, config.getLog()),
+      _callGraphDb(_options.outputDir, config.getLog()) {
 
 }
 
@@ -59,7 +59,7 @@ void Analyzer::analyzeClassfile(const std::string &filename) const {
     }
 }
 
-bool Analyzer::isFileUnchanged(const uintmax_t size, const long long timestamp, const tables::FileRow *row) const {
+bool Analyzer::isFileUnchanged(const uintmax_t size, const long long timestamp, const digest::FileRow *row) const {
     auto const result = _options.useFileTimestamp &&
                         row != nullptr &&
                         row->fileSize == size &&
@@ -69,17 +69,17 @@ bool Analyzer::isFileUnchanged(const uintmax_t size, const long long timestamp, 
 
 void Analyzer::updateDbInMemory(const ClassFileInfo &classFileInfo,
                                 const ClassFileAnalyzer &classFileAnalyzer,
-                                const tables::columns::DigestCol &digest) {
+                                const db::digest::columns::DigestCol &digest) {
     const auto files = _digestDb.getFiles();
-    tables::FileRow fileRow;
+    digest::FileRow fileRow;
     fileRow.filename = _digestDb.getPoolString(classFileInfo.filename);
-    fileRow.type = tables::columns::EntryType::Classfile;
+    fileRow.type = digest::columns::EntryType::Classfile;
     fileRow.lastWriteTime = classFileInfo.timestamp;
     fileRow.fileSize = classFileInfo.size;
     fileRow.digest = digest;
     fileRow.id = files->addOrUpdate(fileRow);
 
-    tables::ClassfileRow digestRow(fileRow);
+    digest::ClassfileRow digestRow(fileRow);
     digestRow.size = classFileInfo.size;
     digestRow.lastWriteTime = classFileInfo.timestamp;
     digestRow.digest = digest;
@@ -87,11 +87,11 @@ void Analyzer::updateDbInMemory(const ClassFileInfo &classFileInfo,
     digestRow.id = _digestDb.getClassfiles()->addOrUpdate(digestRow);
 }
 
-void Analyzer::digestClassfile(const string &filename) {
+void Analyzer::digestClassfile(const std::string &filename) {
 
     ClassFileInfo classFileInfo(filename);
 
-    const tables::FileRow *row = _digestDb.getFiles()->findByKey(classFileInfo.filename);
+    const digest::FileRow *row = _digestDb.getFiles()->findByKey(classFileInfo.filename);
     const bool rowFound = row != nullptr;
     const auto isFileChanged = !isFileUnchanged(classFileInfo.size, classFileInfo.timestamp, row);
 
@@ -110,7 +110,7 @@ void Analyzer::digestClassfile(const string &filename) {
             const auto isSamePublicDigest = rowFound && publicDigest.value() == row->digest;
 
             if (isSamePublicDigest) {
-                _results.log.writeln(std::format("Same public digestEntry of changed file:{}", classFileInfo.filename));
+                _results.log->writeln(std::format("Same public digestEntry of changed file:{}", classFileInfo.filename));
                 ++_results.classfiles.digest.same;
             } else {
                 if (rowFound) {
@@ -133,7 +133,7 @@ void Analyzer::digestClassfile(const string &filename) {
 
 }
 
-void Analyzer::processClassfile(const string &filename) {
+void Analyzer::processClassfile(const std::string &filename) {
     _fileThreadPool.push_task([this, filename] {
         ++_results.classfiles.count;
         if (_options.isPublicDigest) {
@@ -159,23 +159,23 @@ void Analyzer::processJar(const std::string &filename) {
 
         ++_results.jarfiles.count;
         if (_options.isPublicDigest) {
-            jar::JarDigestTask jarDigestTask(jarOptions, _results, _digestDb);
-            jar::JarProcessor jarProcessor(jarOptions, _results, jarDigestTask);
+            jar::DigestTask jarDigestTask(jarOptions, _results, _digestDb);
+            jar::Processor jarProcessor(jarOptions, _results, jarDigestTask);
             jarProcessor.run();
         } else if (_options.isCallGraph) {
-            jar::JarGraphTask jarGraphTask(jarOptions, _results, _callGraphDb);
-            jar::JarProcessor jarProcessor(jarOptions, _results, jarGraphTask);
+            jar::GraphTask jarGraphTask(jarOptions, _results, _callGraphDb);
+            jar::Processor jarProcessor(jarOptions, _results, jarGraphTask);
             jarProcessor.run();
         } else {
-            jar::JarParserTask jarParserTask(jarOptions, _results);
-            jar::JarProcessor jarProcessor(jarOptions, _results, jarParserTask);
+            jar::ParserTask jarParserTask(jarOptions, _results);
+            jar::Processor jarProcessor(jarOptions, _results, jarParserTask);
             jarProcessor.run();
         }
     });
 }
 
 
-bool Analyzer::initDb(db::Database &db) const {
+bool Analyzer::initDb(infrastructure::db::Database &db) const {
 
     ScopedTimer timer(&_results.profileData->initDb);
     auto result = true;
@@ -192,17 +192,18 @@ bool Analyzer::initDb(db::Database &db) const {
 }
 
 
-void Analyzer::processFile(const filesystem::directory_entry &dirEntry) {
-    if (fsUtils::isJar(dirEntry)) {
+
+void Analyzer::processFile(const std::filesystem::directory_entry &dirEntry) {
+    if (infrastructure::filesystem::utils::isJar(dirEntry)) {
         processJar(dirEntry.path().string());
-    } else if (fsUtils::isClassfile(dirEntry)) {
+    } else if (infrastructure::filesystem::utils::isClassfile(dirEntry)) {
         processClassfile(dirEntry.path().string());
     }
 }
 
 bool Analyzer::initAnalyzer() {
     ScopedTimer timer(&_results.profileData->initAnalyzer);
-    _results.log.setFile(_options.logFile);
+    _results.log->setFile(_options.logFile);
 
     if (_options.isPublicDigest) {
         if (!initDb(_digestDb)) return false;
@@ -214,7 +215,7 @@ bool Analyzer::initAnalyzer() {
 
 
 void Analyzer::processDirInput() {
-    for (auto const &dirEntry : filesystem::recursive_directory_iterator(_options.directory)) {
+    for (auto const &dirEntry : std::filesystem::recursive_directory_iterator(_options.directory)) {
         if (dirEntry.is_regular_file()) {
             processFile(dirEntry);
         }

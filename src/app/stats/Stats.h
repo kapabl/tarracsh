@@ -2,13 +2,14 @@
 #define TARRACSH_STATS_H
 
 #include <string>
-#include "../log/Log.h"
+#include "../infrastructure/log/Log.h"
 #include "../Options.h"
 #include "Report.h"
 #include "ProfileData.h"
 
 
-namespace org::kapa::tarracsh::stats {
+
+namespace kapa::tarracsh::stats {
 
 typedef std::atomic<unsigned int> Counter;
 typedef std::atomic<unsigned long> FileTime;
@@ -51,18 +52,16 @@ struct Results {
 
     FileTime classfileTime{};
     FileTime jarfileTime{};
-
-    log::Log log;
-
-
+    
     void print() const;
     void forcePrint() const;
     void printAll();
 
     mutable std::chrono::time_point<std::chrono::steady_clock> lastPrint{std::chrono::high_resolution_clock::now()};
 
-    std::unique_ptr <report::Report> report;
+    std::unique_ptr<report::Report> report;
     std::unique_ptr<profiler::ProfileData> profileData;
+    std::shared_ptr<infrastructure::log::Log> log;
 
 };
 

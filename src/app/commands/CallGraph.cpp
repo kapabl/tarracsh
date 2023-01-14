@@ -2,14 +2,14 @@
 #include "../Analyzer.h"
 
 
-using namespace org::kapa::infrastructure::cli::command;
-using namespace org::kapa::tarracsh::app::commands;
+using namespace kapa::infrastructure::app::cli::command;
+using namespace kapa::tarracsh::app::commands;
 
 CallGraph::CallGraph(CLI::App* parent)
     : Command(parent), _results(App::getGlobalResults()), _options(App::getGlobalOptions()) {
 }
 
-ExitCode CallGraph::run() const {
+kapa::infrastructure::app::cli::ExitCode CallGraph::run() const {
     ExitCode result = 0;
     Analyzer analyzer(App::getApp());
     analyzer.run();

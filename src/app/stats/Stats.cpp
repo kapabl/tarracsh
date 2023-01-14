@@ -5,7 +5,7 @@
 
 // #include "../app/TarracshApp.h"
 
-using namespace org::kapa::tarracsh::stats;
+using namespace kapa::tarracsh::stats;
 
 
 Results::Results(Options& options): options(options) {
@@ -109,10 +109,10 @@ void Results::printAll() {
     long long totalClassfiles = classfiles.count + jarfiles.classfileCount;
     const auto totalTime = profileData->analyzerTime.count();
     std::cout << std::endl;
-    log.writeln(std::format("classfiles: {:L}", totalClassfiles), true);
-    log.writeln(std::format("speed: {:.2f} classfile/s",
+    log->writeln(std::format("classfiles: {:L}", totalClassfiles), true);
+    log->writeln(std::format("speed: {:.2f} classfile/s",
         1000.0 * totalClassfiles / totalTime), true);
-    log.writeln(std::format("total time: {}", profileData->analyzerTime), true);
+    log->writeln(std::format("total time: {}", profileData->analyzerTime), true);
 
     std::cout << "\r" << std::flush;
 }

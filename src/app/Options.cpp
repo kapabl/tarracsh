@@ -1,7 +1,7 @@
 #include "Options.h"
-#include "../utils/FilesystemUtils.h"
+#include "../infrastructure/filesystem/FilesystemUtils.h"
 
-using namespace org::kapa::tarracsh;
+using namespace kapa::tarracsh;
 
 bool Options::canPrintProgress() const {
     const auto result = !printClassParse && !printConstantPool && !printDiffReport;
@@ -14,9 +14,9 @@ bool Options::processInput() {
         directory = input;
     } else if (std::filesystem::exists(input)) {
         const auto path = std::filesystem::path(input);
-        if (fsUtils::isJar(path)) {
+        if (infrastructure::filesystem::utils::isJar(path)) {
             jarFile = input;
-        } else if (fsUtils::isClassfile(path)) {
+        } else if (infrastructure::filesystem::utils::isClassfile(path)) {
             classFilePath = input;
         } else {
             result = false;

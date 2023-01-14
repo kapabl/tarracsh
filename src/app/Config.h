@@ -2,19 +2,20 @@
 #define TARRACSH_CONFIG_H
 
 #include "Options.h"
-// #include "stats/Stats.h"
+#include "../infrastructure/log/Log.h"
 
-namespace org::kapa::tarracsh::stats {
+namespace kapa::tarracsh::stats {
 struct Results;
 }
 
-namespace org::kapa::tarracsh::app {
-class Config abstract {
+namespace kapa::tarracsh::app {
+class Config {
 
 public:
     virtual ~Config() = default;
-    virtual stats::Results& getResults() abstract;
-    virtual Options &getOptions() abstract;
+    virtual stats::Results& getResults() = 0;
+    virtual Options &getOptions() = 0;
+    virtual infrastructure::log::Log &getLog() = 0;
 
 };
 

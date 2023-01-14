@@ -2,16 +2,17 @@
 #define TARRACSH_REPORT_H
 
 #include <string>
+#include <vector>
 
 #include "../Options.h"
-#include "../utils/FilesystemUtils.h"
+#include "../infrastructure/filesystem/FilesystemUtils.h"
 
 
-namespace org::kapa::tarracsh::stats {
+namespace kapa::tarracsh::stats {
 struct Results;
 }
 
-namespace org::kapa::tarracsh::stats::report {
+namespace kapa::tarracsh::stats::report {
 
 struct JarResult {
     std::string filename;
