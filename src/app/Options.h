@@ -1,13 +1,9 @@
 #ifndef TARRACSH_OPTIONS_H
 #define TARRACSH_OPTIONS_H
-
-#include <functional>
 #include <string>
 
-#include "CLI11.hpp"
-
-namespace org::kapa::tarracsh {
-struct Options;
+namespace kapa::tarracsh {
+// struct Options;
 
 struct ServerOptions {
     bool enabled{false};

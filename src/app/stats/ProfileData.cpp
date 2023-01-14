@@ -2,9 +2,9 @@
 #include "ProfileData.h"
 
 
-#include "../../utils/FilesystemUtils.h"
+#include "../../infrastructure/filesystem/FilesystemUtils.h"
 
-using namespace org::kapa::tarracsh::stats::profiler;
+using namespace kapa::tarracsh::stats::profiler;
 
 
 ProfileData::ProfileData(Results &results): results(results) {
@@ -22,10 +22,10 @@ void ProfileData::output(const Options &options) const {
     lines.push_back(std::format("Init Db: {}", initDb));
     lines.push_back(std::format("Write Digest Db: {}", writeDigestDb));
     lines.push_back(std::format("Write Call Graph Db: {}", writeCallGraphDb));
-    fsUtils::writeLines(filename, lines);
+    infrastructure::filesystem::utils::writeLines(filename, lines);
     if ( options.printProfiler ) {
         std::cout << std::endl;
-        fsUtils::stdoutFile(filename);
+        infrastructure::filesystem::utils::stdoutFile(filename);
     }
 }
 

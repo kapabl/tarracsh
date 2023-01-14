@@ -1,13 +1,12 @@
 #include "Parse.h"
 #include "../Analyzer.h"
 
-using namespace org::kapa::tarracsh;
+using namespace kapa::tarracsh;
 using namespace app;
 using namespace commands;
 
 
-using namespace org::kapa::infrastructure::cli::command;
-using namespace org::kapa::tarracsh::app::commands;
+using namespace kapa::infrastructure::app::cli::command;
 
 Parse::Parse(CLI::App* parent)
     : Command(parent), _results(App::getGlobalResults()), _options(App::getGlobalOptions()) {

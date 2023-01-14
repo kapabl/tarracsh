@@ -1,7 +1,8 @@
 #include "App.h"
+#include "../infrastructure/filesystem/FilesystemUtils.h"
 #include "Tarracsh.h"
-#include "../classfile/constpool/ConstantPoolPrinter.h"
-#include "../nav/HtmlGen.h"
+#include "../domain/classfile/constpool/ConstantPoolPrinter.h"
+#include "nav/HtmlGen.h"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -9,7 +10,11 @@
 #include <consoleapi.h>
 #endif
 
-using namespace org::kapa::tarracsh;
+using namespace kapa;
+using namespace infrastructure::app::cli;
+using namespace infrastructure::log;
+using namespace infrastructure::filesystem::utils;
+using namespace tarracsh;
 using namespace app;
 using namespace std;
 
@@ -18,13 +23,16 @@ std::unique_ptr<App> App::_app;
 
 
 
-App::App(const std::string &description, const std::string &name)
-    : CLI::App(description, name), _results(_options) {
+App::App(const std::string &description, const std::string &name, std::shared_ptr<Log> log)
+    : CliApp(description, name), _results(_options), _log(log) {
+
+    _results.log = log;
 }
 
 ExitCode App::run(int argc, char *argv[]) {
 
-    _app.reset(new App("", "Tarracsh"));
+    const auto log = make_shared<Log>();
+    _app.reset(new App("", "Tarracsh", log));
 
     const auto result = _app->start(argc, argv);
 
@@ -115,7 +123,7 @@ int App::parseCli(int argc, char **argv) {
         }
 
         if (_options.outputDir.empty()) {
-            _options.outputDir = (fsUtils::getUserHomeDir() / "tarracsh" / "output").string();
+            _options.outputDir = (getUserHomeDir() / "tarracsh" / "output").string();
         }
 
         if (_options.logFile.empty()) {
@@ -161,8 +169,8 @@ void App::init() {
     prepareConsoleForUTF8();
 #endif
 
-    fsUtils::ensureDir(_options.outputDir);
-    _results.log.init(_options.logFile);
+    ensureDir(_options.outputDir);
+    _log->init(_options.logFile);
 
     if (isCPoolPrinterNeeded()) {
         ConstantPoolPrinter::init();

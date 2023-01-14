@@ -2,7 +2,7 @@
 #include "Stats.h"
 #include "../App.h"
 
-using namespace org::kapa::tarracsh;
+using namespace kapa::tarracsh;
 using namespace app;
 using namespace stats::report;
 

@@ -1,11 +1,11 @@
 #include "PublicDigest.h"
 #include "../Analyzer.h"
-#include "../tables/Query.h"
+#include "../db/Query.h"
 #include "../server/digest/ServerCommand.h"
 
 
-using namespace org::kapa::infrastructure::cli::command;
-using namespace org::kapa::tarracsh;
+using namespace kapa::infrastructure::app::cli::command;
+using namespace kapa::tarracsh;
 using namespace app;
 using namespace commands;
 
