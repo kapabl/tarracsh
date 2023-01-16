@@ -21,8 +21,7 @@ namespace kapa::infrastructure::db::tables {
 constexpr const char *TableExtension = ".kapamd";
 
 
-struct Row {
-};
+struct Row {};
 
 struct AutoIncrementedRow : Row {
     columns::UInt64Col id{-1ull};
@@ -76,6 +75,26 @@ public:
         defineColumns();
     }
 
+    [[nodiscard]] uint64_t getFileSize() const {
+        const auto result = std::filesystem::file_size(_filename);
+        return result;
+    }
+
+    [[nodiscard]] uint64_t getHeaderSize() const {
+        const auto result = sizeof(TableLayout) + (_layout.header.columnCount - 1) * sizeof(columns::Properties);
+        return result;
+    }
+
+    [[nodiscard]] static uint64_t getRowSize() {
+        const auto result = sizeof(T);
+        return result;
+    }
+
+    [[nodiscard]] uint64_t calculateRowCount() const {
+        const auto result = (getFileSize() - getHeaderSize()) / getRowSize();
+        return result;
+    }
+
     virtual ~Table() = default;
 
     [[nodiscard]] bool isDirty() const { return _isDirty; }
@@ -91,21 +110,21 @@ public:
 
     uint64_t update(const T &row) {
         std::lock_guard lock(_mutex);
-        const auto update = internalUpdate(row);
+        auto key = getKey(row);
+        const auto update = internalUpdate(row, key);
         _isDirty = true;
         return update;
     }
 
-    uint64_t addOrUpdate(const T &row) {
+    [[nodiscard]] uint64_t addOrUpdate(const T &row) {
 
         std::lock_guard lock(_mutex);
         auto key = getKey(row);
-        const auto &it = _rows.find(key);
 
         const auto result =
-            it != _rows.end()
-                ? internalUpdate(row)
-                : internalAdd(row);
+            _rows.contains(key)
+                ? internalUpdate(row, key)
+                : internalAdd(row, key);
 
         _isDirty = true;
 
@@ -117,14 +136,15 @@ public:
         return result;
     }
 
-    const T *getRow(uint64_t id) {
+    [[nodiscard]] const T *getRow(uint64_t id) {
         const auto result = _autoIncrementIndex[id];
         return result;
     }
 
-    uint64_t add(const T &row) {
+    [[nodiscard]] uint64_t add(const T &row) {
         std::lock_guard lock(_mutex);
-        const auto result = internalAdd(row);
+        auto key = getKey(row);
+        const auto result = internalAdd(row, key);
 
         _isDirty = true;
 
@@ -136,7 +156,7 @@ public:
 
     virtual std::string getKey(const T &row) = 0;
 
-    bool write() {
+    [[nodiscard]] bool write() {
         if (!_isDirty) return true;
 
         std::lock_guard lock(_mutex);
@@ -168,9 +188,9 @@ public:
         return result;
     }
 
-    std::shared_ptr<StringPool> getStringPool() const;
+    [[nodiscard]] std::shared_ptr<StringPool> getStringPool() const;
 
-    const T *findByKey(const std::string &key) {
+    [[nodiscard]] const T *findByKey(const std::string &key) {
         std::shared_lock lock(_mutex);
         T *result{};
         const auto it = _rows.find(key);
@@ -181,11 +201,9 @@ public:
     }
 
 
-    void printSchema() {
-        printLayout();
-    }
+    void printSchema();
 
-    uint64_t size() { return _rows.size(); }
+    [[nodiscard]] uint64_t size() { return _rows.size(); }
 
 
 protected:
@@ -206,27 +224,9 @@ protected:
     std::vector<columns::Properties> _columns;
     TableLayout _layout;
 
-    virtual void defineColumns() {
-    }
-
-
-    void printLayout() {
-        std::cout << std::endl;
-        std::cout << std::format("table name: {}", _layout.header.name) << std::endl;
-        std::cout << std::format("column count: {}", _layout.header.columnCount) << std::endl;
-        std::cout << std::endl;
-        std::cout << "columns:" << std::endl;
-        auto index = 1u;
-        for (auto &column : _columns) {
-            std::cout << std::format("  no: {}", index) << std::endl;
-            std::cout << std::format("  name: {}", column.name) << std::endl;
-            std::cout << std::format("  type: {}", StorageTypeToString(column.type)) << std::endl;
-            std::cout << std::format("  display as: {}", DisplayAsToString(column.displayAs)) << std::endl;
-            std::cout << std::endl;
-            index++;
-        }
-
-    }
+    virtual void defineColumns() {}
+    
+    void printLayout();
 
     void writeRows(std::ofstream &file) {
         for (auto pRow : _autoIncrementIndex) {
@@ -246,8 +246,8 @@ protected:
 
     bool readRows(std::ifstream &file) {
         while (!file.eof()) {
-            T rowBuffer;
-            file.read(reinterpret_cast<char *>(&rowBuffer), _rowSize);
+            T row;
+            file.read(reinterpret_cast<char *>(&row), _rowSize);
             const auto bytesRead = file.gcount();
             if (bytesRead == 0) {
                 continue;
@@ -257,7 +257,8 @@ protected:
                 _db.log().writeln(std::format("Error reading table: {}", _filename), true);
                 return false;
             }
-            internalAdd(rowBuffer);
+            auto key = getKey(row);
+            internalAdd(row, key);
         }
         return true;
     }
@@ -290,9 +291,8 @@ protected:
     }
 
 
-    uint64_t internalAdd(const T &row) {
+    uint64_t internalAdd(const T &row, const std::string& key ) {
 
-        auto key = getKey(row);
         const auto &it = _rows.find(key);
         assert(!_rows.contains(key));
 
@@ -305,9 +305,8 @@ protected:
         return result;
     }
 
-    uint64_t internalUpdate(const T &row) {
+    uint64_t internalUpdate(const T &row, const std::string& key) {
 
-        auto key = getKey(row);
         assert(_rows.contains(key));
         _rows[key] = row;
         const auto result = _reverseAutoincrementIndex[&row];

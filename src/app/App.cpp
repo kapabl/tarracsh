@@ -2,11 +2,14 @@
 #include "../infrastructure/filesystem/Utils.h"
 #include "Tarracsh.h"
 
+
 #include "classfile/constantpool/printer/ConstantPoolPrinter.h"
 #include "classfile/constantpool/printer/nav/HtmlGen.h"
+#include "server/digest/ServiceImpl.h"
 
 #ifdef _WIN32
-#include <Windows.h>
+// #define WIN32_LEAN_AND_MEAN
+// #include <Windows.h>
 #include <processenv.h>
 #include <consoleapi.h>
 #endif
@@ -65,6 +68,13 @@ ExitCode App::start(const int argc, char *argv[]) {
 
 }
 
+void App::controlCHandler() {
+    if (_options.digestServer.enabled) {
+        std::cout << "Terminating..." << std::endl;
+        tarracsh::server::digest::ServiceImpl::signalQuick();
+    }
+}
+
 
 void App::setupCliOptions() {
     set_version_flag("--version", "version " TARRACSH_VERSION);
@@ -99,7 +109,7 @@ bool App::isValidInput(domain::Options &options) {
     const auto result = options.processInput();
     if (!result) {
         std::cout << std::format("Input should be a directory, jar or class file. Invalid input:{}",
-                            options.input) << std::endl;
+                                 options.input) << std::endl;
     }
     return result;
 }
@@ -159,6 +169,37 @@ bool App::isCPoolPrinterNeeded() const {
     return result;
 }
 
+
+#ifdef _WIN32
+int __stdcall App::ctrlHandler(unsigned long fdwCtrlType) {
+    switch (fdwCtrlType) {
+        case CTRL_C_EVENT:
+            _app->controlCHandler();
+            return _app->getOptions().digestServer.enabled;
+
+        case CTRL_CLOSE_EVENT:
+            _app->controlCHandler();
+            return TRUE;
+
+        case CTRL_BREAK_EVENT:
+            _app->controlCHandler();
+            return TRUE;
+
+        case CTRL_LOGOFF_EVENT:
+            _app->controlCHandler();
+            return TRUE;
+
+        case CTRL_SHUTDOWN_EVENT:
+            _app->controlCHandler();
+            return TRUE;
+
+        default:
+            return FALSE;
+    }
+}
+#endif
+
+
 void App::init() const {
 
     auto result = true;
@@ -166,6 +207,7 @@ void App::init() const {
 #ifdef _WIN32
     prepareConsoleForVT100();
     prepareConsoleForUTF8();
+    SetConsoleCtrlHandler(App::ctrlHandler, TRUE);
 #endif
 
     ensureDir(_options.outputDir);

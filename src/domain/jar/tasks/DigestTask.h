@@ -23,8 +23,11 @@ public:
     [[ nodiscard ]] std::string getStrongClassname(const JarEntry &jarEntry) const;
 
     void processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) override;
-    void updateFileTableInMemory(digestUtils::DigestVector digest) const;
+    void updateFileTableInMemory(const digestUtils::DigestVector &digest) const;
     bool start() override;
+    static std::string getUniqueClassname(
+        const JarEntry& jarEntry, 
+        const classfile::ClassFileParser &classFileParser);
     void updateClassfileTableInMemory(const JarEntry &jarEntry, const db::digest::columns::DigestCol &result,
                                       const classfile::ClassFileParser &classFileParser) const;
     void end() override;

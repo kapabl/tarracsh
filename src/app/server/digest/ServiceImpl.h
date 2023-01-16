@@ -20,6 +20,7 @@ public:
     static void start(app::Config& config);
 
     explicit ServiceImpl(app::Config& config);
+    static void signalQuick();
 
     Status Quit(ServerContext* context, const app::server::digest::Empty* request, app::server::digest::Empty* response) override;
     Status Check(ServerContext* context, 
@@ -32,8 +33,8 @@ private:
     app::Config& _config;
     std::unique_ptr<grpc::Server> _server;
     std::mutex _mutex;
-    std::condition_variable _cv;
-    bool _quickReceived{ false };
+    static std::condition_variable _quickSignalCV;
+    static bool _quickReceived;
 
     bool initDb();
     void startServer();
