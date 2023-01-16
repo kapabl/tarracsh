@@ -1,26 +1,29 @@
 #include "PublicDigest.h"
-#include "../Analyzer.h"
-#include "../domain/db/Query.h"
-#include "../server/digest/ServerCommand.h"
+#include "../../Analyzer.h"
+#include "Query.h"
+#include "../../server/digest/ServerCommand.h"
 
 
-using namespace kapa::infrastructure::app::cli::command;
-using namespace kapa::tarracsh;
-using namespace app;
-using namespace commands;
+using kapa::tarracsh::app::server::digest::ServerCommand;
+using kapa::tarracsh::app::commands::digest::QueryCommand;
+using kapa::tarracsh::domain::ServerOptions;
+using kapa::infrastructure::app::cli::ExitCode;
+
+using namespace kapa::tarracsh::app::commands::digest;
+
 
 
 PublicDigest::PublicDigest(CLI::App* parent)
     : Command(parent), _results(App::getGlobalResults()), _options(App::getGlobalOptions()) {
 }
 
-ExitCode PublicDigest::run() const {
+ ExitCode PublicDigest::run() const {
     ExitCode result = 0;
     _options.digestServer.enabled = _parent->got_subcommand(_digestServerOptions);
     if (_options.digestServer.enabled) {
-        server::digest::ServerCommand::run(App::getApp());
+        ServerCommand::run(App::getApp());
     } else if (!_options.queryValue.empty()) {
-        db::query::QueryCommand::run(App::getApp());
+        QueryCommand::run(App::getApp());
     } else {
         if (App::isValidInput(_options)) {
             Analyzer analyzer(App::getApp());
@@ -36,7 +39,7 @@ ExitCode PublicDigest::run() const {
 CLI::App *PublicDigest::addServerOptions() const {
     const auto result = _subCommand->add_subcommand("server", "Server commands - Default start server");
 
-    ServerOptions& serverOptions = _options.digestServer;
+    domain::ServerOptions& serverOptions = _options.digestServer;
 
     result->add_option("--port", serverOptions.port, "Server Port")->default_val(serverOptions.port);
     const auto listenAddress = result->add_option("--listen-addr", serverOptions.listenAddress, "Listen address")->

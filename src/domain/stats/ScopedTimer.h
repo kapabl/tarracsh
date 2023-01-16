@@ -4,11 +4,10 @@
 #include <string>
 
 #include "ProfileData.h"
-#include "../Tarracsh.h"
 #include "../../infrastructure/filesystem/Utils.h"
 
 
-namespace kapa::tarracsh::app::stats::profiler {
+namespace kapa::tarracsh::domain::stats::profiler {
 
 
 class ScopedTimer {

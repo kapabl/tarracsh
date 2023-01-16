@@ -2,8 +2,8 @@
 #define TARRACSH_PARSE_CMD_H
 
 #include "../../infrastructure/app/Command.h"
-#include "../Options.h"
-#include "../stats/Stats.h"
+#include "../../domain/Options.h"
+#include "../../domain/stats/Results.h"
 
 
 namespace kapa::tarracsh::app::commands {
@@ -14,8 +14,8 @@ public:
     [[nodiscard]] infrastructure::app::cli::ExitCode run() const override;
     void addCommand() override;
 private:
-    stats::Results& _results;
-    Options& _options;
+    domain::stats::Results& _results;
+    domain::Options& _options;
 };
 
 

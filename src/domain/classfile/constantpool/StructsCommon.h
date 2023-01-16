@@ -2,8 +2,8 @@
 // Created by xman on 6/29/2022.
 //
 
-#ifndef TARRACSH_STRUCTSCOMMON_H
-#define TARRACSH_STRUCTSCOMMON_H
+#ifndef TARRACSH_STRUCTS_COMMON_H
+#define TARRACSH_STRUCTS_COMMON_H
 
 
 namespace kapa::tarracsh::domain::classfile::constantpool {

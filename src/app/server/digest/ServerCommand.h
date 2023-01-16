@@ -6,7 +6,7 @@
 #include "proto/Server.grpc.pb.h"
 
 
-namespace kapa::tarracsh::server::digest {
+namespace kapa::tarracsh::app::server::digest {
 
 
 class ServerCommand {

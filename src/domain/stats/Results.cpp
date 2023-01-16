@@ -1,11 +1,9 @@
-#include "Stats.h"
+#include "Results.h"
 
 #include <iostream>
 
 
-// #include "../app/TarracshApp.h"
-
-using namespace kapa::tarracsh::app::stats;
+using namespace kapa::tarracsh::domain::stats;
 
 
 Results::Results(Options& options): options(options) {

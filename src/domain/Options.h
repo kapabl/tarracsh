@@ -2,7 +2,7 @@
 #define TARRACSH_OPTIONS_H
 #include <string>
 
-namespace kapa::tarracsh {
+namespace kapa::tarracsh::domain {
 // struct Options;
 
 struct ServerOptions {

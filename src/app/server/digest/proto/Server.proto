@@ -6,7 +6,7 @@ option java_outer_classname = "RouteGuideProto";
 option objc_class_prefix = "RTG";
 
 
-package kapa.tarracsh.server.digest;
+package kapa.tarracsh.app.server.digest;
 
 service PublicDigest {
   rpc Quit(Empty) returns (Empty) {}

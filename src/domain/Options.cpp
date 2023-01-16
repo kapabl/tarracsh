@@ -1,7 +1,7 @@
 #include "Options.h"
 #include "../infrastructure/filesystem/Utils.h"
 
-using namespace kapa::tarracsh;
+using namespace kapa::tarracsh::domain;
 
 bool Options::canPrintProgress() const {
     const auto result = !printClassParse && !printConstantPool && !printDiffReport;

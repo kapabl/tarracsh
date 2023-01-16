@@ -41,8 +41,8 @@ public:
     void run();
 
 private:
-    Options _options;
-    stats::Results& _results;
+    domain::Options _options;
+    domain::stats::Results& _results;
     void processJar(const std::string &filename);
 
     domain::db::digest::DigestDb _digestDb;

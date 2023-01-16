@@ -22,14 +22,14 @@ using domain::classfile::constantpool::MethodInfo;
 using domain::classfile::constantpool::FieldInfo;
 using domain::classfile::attribute::AttributeInfo;
 
-class ParserOutput final {
+class ParserPrinter final {
 
 public:
-    explicit ParserOutput(domain::classfile::ClassFileParser& classFileParser);
+    explicit ParserPrinter(domain::classfile::ClassFileParser& classFileParser);
 
-    void run();
+    void print();
 
-    ~ParserOutput() = default;
+    ~ParserPrinter() = default;
 
 
 private:

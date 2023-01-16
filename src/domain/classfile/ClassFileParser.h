@@ -3,18 +3,21 @@
 #include <string>
 #include <vector>
 
-#include "constpool/ConstantPool.h"
+#include "constantpool/ConstantPool.h"
 #include "AttributesManager.h"
 #include "AccessModifiers.h"
-#include "../../app/stats/Stats.h"
+#include "../stats/Results.h"
 #include "reader/ClassFileReader.h"
 
 namespace kapa::tarracsh::domain::classfile {
 
+    using kapa::tarracsh::domain::stats::Results;
+
 class ClassFileParser final {
+   
 
 public:
-    explicit ClassFileParser(reader::ClassFileReader &reader, Options &options, app::stats::Results &results);
+    explicit ClassFileParser(reader::ClassFileReader &reader, Options &options, stats::Results &results);
 
     ClassFileParser(const ClassFileParser &) = delete;
     ClassFileParser(const ClassFileParser &&) = delete;
@@ -44,7 +47,7 @@ public:
 
 private:
     Options _options;
-    app::stats::Results &_results;
+    Results &_results;
     reader::ClassFileReader &_reader;
     bool _parseSucceed{ false };
 

@@ -1,6 +1,7 @@
 #ifndef JAR_ANALYZER_H
 #define JAR_ANALYZER_H
-#include "../app/stats/Stats.h"
+#include "../../stats/Results.h"
+#include "../../Options.h"
 #include "../JarEntry.h"
 #include "Task.h"
 #include "../../classfile/ClassFileParser.h"
@@ -8,11 +9,13 @@
 
 namespace kapa::tarracsh::domain::jar::tasks {
 
+using kapa::tarracsh::domain::stats::Results;
+
 class ParserTask: public Task {
 public:
     explicit ParserTask(
         Options jarOptions, 
-        app::stats::Results& results, 
+        Results& results, 
         std::function<void(classfile::ClassFileParser&)> onParserDone );
 
     void processEntry(const JarEntry& jarEntry, std::mutex& taskMutex) override;
@@ -20,7 +23,7 @@ public:
     void end() override;
 
 private:
-    app::stats::Results &_results;
+    Results &_results;
     Options _jarOptions;
     bool _isValid{true};
     unsigned int _classfileCount{0};
@@ -28,7 +31,7 @@ private:
     std::function<void(classfile::ClassFileParser&)> _onParserDone;
     void parseEntry(const JarEntry &jarEntry) const;
 
-    void prepareOptions(const jar::JarEntry& jarEntry, kapa::tarracsh::Options& options) const;
+    void prepareOptions(const jar::JarEntry& jarEntry, Options& options) const;
 };
 }
 #endif

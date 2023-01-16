@@ -2,11 +2,10 @@
 #define TARRACSH_APP_H
 
 #include "../infrastructure/app/CliApp.h"
-#include "Options.h"
+#include "../domain/Options.h"
 #include "Config.h"
-#include "stats/Stats.h"
 
-#include "commands/PublicDigest.h"
+#include "commands/digest/PublicDigest.h"
 #include "commands/CallGraph.h"
 #include "commands/Parse.h"
 
@@ -23,15 +22,15 @@ public:
     [[nodiscard]] static ExitCode run(int argc, char *argv[]);
     [[nodiscard]] ExitCode start(int argc, char *argv[]);
 
-    [[nodiscard]] static stats::Results &getGlobalResults() { return _app->_results; }
-    [[nodiscard]] static Options &getGlobalOptions() { return _app->_options; }
+    [[nodiscard]] static domain::stats::Results &getGlobalResults() { return _app->_results; }
+    [[nodiscard]] static domain::Options &getGlobalOptions() { return _app->_options; }
     
-    [[nodiscard]] static bool isValidInput(Options& options);
+    [[nodiscard]] static bool isValidInput(domain::Options& options);
 
     [[nodiscard]] static App& getApp() { return *_app; }
 
-    [[nodiscard]] stats::Results& getResults() override { return _results; }
-    [[nodiscard]] Options& getOptions() override { return _options; }
+    [[nodiscard]] domain::stats::Results& getResults() override { return _results; }
+    [[nodiscard]] domain::Options& getOptions() override { return _options; }
 
     [[nodiscard]] infrastructure::log::Log& getLog() override { return *_log; }
 
@@ -40,12 +39,12 @@ protected:
     std::shared_ptr<infrastructure::log::Log> _log;
 
 private:
-    Options _options;
+    domain::Options _options;
     void setupCliOptions();
 
     std::unique_ptr<commands::Parse> _parseCommand{};
     std::unique_ptr<commands::CallGraph> _callGraphCommand{};
-    std::unique_ptr<commands::PublicDigest> _digestCommand{};
+    std::unique_ptr<commands::digest::PublicDigest> _digestCommand{};
     static std::unique_ptr<App> _app;
 
 
@@ -57,10 +56,10 @@ private:
     static void prepareConsoleForVT100();
     static void prepareConsoleForUTF8();
 #endif
-    stats::Results _results;
+    domain::stats::Results _results;
 
     [[nodiscard]] bool isCPoolPrinterNeeded() const;
-    void init();
+    void init() const;
 };
 
 

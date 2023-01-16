@@ -6,7 +6,7 @@
 
 #include "classfile/constantpool/printer/ConstantPoolPrinter.h"
 #include "classfile/constantpool/printer/nav/HtmlGen.h"
-#include "classfile/ParserOutput.h"
+#include "classfile/ParserPrinter.h"
 #include "../domain/digest/ClassFileDigest.h"
 #include "../domain/classfile/ClassFileParser.h"
 #include "../domain/jar/tasks/ParserTask.h"
@@ -14,15 +14,15 @@
 #include "../domain/jar/tasks/GraphTask.h"
 #include "../domain/jar/Processor.h"
 #include "../domain/classfile/reader/FileReader.h"
-#include "stats/Stats.h"
-#include "stats/ScopedTimer.h"
+#include "../domain/stats/Results.h"
+#include "../domain/stats/ScopedTimer.h"
 
 using namespace std;
 
 using kapa::tarracsh::app::classfile::constantpool::printer::nav::HtmlGen;
 
 
-using kapa::tarracsh::app::classfile::ParserOutput;
+using kapa::tarracsh::app::classfile::ParserPrinter;
 using kapa::tarracsh::app::classfile::constantpool::printer::ConstantPoolPrinter;
 
 using kapa::tarracsh::domain::classfile::reader::FileReader;
@@ -35,10 +35,11 @@ using kapa::tarracsh::domain::db::digest::ClassfileRow;
 using kapa::tarracsh::domain::db::digest::columns::DigestCol;
 using kapa::tarracsh::domain::db::digest::columns::EntryType;
 using kapa::tarracsh::domain::digest::ClassFileDigest;
+using kapa::tarracsh::domain::Options;
+using kapa::tarracsh::domain::stats::profiler::ScopedTimer;
 
 
 using namespace kapa::tarracsh::app;
-using namespace stats::profiler;
 
 
 bool Analyzer::isJarInput() const {
@@ -62,7 +63,7 @@ Analyzer::Analyzer(Config &config)
 }
 
 void Analyzer::parseClassfile(const std::string &filename) const {
-    Options classfileOptions(_options);
+    domain::Options classfileOptions(_options);
     classfileOptions.classFilePath = filename;
 
     FileReader reader(classfileOptions.classFilePath);
@@ -179,17 +180,17 @@ void Analyzer::classFileParserDone(ClassFileParser& parser) const {
     if (!parser.isValid()) return;
 
     if (_options.printConstantPool) {
-        ConstantPoolPrinter printer(parser);
-        printer.print();
+        ConstantPoolPrinter constantPoolPrinter(parser);
+        constantPoolPrinter.print();
     }
     else if (_options.printCPoolHtmlNav) {
-        HtmlGen printer(parser);
-        printer.print();
+        HtmlGen htmlGen(parser);
+        htmlGen.print();
     }
 
     if (_options.printClassParse) {
-        ParserOutput parserOutput(parser);
-        parserOutput.run();
+        ParserPrinter parserPrinter(parser);
+        parserPrinter.print();
     }
 }
 

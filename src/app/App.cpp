@@ -1,7 +1,9 @@
 #include "App.h"
 #include "../infrastructure/filesystem/Utils.h"
 #include "Tarracsh.h"
-#include "nav/HtmlGen.h"
+
+#include "classfile/constantpool/printer/ConstantPoolPrinter.h"
+#include "classfile/constantpool/printer/nav/HtmlGen.h"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -9,40 +11,38 @@
 #include <consoleapi.h>
 #endif
 
-using namespace kapa;
-using namespace infrastructure::app::cli;
-using namespace infrastructure::log;
-using namespace infrastructure::filesystem::utils;
-using namespace tarracsh;
-using namespace app;
-using namespace std;
+using kapa::tarracsh::app::classfile::constantpool::printer::ConstantPoolPrinter;
+using kapa::tarracsh::app::classfile::constantpool::printer::nav::HtmlGen;
+using kapa::infrastructure::log::Log;
+using kapa::infrastructure::filesystem::utils::getUserHomeDir;
+using kapa::infrastructure::filesystem::utils::ensureDir;
+
+using namespace kapa::tarracsh::app;
 
 
 std::unique_ptr<App> App::_app;
 
-
-
-App::App(const std::string &description, const std::string &name, std::shared_ptr<Log> log)
-    : CliApp(description, name), _results(_options), _log(log) {
+App::App(const std::string &description, const std::string &name, const std::shared_ptr<Log> log)
+    : CliApp(description, name), _log(log), _results(_options) {
 
     _results.log = log;
 }
 
-ExitCode App::run(int argc, char *argv[]) {
+ExitCode App::run(const int argc, char *argv[]) {
 
-    const auto log = make_shared<Log>();
+    const auto log = std::make_shared<Log>();
     _app.reset(new App("", "Tarracsh", log));
 
     const auto result = _app->start(argc, argv);
 
     if (_app->_options.pause) {
-        cin.get();
+        std::cin.get();
     }
 
     return result;
 }
 
-ExitCode App::start(int argc, char *argv[]) {
+ExitCode App::start(const int argc, char *argv[]) {
 
     auto exitCode = parseCli(argc, argv);
     if (exitCode != 0) {
@@ -70,13 +70,13 @@ void App::setupCliOptions() {
     set_version_flag("--version", "version " TARRACSH_VERSION);
     set_help_all_flag("--help-all");
 
-    _digestCommand = make_unique<commands::PublicDigest>(this);
+    _digestCommand = std::make_unique<commands::digest::PublicDigest>(this);
     _digestCommand->addCommand();
 
-    _parseCommand = make_unique<commands::Parse>(this);
+    _parseCommand = std::make_unique<commands::Parse>(this);
     _parseCommand->addCommand();
 
-    _callGraphCommand = make_unique<commands::CallGraph>(this);
+    _callGraphCommand = std::make_unique<commands::CallGraph>(this);
     _callGraphCommand->addCommand();
 
     _parseCommand->getSubCommand()->excludes(_digestCommand->getSubCommand());
@@ -95,11 +95,11 @@ void App::setupCliOptions() {
 
 }
 
-bool App::isValidInput(Options &options) {
+bool App::isValidInput(domain::Options &options) {
     const auto result = options.processInput();
     if (!result) {
-        cout << std::format("Input should be a directory, jar or class file. Invalid input:{}",
-                            options.input) << endl;
+        std::cout << std::format("Input should be a directory, jar or class file. Invalid input:{}",
+                            options.input) << std::endl;
     }
     return result;
 }
@@ -117,7 +117,7 @@ int App::parseCli(int argc, char **argv) {
         } else if (_parseCommand->isSelected()) {
             _options.isParse = true;
         } else {
-            cout << std::format("Invalid sub-command") << endl;
+            std::cout << std::format("Invalid sub-command") << std::endl;
             result = 1;
         }
 
@@ -159,7 +159,7 @@ bool App::isCPoolPrinterNeeded() const {
     return result;
 }
 
-void App::init() {
+void App::init() const {
 
     auto result = true;
 
@@ -174,7 +174,7 @@ void App::init() {
     if (isCPoolPrinterNeeded()) {
         ConstantPoolPrinter::init();
         if (_options.printCPoolHtmlNav) {
-            nav::HtmlGen::init();
+            HtmlGen::init();
         }
     }
 

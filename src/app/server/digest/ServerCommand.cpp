@@ -2,13 +2,11 @@
 #include <grpcpp/create_channel.h>
 #include <grpcpp/security/credentials.h>
 
-using namespace kapa::tarracsh;
-using namespace app;
-using namespace server::digest;
-using namespace std;
 
 
+using namespace kapa::tarracsh::app::server::digest;
 
+using kapa::tarracsh::server::digest::ServiceImpl;
 
 ServerCommand::ServerCommand(Config& config):_config(config) {
 
@@ -33,7 +31,7 @@ void ServerCommand::stop() const {
     Empty response;
     const auto status = _stub->Quit( &context, request, &response );
     if (status.error_code() != grpc::StatusCode::OK) {
-        cout << format("Error: {} - {} ", static_cast<int>(status.error_code()), status.error_message()) << endl;
+        std::cout << format("Error: {} - {} ", static_cast<int>(status.error_code()), status.error_message()) << std::endl;
     }
    
 

@@ -5,14 +5,10 @@
 #include "ConstantPool.h"
 
 #include <cassert>
-#include <iostream>
-#include <ostream>
-
 #include "../DescriptorParser.h"
 
 
-using namespace kapa::tarracsh;
-using namespace std;
+using namespace kapa::tarracsh::domain::classfile::constantpool;
 
 void ConstantPool::addEmptyIndex() {
      _constantPoolIndex.push_back(nullptr);
