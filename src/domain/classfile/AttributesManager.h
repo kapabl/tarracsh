@@ -9,13 +9,13 @@
 #include "AttributeTags.h"
 #include "AttributeStructures.h"
 #include "AccessModifiers.h"
-#include "VectorReader.h"
+#include "reader/VectorReader.h"
 #include "AnnotationsParser.h"
-#include "signatures/SignatureParser.h"
+#include "signature/SignatureParser.h"
 #include "../../infrastructure/string/StringUtils.h"
 
 
-namespace kapa::tarracsh::attributes {
+namespace kapa::tarracsh::domain::classfile::attribute {
 
 
 #define ATTR_TO_STRING_FUNC_NAME(AttributeName) toString##AttributeName
@@ -27,20 +27,20 @@ namespace kapa::tarracsh::attributes {
 #define START_ATTR_TO_STRING(AttributeName) \
     std::string ATTR_TO_STRING_FUNC_NAME(AttributeName)(AttributeInfo & attribute) { \
         std::string result = "Attr - "#AttributeName; \
-        readers::VectorReader reader(attribute.info, _isBigEndian);
+        reader::VectorReader reader(attribute.info, _isBigEndian);
 
 #define END_ATTR_TO_STRING() \
         return result;\
     }
 
 
-using common::u1;
-using common::u2;
-using common::u4;
+using constantpool::u1;
+using constantpool::u2;
+using constantpool::u4;
 
 class AttributesManager final {
 public:
-    AttributesManager(const ConstantPool &constantPool)
+    AttributesManager(const constantpool::ConstantPool &constantPool)
         : _constantPool(constantPool), _isBigEndian(true) {
         init();
     }
@@ -81,11 +81,11 @@ private:
         return AttributeTag::InvalidTag;
     }
 
-    accessModifiers::AccessModifiers _accessModifiers;
+    accessmodifier::AccessModifiers _accessModifiers;
 
     std::unordered_map<std::string, AttributeTag> _tagsMap;
     std::unordered_map<AttributeTag, AttrToStringFunc> _tags2ToStringFunc;
-    const ConstantPool &_constantPool;
+    const constantpool::ConstantPool &_constantPool;
     bool _isBigEndian;
 
     START_ATTR_TO_STRING(ConstantValue)
@@ -98,33 +98,33 @@ private:
         switch (constantValueEntry.tag) {
 
             case JVM_CONSTANT_Integer: {
-                constantValue.value.intValue = static_cast<IntegerInfo &>(constantValueEntry).value;
+                constantValue.value.intValue = static_cast<constantpool::IntegerInfo &>(constantValueEntry).value;
                 result += std::to_string(constantValue.value.intValue);
                 break;
             }
 
             case JVM_CONSTANT_Float: {
 
-                constantValue.value.floatValue = static_cast<FloatInfo &>(constantValueEntry).getFloat();
+                constantValue.value.floatValue = static_cast<constantpool::FloatInfo &>(constantValueEntry).getFloat();
                 result += std::to_string(constantValue.value.floatValue);
                 break;
             }
 
             case JVM_CONSTANT_Long: {
-                auto longInfo = static_cast<LongInfo &>(constantValueEntry);
+                auto longInfo = static_cast<constantpool::LongInfo &>(constantValueEntry);
                 constantValue.value.longValue = longInfo.getLongLong();
                 result += std::to_string(constantValue.value.longValue);
                 break;
             }
 
             case JVM_CONSTANT_Double: {
-                constantValue.value.doubleValue = static_cast<DoubleInfo &>(constantValueEntry).getDouble();
+                constantValue.value.doubleValue = static_cast<constantpool::DoubleInfo &>(constantValueEntry).getDouble();
                 result += std::to_string(constantValue.value.doubleValue);
                 break;
             }
 
             case JVM_CONSTANT_String: {
-                auto &stringInfo = static_cast<StringInfo &>(constantValueEntry);
+                auto &stringInfo = static_cast<constantpool::StringInfo &>(constantValueEntry);
                 constantValue.value.string = _constantPool.getString(stringInfo.stringIndex);
                 result += std::to_string(constantValue.value.doubleValue);
                 break;
@@ -154,7 +154,7 @@ private:
         result += ": " + _constantPool.getEntry(sourceFile.sourceFileIndex).utf8Info.getAsUtf8();
     END_ATTR_TO_STRING()
 
-    std::string innerClassToString(InnerClasses &innerClasses, readers::VectorReader &reader,
+    std::string innerClassToString(InnerClasses &innerClasses, reader::VectorReader &reader,
                                     u4 index) const {
 
         const InnerClass innerClass{
@@ -294,7 +294,7 @@ private:
     END_ATTR_TO_STRING()
 
     START_ATTR_TO_STRING(Signature)
-        const signatures::SignatureParser signatureParser(_constantPool, attribute, reader);
+        const signature::SignatureParser signatureParser(_constantPool, attribute, reader);
         result += " " + signatureParser.toString();
     END_ATTR_TO_STRING()
 

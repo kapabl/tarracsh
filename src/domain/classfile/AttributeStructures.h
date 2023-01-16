@@ -8,18 +8,18 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "constpool/StructsCommon.h"
-#include "constpool/StackFrame.h"
+#include "constantpool/StructsCommon.h"
+#include "constantpool/StackFrame.h"
 
 #pragma pack(push,1)
 
-namespace kapa::tarracsh::attributes {
+namespace kapa::tarracsh::domain::classfile::attribute {
 
 struct AnnotationValuePair;
 
-using common::u1;
-using common::u2;
-using common::u4;
+using constantpool::u1;
+using constantpool::u2;
+using constantpool::u4;
 
 enum AttributeOwner { ClassFile, Method, Field, CodeAttribute, RecordComponentInfoAttribute };
 

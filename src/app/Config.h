@@ -4,7 +4,7 @@
 #include "Options.h"
 #include "../infrastructure/log/Log.h"
 
-namespace kapa::tarracsh::stats {
+namespace kapa::tarracsh::app::stats {
 struct Results;
 }
 

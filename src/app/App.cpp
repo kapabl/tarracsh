@@ -1,7 +1,6 @@
 #include "App.h"
-#include "../infrastructure/filesystem/FilesystemUtils.h"
+#include "../infrastructure/filesystem/Utils.h"
 #include "Tarracsh.h"
-#include "../domain/classfile/constpool/ConstantPoolPrinter.h"
 #include "nav/HtmlGen.h"
 
 #ifdef _WIN32

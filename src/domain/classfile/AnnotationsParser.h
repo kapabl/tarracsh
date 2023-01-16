@@ -2,14 +2,14 @@
 #define ANNOTATIONS_PARSER_H
 
 #include <string>
-#include "VectorReader.h"
-#include "constpool/ConstantPool.h"
+#include "reader/VectorReader.h"
+#include "constantpool/ConstantPool.h"
 
-namespace kapa::tarracsh::annotations {
+namespace kapa::tarracsh::domain::classfile::annotations {
 class AnnotationsParser {
 public:
-    AnnotationsParser(const ConstantPool &constantPool, const attributes::AttributeInfo &attribute,
-                      readers::VectorReader &reader)
+    AnnotationsParser(const constantpool::ConstantPool &constantPool, const attribute::AttributeInfo &attribute,
+                      reader::VectorReader &reader)
         : _constantPool(constantPool), _attribute(attribute), _reader(reader) {
 
     }
@@ -20,35 +20,35 @@ public:
     [[nodiscard]] std::string toStringAnnotationDefault() const;
 
 private:
-    const ConstantPool &_constantPool;
-    const attributes::AttributeInfo &_attribute;
-    readers::VectorReader &_reader;
+    const constantpool::ConstantPool &_constantPool;
+    const attribute::AttributeInfo &_attribute;
+    reader::VectorReader &_reader;
 
-    [[nodiscard]] std::string localVarAnnotationToString(const attributes::TypeAnnotation &typeAnnotation) const;
-    [[nodiscard]] std::string annotationToString(const attributes::AnnotationValuePair &annotationValuePair) const;
-    [[nodiscard]] std::string annotationToString(const attributes::Annotation &annotation) const;
-    [[nodiscard]] std::string annotationToString(const attributes::ParameterAnnotation &parameterAnnotation) const;
-    [[nodiscard]] std::string annotationsToString(const attributes::RuntimeAnnotations &annotations) const;
-    [[nodiscard]] std::string annotationsToString(const attributes::RuntimeParameterAnnotations &annotations) const;
-    [[nodiscard]] std::string annotationToString(const attributes::TypeAnnotation &typeAnnotation) const;
-    [[nodiscard]] std::string annotationsToString(const attributes::RuntimeTypeAnnotations &typeAnnotations) const;
+    [[nodiscard]] std::string localVarAnnotationToString(const attribute::TypeAnnotation &typeAnnotation) const;
+    [[nodiscard]] std::string annotationToString(const attribute::AnnotationValuePair &annotationValuePair) const;
+    [[nodiscard]] std::string annotationToString(const attribute::Annotation &annotation) const;
+    [[nodiscard]] std::string annotationToString(const attribute::ParameterAnnotation &parameterAnnotation) const;
+    [[nodiscard]] std::string annotationsToString(const attribute::RuntimeAnnotations &annotations) const;
+    [[nodiscard]] std::string annotationsToString(const attribute::RuntimeParameterAnnotations &annotations) const;
+    [[nodiscard]] std::string annotationToString(const attribute::TypeAnnotation &typeAnnotation) const;
+    [[nodiscard]] std::string annotationsToString(const attribute::RuntimeTypeAnnotations &typeAnnotations) const;
 
-    [[nodiscard]] std::string elementValueToString(const attributes::ElementValue& elementValue) const;
+    [[nodiscard]] std::string elementValueToString(const attribute::ElementValue& elementValue) const;
 
 
-    void readElementValue(attributes::ElementValue &elementValue) const;
-    void readAnnotationValuePair(attributes::AnnotationValuePair &annotationValuePair) const;
-    void readAnnotation(attributes::Annotation &annotation) const;
-    void readAnnotations(attributes::RuntimeAnnotations &annotations) const;
-    void readAnnotation(attributes::ParameterAnnotation &parameterAnnotation) const;
-    void readAnnotations(attributes::RuntimeParameterAnnotations &annotations) const;
-    void readAnnotation(attributes::TypeAnnotation &typeAnnotation) const;
-    void readAnnotations(attributes::RuntimeTypeAnnotations &runtimeTypeAnnotations) const;
+    void readElementValue(attribute::ElementValue &elementValue) const;
+    void readAnnotationValuePair(attribute::AnnotationValuePair &annotationValuePair) const;
+    void readAnnotation(attribute::Annotation &annotation) const;
+    void readAnnotations(attribute::RuntimeAnnotations &annotations) const;
+    void readAnnotation(attribute::ParameterAnnotation &parameterAnnotation) const;
+    void readAnnotations(attribute::RuntimeParameterAnnotations &annotations) const;
+    void readAnnotation(attribute::TypeAnnotation &typeAnnotation) const;
+    void readAnnotations(attribute::RuntimeTypeAnnotations &runtimeTypeAnnotations) const;
 
     template <typename T>
     void readAnnotationValues(T &annotation) const {
         for (auto i = 0u; i < annotation.count; ++i) {
-            attributes::AnnotationValuePair annotationValuePair;
+            attribute::AnnotationValuePair annotationValuePair;
             readAnnotationValuePair(annotationValuePair);
             annotation.values.push_back(annotationValuePair);
         }

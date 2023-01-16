@@ -5,10 +5,10 @@
 
 #include "ProfileData.h"
 #include "../Tarracsh.h"
-#include "../../infrastructure/filesystem/FilesystemUtils.h"
+#include "../../infrastructure/filesystem/Utils.h"
 
 
-namespace kapa::tarracsh::stats::profiler {
+namespace kapa::tarracsh::app::stats::profiler {
 
 
 class ScopedTimer {

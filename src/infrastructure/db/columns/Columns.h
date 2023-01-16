@@ -104,6 +104,7 @@ struct RefCol {
 };
 
 typedef uint64_t UInt64Col;
+typedef int64_t Int64Col;
 typedef int32_t Int32Col;
 typedef uint32_t UInt32Col;
 

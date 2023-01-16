@@ -5,11 +5,11 @@
 
 // #include "../app/TarracshApp.h"
 
-using namespace kapa::tarracsh::stats;
+using namespace kapa::tarracsh::app::stats;
 
 
 Results::Results(Options& options): options(options) {
-    report = std::make_unique<report::Report>(*this);
+    report = std::make_unique<report::DigestReport>(*this);
     profileData = std::make_unique<profiler::ProfileData>(*this);
 }
 
@@ -32,7 +32,7 @@ void Results::forcePrint() const {
     std::cout << "\r";
 
     std::cout << "classfiles: " <<
-        classfiles.count + jarfiles.classfiles.count <<
+        standaloneClassfiles.count + jarfiles.classfiles.count <<
         " jars: " << jarfiles.count;
 
     std::cout << std::flush;
@@ -46,9 +46,9 @@ void Results::printAll() {
         << std::setw(10) << "Ok"
         << std::setw(10) << "Error"
         << std::endl
-        << std::setw(10) << classfiles.count
-        << std::setw(10) << classfiles.parsedCount
-        << std::setw(10) << classfiles.errors
+        << std::setw(10) << standaloneClassfiles.count
+        << std::setw(10) << standaloneClassfiles.parsedCount
+        << std::setw(10) << standaloneClassfiles.errors
         << std::endl;
 
     std::cout << "jars:" << std::endl << std::right
@@ -70,11 +70,11 @@ void Results::printAll() {
             << std::setw(10) << "Diff"
             << std::setw(10) << "Unchanged"
             << std::endl
-            << std::setw(10) << classfiles.digest.count
-            << std::setw(10) << classfiles.digest.newFile
-            << std::setw(10) << classfiles.digest.same
-            << std::setw(10) << classfiles.digest.differentDigest
-            << std::setw(10) << classfiles.digest.unchangedCount
+            << std::setw(10) << standaloneClassfiles.digest.count
+            << std::setw(10) << standaloneClassfiles.digest.newFile
+            << std::setw(10) << standaloneClassfiles.digest.same
+            << std::setw(10) << standaloneClassfiles.digest.differentDigest
+            << std::setw(10) << standaloneClassfiles.digest.unchangedCount
             << std::endl;
 
         std::cout << "jar digest:" << std::endl << std::right
@@ -106,7 +106,7 @@ void Results::printAll() {
             << std::endl;
     }
 
-    long long totalClassfiles = classfiles.count + jarfiles.classfileCount;
+    long long totalClassfiles = standaloneClassfiles.count + jarfiles.classfileCount;
     const auto totalTime = profileData->analyzerTime.count();
     std::cout << std::endl;
     log->writeln(std::format("classfiles: {:L}", totalClassfiles), true);

@@ -138,7 +138,7 @@ void ServiceImpl::requestToOptions(const DigestRequest &request, Options &reques
 
 }
 
-void ServiceImpl::reportToResponse(const std::unique_ptr<stats::report::Report> &report, DigestResponse &response) {
+void ServiceImpl::reportToResponse(const std::unique_ptr<stats::report::DigestReport> &report, DigestResponse &response) {
     //TODO
 }
 

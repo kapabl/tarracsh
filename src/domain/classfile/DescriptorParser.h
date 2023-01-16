@@ -5,20 +5,20 @@
 #ifndef TARRACSH_DESCRIPTORPARSER_H
 #define TARRACSH_DESCRIPTORPARSER_H
 
-#include "signatures/SignatureScanner.h"
-#include "constpool/ConstpoolStructures.h"
+#include "signature/SignatureScanner.h"
+#include "constantpool/ConstpoolStructures.h"
 #include <memory>
 
 
-namespace kapa::tarracsh {
+namespace kapa::tarracsh::domain::classfile {
 
 class DescriptorParser {
 public:
-    explicit DescriptorParser(std::shared_ptr<signatures::SignatureScanner> scanner)
+    explicit DescriptorParser(std::shared_ptr<signature::SignatureScanner> scanner)
         : _scanner(std::move(scanner)) { parse(); }
 
     explicit DescriptorParser(const std::string &value)
-        : _scanner(new signatures::SignatureScanner(value)) {
+        : _scanner(new signature::SignatureScanner(value)) {
         _scanner->step();
         parse();
     }
@@ -27,7 +27,7 @@ public:
 
 private:
     Descriptor _descriptor;
-    std::shared_ptr<signatures::SignatureScanner> _scanner;
+    std::shared_ptr<signature::SignatureScanner> _scanner;
 
     void parse() {
 

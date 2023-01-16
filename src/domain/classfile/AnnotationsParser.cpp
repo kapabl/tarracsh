@@ -1,15 +1,16 @@
 #include "AttributeStructures.h"
-#include "VectorReader.h"
+#include "reader/VectorReader.h"
 #include "AnnotationsParser.h"
 
 #include <iostream>
 #include <format>
-
-using namespace kapa::tarracsh::annotations;
-using namespace kapa::tarracsh::readers;
-using namespace kapa::tarracsh::attributes;
-using namespace kapa::infrastructure::string::stringUtils;
 using namespace std;
+using namespace kapa::tarracsh::domain::classfile;
+using namespace annotations;
+using namespace kapa::tarracsh::domain::classfile::reader;
+using namespace attribute;
+using namespace kapa::infrastructure::string::stringUtils;
+
 
 string AnnotationsParser::toStringRuntimeAnnotations() const {
     RuntimeVisibleAnnotations annotations;
@@ -40,12 +41,12 @@ string AnnotationsParser::localVarAnnotationToString(const TypeAnnotation &typeA
             format("(start_pc:{},length:{},index:{})", startPC, length, index));
     }
     auto locationTables = join<string>(locations, ",");
-    const auto string = format("local var locations: {}", locationTables);
-    return string;
+    const auto result = format("local var locations: {}", locationTables);
+    return result;
 }
 
 string AnnotationsParser::annotationToString(
-    const attributes::TypeAnnotation &typeAnnotation) const {
+    const attribute::TypeAnnotation &typeAnnotation) const {
 
     string result;
     //TODO
@@ -159,7 +160,7 @@ string AnnotationsParser::annotationToString(
 }
 
 std::string AnnotationsParser::annotationsToString(
-    const attributes::RuntimeTypeAnnotations &typeAnnotations) const {
+    const attribute::RuntimeTypeAnnotations &typeAnnotations) const {
     vector<string> parts;
     for (auto &typeAnnotation : typeAnnotations.items) {
         parts.push_back(annotationToString(typeAnnotation));

@@ -1,6 +1,6 @@
 #include "PublicDigest.h"
 #include "../Analyzer.h"
-#include "../db/Query.h"
+#include "../domain/db/Query.h"
 #include "../server/digest/ServerCommand.h"
 
 
