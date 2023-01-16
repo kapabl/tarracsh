@@ -23,7 +23,6 @@ struct FileRow : infrastructure::db::tables::AutoIncrementedRow {
 
 };
 
-
 class FilesTable : public infrastructure::db::tables::Table<FileRow> {
 
 public:
@@ -49,7 +48,7 @@ public:
         return createKey(row);
     }
 
-    const char* getFilename(const FileRow& row) const {
+    [[nodiscard]] const char* getFilename(const FileRow& row) const {
         const auto result = _stringPool->getCString(row.filename);
         return result;
     }

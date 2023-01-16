@@ -19,7 +19,7 @@ PublicDigest::PublicDigest(CLI::App* parent)
 
  ExitCode PublicDigest::run() const {
     ExitCode result = 0;
-    _options.digestServer.enabled = _parent->got_subcommand(_digestServerOptions);
+    _options.digestServer.enabled = _subCommand->got_subcommand(_digestServerOptions);
     if (_options.digestServer.enabled) {
         ServerCommand::run(App::getApp());
     } else if (!_options.queryValue.empty()) {
@@ -76,7 +76,7 @@ void PublicDigest::addCommand() {
     _subCommand->add_flag("--verbose, -v", _options.verbose, "Verbose output");
 
     const auto query = _subCommand->add_option("--query", _options.queryValue, "TODO Query Help - schema")
-                             ->needs(input);
+                             ->excludes(input);
 
     _digestServerOptions = addServerOptions();
     _digestServerOptions->excludes(input);

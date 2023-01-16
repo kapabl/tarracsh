@@ -36,8 +36,9 @@ string DigestTask::getStrongClassname(const JarEntry &jarEntry) const {
 }
 
 void DigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
-    const auto filename = _digestDb.getFiles()->getFilename( getJarFileRow());
+    const auto filename = _digestDb.getFiles()->getFilename(getJarFileRow());
     const DigestJarEntryInfo digestEntryInfo(filename, jarEntry);
+
     const auto *classfileRow = _digestDb.getClassfiles()->findByKey(digestEntryInfo.strongClassname);
 
     const auto classExists = nullptr != classfileRow;
@@ -64,7 +65,7 @@ void DigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
 
 }
 
-void DigestTask::updateFileTableInMemory(const digestUtils::DigestVector digest) const {
+void DigestTask::updateFileTableInMemory(const digestUtils::DigestVector &digest) const {
     _jarFileRow->digest = digest;
     _jarFileRow->lastWriteTime = _jarTimestamp;
     _jarFileRow->fileSize = _jarSize;
@@ -142,9 +143,19 @@ bool DigestTask::start() {
     return result;
 }
 
+string DigestTask::getUniqueClassname(
+    const JarEntry &jarEntry,
+    const ClassFileParser &classFileParser) {
+    const auto result = jarEntry.isMultiReleaseEntry()
+                            ? jarEntry.getClassname()
+                            : classFileParser.getMainClassname();
+    return result;
+
+}
+
 void DigestTask::updateClassfileTableInMemory(const JarEntry &jarEntry, const columns::DigestCol &result,
                                               const ClassFileParser &classFileParser) const {
-    const auto classname = classFileParser.getMainClassname();
+    const auto classname = getUniqueClassname(jarEntry, classFileParser);
     ClassfileRow classfileRow(*_jarFileRow);
     classfileRow.lastWriteTime = jarEntry.getLastWriteTime();
     classfileRow.size = jarEntry.getSize();

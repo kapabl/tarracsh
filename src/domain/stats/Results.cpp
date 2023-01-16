@@ -111,6 +111,7 @@ void Results::printAll() {
     log->writeln(std::format("speed: {:.2f} classfile/s",
         1000.0 * totalClassfiles / totalTime), true);
     log->writeln(std::format("total time: {}", profileData->analyzerTime), true);
+    log->writeln(std::format("output dir: {}", options.outputDir), true);
 
     std::cout << "\r" << std::flush;
 }

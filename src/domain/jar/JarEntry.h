@@ -25,6 +25,9 @@ public:
             _jvmClassname = name.substr( 0, name.length() - ExtensionLength );
         }
 
+        _isMultiRelease = name.find("META-INF/versions/") == 0;
+
+
     }
 
     ~JarEntry() {
@@ -41,14 +44,19 @@ public:
 
     [[nodiscard]] bool isClassfile() const { return _isClassfile; }
     [[nodiscard]] std::string getClassname() const { return _jvmClassname; }
+    [[nodiscard]] bool isMultiReleaseEntry() const {
+        return _isMultiRelease;
+    }
+
 
 
 private:
-    const libzippp::ZipEntry &_entry;
+    libzippp::ZipEntry _entry;
     bool _isClassfile;
     std::string _jvmClassname;
     uint64_t _lastWriteTime{};
     char *_buffer{nullptr};
+    bool _isMultiRelease{ false };
 
 };
 }

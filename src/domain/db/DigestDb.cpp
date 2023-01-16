@@ -1,9 +1,6 @@
 #include "DigestDb.h"
-
+#include "../infrastructure/db/table/Table.inl"
 #include <memory>
-
-#include "table/ClassfilesTable.h"
-#include "table/FilesTable.h"
 #include "../infrastructure/db/StringPool.h"
 
 
@@ -39,7 +36,6 @@ bool DigestDb::write() {
 }
 
 void DigestDb::printSchema() {
-    //TODO
     _filesTable->printSchema();
     _classfilesTable->printSchema();
 }

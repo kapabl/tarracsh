@@ -21,6 +21,7 @@ public:
 
     [[nodiscard]] static ExitCode run(int argc, char *argv[]);
     [[nodiscard]] ExitCode start(int argc, char *argv[]);
+    void controlCHandler();
 
     [[nodiscard]] static domain::stats::Results &getGlobalResults() { return _app->_results; }
     [[nodiscard]] static domain::Options &getGlobalOptions() { return _app->_options; }
@@ -55,6 +56,7 @@ private:
 #ifdef _WIN32
     static void prepareConsoleForVT100();
     static void prepareConsoleForUTF8();
+    static int __stdcall ctrlHandler(unsigned long fdwCtrlType);
 #endif
     domain::stats::Results _results;
 

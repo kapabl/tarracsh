@@ -177,7 +177,7 @@ void Analyzer::processClassfile(const std::string &filename) {
 }
 
 void Analyzer::classFileParserDone(ClassFileParser& parser) const {
-    if (!parser.isValid()) return;
+    if (!parser.succeeded()) return;
 
     if (_options.printConstantPool) {
         ConstantPoolPrinter constantPoolPrinter(parser);

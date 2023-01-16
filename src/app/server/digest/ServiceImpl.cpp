@@ -33,6 +33,10 @@ using namespace boost::interprocess;
 
 using grpc::ServerBuilder;
 
+
+bool ServiceImpl::_quickReceived = false;
+std::condition_variable ServiceImpl::_quickSignalCV;
+
 #ifdef _WIN32
 #pragma comment(lib, "Ws2_32.lib")
 #endif
@@ -89,7 +93,7 @@ void ServiceImpl::startServer() {
 
 void ServiceImpl::waitForShutDown() {
     unique_lock lock(_mutex);
-    _cv.wait(lock, [this] {
+    _quickSignalCV.wait(lock, [this] {
         return _quickReceived;
     });
 
@@ -156,9 +160,13 @@ ServiceImpl::ServiceImpl(app::Config& config)
       _config(config) {
 }
 
-Status ServiceImpl::Quit(ServerContext *context, const Empty *request, Empty *response) {
+void ServiceImpl::signalQuick() {
     _quickReceived = true;
-    _cv.notify_one();
+    _quickSignalCV.notify_one();
+}
+
+Status ServiceImpl::Quit(ServerContext *context, const Empty *request, Empty *response) {
+    signalQuick();
     return Status::OK;
 }
 

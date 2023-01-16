@@ -234,11 +234,13 @@ void ClassFileParser::readAttributesSection(vector<AttributeInfo> &attributes, c
         _reader.read(attributeInfo.length);
 
         attributeInfo.info.resize(attributeInfo.length);
-        // const auto dest = reinterpret_cast<char *>(&*attributeInfo.info.begin());
-        // _reader.readRaw(dest, attributeInfo.length);
 
-        for (auto index = 0u; index < attributeInfo.length; ++index) {
-            attributeInfo.info[index] = _reader.readU1();
+        // for (auto index = 0u; index < attributeInfo.length; ++index) {
+        //     attributeInfo.info[index] = _reader.readU1();
+        // }
+        if (attributeInfo.length > 0 ) {
+            const auto buffer = reinterpret_cast<char*>(&*attributeInfo.info.begin());
+            _reader.readBytes(buffer, attributeInfo.length);
         }
         attributes.push_back(attributeInfo);
     }
@@ -265,7 +267,7 @@ void ClassFileParser::readAttributes() {
 
 
 void ClassFileParser::processFile() {
-    if (!isValid()) return;
+    if (!isValidHeader()) return;
 
     initialize();
     readConstantsPool();

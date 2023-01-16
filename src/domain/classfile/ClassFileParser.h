@@ -24,7 +24,8 @@ public:
     ClassFileParser &operator=(const ClassFileParser &) = delete;
     ClassFileParser &operator=(const ClassFileParser &&) = delete;
 
-    [[nodiscard]] bool isValid() const { return _reader.isValid() && _parseSucceed; }
+    [[nodiscard]] bool isValidHeader() const { return _reader.isValidHeader(); }
+    [[nodiscard]] bool succeeded() const { return _parseSucceed; }
 
     ~ClassFileParser() = default;
 

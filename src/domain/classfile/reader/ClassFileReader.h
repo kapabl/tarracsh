@@ -7,13 +7,12 @@
 
 namespace kapa::tarracsh::domain::classfile::reader {
 
- using constantpool::u2;
- using constantpool::u2;
- using constantpool::u4;
- using constantpool::u1;
+using constantpool::u2;
+using constantpool::u2;
+using constantpool::u4;
+using constantpool::u1;
 
 class ClassFileReader {
-
 
 
 public:
@@ -45,12 +44,12 @@ public:
     u1 readU1();
 
     [[nodiscard]] std::streamsize size() const { return _size; }
-    [[nodiscard]] bool isValid() const { return _isValid; }
+    [[nodiscard]] bool isValidHeader() const { return _isValidHeader; }
     [[nodiscard]] uint64_t isBigEndian() const { return _isBigEndian; }
     [[nodiscard]] uint64_t getLastReadCount() const { return _lastReadCount; }
 
 
-    void readRaw(char* buffer, const unsigned int count) {
+    void readRaw(char *buffer, const unsigned int count) {
 
         if (_bytesRead + count > _size) {
             throw std::runtime_error("Error reading beyond size");
@@ -62,7 +61,7 @@ public:
     }
 
     template <typename T> void readRaw(T &buffer, const unsigned int count) {
-        readRaw(reinterpret_cast<char*>(&buffer), count);
+        readRaw(reinterpret_cast<char *>(&buffer), count);
     }
 
     template <typename T = u2>
@@ -92,15 +91,13 @@ public:
     void readHeader() {
         readRaw(_header, sizeof(_header.magic));
         _isBigEndian = _header.magic == 0x0cafebabe;
-        _isValid = _isBigEndian || _header.magic == swapLong(0x0cafebabe);
-        if (_isValid) {
+        _isValidHeader = _isBigEndian || _header.magic == swapLong(0x0cafebabe);
+        if (_isValidHeader) {
             _header.minorVersion = readU2();
             _header.majorVersion = readU2();
         } else {
             std::cout << "Invalid class file " << std::endl;
-            _isValid = false;
         }
-
     }
 
 
@@ -110,7 +107,7 @@ protected:
     unsigned int _bytesRead{};
     std::streamsize _lastReadCount{};
     constantpool::ClassFileHeader _header{};
-    bool _isValid{};
+    bool _isValidHeader{};
 
     template <typename T> void readRaw(T &buffer) { readRaw(buffer, sizeof(buffer)); }
 
