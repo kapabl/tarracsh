@@ -4,7 +4,7 @@
 #include <grpcpp/security/server_credentials.h>
 #include <grpcpp/server.h>
 #include "proto/Server.grpc.pb.h"
-#include "../db/DigestDb.h"
+#include "../domain/db/DigestDb.h"
 
 using grpc::Status;
 using grpc::ServerContext;
@@ -37,7 +37,7 @@ private:
     void waitForShutDown();
     void init();
     void requestToOptions(const DigestRequest& request, Options& requestOptions) const;
-    void reportToResponse(const std::unique_ptr<stats::report::Report>& report, DigestResponse& response);
+    void reportToResponse(const std::unique_ptr<stats::report::DigestReport>& report, DigestResponse& response);
 };
 }
 

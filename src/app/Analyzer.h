@@ -6,12 +6,16 @@
 #include <BS_thread_pool.hpp>
 
 #include "Config.h"
-#include "../db/DigestDb.h"
-#include "../db/CallGraphDb.h"
-#include "../domain/classfile/ClassFileAnalyzer.h"
-#include "../domain/classfile/ClassFileInfo.h"
+#include "../domain/db/DigestDb.h"
+#include "../domain/db/CallGraphDb.h"
+#include "../domain/classfile/ClassFileParser.h"
+#include "../domain/classfile/StandaloneClassFileInfo.h"
 #include "../infrastructure/db/Database.h"
-#include "../db/table/FilesTable.h"
+#include "../domain/db/table/FilesTable.h"
+
+
+using kapa::tarracsh::domain::classfile::ClassFileParser;
+using kapa::tarracsh::domain::classfile::StandaloneClassFileInfo;
 
 
 namespace kapa::tarracsh::app {
@@ -41,8 +45,8 @@ private:
     stats::Results& _results;
     void processJar(const std::string &filename);
 
-    db::digest::DigestDb _digestDb;
-    db::callgraph::CallGraphDb _callGraphDb;
+    domain::db::digest::DigestDb _digestDb;
+    domain::db::callgraph::CallGraphDb _callGraphDb;
 
     BS::thread_pool _fileThreadPool{std::max<unsigned int>(1u, std::thread::hardware_concurrency() * 4 / 5)};
     // BS::thread_pool _fileThreadPool{std::max<unsigned int>(1u, std::thread::hardware_concurrency() * 3 / 4)};
@@ -54,18 +58,19 @@ private:
     void processFile(const std::filesystem::directory_entry &dirEntry);
     bool initAnalyzer();
     void processDirInput();
-    void processJarInput();
-    void processClassfileInput();
     void analyzeInput();
     void updateDbs();
     void endAnalysis();
 
-    void analyzeClassfile(const std::string& filename) const;
-    bool isFileUnchanged(uintmax_t size, long long timestamp, const db::digest::FileRow *row) const;
-    void updateDbInMemory(const ClassFileInfo &classFileInfo, const ClassFileAnalyzer &classFileAnalyzer,
-                          const db::digest::columns::DigestCol &digest);
+    void parseClassfile(const std::string& filename) const;
+    bool isFileUnchanged(uintmax_t size, long long timestamp, const domain::db::digest::FileRow *row) const;
+    void updateDbInMemory(
+        const StandaloneClassFileInfo &classFileInfo, 
+        const ClassFileParser &parser,
+        const domain::db::digest::columns::DigestCol &digest);
     void digestClassfile(const std::string& filename);
     void processClassfile(const std::string& filename);
+    void classFileParserDone(ClassFileParser &parser) const;
 };
 }
 #endif

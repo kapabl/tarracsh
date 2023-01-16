@@ -29,7 +29,7 @@ void Parse::addCommand() {
         "Printing const-pool to stdout. Similar to javap");
 
     _subCommand->add_flag("--descriptive-cpool", _options.descriptiveCPoolEntries,
-        "Descriptive CPool Entries. e.g: 'UTF8 String' in place of 'utf8'");
+        "Descriptive CPool Entries. e.g: 'UTF8 String' in place of 'utf8'")->default_val(true);
 
     const auto htmlNav = _subCommand->add_flag("--html-nav", _options.printCPoolHtmlNav,
         "Generate Constant pool navigable file");

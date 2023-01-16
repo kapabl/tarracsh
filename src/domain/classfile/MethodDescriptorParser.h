@@ -6,20 +6,23 @@
 #define METHODDESCRIPTORPARSER_H
 
 #include "DescriptorParser.h"
-#include "signatures/SignatureScanner.h"
-#include "classfile_constants.h"
+#include "signature/SignatureScanner.h"
+#include "ClassFileConstants.h"
 
-namespace kapa::tarracsh {
+namespace kapa::tarracsh::domain::classfile {
 
 class MethodDescriptorParser {
 public:
-    MethodDescriptorParser(const std::string &descriptorString) : _scanner( new signatures::SignatureScanner(descriptorString)) { parse(); }
+    explicit MethodDescriptorParser(const std::string &descriptorString)
+        : _scanner(new signature::SignatureScanner(descriptorString)) {
+        parse();
+    }
 
-    const MethodDescriptor &getDescriptor() { return _methodDescriptor; }
+    const constantpool::MethodDescriptor &getDescriptor() { return _methodDescriptor; }
 
 private:
-    std::shared_ptr<signatures::SignatureScanner> _scanner;
-    MethodDescriptor _methodDescriptor;
+    std::shared_ptr<signature::SignatureScanner> _scanner;
+    constantpool::MethodDescriptor _methodDescriptor;
 
     void parse() {
 

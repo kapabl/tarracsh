@@ -4,12 +4,12 @@
 #include <string>
 #include "../infrastructure/log/Log.h"
 #include "../Options.h"
-#include "Report.h"
+#include "DigestReport.h"
 #include "ProfileData.h"
 
 
 
-namespace kapa::tarracsh::stats {
+namespace kapa::tarracsh::app::stats {
 
 typedef std::atomic<unsigned int> Counter;
 typedef std::atomic<unsigned long> FileTime;
@@ -31,24 +31,24 @@ struct ClassfileStats {
     PublicDigestResult digest;
 };
 
+struct JarfileStats {
+    Counter count{};
+    Counter parsedCount{};
+    Counter errors{};
+    Counter classfileCount{};
+    PublicDigestResult digest;
+    ClassfileStats classfiles;
+};
+
+
 
 struct Results {
 
     Options& options;
     explicit Results(Options& options);
 
-    ClassfileStats classfiles;
-
-
-    struct {
-        Counter count{};
-        Counter parsedCount{};
-        Counter errors{};
-        Counter classfileCount{};
-        PublicDigestResult digest;
-        ClassfileStats classfiles;
-    } jarfiles;
-
+    ClassfileStats standaloneClassfiles;
+    JarfileStats jarfiles;
 
     FileTime classfileTime{};
     FileTime jarfileTime{};
@@ -59,7 +59,7 @@ struct Results {
 
     mutable std::chrono::time_point<std::chrono::steady_clock> lastPrint{std::chrono::high_resolution_clock::now()};
 
-    std::unique_ptr<report::Report> report;
+    std::unique_ptr<report::DigestReport> report;
     std::unique_ptr<profiler::ProfileData> profileData;
     std::shared_ptr<infrastructure::log::Log> log;
 

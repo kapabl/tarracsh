@@ -5,14 +5,15 @@
 #include <string>
 #include <array>
 
+#include "ClassFileConstants.h"
 #include "../infrastructure/string/StringUtils.h"
-#include "constpool/StructsCommon.h"
+#include "constantpool/StructsCommon.h"
 
-namespace kapa::tarracsh::accessModifiers {
+namespace kapa::tarracsh::domain::classfile::accessmodifier {
 
-using common::u1;
-using common::u2;
-using common::u4;
+using constantpool::u1;
+using constantpool::u2;
+using constantpool::u4;
 
 class AccessModifiers {
 public:

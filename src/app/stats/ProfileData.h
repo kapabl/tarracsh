@@ -4,11 +4,11 @@
 #include <chrono>
 #include "../app/Options.h"
 
-namespace kapa::tarracsh::stats {
+namespace kapa::tarracsh::app::stats {
 struct Results;
 }
 
-namespace kapa::tarracsh::stats::profiler {
+namespace kapa::tarracsh::app::stats::profiler {
 
 // using MillisecondDuration = std::chrono::duration<long long, std::milli>;
 using MillisecondDuration = std::chrono::milliseconds;

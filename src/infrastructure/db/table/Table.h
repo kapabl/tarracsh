@@ -11,7 +11,6 @@
 #include "../Database.h"
 #include "../StringPool.h"
 
-// #include "../domain/utils/DigestUtils.h"
 #include "../columns/Columns.h"
 
 #pragma pack( push, 1 )

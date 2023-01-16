@@ -9,12 +9,6 @@
 #include <format>
 #include <vector>
 
-
-/**
- *
- * TODO use ICU library
- */
-
 namespace kapa::infrastructure::string::stringUtils {
 
 

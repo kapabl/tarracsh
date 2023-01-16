@@ -1,10 +1,10 @@
+#include <fstream>
 #include <iostream>
 #include "ProfileData.h"
 
+#include "../../infrastructure/filesystem/Utils.h"
 
-#include "../../infrastructure/filesystem/FilesystemUtils.h"
-
-using namespace kapa::tarracsh::stats::profiler;
+using namespace kapa::tarracsh::app::stats::profiler;
 
 
 ProfileData::ProfileData(Results &results): results(results) {
