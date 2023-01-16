@@ -12,11 +12,20 @@
 #include "ServerCommand.h"
 #include "../RequestConfig.h"
 #include "../app/Analyzer.h"
-#include "../app/stats/ScopedTimer.h"
+#include "../domain/stats/ScopedTimer.h"
+
+
+using kapa::tarracsh::server::digest::ServiceImpl;
+using kapa::tarracsh::domain::stats::profiler::MillisecondDuration;
+using kapa::tarracsh::domain::stats::profiler::ScopedTimer;
+using kapa::tarracsh::domain::stats::report::DigestReport;
+using kapa::tarracsh::app::server::digest::DigestRequest;
+using kapa::tarracsh::app::server::digest::DigestResponse;
+using kapa::tarracsh::app::server::digest::Empty;
+
 
 
 using namespace grpc;
-using namespace kapa::tarracsh::server::digest;
 using namespace std;
 using namespace chrono;
 using namespace boost::interprocess;
@@ -44,9 +53,9 @@ void ServiceImpl::start(app::Config& config) {
 bool ServiceImpl::initDb() {
 
     auto result = true;
-    stats::profiler::MillisecondDuration duration{0};
+    domain::stats::profiler::MillisecondDuration duration{0};
     {
-        stats::profiler::ScopedTimer timer(&duration);
+        ScopedTimer timer(&duration);
         _db.init();
 
         if (_config.getOptions().rebuild) {
@@ -94,7 +103,7 @@ void ServiceImpl::init() {
 
 }
 
-void ServiceImpl::requestToOptions(const DigestRequest &request, Options &requestOptions) const {
+void ServiceImpl::requestToOptions(const DigestRequest &request, domain::Options &requestOptions) const {
     /*
      * struct Options {
     std::string classFilePath;
@@ -138,7 +147,7 @@ void ServiceImpl::requestToOptions(const DigestRequest &request, Options &reques
 
 }
 
-void ServiceImpl::reportToResponse(const std::unique_ptr<stats::report::DigestReport> &report, DigestResponse &response) {
+void ServiceImpl::reportToResponse(const std::unique_ptr<DigestReport> &report,DigestResponse &response) {
     //TODO
 }
 

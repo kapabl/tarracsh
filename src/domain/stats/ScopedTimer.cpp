@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-using namespace kapa::tarracsh::app::stats::profiler;
+using namespace kapa::tarracsh::domain::stats::profiler;
 
 ScopedTimer::ScopedTimer(MillisecondDuration *pStorage, const bool stdoutAtDestruction,
                          const bool autoStart)

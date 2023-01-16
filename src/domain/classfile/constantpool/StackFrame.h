@@ -2,17 +2,18 @@
 // Created by xman on 6/29/2022.
 //
 
-#ifndef TARRASH_STACKFRAME_H
-#define TARRASH_STACKFRAME_H
+#ifndef TARRACSH_STACKFRAME_H
+#define TARRACSH_STACKFRAME_H
 
 #include <vector>
-#include "classfile_constants.h"
 #include "StructsCommon.h"
+#include "../ClassFileConstants.h"
 
-namespace kapa::tarracsh::stack {
 
-using constantpool::u1;
-using constantpool::u2;
+namespace kapa::tarracsh::classfile::constantpool::stack {
+
+using domain::classfile::constantpool::u1;
+using domain::classfile::constantpool::u2;
 
 
 struct SameFrame {
@@ -162,4 +163,4 @@ struct StackMapFrame {
 
 }
 
-#endif // TARRASH_STACKFRAME_H
+#endif

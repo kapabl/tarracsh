@@ -1,7 +1,4 @@
-// #include "../app/Tarracsh.h"
-
-
-#include "../app/Options.h"
+#include "../Options.h"
 #include <iostream>
 #include "ClassFileParser.h"
 #include "MethodDescriptorParser.h"
@@ -10,7 +7,6 @@ using namespace kapa::tarracsh::domain::classfile;
 using namespace constantpool;
 using namespace attribute;
 
-using namespace kapa::tarracsh::app::stats;
 using namespace std;
 
 ClassFileParser::ClassFileParser(reader::ClassFileReader &reader, Options &options, Results &results)

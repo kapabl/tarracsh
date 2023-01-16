@@ -20,6 +20,7 @@ struct AnnotationValuePair;
 using constantpool::u1;
 using constantpool::u2;
 using constantpool::u4;
+using kapa::tarracsh::classfile::constantpool::stack::StackMapFrame;
 
 enum AttributeOwner { ClassFile, Method, Field, CodeAttribute, RecordComponentInfoAttribute };
 
@@ -79,7 +80,7 @@ struct BootstrapMethods : AttributeBase {
 
 struct StackMapTable : AttributeBase {
     u2 entryCount;
-    std::vector<stack::StackMapFrame> entries;
+    std::vector<StackMapFrame> entries;
 };
 
 struct Code : AttributeBase {

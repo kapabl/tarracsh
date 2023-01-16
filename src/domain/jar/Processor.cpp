@@ -9,10 +9,7 @@
 using namespace libzippp;
 
 
-using namespace kapa::tarracsh;
-using namespace db;
-using namespace stats;
-using namespace domain::jar;
+using namespace kapa::tarracsh::domain::jar;
 using namespace std;
 
 

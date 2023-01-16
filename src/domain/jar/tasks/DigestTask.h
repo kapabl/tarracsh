@@ -16,7 +16,7 @@ namespace kapa::tarracsh::domain::jar::tasks {
 class DigestTask : public Task {
 public:
     explicit DigestTask(
-        Options options, app::stats::Results &results,
+        Options options, stats::Results &results,
         db::digest::DigestDb &digestDb
         );
 
@@ -35,7 +35,7 @@ private:
     db::digest::DigestDb &_digestDb;
     // std::shared_ptr<db::ClassfilesTable> _classfilesTable;
     // std::shared_ptr<db::FilesTable> _filesTable;
-    app::stats::Results &_results;
+    stats::Results &_results;
     Options _options;
     bool _isFileUnchanged{false};
     bool _isNewJarFile{false};

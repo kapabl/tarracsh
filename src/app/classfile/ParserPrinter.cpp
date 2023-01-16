@@ -1,5 +1,5 @@
 #include <iostream>
-#include "ParserOutput.h"
+#include "ParserPrinter.h"
 
 #include "../../domain/classfile/MethodDescriptorParser.h"
 #include "./../domain/classfile/ClassFileParser.h"
@@ -11,25 +11,25 @@ using namespace attribute;
 using namespace constantpool;
 using namespace std;
 
-ParserOutput::ParserOutput(ClassFileParser &classFileParser)
+ParserPrinter::ParserPrinter(ClassFileParser &classFileParser)
     : _classFileParser(classFileParser),
       _accessModifiers(classFileParser.getAccessModifiers()),
       _constantPool(classFileParser.getConstantPool()) {
 
 }
 
-void ParserOutput::run() {
+void ParserPrinter::print() {
     outputClass();
     outputMethods();
     outputFields();
     outputInterfaces();
 }
 
-void ParserOutput::outputAccessModifiers(const u2 accessFlags) const {
+void ParserPrinter::outputAccessModifiers(const u2 accessFlags) const {
     cout << _accessModifiers.toString(accessFlags) << " ";
 }
 
-void ParserOutput::outputMethod(MethodInfo &methodInfo) {
+void ParserPrinter::outputMethod(MethodInfo &methodInfo) {
     const auto accessModifiers = _accessModifiers.toString(methodInfo.accessFlags);
     const auto name = _constantPool.getEntry(methodInfo.nameIndex).utf8Info.getAsUtf8();
     const auto &utf8DDesc = _constantPool.getEntry(methodInfo.descriptorIndex).utf8Info;
@@ -47,7 +47,7 @@ void ParserOutput::outputMethod(MethodInfo &methodInfo) {
     cout << endl;
 }
 
-void ParserOutput::outputMethods() {
+void ParserPrinter::outputMethods() {
     auto& methods = _classFileParser.getMethods();
     cout << endl;
     cout << "//Methods: " << methods.size() << endl;
@@ -59,12 +59,12 @@ void ParserOutput::outputMethods() {
     cout << endl;
 }
 
-std::string ParserOutput::getClassInfoName(const u2 index) const {
+std::string ParserPrinter::getClassInfoName(const u2 index) const {
     auto result = _constantPool.getClassInfoName(index);
     return result;
 }
 
-void ParserOutput::outputClass(const string &type) {
+void ParserPrinter::outputClass(const string &type) {
     const auto& mainClassInfo = _classFileParser.getMainClassInfo();
     cout << endl;
     cout << "//Class " << endl;
@@ -85,13 +85,13 @@ void ParserOutput::outputClass(const string &type) {
     // TODO implemented interfaces
 }
 
-void ParserOutput::outputClass() {
+void ParserPrinter::outputClass() {
 
     outputClass(_classFileParser.getMainClassInfo().isInterface() ? "interface" : "class");
     cout << endl;
 }
 
-string ParserOutput::attributesToString(vector<AttributeInfo> &attributes) {
+string ParserPrinter::attributesToString(vector<AttributeInfo> &attributes) {
 
     vector<string> parts;
 
@@ -108,7 +108,7 @@ string ParserOutput::attributesToString(vector<AttributeInfo> &attributes) {
     return result;
 }
 
-void ParserOutput::outputField(FieldInfo &fieldInfo) {
+void ParserPrinter::outputField(FieldInfo &fieldInfo) {
     const auto accessModifiers = _accessModifiers.toString(fieldInfo.accessFlags);
     const auto name = _constantPool.getEntry(fieldInfo.nameIndex).utf8Info.getAsUtf8();
     const auto descriptorString = _constantPool.getEntry(fieldInfo.descriptorIndex).utf8Info.getAsUtf8();
@@ -121,7 +121,7 @@ void ParserOutput::outputField(FieldInfo &fieldInfo) {
     cout << infrastructure::string::stringUtils::join<string>(parts, " ") << ";";
 }
 
-void ParserOutput::outputFields() {
+void ParserPrinter::outputFields() {
     auto& fields = _classFileParser.getFields();
     cout << endl;
     cout << "//Fields: " << fields.size() << endl;
@@ -133,6 +133,6 @@ void ParserOutput::outputFields() {
     cout << endl;
 }
 
-void ParserOutput::outputInterfaces() {
+void ParserPrinter::outputInterfaces() {
     // TODO
 }

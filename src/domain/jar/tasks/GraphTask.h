@@ -1,6 +1,6 @@
 #ifndef TARRACSH_JAR_GRAPH_H
 #define TARRACSH_JAR_GRAPH_H
-#include "../app/stats/Stats.h"
+#include "../../stats/Results.h"
 #include <map>
 
 #include "../JarEntry.h"
@@ -13,10 +13,12 @@
 
 namespace kapa::tarracsh::domain::jar::tasks {
 
+using kapa::tarracsh::domain::stats::Results;
+
 class GraphTask : public Task {
 public:
     explicit GraphTask(
-        Options options, app::stats::Results &results,
+        Options options, Results &results,
         db::callgraph::CallGraphDb& callGraphDb
         );
 
@@ -26,7 +28,7 @@ public:
 
 private:
     db::callgraph::CallGraphDb& _callGraphDb;
-    app::stats::Results &_results;
+    Results &_results;
     Options _options;
     bool _isFileUnchanged{false};
     bool _isNewJarFile{false};

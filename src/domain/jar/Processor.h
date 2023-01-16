@@ -3,7 +3,7 @@
 #include <BS_thread_pool.hpp>
 #include <unordered_set>
 
-#include "../app/stats/Stats.h"
+#include "../stats/Results.h"
 
 #include "JarEntry.h"
 #include "tasks/Task.h"
@@ -12,11 +12,14 @@
 
 
 namespace kapa::tarracsh::domain::jar {
+
+using kapa::tarracsh::domain::stats::Results;
+
 class Processor {
 public:
     explicit Processor(
         Options options,
-        stats::Results &results,
+        Results &results,
         Task &task
        );
 
@@ -35,7 +38,7 @@ public:
 
 private:
     Task& _task;
-    stats::Results &_results;
+    Results &_results;
     Options _jarOptions;
     bool _isValid{true};
     std::atomic<unsigned int> _classfileCount{0};

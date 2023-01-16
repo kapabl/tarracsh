@@ -23,10 +23,10 @@ public:
         parse();
     }
 
-    const Descriptor &getDescriptor() { return _descriptor; }
+    const constantpool::Descriptor &getDescriptor() { return _descriptor; }
 
 private:
-    Descriptor _descriptor;
+    constantpool::Descriptor _descriptor;
     std::shared_ptr<signature::SignatureScanner> _scanner;
 
     void parse() {

@@ -1,11 +1,13 @@
 #ifndef TARRACSH_QUERY_H
 #define TARRACSH_QUERY_H
 
-#include "../app/Tarracsh.h"
 #include "../infrastructure/db/Database.h"
+#include "../domain/db/CallGraphDb.h"
+#include "../domain/db/DigestDb.h"
+#include "../domain/stats/Results.h"
 
 
-namespace kapa::tarracsh::domain::db::query {
+namespace kapa::tarracsh::app::commands::digest {
 
 
 #define TQ_SCHEMA "schema"
@@ -23,9 +25,9 @@ private:
         : _options(app.getOptions()), _results(app.getResults()) {
 
         if (_options.isPublicDigest) {
-            _db = std::make_unique<digest::DigestDb>(_options.outputDir, app.getLog() );
+            _db = std::make_unique<domain::db::digest::DigestDb>(_options.outputDir, app.getLog() );
         } else {
-            _db = std::make_unique<callgraph::CallGraphDb>(_options.outputDir, app.getLog());
+            _db = std::make_unique<domain::db::callgraph::CallGraphDb>(_options.outputDir, app.getLog());
         }
         _db->init();
 
@@ -43,10 +45,8 @@ private:
     }
 
     std::unique_ptr<infrastructure::db::Database> _db;
-    Options &_options;
-    stats::Results& _results;
-    // DigestDb _digestDb;
-    // CallGraphDb _callGraphDb;
+    domain::Options &_options;
+    domain::stats::Results& _results;
 };
 
 

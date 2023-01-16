@@ -10,13 +10,6 @@
 using namespace libzippp;
 
 
-// using namespace kapa::infrastructure::filesystem;
-
-using namespace kapa::tarracsh::app;
-using namespace stats;
-
-// using namespace kapa::tarracsh::domain::digest;
-
 using namespace kapa::tarracsh::domain;
 
 using namespace classfile;

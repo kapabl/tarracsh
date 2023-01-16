@@ -4,7 +4,7 @@
 #include <grpcpp/security/server_credentials.h>
 #include <grpcpp/server.h>
 #include "proto/Server.grpc.pb.h"
-#include "../domain/db/DigestDb.h"
+#include "../../../domain/db/DigestDb.h"
 
 using grpc::Status;
 using grpc::ServerContext;
@@ -14,18 +14,21 @@ using grpc::ServerReaderWriter;
 namespace kapa::tarracsh::server::digest {
 
 
-class ServiceImpl: public PublicDigest::Service {
+
+class ServiceImpl: public app::server::digest::PublicDigest::Service {
 public:
     static void start(app::Config& config);
 
     explicit ServiceImpl(app::Config& config);
 
-    Status Quit(ServerContext* context, const Empty* request, Empty* response) override;
-    Status Check(ServerContext* context, const DigestRequest* request, DigestResponse* response) override;
+    Status Quit(ServerContext* context, const app::server::digest::Empty* request, app::server::digest::Empty* response) override;
+    Status Check(ServerContext* context, 
+        const app::server::digest::DigestRequest* request, 
+        app::server::digest::DigestResponse* response) override;
 
 
 private:
-    db::digest::DigestDb _db;
+    kapa::tarracsh::domain::db::digest::DigestDb _db;
     app::Config& _config;
     std::unique_ptr<grpc::Server> _server;
     std::mutex _mutex;
@@ -36,8 +39,8 @@ private:
     void startServer();
     void waitForShutDown();
     void init();
-    void requestToOptions(const DigestRequest& request, Options& requestOptions) const;
-    void reportToResponse(const std::unique_ptr<stats::report::DigestReport>& report, DigestResponse& response);
+    void requestToOptions(const app::server::digest::DigestRequest& request, domain::Options& requestOptions) const;
+    void reportToResponse(const std::unique_ptr<domain::stats::report::DigestReport>& report, app::server::digest::DigestResponse& response);
 };
 }
 

@@ -8,8 +8,7 @@
 #include "ProfileData.h"
 
 
-
-namespace kapa::tarracsh::app::stats {
+namespace kapa::tarracsh::domain::stats {
 
 typedef std::atomic<unsigned int> Counter;
 typedef std::atomic<unsigned long> FileTime;

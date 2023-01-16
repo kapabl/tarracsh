@@ -2,17 +2,15 @@
 #define TARRACSH_PROFILE_DATA_H
 
 #include <chrono>
-#include "../app/Options.h"
+#include "../Options.h"
 
-namespace kapa::tarracsh::app::stats {
+namespace kapa::tarracsh::domain::stats {
 struct Results;
 }
 
-namespace kapa::tarracsh::app::stats::profiler {
+namespace kapa::tarracsh::domain::stats::profiler {
 
-// using MillisecondDuration = std::chrono::duration<long long, std::milli>;
 using MillisecondDuration = std::chrono::milliseconds;
-// using MillisecondDuration = long long;
 
 struct ProfileData {
     Results &results;

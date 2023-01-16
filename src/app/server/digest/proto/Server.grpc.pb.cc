@@ -21,12 +21,13 @@
 #include <grpcpp/impl/codegen/sync_stream.h>
 namespace kapa {
 namespace tarracsh {
+namespace app {
 namespace server {
 namespace digest {
 
 static const char* PublicDigest_method_names[] = {
-  "/kapa.tarracsh.server.digest.PublicDigest/Quit",
-  "/kapa.tarracsh.server.digest.PublicDigest/Check",
+  "/kapa.tarracsh.app.server.digest.PublicDigest/Quit",
+  "/kapa.tarracsh.app.server.digest.PublicDigest/Check",
 };
 
 std::unique_ptr< PublicDigest::Stub> PublicDigest::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -40,46 +41,46 @@ PublicDigest::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& chann
   , rpcmethod_Check_(PublicDigest_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
-::grpc::Status PublicDigest::Stub::Quit(::grpc::ClientContext* context, const ::kapa::tarracsh::server::digest::Empty& request, ::kapa::tarracsh::server::digest::Empty* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::kapa::tarracsh::server::digest::Empty, ::kapa::tarracsh::server::digest::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Quit_, context, request, response);
+::grpc::Status PublicDigest::Stub::Quit(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty& request, ::kapa::tarracsh::app::server::digest::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::kapa::tarracsh::app::server::digest::Empty, ::kapa::tarracsh::app::server::digest::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Quit_, context, request, response);
 }
 
-void PublicDigest::Stub::async::Quit(::grpc::ClientContext* context, const ::kapa::tarracsh::server::digest::Empty* request, ::kapa::tarracsh::server::digest::Empty* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::kapa::tarracsh::server::digest::Empty, ::kapa::tarracsh::server::digest::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Quit_, context, request, response, std::move(f));
+void PublicDigest::Stub::async::Quit(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty* request, ::kapa::tarracsh::app::server::digest::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::kapa::tarracsh::app::server::digest::Empty, ::kapa::tarracsh::app::server::digest::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Quit_, context, request, response, std::move(f));
 }
 
-void PublicDigest::Stub::async::Quit(::grpc::ClientContext* context, const ::kapa::tarracsh::server::digest::Empty* request, ::kapa::tarracsh::server::digest::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+void PublicDigest::Stub::async::Quit(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty* request, ::kapa::tarracsh::app::server::digest::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
   ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Quit_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::server::digest::Empty>* PublicDigest::Stub::PrepareAsyncQuitRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::server::digest::Empty& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::kapa::tarracsh::server::digest::Empty, ::kapa::tarracsh::server::digest::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Quit_, context, request);
+::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::Empty>* PublicDigest::Stub::PrepareAsyncQuitRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::kapa::tarracsh::app::server::digest::Empty, ::kapa::tarracsh::app::server::digest::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Quit_, context, request);
 }
 
-::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::server::digest::Empty>* PublicDigest::Stub::AsyncQuitRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::server::digest::Empty& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::Empty>* PublicDigest::Stub::AsyncQuitRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty& request, ::grpc::CompletionQueue* cq) {
   auto* result =
     this->PrepareAsyncQuitRaw(context, request, cq);
   result->StartCall();
   return result;
 }
 
-::grpc::Status PublicDigest::Stub::Check(::grpc::ClientContext* context, const ::kapa::tarracsh::server::digest::DigestRequest& request, ::kapa::tarracsh::server::digest::DigestResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::kapa::tarracsh::server::digest::DigestRequest, ::kapa::tarracsh::server::digest::DigestResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Check_, context, request, response);
+::grpc::Status PublicDigest::Stub::Check(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::kapa::tarracsh::app::server::digest::DigestResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::kapa::tarracsh::app::server::digest::DigestRequest, ::kapa::tarracsh::app::server::digest::DigestResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Check_, context, request, response);
 }
 
-void PublicDigest::Stub::async::Check(::grpc::ClientContext* context, const ::kapa::tarracsh::server::digest::DigestRequest* request, ::kapa::tarracsh::server::digest::DigestResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::kapa::tarracsh::server::digest::DigestRequest, ::kapa::tarracsh::server::digest::DigestResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Check_, context, request, response, std::move(f));
+void PublicDigest::Stub::async::Check(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest* request, ::kapa::tarracsh::app::server::digest::DigestResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::kapa::tarracsh::app::server::digest::DigestRequest, ::kapa::tarracsh::app::server::digest::DigestResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Check_, context, request, response, std::move(f));
 }
 
-void PublicDigest::Stub::async::Check(::grpc::ClientContext* context, const ::kapa::tarracsh::server::digest::DigestRequest* request, ::kapa::tarracsh::server::digest::DigestResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+void PublicDigest::Stub::async::Check(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest* request, ::kapa::tarracsh::app::server::digest::DigestResponse* response, ::grpc::ClientUnaryReactor* reactor) {
   ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Check_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::server::digest::DigestResponse>* PublicDigest::Stub::PrepareAsyncCheckRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::server::digest::DigestRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::kapa::tarracsh::server::digest::DigestResponse, ::kapa::tarracsh::server::digest::DigestRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Check_, context, request);
+::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DigestResponse>* PublicDigest::Stub::PrepareAsyncCheckRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::kapa::tarracsh::app::server::digest::DigestResponse, ::kapa::tarracsh::app::server::digest::DigestRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Check_, context, request);
 }
 
-::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::server::digest::DigestResponse>* PublicDigest::Stub::AsyncCheckRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::server::digest::DigestRequest& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DigestResponse>* PublicDigest::Stub::AsyncCheckRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::grpc::CompletionQueue* cq) {
   auto* result =
     this->PrepareAsyncCheckRaw(context, request, cq);
   result->StartCall();
@@ -90,21 +91,21 @@ PublicDigest::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       PublicDigest_method_names[0],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< PublicDigest::Service, ::kapa::tarracsh::server::digest::Empty, ::kapa::tarracsh::server::digest::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+      new ::grpc::internal::RpcMethodHandler< PublicDigest::Service, ::kapa::tarracsh::app::server::digest::Empty, ::kapa::tarracsh::app::server::digest::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](PublicDigest::Service* service,
              ::grpc::ServerContext* ctx,
-             const ::kapa::tarracsh::server::digest::Empty* req,
-             ::kapa::tarracsh::server::digest::Empty* resp) {
+             const ::kapa::tarracsh::app::server::digest::Empty* req,
+             ::kapa::tarracsh::app::server::digest::Empty* resp) {
                return service->Quit(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       PublicDigest_method_names[1],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< PublicDigest::Service, ::kapa::tarracsh::server::digest::DigestRequest, ::kapa::tarracsh::server::digest::DigestResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+      new ::grpc::internal::RpcMethodHandler< PublicDigest::Service, ::kapa::tarracsh::app::server::digest::DigestRequest, ::kapa::tarracsh::app::server::digest::DigestResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](PublicDigest::Service* service,
              ::grpc::ServerContext* ctx,
-             const ::kapa::tarracsh::server::digest::DigestRequest* req,
-             ::kapa::tarracsh::server::digest::DigestResponse* resp) {
+             const ::kapa::tarracsh::app::server::digest::DigestRequest* req,
+             ::kapa::tarracsh::app::server::digest::DigestResponse* resp) {
                return service->Check(ctx, req, resp);
              }, this)));
 }
@@ -112,14 +113,14 @@ PublicDigest::Service::Service() {
 PublicDigest::Service::~Service() {
 }
 
-::grpc::Status PublicDigest::Service::Quit(::grpc::ServerContext* context, const ::kapa::tarracsh::server::digest::Empty* request, ::kapa::tarracsh::server::digest::Empty* response) {
+::grpc::Status PublicDigest::Service::Quit(::grpc::ServerContext* context, const ::kapa::tarracsh::app::server::digest::Empty* request, ::kapa::tarracsh::app::server::digest::Empty* response) {
   (void) context;
   (void) request;
   (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status PublicDigest::Service::Check(::grpc::ServerContext* context, const ::kapa::tarracsh::server::digest::DigestRequest* request, ::kapa::tarracsh::server::digest::DigestResponse* response) {
+::grpc::Status PublicDigest::Service::Check(::grpc::ServerContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest* request, ::kapa::tarracsh::app::server::digest::DigestResponse* response) {
   (void) context;
   (void) request;
   (void) response;
@@ -129,6 +130,7 @@ PublicDigest::Service::~Service() {
 
 }  // namespace kapa
 }  // namespace tarracsh
+}  // namespace app
 }  // namespace server
 }  // namespace digest
 

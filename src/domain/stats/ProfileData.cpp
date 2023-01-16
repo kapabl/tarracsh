@@ -4,7 +4,7 @@
 
 #include "../../infrastructure/filesystem/Utils.h"
 
-using namespace kapa::tarracsh::app::stats::profiler;
+using namespace kapa::tarracsh::domain::stats::profiler;
 
 
 ProfileData::ProfileData(Results &results): results(results) {

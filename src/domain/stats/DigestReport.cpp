@@ -1,10 +1,10 @@
 #include "DigestReport.h"
-#include "Stats.h"
-#include "../App.h"
 
-using namespace kapa::tarracsh;
-using namespace app;
-using namespace stats::report;
+#include <iostream>
+
+#include "Results.h"
+
+using namespace kapa::tarracsh::domain::stats::report;
 
 
 DigestReport::DigestReport(Results &results)

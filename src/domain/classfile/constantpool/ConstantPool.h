@@ -1,11 +1,7 @@
 #ifndef TARRACSH_CONSTANT_POOL_H
 #define TARRACSH_CONSTANT_POOL_H
 
-#include <unicode/unistr.h>
-#include <cstring>
-#include "ConstantPool.h"
 #include "../reader/ClassFileReader.h"
-
 #include "ConstpoolStructures.h"
 
 namespace kapa::tarracsh::domain::classfile::constantpool {

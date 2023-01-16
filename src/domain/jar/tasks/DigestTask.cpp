@@ -10,12 +10,7 @@
 #include "../../../infrastructure/filesystem/Utils.h"
 
 using namespace kapa::infrastructure::filesystem;
-
-using namespace kapa::tarracsh::app;
-using namespace stats;
-
 using namespace kapa::tarracsh::domain::digest;
-
 using namespace kapa::tarracsh::domain;
 
 using namespace classfile;
@@ -27,7 +22,7 @@ using namespace std;
 
 DigestTask::DigestTask(
     Options options, Results &results,
-    db::digest::DigestDb &digestDb
+    DigestDb &digestDb
     )
     : _digestDb(digestDb),
       _results(results),

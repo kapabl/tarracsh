@@ -8,13 +8,13 @@
 #include "../infrastructure/filesystem/Utils.h"
 
 
-namespace kapa::tarracsh::app::stats {
+namespace kapa::tarracsh::domain::stats {
 struct Results;
 struct JarfileStats;
 struct ClassfileStats;
 }
 
-namespace kapa::tarracsh::app::stats::report {
+namespace kapa::tarracsh::domain::stats::report {
 
 struct FileResult {
     std::string filename;

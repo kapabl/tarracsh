@@ -1,13 +1,13 @@
 #ifndef TARRACSH_PUBLIC_DIGEST_CMD_H
 #define TARRACSH_PUBLIC_DIGEST_CMD_H
 
-#include "../../infrastructure/app/Command.h"
-#include "../Options.h"
-#include "../stats/Stats.h"
-#include "../../infrastructure/app/CliApp.h"
+#include "../../../infrastructure/app/Command.h"
+#include "../../../domain/Options.h"
+#include "../../../domain/stats/Results.h"
+#include "../../../infrastructure/app/CliApp.h"
 
 
-namespace kapa::tarracsh::app::commands {
+namespace kapa::tarracsh::app::commands::digest {
 
 class PublicDigest final : public infrastructure::app::cli::command::Command {
 public:
@@ -17,8 +17,8 @@ public:
 
 
 private:
-    stats::Results &_results;
-    Options &_options;
+    domain::stats::Results &_results;
+    domain::Options &_options;
     CLI::App *_digestServerOptions{nullptr};
     [[nodiscard]] CLI::App *addServerOptions() const;
 };
