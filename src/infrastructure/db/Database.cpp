@@ -45,6 +45,19 @@ std::string Database::generateTableFilename(const std::string &name) const {
     return result;
 }
 
+bool Database::init(Database &db, const bool doClean) {
+    auto result = true;
+    db.init();
+
+    if (doClean) {
+        db.clean();
+    } else {
+        result = db.read();
+    }
+
+    return result;
+}
+
 std::string Database::generateStringPoolFilename(const std::string &name) const {
     std::string result(name + StringPoolExtension);
     result = (std::filesystem::path(_dataDir) / result).string();

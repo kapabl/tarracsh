@@ -1,4 +1,5 @@
-#include "Parse.h"
+#include "ParseCommand.h"
+#include "../App.h"
 #include "../Analyzer.h"
 
 using namespace kapa::tarracsh;
@@ -8,18 +9,18 @@ using namespace commands;
 
 using namespace kapa::infrastructure::app::cli::command;
 
-Parse::Parse(CLI::App* parent)
+ParseCommand::ParseCommand(CLI::App* parent)
     : Command(parent), _results(App::getGlobalResults()), _options(App::getGlobalOptions()) {
 }
 
-ExitCode Parse::run() const {
+ExitCode ParseCommand::run() {
     ExitCode result = 0;
     Analyzer analyzer(App::getApp());
     analyzer.run();
     return result;
 }
 
-void Parse::addCommand() {
+void ParseCommand::addCommand() {
     _subCommand = _parent->add_subcommand("parse", "Parse class files, jar or directories");
     _subCommand->add_option("--input,-i", _options.input, "Input: directory, jar file or class file")->required();
 

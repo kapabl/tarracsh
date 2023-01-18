@@ -6,8 +6,8 @@
 #include "Config.h"
 
 #include "commands/digest/PublicDigest.h"
-#include "commands/CallGraph.h"
-#include "commands/Parse.h"
+#include "commands/CallGraphCommand.h"
+#include "commands/ParseCommand.h"
 
 using CliApp = kapa::infrastructure::app::cli::CliApp;
 
@@ -21,13 +21,10 @@ public:
 
     [[nodiscard]] static ExitCode run(int argc, char *argv[]);
     [[nodiscard]] ExitCode start(int argc, char *argv[]);
-    void controlCHandler();
 
     [[nodiscard]] static domain::stats::Results &getGlobalResults() { return _app->_results; }
-    [[nodiscard]] static domain::Options &getGlobalOptions() { return _app->_options; }
-    
+    [[nodiscard]] static domain::Options &getGlobalOptions() { return _app->_options; }    
     [[nodiscard]] static bool isValidInput(domain::Options& options);
-
     [[nodiscard]] static App& getApp() { return *_app; }
 
     [[nodiscard]] domain::stats::Results& getResults() override { return _results; }
@@ -43,8 +40,8 @@ private:
     domain::Options _options;
     void setupCliOptions();
 
-    std::unique_ptr<commands::Parse> _parseCommand{};
-    std::unique_ptr<commands::CallGraph> _callGraphCommand{};
+    std::unique_ptr<commands::ParseCommand> _parseCommand{};
+    std::unique_ptr<commands::CallGraphCommand> _callGraphCommand{};
     std::unique_ptr<commands::digest::PublicDigest> _digestCommand{};
     static std::unique_ptr<App> _app;
 
@@ -57,6 +54,7 @@ private:
     static void prepareConsoleForVT100();
     static void prepareConsoleForUTF8();
     static int __stdcall ctrlHandler(unsigned long fdwCtrlType);
+    void controlCHandler();
 #endif
     domain::stats::Results _results;
 

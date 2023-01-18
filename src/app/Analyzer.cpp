@@ -30,6 +30,8 @@ using kapa::tarracsh::domain::jar::tasks::DigestTask;
 using kapa::tarracsh::domain::jar::tasks::GraphTask;
 using kapa::tarracsh::domain::jar::tasks::ParserTask;
 using kapa::tarracsh::domain::jar::Processor;
+using kapa::tarracsh::domain::db::digest::DigestDb;
+using kapa::tarracsh::domain::db::callgraph::CallGraphDb;
 using kapa::tarracsh::domain::db::digest::FileRow;
 using kapa::tarracsh::domain::db::digest::ClassfileRow;
 using kapa::tarracsh::domain::db::digest::columns::DigestCol;
@@ -54,12 +56,17 @@ bool Analyzer::isClassfileInput() const {
     return !_options.classFilePath.empty();
 }
 
-Analyzer::Analyzer(Config &config)
+Analyzer::Analyzer(Config &config, const std::shared_ptr<infrastructure::db::Database> db)
     : _options(config.getOptions()),
       _results(config.getResults()),
-      _digestDb(_options.outputDir, config.getLog()),
-      _callGraphDb(_options.outputDir, config.getLog()) {
+      _db(db)
+{
+}
 
+Analyzer::Analyzer(Config& config)
+    : _options(config.getOptions()),
+    _results(config.getResults())
+{
 }
 
 void Analyzer::parseClassfile(const std::string &filename) const {
@@ -87,13 +94,26 @@ bool Analyzer::isFileUnchanged(const uintmax_t size, const long long timestamp, 
     return result;
 }
 
+DigestDb& Analyzer::getDigestDb() const {
+    auto& result = reinterpret_cast<DigestDb&>(*_db);
+    return result;
+}
+
+CallGraphDb& Analyzer::getCallGraphDb() const {
+    auto& result = reinterpret_cast<CallGraphDb&>(*_db);
+    return result;
+}
+
+
 void Analyzer::updateDbInMemory(const StandaloneClassFileInfo &classFileInfo,
                                 const ClassFileParser &parser,
                                 const DigestCol &digest) {
-    const auto files = _digestDb.getFiles();
+
+    auto& digestDb = getDigestDb();
+    const auto files = digestDb.getFiles();
     FileRow fileRow;
-    fileRow.filename = _digestDb.getPoolString(classFileInfo.filename);
-    fileRow.type = domain::db::digest::columns::EntryType::Classfile;
+    fileRow.filename = digestDb.getPoolString(classFileInfo.filename);
+    fileRow.type = EntryType::Classfile;
     fileRow.lastWriteTime = classFileInfo.timestamp;
     fileRow.fileSize = classFileInfo.size;
     fileRow.digest = digest;
@@ -103,15 +123,16 @@ void Analyzer::updateDbInMemory(const StandaloneClassFileInfo &classFileInfo,
     digestRow.size = classFileInfo.size;
     digestRow.lastWriteTime = classFileInfo.timestamp;
     digestRow.digest = digest;
-    digestRow.classname = _digestDb.getPoolString(parser.getMainClassname());
-    digestRow.id = _digestDb.getClassfiles()->addOrUpdate(digestRow);
+    digestRow.classname = digestDb.getPoolString(parser.getMainClassname());
+    digestRow.id = digestDb.getClassfiles()->addOrUpdate(digestRow);
 }
 
 void Analyzer::digestClassfile(const std::string &filename) {
+    auto& digestDb = getDigestDb();
 
     StandaloneClassFileInfo fileInfo(filename);
 
-    const FileRow *fileRow = _digestDb.getFiles()->findByKey(fileInfo.filename);
+    const FileRow *fileRow = digestDb.getFiles()->findByKey(fileInfo.filename);
     const bool fileExists = fileRow != nullptr;
     const auto isFileChanged = !isFileUnchanged(fileInfo.size, fileInfo.timestamp, fileRow);
 
@@ -201,13 +222,14 @@ void Analyzer::processJar(const std::string &filename) {
 
         ++_results.jarfiles.count;
         if (_options.isPublicDigest) {
-            DigestTask jarDigestTask(jarOptions, _results, _digestDb);
+            DigestTask jarDigestTask(jarOptions, _results, reinterpret_cast<domain::db::digest::DigestDb&>(_db));
             Processor jarProcessor(jarOptions, _results, jarDigestTask);
             jarProcessor.run();
         } else if (_options.isCallGraph) {
-            GraphTask jarGraphTask(jarOptions, _results, _callGraphDb);
-            Processor jarProcessor(jarOptions, _results, jarGraphTask);
-            jarProcessor.run();
+            //TODO
+            // GraphTask jarGraphTask(jarOptions, _results, _callGraphDb);
+            // Processor jarProcessor(jarOptions, _results, jarGraphTask);
+            // jarProcessor.run();
         } else {
             ParserTask jarParserTask(jarOptions, _results,[this]( ClassFileParser& parser) -> void {
                 classFileParserDone(parser);
@@ -247,12 +269,12 @@ void Analyzer::processFile(const std::filesystem::directory_entry &dirEntry) {
 bool Analyzer::initAnalyzer() {
     ScopedTimer timer(&_results.profileData->initAnalyzer);
     _results.log->setFile(_options.logFile);
-
-    if (_options.isPublicDigest) {
-        if (!initDb(_digestDb)) return false;
-    } else if (_options.isCallGraph) {
-        if (!initDb(_callGraphDb)) return false;
-    }
+//TODO extract
+    // if (_options.isPublicDigest) {
+    //     if (!initDb(_digestDb)) return false;
+    // } else if (_options.isCallGraph) {
+    //     if (!initDb(_callGraphDb)) return false;
+    // }
     return true;
 }
 
@@ -279,13 +301,14 @@ void Analyzer::analyzeInput() {
 
 
 void Analyzer::updateDbs() {
-    if (_options.isPublicDigest) {
-        ScopedTimer timer(&_results.profileData->writeDigestDb);
-        _digestDb.write();
-    } else if (_options.isCallGraph) {
-        ScopedTimer timer(&_results.profileData->writeCallGraphDb);
-        _callGraphDb.write();
-    }
+    //TODO extract
+    // if (_options.isPublicDigest) {
+    //     ScopedTimer timer(&_results.profileData->writeDigestDb);
+    //     _digestDb.write();
+    // } else if (_options.isCallGraph) {
+    //     ScopedTimer timer(&_results.profileData->writeCallGraphDb);
+    //     _callGraphDb.write();
+    // }
 }
 
 void Analyzer::endAnalysis() {

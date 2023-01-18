@@ -54,6 +54,9 @@ public:
 
     void print() const;
 
+    [[nodiscard]] const std::vector<FileResult>& getJarResults() const { return jarResults; }
+    [[nodiscard]] const std::vector<ClassResult>& getClassResults() const { return classfileResults; }
+
 private:
     Results& results;
     JarfileStats& jarfiles;

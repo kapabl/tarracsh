@@ -29,7 +29,7 @@ public:
 
 
 private:
-    kapa::tarracsh::domain::db::digest::DigestDb _db;
+    std::shared_ptr<domain::db::digest::DigestDb> _db;
     app::Config& _config;
     std::unique_ptr<grpc::Server> _server;
     std::mutex _mutex;

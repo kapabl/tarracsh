@@ -162,7 +162,7 @@ void DigestReport::asUnchangedJarClass(const std::string &strongClassname) {
     ++results.jarfiles.classfiles.digest.unchangedCount;
 
     if (options.doDiffReport) {
-        asUnchangedClass(strongClassname);;
+        asUnchangedClass(strongClassname);
     }
 
     
@@ -185,7 +185,7 @@ void DigestReport::asModifiedJarClass(const std::string &strongClassname, const 
     }
 
     if (options.doDiffReport) {
-        asModifiedClass(strongClassname, isSamePublicDigest);;
+        asModifiedClass(strongClassname, isSamePublicDigest);
     }
     
 }

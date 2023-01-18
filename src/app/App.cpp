@@ -83,10 +83,10 @@ void App::setupCliOptions() {
     _digestCommand = std::make_unique<commands::digest::PublicDigest>(this);
     _digestCommand->addCommand();
 
-    _parseCommand = std::make_unique<commands::Parse>(this);
+    _parseCommand = std::make_unique<commands::ParseCommand>(this);
     _parseCommand->addCommand();
 
-    _callGraphCommand = std::make_unique<commands::CallGraph>(this);
+    _callGraphCommand = std::make_unique<commands::CallGraphCommand>(this);
     _callGraphCommand->addCommand();
 
     _parseCommand->getSubCommand()->excludes(_digestCommand->getSubCommand());
@@ -108,8 +108,7 @@ void App::setupCliOptions() {
 bool App::isValidInput(domain::Options &options) {
     const auto result = options.processInput();
     if (!result) {
-        std::cout << std::format("Input should be a directory, jar or class file. Invalid input:{}",
-                                 options.input) << std::endl;
+        std::cout << std::format("Input should be a directory, jar or class file. Invalid input:{}", options.input) << std::endl;
     }
     return result;
 }

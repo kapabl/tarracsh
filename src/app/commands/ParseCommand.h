@@ -8,10 +8,10 @@
 
 namespace kapa::tarracsh::app::commands {
 
-class Parse final: public infrastructure::app::cli::command::Command {
+class ParseCommand final: public infrastructure::app::cli::command::Command {
 public:
-    explicit Parse(CLI::App* parent);
-    [[nodiscard]] infrastructure::app::cli::ExitCode run() const override;
+    explicit ParseCommand(CLI::App* parent);
+    [[nodiscard]] infrastructure::app::cli::ExitCode run() override;
     void addCommand() override;
 private:
     domain::stats::Results& _results;

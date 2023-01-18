@@ -35,6 +35,8 @@ public:
 
     log::Log& log() const { return _log; }
 
+    static bool init( Database& db, const bool doClean );
+
 protected:
 
     [[nodiscard]] std::string generateStringPoolFilename(const std::string &name) const;
