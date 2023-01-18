@@ -6,12 +6,11 @@
 #include <BS_thread_pool.hpp>
 
 #include "Config.h"
-#include "../domain/db/DigestDb.h"
-#include "../domain/db/CallGraphDb.h"
 #include "../domain/classfile/ClassFileParser.h"
 #include "../domain/classfile/StandaloneClassFileInfo.h"
 #include "../infrastructure/db/Database.h"
-#include "../domain/db/table/FilesTable.h"
+#include "../domain/db/DigestDb.h"
+#include "../domain/db/CallGraphDb.h"
 
 
 using kapa::tarracsh::domain::classfile::ClassFileParser;
@@ -23,6 +22,7 @@ class Analyzer {
 public:
 
     explicit Analyzer(Config& config);
+    explicit Analyzer(Config& config, std::shared_ptr<infrastructure::db::Database> db);
     
     [[nodiscard]] bool isJarInput() const;
     [[nodiscard]] bool isDirInput() const;
@@ -45,8 +45,10 @@ private:
     domain::stats::Results& _results;
     void processJar(const std::string &filename);
 
-    domain::db::digest::DigestDb _digestDb;
-    domain::db::callgraph::CallGraphDb _callGraphDb;
+    // infrastructure::db::Database& _db;
+    std::shared_ptr<infrastructure::db::Database> _db;
+    // domain::db::digest::DigestDb& _digestDb;
+    // domain::db::callgraph::CallGraphDb _callGraphDb;
 
     // BS::thread_pool _fileThreadPool{std::max<unsigned int>(1u, std::thread::hardware_concurrency() * 4 / 5)};
     // BS::thread_pool _fileThreadPool{std::max<unsigned int>(1u, std::thread::hardware_concurrency() * 3 / 4)};
@@ -64,6 +66,8 @@ private:
 
     void parseClassfile(const std::string& filename) const;
     bool isFileUnchanged(uintmax_t size, long long timestamp, const domain::db::digest::FileRow *row) const;
+    domain::db::digest::DigestDb &getDigestDb() const;
+    domain::db::callgraph::CallGraphDb &getCallGraphDb() const;
     void updateDbInMemory(
         const StandaloneClassFileInfo &classFileInfo, 
         const ClassFileParser &parser,

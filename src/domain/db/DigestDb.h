@@ -18,6 +18,7 @@ public:
     }
 
     void init() override;
+    static std::shared_ptr<DigestDb> create(const std::string &dataDir, infrastructure::log::Log &log, bool doClean);
     void clean() override;
     bool read() override;
     bool write() override;

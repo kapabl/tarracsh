@@ -15,6 +15,21 @@ void DigestDb::init() {
     _classfilesTable->init();
 }
 
+std::shared_ptr<DigestDb> DigestDb::create( 
+    const std::string& dataDir,
+    infrastructure::log::Log& log, const bool doClean ) {
+
+    std::shared_ptr<DigestDb> result;
+
+    const auto db = std::make_shared<DigestDb>( dataDir, log);
+
+    if ( Database::init(*result, doClean) ) {
+        result = db;
+    }
+    return result;
+
+}
+
 void DigestDb::clean() {
     Database::clean();
     _filesTable->clean();

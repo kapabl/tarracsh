@@ -1,7 +1,9 @@
 #include "PublicDigest.h"
+#include "../../App.h"
 #include "../../Analyzer.h"
-#include "Query.h"
+#include "QueryCommand.h"
 #include "../../server/digest/ServerCommand.h"
+#include "../../../domain/stats/ScopedTimer.h"
 
 
 using kapa::tarracsh::app::server::digest::ServerCommand;
@@ -12,12 +14,38 @@ using kapa::infrastructure::app::cli::ExitCode;
 using namespace kapa::tarracsh::app::commands::digest;
 
 
-
-PublicDigest::PublicDigest(CLI::App* parent)
+PublicDigest::PublicDigest(CLI::App *parent)
     : Command(parent), _results(App::getGlobalResults()), _options(App::getGlobalOptions()) {
 }
 
- ExitCode PublicDigest::run() const {
+bool PublicDigest::initDb() {
+
+    domain::stats::profiler::ScopedTimer timer(&_results.profileData->initDb);
+
+    _db = domain::db::digest::DigestDb::create( _options.outputDir, *_results.log, _options.rebuild);
+    const auto result = _db.get() != nullptr;
+    return result;
+
+}
+
+ExitCode PublicDigest::digestInput() {
+    ExitCode result = 0;
+    if (App::isValidInput(_options)) {
+        if (initDb()) {
+            Analyzer analyzer(App::getApp(), _db);
+            analyzer.run();
+        } else {
+            _results.log->writeln("Error initializing digest Db", true);
+            result = 1;
+        }
+    } else {
+        result = 1;
+    }
+
+    return result;
+}
+
+ExitCode PublicDigest::run() {
     ExitCode result = 0;
     _options.digestServer.enabled = _subCommand->got_subcommand(_digestServerOptions);
     if (_options.digestServer.enabled) {
@@ -25,12 +53,7 @@ PublicDigest::PublicDigest(CLI::App* parent)
     } else if (!_options.queryValue.empty()) {
         QueryCommand::run(App::getApp());
     } else {
-        if (App::isValidInput(_options)) {
-            Analyzer analyzer(App::getApp());
-            analyzer.run();
-        } else {
-            result = 1;
-        }
+        result = digestInput();
     }
     return result;
 
@@ -39,7 +62,7 @@ PublicDigest::PublicDigest(CLI::App* parent)
 CLI::App *PublicDigest::addServerOptions() const {
     const auto result = _subCommand->add_subcommand("server", "Server commands - Default start server");
 
-    domain::ServerOptions& serverOptions = _options.digestServer;
+    ServerOptions &serverOptions = _options.digestServer;
 
     result->add_option("--port", serverOptions.port, "Server Port")->default_val(serverOptions.port);
     const auto listenAddress = result->add_option("--listen-addr", serverOptions.listenAddress, "Listen address")->
@@ -56,27 +79,28 @@ CLI::App *PublicDigest::addServerOptions() const {
 void PublicDigest::addCommand() {
 
     _subCommand = _parent->add_subcommand("public-digest", "Public digest of jar files and classfiles");
-    const auto input = _subCommand->add_option("--input,-i", _options.input, "Input: directory, jar file or class file");
+    const auto input = _subCommand->
+        add_option("--input,-i", _options.input, "Input: directory, jar file or class file");
 
     const auto rebuild = _subCommand->add_flag("--rebuild", _options.rebuild, "Rebuild Digest Db")
-                               ->needs(input);
+                                    ->needs(input);
 
     const auto dryRun = _subCommand->add_flag("--dry-run", _options.dryRun,
-                                         "Check Against Digest Db, default behavior is check and add/update")
-                              ->needs(input);
+                                              "Check Against Digest Db, default behavior is check and add/update")
+                                   ->needs(input);
 
     rebuild->excludes(dryRun);
 
     const auto diff = _subCommand->add_flag("--diff", _options.doDiffReport, "Create Diff report")
-                            ->needs(input);
+                                 ->needs(input);
     _subCommand->add_flag("--print-diff", _options.printDiffReport,
-                     "Print Diff report to stdout")->needs(diff)
-          ->needs(input);
+                          "Print Diff report to stdout")->needs(diff)
+               ->needs(input);
 
     _subCommand->add_flag("--verbose, -v", _options.verbose, "Verbose output");
 
     const auto query = _subCommand->add_option("--query", _options.queryValue, "TODO Query Help - schema")
-                             ->excludes(input);
+                                  ->excludes(input);
 
     _digestServerOptions = addServerOptions();
     _digestServerOptions->excludes(input);

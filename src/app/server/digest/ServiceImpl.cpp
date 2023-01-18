@@ -9,6 +9,7 @@
 
 #include <grpcpp/server_builder.h>
 
+#include "../../App.h"
 #include "ServerCommand.h"
 #include "../RequestConfig.h"
 #include "../app/Analyzer.h"
@@ -16,13 +17,14 @@
 
 
 using kapa::tarracsh::server::digest::ServiceImpl;
+using kapa::tarracsh::domain::db::digest::DigestDb;
 using kapa::tarracsh::domain::stats::profiler::MillisecondDuration;
 using kapa::tarracsh::domain::stats::profiler::ScopedTimer;
 using kapa::tarracsh::domain::stats::report::DigestReport;
 using kapa::tarracsh::app::server::digest::DigestRequest;
 using kapa::tarracsh::app::server::digest::DigestResponse;
+using kapa::tarracsh::app::server::digest::FileDigestResult;
 using kapa::tarracsh::app::server::digest::Empty;
-
 
 
 using namespace grpc;
@@ -43,7 +45,7 @@ std::condition_variable ServiceImpl::_quickSignalCV;
 
 const char *PUBLIC_DIGEST_SERVER_MUTEX_NAME = "public-digest-grpc-server";
 
-void ServiceImpl::start(app::Config& config) {
+void ServiceImpl::start(app::Config &config) {
     named_mutex mutex(open_or_create, PUBLIC_DIGEST_SERVER_MUTEX_NAME);
     if (mutex.try_lock()) {
         ServiceImpl service(config);
@@ -56,22 +58,21 @@ void ServiceImpl::start(app::Config& config) {
 
 bool ServiceImpl::initDb() {
 
-    auto result = true;
-    domain::stats::profiler::MillisecondDuration duration{0};
+    auto result = false;
+    MillisecondDuration duration{0};
     {
         ScopedTimer timer(&duration);
-        _db.init();
+        _db = DigestDb::create(_config.getOptions().outputDir, _config.getLog(), false);
 
-        if (_config.getOptions().rebuild) {
-            _db.clean();
-        } else {
-            result = _db.read();
+        cout << std::format("Db init duration:{}", duration) << endl;
+        if (_db) {
+            _db->outputStats();
+            result = true;
+        }
+        else {
+            cout << "Error initializing Digest db" << endl;
         }
     }
-
-    cout << std::format("Db init duration:{:10L}", duration) << endl;
-    _db.outputStats();
-
     return result;
 
 }
@@ -144,20 +145,38 @@ void ServiceImpl::requestToOptions(const DigestRequest &request, domain::Options
     requestOptions.logFile = _config.getOptions().logFile;
 
     requestOptions.input = request.input();
-    if ( !requestOptions.processInput()) {
+    if (!requestOptions.processInput()) {
         // TODO _results.log
         cout << format("Invalid Input: {}", requestOptions.input) << endl;
     }
 
 }
 
-void ServiceImpl::reportToResponse(const std::unique_ptr<DigestReport> &report,DigestResponse &response) {
-    //TODO
+//TODO write ResponseToReport
+void ServiceImpl::reportToResponse(const std::unique_ptr<DigestReport> &report, DigestResponse &response) {
+  
+
+    for( const auto& jarResult: report->getJarResults() ) {
+        auto jarDigestResult = *response.add_jars();
+        jarDigestResult.set_filename(jarResult.filename);
+        jarDigestResult.set_ischanged(jarResult.isModified);
+        jarDigestResult.set_isnew(jarResult.isNew);
+        jarDigestResult.set_issamedigest(jarResult.isSamePublicDigest);
+    }
+
+    for (const auto& classResults : report->getClassResults()) {
+        auto classDigestResult = *response.add_classfiles();
+        classDigestResult.set_filename(classResults.strongClassname);
+        classDigestResult.set_ischanged(classResults.isModified);
+        classDigestResult.set_isnew(classResults.isNew);
+        classDigestResult.set_issamedigest(classResults.isSamePublicDigest);
+    }
+ 
 }
 
-ServiceImpl::ServiceImpl(app::Config& config)
-    : _db(config.getOptions().outputDir, config.getLog()),
-      _config(config) {
+ServiceImpl::ServiceImpl(app::Config &config)
+    : _config(config) {
+    initDb();
 }
 
 void ServiceImpl::signalQuick() {
@@ -174,9 +193,10 @@ Status ServiceImpl::Check(ServerContext *context, const DigestRequest *request, 
     Status result(Status::OK);
     RequestConfig requestConfig(app::App::getApp().getLog());
     requestToOptions(*request, requestConfig.getOptions());
-    app::Analyzer analyzer(requestConfig);
+
+    app::Analyzer analyzer(requestConfig, _db);
     analyzer.run();
+
     reportToResponse(requestConfig.getResults().report, *response);
     return result;
 }
-
