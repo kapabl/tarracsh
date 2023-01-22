@@ -56,3 +56,18 @@ ScopedTimer::~ScopedTimer() {
         printElapsedTime();
     }
 }
+
+MillisecondDuration ScopedTimer::time(const std::function<void()> &func) {
+    MillisecondDuration result;
+    {
+        ScopedTimer timer(&result);
+        func();
+    }
+    return result;
+}
+
+MillisecondDuration ScopedTimer::timeWithPrint(const std::string &name, const std::function<void()> &func) {
+    const auto result = time(func);
+    std::cout << std::format("[time:{}({})]", name, result) << std::endl;
+    return result;
+}

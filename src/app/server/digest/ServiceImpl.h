@@ -1,6 +1,6 @@
 #ifndef TARRACSH_SERVER_H
 #define TARRACSH_SERVER_H
-#include "../app/Config.h"
+#include "../app/Context.h"
 #include <grpcpp/security/server_credentials.h>
 #include <grpcpp/server.h>
 #include "proto/Server.grpc.pb.h"
@@ -17,20 +17,23 @@ namespace kapa::tarracsh::server::digest {
 
 class ServiceImpl: public app::server::digest::PublicDigest::Service {
 public:
-    static void start(app::Config& config);
+    [[nodiscard]] static bool start(app::Context& config);
 
-    explicit ServiceImpl(app::Config& config);
+    explicit ServiceImpl(app::Context& context);
     static void signalQuick();
 
-    Status Quit(ServerContext* context, const app::server::digest::Empty* request, app::server::digest::Empty* response) override;
-    Status Check(ServerContext* context, 
-        const app::server::digest::DigestRequest* request, 
-        app::server::digest::DigestResponse* response) override;
+    [[nodiscard]] Status Quit(ServerContext* context,
+        const app::server::digest::Empty* request, 
+        app::server::digest::Empty* response) override;
+
+    [[nodiscard]] Status Diff(ServerContext* context,
+        const app::server::digest::DiffRequest* request, 
+        app::server::digest::DiffResponse* response) override;
 
 
 private:
     std::shared_ptr<domain::db::digest::DigestDb> _db;
-    app::Config& _config;
+    app::Context& _context;
     std::unique_ptr<grpc::Server> _server;
     std::mutex _mutex;
     static std::condition_variable _quickSignalCV;
@@ -40,8 +43,8 @@ private:
     void startServer();
     void waitForShutDown();
     void init();
-    void requestToOptions(const app::server::digest::DigestRequest& request, domain::Options& requestOptions) const;
-    void reportToResponse(const std::unique_ptr<domain::stats::report::DigestReport>& report, app::server::digest::DigestResponse& response);
+    static void reportToResponse(const std::unique_ptr<domain::stats::report::DigestReport>& report, app::server::digest::DiffResponse& response);
+
 };
 }
 

@@ -20,24 +20,14 @@ public:
         db::digest::DigestDb &digestDb
         );
 
-    [[ nodiscard ]] std::string getStrongClassname(const JarEntry &jarEntry) const;
-
     void processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) override;
-    void updateFileTableInMemory(const digestUtils::DigestVector &digest) const;
     bool start() override;
-    static std::string getUniqueClassname(
-        const JarEntry& jarEntry, 
-        const classfile::ClassFileParser &classFileParser);
-    void updateClassfileTableInMemory(const JarEntry &jarEntry, const db::digest::columns::DigestCol &result,
-                                      const classfile::ClassFileParser &classFileParser) const;
     void end() override;
 
     [[ nodiscard ]] db::digest::DigestDb &getDb() const { return _digestDb; }
 
 private:
     db::digest::DigestDb &_digestDb;
-    // std::shared_ptr<db::ClassfilesTable> _classfilesTable;
-    // std::shared_ptr<db::FilesTable> _filesTable;
     stats::Results &_results;
     Options _options;
     bool _isFileUnchanged{false};
@@ -52,6 +42,14 @@ private:
     [[nodiscard]] bool isFileUnchanged() const;
     [[nodiscard]] const db::digest::FileRow *createJarFileRow(const std::string &filename) const;
     [[nodiscard]] const db::digest::FileRow *getOrCreateFileRow(const std::string &filename);
+
+    void updateFileTableInMemory(const digestUtils::DigestVector& digest) const;
+
+    static std::string getUniqueClassname(
+        const JarEntry& jarEntry,
+        const classfile::ClassFileParser& classFileParser);
+    void updateClassfileTableInMemory(const JarEntry& jarEntry, const db::digest::columns::DigestCol& result,
+        const classfile::ClassFileParser& classFileParser) const;
 
 };
 

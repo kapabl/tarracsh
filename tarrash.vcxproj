@@ -909,6 +909,7 @@
     <ClCompile Include="src\app\server\digest\ServiceImpl.cpp" />
     <ClCompile Include="src\app\server\digest\ServerCommand.cpp" />
     <ClCompile Include="src\app\Analyzer.cpp" />
+    <ClCompile Include="src\app\server\RequestContext.cpp" />
     <ClCompile Include="src\domain\db\table\DigestTablesImpl.cpp" />
     <ClCompile Include="src\infrastructure\log\Log.cpp" />
     <ClCompile Include="src\app\Main.cpp" />
@@ -954,7 +955,7 @@
     <ClInclude Include="src\infrastructure\app\Command.h" />
     <ClInclude Include="src\app\commands\ParseCommand.h" />
     <ClInclude Include="src\app\commands\digest\PublicDigest.h" />
-    <ClInclude Include="src\app\Config.h" />
+    <ClInclude Include="src\app\Context.h" />
     <ClInclude Include="src\app\server\digest\proto\Server.grpc.pb.h" />
     <ClInclude Include="src\app\server\digest\proto\Server.pb.h" />
     <ClInclude Include="src\app\server\digest\ServiceImpl.h" />
@@ -1011,7 +1012,7 @@
     <ClInclude Include="src\domain\jar\Processor.h" />
     <ClInclude Include="src\domain\jar\tasks\Task.h" />
     <ClInclude Include="src\app\classfile\constantpool\printer\nav\HtmlGen.h" />
-    <ClInclude Include="src\app\server\RequestConfig.h" />
+    <ClInclude Include="src\app\server\RequestContext.h" />
     <ClInclude Include="src\domain\db\CallGraphDb.h" />
     <ClInclude Include="src\domain\db\table\ClassfilesTable.h" />
     <ClInclude Include="src\domain\db\columns\Columns.h" />

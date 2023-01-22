@@ -11,7 +11,7 @@
 
 #include "../../App.h"
 #include "ServerCommand.h"
-#include "../RequestConfig.h"
+#include "../RequestContext.h"
 #include "../app/Analyzer.h"
 #include "../domain/stats/ScopedTimer.h"
 
@@ -21,8 +21,8 @@ using kapa::tarracsh::domain::db::digest::DigestDb;
 using kapa::tarracsh::domain::stats::profiler::MillisecondDuration;
 using kapa::tarracsh::domain::stats::profiler::ScopedTimer;
 using kapa::tarracsh::domain::stats::report::DigestReport;
-using kapa::tarracsh::app::server::digest::DigestRequest;
-using kapa::tarracsh::app::server::digest::DigestResponse;
+using kapa::tarracsh::app::server::digest::DiffRequest;
+using kapa::tarracsh::app::server::digest::DiffResponse;
 using kapa::tarracsh::app::server::digest::FileDigestResult;
 using kapa::tarracsh::app::server::digest::Empty;
 
@@ -45,15 +45,20 @@ std::condition_variable ServiceImpl::_quickSignalCV;
 
 const char *PUBLIC_DIGEST_SERVER_MUTEX_NAME = "public-digest-grpc-server";
 
-void ServiceImpl::start(app::Config &config) {
+bool ServiceImpl::start(app::Context &config) {
+    named_mutex::remove(PUBLIC_DIGEST_SERVER_MUTEX_NAME);
     named_mutex mutex(open_or_create, PUBLIC_DIGEST_SERVER_MUTEX_NAME);
-    if (mutex.try_lock()) {
+
+    const auto result = mutex.try_lock();
+    if (result) {
         ServiceImpl service(config);
         service.init();
         mutex.unlock();
     } else {
         cout << "Public Digest Server is already running";
     }
+
+    return result;
 }
 
 bool ServiceImpl::initDb() {
@@ -62,31 +67,29 @@ bool ServiceImpl::initDb() {
     MillisecondDuration duration{0};
     {
         ScopedTimer timer(&duration);
-        _db = DigestDb::create(_config.getOptions().outputDir, _config.getLog(), false);
-
-        cout << std::format("Db init duration:{}", duration) << endl;
-        if (_db) {
-            _db->outputStats();
-            result = true;
-        }
-        else {
-            cout << "Error initializing Digest db" << endl;
-        }
+        _db = DigestDb::create(_context.getOptions().outputDir, _context.getLog(), false);
     }
+    cout << std::format("Db init duration:{}", duration) << endl;
+    if (_db) {
+        _db->outputStats();
+        result = true;
+    } else {
+        cout << "Error initializing Digest db" << endl;
+    }
+
     return result;
 
 }
 
 void ServiceImpl::startServer() {
-    const auto serverAddress = _config.getOptions().digestServer.getListenServerAddress();
+    const auto serverAddress = _context.getOptions().digestServer.getListenServerAddress();
 
     ServerBuilder builder;
     builder.AddListeningPort(serverAddress, InsecureServerCredentials())
            .RegisterService(this);
 
     _server = builder.BuildAndStart();
-    cout << "Server listening on " << serverAddress << endl;
-    // _server->Wait();
+    cout << "Server listening on " << serverAddress << endl << endl;
     waitForShutDown();
     _server->Shutdown();
 
@@ -108,75 +111,30 @@ void ServiceImpl::init() {
 
 }
 
-void ServiceImpl::requestToOptions(const DigestRequest &request, domain::Options &requestOptions) const {
-    /*
-     * struct Options {
-    std::string classFilePath;
-    std::string input;
-    std::string directory;
-    std::string jarFile;
-    std::string classPath;
-    std::string queryValue;
-    std::string outputDir;
-    bool isParse{false};
-    bool isPublicDigest{false};
-    bool isCallGraph{false};
-    bool printClassParse{false};
-    bool printConstantPool{false};
-    bool rebuild{false};
-    bool dryRun{false};
-    bool doDiffReport{true};
-    bool printDiffReport{false};
-    std::string logFile;
-    int workers{4};
-    bool useFileTimestamp{true};
-    bool pause{false};
-    bool printProfiler{false};
-    bool printCPoolHtmlNav{false};
-    bool descriptiveCPoolEntries{true};
-    bool verbose{false};
-    ServerOptions digestServer
+void ServiceImpl::reportToResponse(const std::unique_ptr<DigestReport> &report, DiffResponse &response) {
 
+    for (const auto &fileResult : report->getFileResults()) {
+        const auto fileDigestResult = response.add_files();
+        fileDigestResult->set_filename(fileResult.filename);
+        fileDigestResult->set_ismodified(fileResult.isModified);
+        fileDigestResult->set_isnew(fileResult.isNew);
+        fileDigestResult->set_issamedigest(fileResult.isSamePublicDigest);
+        fileDigestResult->set_failed(fileResult.failed);
+    }
 
-}
-     */
-    requestOptions.isServerMode = true;
-    requestOptions.isPublicDigest = true;
-    requestOptions.logFile = _config.getOptions().logFile;
-
-    requestOptions.input = request.input();
-    if (!requestOptions.processInput()) {
-        // TODO _results.log
-        cout << format("Invalid Input: {}", requestOptions.input) << endl;
+    for (const auto &classResult : report->getClassResults()) {
+        const auto classDigestResult = response.add_classfiles();
+        classDigestResult->set_strongclassname(classResult.strongClassname);
+        classDigestResult->set_ismodified(classResult.isModified);
+        classDigestResult->set_isnew(classResult.isNew);
+        classDigestResult->set_issamedigest(classResult.isSamePublicDigest);
+        classDigestResult->set_failed(classResult.failed);
     }
 
 }
 
-//TODO write ResponseToReport
-void ServiceImpl::reportToResponse(const std::unique_ptr<DigestReport> &report, DigestResponse &response) {
-  
-
-    for( const auto& jarResult: report->getJarResults() ) {
-        auto jarDigestResult = *response.add_jars();
-        jarDigestResult.set_filename(jarResult.filename);
-        jarDigestResult.set_ischanged(jarResult.isModified);
-        jarDigestResult.set_isnew(jarResult.isNew);
-        jarDigestResult.set_issamedigest(jarResult.isSamePublicDigest);
-    }
-
-    for (const auto& classResults : report->getClassResults()) {
-        auto classDigestResult = *response.add_classfiles();
-        classDigestResult.set_filename(classResults.strongClassname);
-        classDigestResult.set_ischanged(classResults.isModified);
-        classDigestResult.set_isnew(classResults.isNew);
-        classDigestResult.set_issamedigest(classResults.isSamePublicDigest);
-    }
- 
-}
-
-ServiceImpl::ServiceImpl(app::Config &config)
-    : _config(config) {
-    initDb();
+ServiceImpl::ServiceImpl(app::Context &context)
+    : _context(context) {
 }
 
 void ServiceImpl::signalQuick() {
@@ -189,14 +147,26 @@ Status ServiceImpl::Quit(ServerContext *context, const Empty *request, Empty *re
     return Status::OK;
 }
 
-Status ServiceImpl::Check(ServerContext *context, const DigestRequest *request, DigestResponse *response) {
+Status ServiceImpl::Diff(ServerContext *context, const DiffRequest *request, DiffResponse *response) {
     Status result(Status::OK);
-    RequestConfig requestConfig(app::App::getApp().getLog());
-    requestToOptions(*request, requestConfig.getOptions());
+    ScopedTimer::timeWithPrint(
+        "server-diff",
+        [this, request, response, &result]() -> void {
+            RequestContext requestConfig;
+            if (requestConfig.update(*request)) {
+                app::Analyzer analyzer(requestConfig, _db);
+                analyzer.run();
+                requestConfig.getResults().report->print();
+                reportToResponse(
+                    requestConfig.getResults().report, *response);
+            } else {
+                result = Status(
+                    StatusCode::INVALID_ARGUMENT,
+                    requestConfig.getErrorMessage());
+            }
+        });
 
-    app::Analyzer analyzer(requestConfig, _db);
-    analyzer.run();
+    duration;
 
-    reportToResponse(requestConfig.getResults().report, *response);
     return result;
 }

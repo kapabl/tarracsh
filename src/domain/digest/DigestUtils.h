@@ -46,6 +46,7 @@ struct DigestBuffer : std::vector<unsigned char> {
         return *this;
     }
 };
+
 inline DigestVector digest(const char *bytes, const int length) {
     DigestVector result(DIGEST_LENGTH);
     crypto_hash_sha256(
@@ -54,6 +55,7 @@ inline DigestVector digest(const char *bytes, const int length) {
         length);
     return result;
 }
+
 // inline DigestVector digest(const DigestBuffer &buffer) {
 //     auto result = digest(reinterpret_cast<const char *>(&*buffer.begin()), buffer.size());
 //     return result;
@@ -90,7 +92,7 @@ inline DigestVector digestSet(const std::set<DigestVector> &digestSet) {
     return result;
 }
 
-[[nodiscard]] inline std::string getStrongClassname(const char* filename, const char* jvmClassname) {
+[[nodiscard]] inline std::string getStrongClassname(const char *filename, const char *jvmClassname) {
     std::string result(filename);
 
     if (jvmClassname != nullptr && jvmClassname[0] != 0) {
@@ -101,7 +103,11 @@ inline DigestVector digestSet(const std::set<DigestVector> &digestSet) {
     return result;
 }
 
+[[nodiscard]] inline std::vector<std::string> splitStrongClassname(const std::string& strongClassname) {
+    auto result = kapa::infrastructure::string::stringUtils::split(strongClassname, "@");
+    return result;
 }
 
+}
 
 #endif

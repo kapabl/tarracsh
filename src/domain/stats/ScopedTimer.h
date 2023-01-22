@@ -1,6 +1,7 @@
 #ifndef TARRACSH_SCOPED_TIMER_H
 #define TARRACSH_SCOPED_TIMER_H
 
+#include <iostream>
 #include <string>
 
 #include "ProfileData.h"
@@ -20,10 +21,14 @@ public:
 
     void start();
     void stop();
-    std::chrono::duration<long long> getElapsedTime();
-    std::chrono::duration<long long, std::milli> getElapsedTimeMs();
+    [[nodiscard]] std::chrono::duration<long long> getElapsedTime();
+    [[nodiscard]] std::chrono::duration<long long, std::milli> getElapsedTimeMs();
     void printElapsedTime();
     ~ScopedTimer();
+
+    [[nodiscard]] static MillisecondDuration time(const std::function<void()>& func);
+
+    static MillisecondDuration timeWithPrint(const std::string& name, const std::function<void()>& func);
 
 private:
     std::chrono::time_point<std::chrono::steady_clock> _startTime{};

@@ -29,52 +29,56 @@ struct ClassResult {
     bool isNew{false};
     bool isModified{false};
     bool isSamePublicDigest{false};
+    bool failed{false};
 };
 
 class DigestReport {
 public:
+    explicit DigestReport(Results &results);
 
-    explicit DigestReport(Results& results);
-
-    void asNewJar(const std::string &filename );
-    void asNewClassfile(const std::string &filename, const std::string& strongClassname );
+    void asNewJar(const std::string &filename);
     void asModifiedJar(const std::string &filename, bool isSamePublicDigest);
-    void asModifiedClassfile(const std::string &filename, bool isSamePublicDigest, const std::string& strongClassname);
     void asUnchangedJar(const std::string &filename);
-    void asUnchangedClassfile(const std::string &filename);
-
     void asFailedJar(const std::string& filename);
-    void asFailedClassfile(const std::string& filename);
 
+    void asNewClassfile(const std::string &strongClassname);
+    void asModifiedClassfile(bool isSamePublicDigest, const std::string &strongClassname);
+    void asUnchangedClassfile(const std::string &filename);
+    void asFailedClassfile(const std::string &filename);
 
     void asNewJarClass(const std::string &strongClassname);
     void asModifiedJarClass(const std::string &strongClassname, bool isSamePublicDigest);
     void asUnchangedJarClass(const std::string &strongClassname);
+    void asFailedJarClass(const std::string &strongClassname);
 
 
     void print() const;
 
-    [[nodiscard]] const std::vector<FileResult>& getJarResults() const { return jarResults; }
-    [[nodiscard]] const std::vector<ClassResult>& getClassResults() const { return classfileResults; }
+    [[nodiscard]] const std::vector<FileResult> &getFileResults() const { return _fileResults; }
+    [[nodiscard]] const std::vector<ClassResult> &getClassResults() const { return _classResults; }
+    
+    void addClass(const ClassResult& classResult) { _classResults.push_back(classResult); }
+    void addFile(const FileResult& addResult) { _fileResults.push_back(addResult); }
 
 private:
-    Results& results;
-    JarfileStats& jarfiles;
-    ClassfileStats& classfiles;
-    Options& options;
-    std::vector<FileResult> jarResults;
-    std::vector<ClassResult> classfileResults;
+    Results &_results;
+    JarfileStats &_jarfiles;
+    ClassfileStats &_classfiles;
+    Options &_options;
+    std::vector<FileResult> _fileResults;
+    std::vector<ClassResult> _classResults;
 
-    std::mutex mutex;
+    std::mutex _mutex;
 
-    void asNewFile(const std::string& filename);
-    void asModifiedFile(const std::string& filename, bool isSamePublicDigest);
-    void asUnchangedFile(const std::string& filename);
-    void asFailedFile(const std::string& filename);
+    void addNewFile(const std::string& filename);
+    void addModifiedFile(const std::string& filename, bool isSamePublicDigest);
+    void addUnchangedFile(const std::string& filename);
+    void addFailedFile(const std::string& filename);
 
-    void asNewClass(const std::string& strongClassname);
-    void asUnchangedClass(const std::string& strongClassname);
-    void asModifiedClass(const std::string& strongClassname, bool isSamePublicDigest);
+    void addNewClass(const std::string& strongClassname);
+    void addUnchangedClass(const std::string& strongClassname);
+    void addModifiedClass(const std::string& strongClassname, bool isSamePublicDigest);
+
 };
 
 

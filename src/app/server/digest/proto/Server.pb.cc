@@ -36,26 +36,27 @@ struct EmptyDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 EmptyDefaultTypeInternal _Empty_default_instance_;
-PROTOBUF_CONSTEXPR DigestRequest::DigestRequest(
+PROTOBUF_CONSTEXPR DiffRequest::DiffRequest(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.input_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.dryrun_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct DigestRequestDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR DigestRequestDefaultTypeInternal()
+struct DiffRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR DiffRequestDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~DigestRequestDefaultTypeInternal() {}
+  ~DiffRequestDefaultTypeInternal() {}
   union {
-    DigestRequest _instance;
+    DiffRequest _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DigestRequestDefaultTypeInternal _DigestRequest_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DiffRequestDefaultTypeInternal _DiffRequest_default_instance_;
 PROTOBUF_CONSTEXPR FileDigestResult::FileDigestResult(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.filename_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.isnew_)*/false
-  , /*decltype(_impl_.ischanged_)*/false
+  , /*decltype(_impl_.ismodified_)*/false
   , /*decltype(_impl_.issamedigest_)*/false
+  , /*decltype(_impl_.failed_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct FileDigestResultDefaultTypeInternal {
   PROTOBUF_CONSTEXPR FileDigestResultDefaultTypeInternal()
@@ -66,26 +67,43 @@ struct FileDigestResultDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 FileDigestResultDefaultTypeInternal _FileDigestResult_default_instance_;
-PROTOBUF_CONSTEXPR DigestResponse::DigestResponse(
+PROTOBUF_CONSTEXPR ClassDigestResult::ClassDigestResult(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.jars_)*/{}
-  , /*decltype(_impl_.classfiles_)*/{}
+    /*decltype(_impl_.strongclassname_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.isnew_)*/false
+  , /*decltype(_impl_.ismodified_)*/false
+  , /*decltype(_impl_.issamedigest_)*/false
+  , /*decltype(_impl_.failed_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct DigestResponseDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR DigestResponseDefaultTypeInternal()
+struct ClassDigestResultDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ClassDigestResultDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~DigestResponseDefaultTypeInternal() {}
+  ~ClassDigestResultDefaultTypeInternal() {}
   union {
-    DigestResponse _instance;
+    ClassDigestResult _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DigestResponseDefaultTypeInternal _DigestResponse_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ClassDigestResultDefaultTypeInternal _ClassDigestResult_default_instance_;
+PROTOBUF_CONSTEXPR DiffResponse::DiffResponse(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.files_)*/{}
+  , /*decltype(_impl_.classfiles_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct DiffResponseDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR DiffResponseDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~DiffResponseDefaultTypeInternal() {}
+  union {
+    DiffResponse _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DiffResponseDefaultTypeInternal _DiffResponse_default_instance_;
 }  // namespace digest
 }  // namespace server
 }  // namespace app
 }  // namespace tarracsh
 }  // namespace kapa
-static ::_pb::Metadata file_level_metadata_Server_2eproto[4];
+static ::_pb::Metadata file_level_metadata_Server_2eproto[5];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_Server_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Server_2eproto = nullptr;
 
@@ -97,13 +115,13 @@ const uint32_t TableStruct_Server_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::DigestRequest, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::DiffRequest, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::DigestRequest, _impl_.input_),
-  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::DigestRequest, _impl_.dryrun_),
+  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::DiffRequest, _impl_.input_),
+  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::DiffRequest, _impl_.dryrun_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::FileDigestResult, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -112,54 +130,72 @@ const uint32_t TableStruct_Server_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::FileDigestResult, _impl_.filename_),
   PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::FileDigestResult, _impl_.isnew_),
-  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::FileDigestResult, _impl_.ischanged_),
+  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::FileDigestResult, _impl_.ismodified_),
   PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::FileDigestResult, _impl_.issamedigest_),
+  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::FileDigestResult, _impl_.failed_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::DigestResponse, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::ClassDigestResult, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::DigestResponse, _impl_.jars_),
-  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::DigestResponse, _impl_.classfiles_),
+  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::ClassDigestResult, _impl_.strongclassname_),
+  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::ClassDigestResult, _impl_.isnew_),
+  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::ClassDigestResult, _impl_.ismodified_),
+  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::ClassDigestResult, _impl_.issamedigest_),
+  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::ClassDigestResult, _impl_.failed_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::DiffResponse, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::DiffResponse, _impl_.files_),
+  PROTOBUF_FIELD_OFFSET(::kapa::tarracsh::app::server::digest::DiffResponse, _impl_.classfiles_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::kapa::tarracsh::app::server::digest::Empty)},
-  { 6, -1, -1, sizeof(::kapa::tarracsh::app::server::digest::DigestRequest)},
+  { 6, -1, -1, sizeof(::kapa::tarracsh::app::server::digest::DiffRequest)},
   { 14, -1, -1, sizeof(::kapa::tarracsh::app::server::digest::FileDigestResult)},
-  { 24, -1, -1, sizeof(::kapa::tarracsh::app::server::digest::DigestResponse)},
+  { 25, -1, -1, sizeof(::kapa::tarracsh::app::server::digest::ClassDigestResult)},
+  { 36, -1, -1, sizeof(::kapa::tarracsh::app::server::digest::DiffResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
   &::kapa::tarracsh::app::server::digest::_Empty_default_instance_._instance,
-  &::kapa::tarracsh::app::server::digest::_DigestRequest_default_instance_._instance,
+  &::kapa::tarracsh::app::server::digest::_DiffRequest_default_instance_._instance,
   &::kapa::tarracsh::app::server::digest::_FileDigestResult_default_instance_._instance,
-  &::kapa::tarracsh::app::server::digest::_DigestResponse_default_instance_._instance,
+  &::kapa::tarracsh::app::server::digest::_ClassDigestResult_default_instance_._instance,
+  &::kapa::tarracsh::app::server::digest::_DiffResponse_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_Server_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\014Server.proto\022\037kapa.tarracsh.app.server"
-  ".digest\"\007\n\005Empty\".\n\rDigestRequest\022\r\n\005inp"
-  "ut\030\001 \001(\t\022\016\n\006dryRun\030\002 \001(\010\"\\\n\020FileDigestRe"
-  "sult\022\020\n\010filename\030\001 \001(\t\022\r\n\005isNew\030\002 \001(\010\022\021\n"
-  "\tisChanged\030\003 \001(\010\022\024\n\014isSameDigest\030\004 \001(\010\"\230"
-  "\001\n\016DigestResponse\022\?\n\004jars\030\001 \003(\01321.kapa.t"
-  "arracsh.app.server.digest.FileDigestResu"
-  "lt\022E\n\nclassfiles\030\002 \003(\01321.kapa.tarracsh.a"
-  "pp.server.digest.FileDigestResult2\324\001\n\014Pu"
-  "blicDigest\022X\n\004Quit\022&.kapa.tarracsh.app.s"
-  "erver.digest.Empty\032&.kapa.tarracsh.app.s"
-  "erver.digest.Empty\"\000\022j\n\005Check\022..kapa.tar"
-  "racsh.app.server.digest.DigestRequest\032/."
-  "kapa.tarracsh.app.server.digest.DigestRe"
-  "sponse\"\000B6\n\033io.grpc.examples.routeguideB"
-  "\017RouteGuideProtoP\001\242\002\003RTGb\006proto3"
+  ".digest\"\007\n\005Empty\",\n\013DiffRequest\022\r\n\005input"
+  "\030\001 \001(\t\022\016\n\006dryRun\030\002 \001(\010\"m\n\020FileDigestResu"
+  "lt\022\020\n\010filename\030\001 \001(\t\022\r\n\005isNew\030\002 \001(\010\022\022\n\ni"
+  "sModified\030\003 \001(\010\022\024\n\014isSameDigest\030\004 \001(\010\022\016\n"
+  "\006failed\030\005 \001(\010\"u\n\021ClassDigestResult\022\027\n\017st"
+  "rongClassname\030\001 \001(\t\022\r\n\005isNew\030\002 \001(\010\022\022\n\nis"
+  "Modified\030\003 \001(\010\022\024\n\014isSameDigest\030\004 \001(\010\022\016\n\006"
+  "failed\030\005 \001(\010\"\230\001\n\014DiffResponse\022@\n\005files\030\001"
+  " \003(\01321.kapa.tarracsh.app.server.digest.F"
+  "ileDigestResult\022F\n\nclassfiles\030\002 \003(\01322.ka"
+  "pa.tarracsh.app.server.digest.ClassDiges"
+  "tResult2\317\001\n\014PublicDigest\022X\n\004Quit\022&.kapa."
+  "tarracsh.app.server.digest.Empty\032&.kapa."
+  "tarracsh.app.server.digest.Empty\"\000\022e\n\004Di"
+  "ff\022,.kapa.tarracsh.app.server.digest.Dif"
+  "fRequest\032-.kapa.tarracsh.app.server.dige"
+  "st.DiffResponse\"\000B6\n\033io.grpc.examples.ro"
+  "uteguideB\017RouteGuideProtoP\001\242\002\003RTGb\006proto"
+  "3"
   ;
 static ::_pbi::once_flag descriptor_table_Server_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Server_2eproto = {
-    false, false, 632, descriptor_table_protodef_Server_2eproto,
+    false, false, 761, descriptor_table_protodef_Server_2eproto,
     "Server.proto",
-    &descriptor_table_Server_2eproto_once, nullptr, 0, 4,
+    &descriptor_table_Server_2eproto_once, nullptr, 0, 5,
     schemas, file_default_instances, TableStruct_Server_2eproto::offsets,
     file_level_metadata_Server_2eproto, file_level_enum_descriptors_Server_2eproto,
     file_level_service_descriptors_Server_2eproto,
@@ -218,19 +254,19 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*Empty::GetClassData() const { 
 
 // ===================================================================
 
-class DigestRequest::_Internal {
+class DiffRequest::_Internal {
  public:
 };
 
-DigestRequest::DigestRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+DiffRequest::DiffRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:kapa.tarracsh.app.server.digest.DigestRequest)
+  // @@protoc_insertion_point(arena_constructor:kapa.tarracsh.app.server.digest.DiffRequest)
 }
-DigestRequest::DigestRequest(const DigestRequest& from)
+DiffRequest::DiffRequest(const DiffRequest& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  DigestRequest* const _this = this; (void)_this;
+  DiffRequest* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.input_){}
     , decltype(_impl_.dryrun_){}
@@ -246,10 +282,10 @@ DigestRequest::DigestRequest(const DigestRequest& from)
       _this->GetArenaForAllocation());
   }
   _this->_impl_.dryrun_ = from._impl_.dryrun_;
-  // @@protoc_insertion_point(copy_constructor:kapa.tarracsh.app.server.digest.DigestRequest)
+  // @@protoc_insertion_point(copy_constructor:kapa.tarracsh.app.server.digest.DiffRequest)
 }
 
-inline void DigestRequest::SharedCtor(
+inline void DiffRequest::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
@@ -264,8 +300,8 @@ inline void DigestRequest::SharedCtor(
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-DigestRequest::~DigestRequest() {
-  // @@protoc_insertion_point(destructor:kapa.tarracsh.app.server.digest.DigestRequest)
+DiffRequest::~DiffRequest() {
+  // @@protoc_insertion_point(destructor:kapa.tarracsh.app.server.digest.DiffRequest)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -273,17 +309,17 @@ DigestRequest::~DigestRequest() {
   SharedDtor();
 }
 
-inline void DigestRequest::SharedDtor() {
+inline void DiffRequest::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.input_.Destroy();
 }
 
-void DigestRequest::SetCachedSize(int size) const {
+void DiffRequest::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void DigestRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:kapa.tarracsh.app.server.digest.DigestRequest)
+void DiffRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:kapa.tarracsh.app.server.digest.DiffRequest)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -293,7 +329,7 @@ void DigestRequest::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* DigestRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* DiffRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
@@ -305,7 +341,7 @@ const char* DigestRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext*
           auto str = _internal_mutable_input();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "kapa.tarracsh.app.server.digest.DigestRequest.input"));
+          CHK_(::_pbi::VerifyUTF8(str, "kapa.tarracsh.app.server.digest.DiffRequest.input"));
         } else
           goto handle_unusual;
         continue;
@@ -340,9 +376,9 @@ failure:
 #undef CHK_
 }
 
-uint8_t* DigestRequest::_InternalSerialize(
+uint8_t* DiffRequest::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:kapa.tarracsh.app.server.digest.DigestRequest)
+  // @@protoc_insertion_point(serialize_to_array_start:kapa.tarracsh.app.server.digest.DiffRequest)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -351,7 +387,7 @@ uint8_t* DigestRequest::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_input().data(), static_cast<int>(this->_internal_input().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "kapa.tarracsh.app.server.digest.DigestRequest.input");
+      "kapa.tarracsh.app.server.digest.DiffRequest.input");
     target = stream->WriteStringMaybeAliased(
         1, this->_internal_input(), target);
   }
@@ -366,12 +402,12 @@ uint8_t* DigestRequest::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:kapa.tarracsh.app.server.digest.DigestRequest)
+  // @@protoc_insertion_point(serialize_to_array_end:kapa.tarracsh.app.server.digest.DiffRequest)
   return target;
 }
 
-size_t DigestRequest::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:kapa.tarracsh.app.server.digest.DigestRequest)
+size_t DiffRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:kapa.tarracsh.app.server.digest.DiffRequest)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -393,17 +429,17 @@ size_t DigestRequest::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DigestRequest::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DiffRequest::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    DigestRequest::MergeImpl
+    DiffRequest::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DigestRequest::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DiffRequest::GetClassData() const { return &_class_data_; }
 
 
-void DigestRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<DigestRequest*>(&to_msg);
-  auto& from = static_cast<const DigestRequest&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:kapa.tarracsh.app.server.digest.DigestRequest)
+void DiffRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<DiffRequest*>(&to_msg);
+  auto& from = static_cast<const DiffRequest&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:kapa.tarracsh.app.server.digest.DiffRequest)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -417,18 +453,18 @@ void DigestRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void DigestRequest::CopyFrom(const DigestRequest& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:kapa.tarracsh.app.server.digest.DigestRequest)
+void DiffRequest::CopyFrom(const DiffRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:kapa.tarracsh.app.server.digest.DiffRequest)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool DigestRequest::IsInitialized() const {
+bool DiffRequest::IsInitialized() const {
   return true;
 }
 
-void DigestRequest::InternalSwap(DigestRequest* other) {
+void DiffRequest::InternalSwap(DiffRequest* other) {
   using std::swap;
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
@@ -440,7 +476,7 @@ void DigestRequest::InternalSwap(DigestRequest* other) {
   swap(_impl_.dryrun_, other->_impl_.dryrun_);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata DigestRequest::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata DiffRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Server_2eproto_getter, &descriptor_table_Server_2eproto_once,
       file_level_metadata_Server_2eproto[1]);
@@ -464,8 +500,9 @@ FileDigestResult::FileDigestResult(const FileDigestResult& from)
   new (&_impl_) Impl_{
       decltype(_impl_.filename_){}
     , decltype(_impl_.isnew_){}
-    , decltype(_impl_.ischanged_){}
+    , decltype(_impl_.ismodified_){}
     , decltype(_impl_.issamedigest_){}
+    , decltype(_impl_.failed_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -478,8 +515,8 @@ FileDigestResult::FileDigestResult(const FileDigestResult& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.isnew_, &from._impl_.isnew_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.issamedigest_) -
-    reinterpret_cast<char*>(&_impl_.isnew_)) + sizeof(_impl_.issamedigest_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.failed_) -
+    reinterpret_cast<char*>(&_impl_.isnew_)) + sizeof(_impl_.failed_));
   // @@protoc_insertion_point(copy_constructor:kapa.tarracsh.app.server.digest.FileDigestResult)
 }
 
@@ -490,8 +527,9 @@ inline void FileDigestResult::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_.filename_){}
     , decltype(_impl_.isnew_){false}
-    , decltype(_impl_.ischanged_){false}
+    , decltype(_impl_.ismodified_){false}
     , decltype(_impl_.issamedigest_){false}
+    , decltype(_impl_.failed_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.filename_.InitDefault();
@@ -526,8 +564,8 @@ void FileDigestResult::Clear() {
 
   _impl_.filename_.ClearToEmpty();
   ::memset(&_impl_.isnew_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.issamedigest_) -
-      reinterpret_cast<char*>(&_impl_.isnew_)) + sizeof(_impl_.issamedigest_));
+      reinterpret_cast<char*>(&_impl_.failed_) -
+      reinterpret_cast<char*>(&_impl_.isnew_)) + sizeof(_impl_.failed_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -555,10 +593,10 @@ const char* FileDigestResult::_InternalParse(const char* ptr, ::_pbi::ParseConte
         } else
           goto handle_unusual;
         continue;
-      // bool isChanged = 3;
+      // bool isModified = 3;
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
-          _impl_.ischanged_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.ismodified_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -567,6 +605,14 @@ const char* FileDigestResult::_InternalParse(const char* ptr, ::_pbi::ParseConte
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
           _impl_.issamedigest_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool failed = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          _impl_.failed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -616,16 +662,22 @@ uint8_t* FileDigestResult::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteBoolToArray(2, this->_internal_isnew(), target);
   }
 
-  // bool isChanged = 3;
-  if (this->_internal_ischanged() != 0) {
+  // bool isModified = 3;
+  if (this->_internal_ismodified() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(3, this->_internal_ischanged(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(3, this->_internal_ismodified(), target);
   }
 
   // bool isSameDigest = 4;
   if (this->_internal_issamedigest() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteBoolToArray(4, this->_internal_issamedigest(), target);
+  }
+
+  // bool failed = 5;
+  if (this->_internal_failed() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(5, this->_internal_failed(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -656,13 +708,18 @@ size_t FileDigestResult::ByteSizeLong() const {
     total_size += 1 + 1;
   }
 
-  // bool isChanged = 3;
-  if (this->_internal_ischanged() != 0) {
+  // bool isModified = 3;
+  if (this->_internal_ismodified() != 0) {
     total_size += 1 + 1;
   }
 
   // bool isSameDigest = 4;
   if (this->_internal_issamedigest() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool failed = 5;
+  if (this->_internal_failed() != 0) {
     total_size += 1 + 1;
   }
 
@@ -690,11 +747,14 @@ void FileDigestResult::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const
   if (from._internal_isnew() != 0) {
     _this->_internal_set_isnew(from._internal_isnew());
   }
-  if (from._internal_ischanged() != 0) {
-    _this->_internal_set_ischanged(from._internal_ischanged());
+  if (from._internal_ismodified() != 0) {
+    _this->_internal_set_ismodified(from._internal_ismodified());
   }
   if (from._internal_issamedigest() != 0) {
     _this->_internal_set_issamedigest(from._internal_issamedigest());
+  }
+  if (from._internal_failed() != 0) {
+    _this->_internal_set_failed(from._internal_failed());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -720,8 +780,8 @@ void FileDigestResult::InternalSwap(FileDigestResult* other) {
       &other->_impl_.filename_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(FileDigestResult, _impl_.issamedigest_)
-      + sizeof(FileDigestResult::_impl_.issamedigest_)
+      PROTOBUF_FIELD_OFFSET(FileDigestResult, _impl_.failed_)
+      + sizeof(FileDigestResult::_impl_.failed_)
       - PROTOBUF_FIELD_OFFSET(FileDigestResult, _impl_.isnew_)>(
           reinterpret_cast<char*>(&_impl_.isnew_),
           reinterpret_cast<char*>(&other->_impl_.isnew_));
@@ -735,41 +795,62 @@ void FileDigestResult::InternalSwap(FileDigestResult* other) {
 
 // ===================================================================
 
-class DigestResponse::_Internal {
+class ClassDigestResult::_Internal {
  public:
 };
 
-DigestResponse::DigestResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+ClassDigestResult::ClassDigestResult(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:kapa.tarracsh.app.server.digest.DigestResponse)
+  // @@protoc_insertion_point(arena_constructor:kapa.tarracsh.app.server.digest.ClassDigestResult)
 }
-DigestResponse::DigestResponse(const DigestResponse& from)
+ClassDigestResult::ClassDigestResult(const ClassDigestResult& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  DigestResponse* const _this = this; (void)_this;
+  ClassDigestResult* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.jars_){from._impl_.jars_}
-    , decltype(_impl_.classfiles_){from._impl_.classfiles_}
+      decltype(_impl_.strongclassname_){}
+    , decltype(_impl_.isnew_){}
+    , decltype(_impl_.ismodified_){}
+    , decltype(_impl_.issamedigest_){}
+    , decltype(_impl_.failed_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:kapa.tarracsh.app.server.digest.DigestResponse)
+  _impl_.strongclassname_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.strongclassname_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_strongclassname().empty()) {
+    _this->_impl_.strongclassname_.Set(from._internal_strongclassname(), 
+      _this->GetArenaForAllocation());
+  }
+  ::memcpy(&_impl_.isnew_, &from._impl_.isnew_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.failed_) -
+    reinterpret_cast<char*>(&_impl_.isnew_)) + sizeof(_impl_.failed_));
+  // @@protoc_insertion_point(copy_constructor:kapa.tarracsh.app.server.digest.ClassDigestResult)
 }
 
-inline void DigestResponse::SharedCtor(
+inline void ClassDigestResult::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.jars_){arena}
-    , decltype(_impl_.classfiles_){arena}
+      decltype(_impl_.strongclassname_){}
+    , decltype(_impl_.isnew_){false}
+    , decltype(_impl_.ismodified_){false}
+    , decltype(_impl_.issamedigest_){false}
+    , decltype(_impl_.failed_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
+  _impl_.strongclassname_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.strongclassname_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-DigestResponse::~DigestResponse() {
-  // @@protoc_insertion_point(destructor:kapa.tarracsh.app.server.digest.DigestResponse)
+ClassDigestResult::~ClassDigestResult() {
+  // @@protoc_insertion_point(destructor:kapa.tarracsh.app.server.digest.ClassDigestResult)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -777,47 +858,337 @@ DigestResponse::~DigestResponse() {
   SharedDtor();
 }
 
-inline void DigestResponse::SharedDtor() {
+inline void ClassDigestResult::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.jars_.~RepeatedPtrField();
-  _impl_.classfiles_.~RepeatedPtrField();
+  _impl_.strongclassname_.Destroy();
 }
 
-void DigestResponse::SetCachedSize(int size) const {
+void ClassDigestResult::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void DigestResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:kapa.tarracsh.app.server.digest.DigestResponse)
+void ClassDigestResult::Clear() {
+// @@protoc_insertion_point(message_clear_start:kapa.tarracsh.app.server.digest.ClassDigestResult)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.jars_.Clear();
-  _impl_.classfiles_.Clear();
+  _impl_.strongclassname_.ClearToEmpty();
+  ::memset(&_impl_.isnew_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.failed_) -
+      reinterpret_cast<char*>(&_impl_.isnew_)) + sizeof(_impl_.failed_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* DigestResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* ClassDigestResult::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // repeated .kapa.tarracsh.app.server.digest.FileDigestResult jars = 1;
+      // string strongClassname = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_strongclassname();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "kapa.tarracsh.app.server.digest.ClassDigestResult.strongClassname"));
+        } else
+          goto handle_unusual;
+        continue;
+      // bool isNew = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.isnew_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool isModified = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _impl_.ismodified_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool isSameDigest = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+          _impl_.issamedigest_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool failed = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          _impl_.failed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* ClassDigestResult::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:kapa.tarracsh.app.server.digest.ClassDigestResult)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string strongClassname = 1;
+  if (!this->_internal_strongclassname().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_strongclassname().data(), static_cast<int>(this->_internal_strongclassname().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "kapa.tarracsh.app.server.digest.ClassDigestResult.strongClassname");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_strongclassname(), target);
+  }
+
+  // bool isNew = 2;
+  if (this->_internal_isnew() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(2, this->_internal_isnew(), target);
+  }
+
+  // bool isModified = 3;
+  if (this->_internal_ismodified() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(3, this->_internal_ismodified(), target);
+  }
+
+  // bool isSameDigest = 4;
+  if (this->_internal_issamedigest() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(4, this->_internal_issamedigest(), target);
+  }
+
+  // bool failed = 5;
+  if (this->_internal_failed() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(5, this->_internal_failed(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:kapa.tarracsh.app.server.digest.ClassDigestResult)
+  return target;
+}
+
+size_t ClassDigestResult::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:kapa.tarracsh.app.server.digest.ClassDigestResult)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string strongClassname = 1;
+  if (!this->_internal_strongclassname().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_strongclassname());
+  }
+
+  // bool isNew = 2;
+  if (this->_internal_isnew() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool isModified = 3;
+  if (this->_internal_ismodified() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool isSameDigest = 4;
+  if (this->_internal_issamedigest() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool failed = 5;
+  if (this->_internal_failed() != 0) {
+    total_size += 1 + 1;
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ClassDigestResult::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    ClassDigestResult::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ClassDigestResult::GetClassData() const { return &_class_data_; }
+
+
+void ClassDigestResult::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ClassDigestResult*>(&to_msg);
+  auto& from = static_cast<const ClassDigestResult&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:kapa.tarracsh.app.server.digest.ClassDigestResult)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_strongclassname().empty()) {
+    _this->_internal_set_strongclassname(from._internal_strongclassname());
+  }
+  if (from._internal_isnew() != 0) {
+    _this->_internal_set_isnew(from._internal_isnew());
+  }
+  if (from._internal_ismodified() != 0) {
+    _this->_internal_set_ismodified(from._internal_ismodified());
+  }
+  if (from._internal_issamedigest() != 0) {
+    _this->_internal_set_issamedigest(from._internal_issamedigest());
+  }
+  if (from._internal_failed() != 0) {
+    _this->_internal_set_failed(from._internal_failed());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void ClassDigestResult::CopyFrom(const ClassDigestResult& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:kapa.tarracsh.app.server.digest.ClassDigestResult)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ClassDigestResult::IsInitialized() const {
+  return true;
+}
+
+void ClassDigestResult::InternalSwap(ClassDigestResult* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.strongclassname_, lhs_arena,
+      &other->_impl_.strongclassname_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ClassDigestResult, _impl_.failed_)
+      + sizeof(ClassDigestResult::_impl_.failed_)
+      - PROTOBUF_FIELD_OFFSET(ClassDigestResult, _impl_.isnew_)>(
+          reinterpret_cast<char*>(&_impl_.isnew_),
+          reinterpret_cast<char*>(&other->_impl_.isnew_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata ClassDigestResult::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Server_2eproto_getter, &descriptor_table_Server_2eproto_once,
+      file_level_metadata_Server_2eproto[3]);
+}
+
+// ===================================================================
+
+class DiffResponse::_Internal {
+ public:
+};
+
+DiffResponse::DiffResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:kapa.tarracsh.app.server.digest.DiffResponse)
+}
+DiffResponse::DiffResponse(const DiffResponse& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  DiffResponse* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.files_){from._impl_.files_}
+    , decltype(_impl_.classfiles_){from._impl_.classfiles_}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:kapa.tarracsh.app.server.digest.DiffResponse)
+}
+
+inline void DiffResponse::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.files_){arena}
+    , decltype(_impl_.classfiles_){arena}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+DiffResponse::~DiffResponse() {
+  // @@protoc_insertion_point(destructor:kapa.tarracsh.app.server.digest.DiffResponse)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void DiffResponse::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.files_.~RepeatedPtrField();
+  _impl_.classfiles_.~RepeatedPtrField();
+}
+
+void DiffResponse::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void DiffResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:kapa.tarracsh.app.server.digest.DiffResponse)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.files_.Clear();
+  _impl_.classfiles_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* DiffResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // repeated .kapa.tarracsh.app.server.digest.FileDigestResult files = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
           ptr -= 1;
           do {
             ptr += 1;
-            ptr = ctx->ParseMessage(_internal_add_jars(), ptr);
+            ptr = ctx->ParseMessage(_internal_add_files(), ptr);
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
         } else
           goto handle_unusual;
         continue;
-      // repeated .kapa.tarracsh.app.server.digest.FileDigestResult classfiles = 2;
+      // repeated .kapa.tarracsh.app.server.digest.ClassDigestResult classfiles = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           ptr -= 1;
@@ -853,21 +1224,21 @@ failure:
 #undef CHK_
 }
 
-uint8_t* DigestResponse::_InternalSerialize(
+uint8_t* DiffResponse::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:kapa.tarracsh.app.server.digest.DigestResponse)
+  // @@protoc_insertion_point(serialize_to_array_start:kapa.tarracsh.app.server.digest.DiffResponse)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated .kapa.tarracsh.app.server.digest.FileDigestResult jars = 1;
+  // repeated .kapa.tarracsh.app.server.digest.FileDigestResult files = 1;
   for (unsigned i = 0,
-      n = static_cast<unsigned>(this->_internal_jars_size()); i < n; i++) {
-    const auto& repfield = this->_internal_jars(i);
+      n = static_cast<unsigned>(this->_internal_files_size()); i < n; i++) {
+    const auto& repfield = this->_internal_files(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
         InternalWriteMessage(1, repfield, repfield.GetCachedSize(), target, stream);
   }
 
-  // repeated .kapa.tarracsh.app.server.digest.FileDigestResult classfiles = 2;
+  // repeated .kapa.tarracsh.app.server.digest.ClassDigestResult classfiles = 2;
   for (unsigned i = 0,
       n = static_cast<unsigned>(this->_internal_classfiles_size()); i < n; i++) {
     const auto& repfield = this->_internal_classfiles(i);
@@ -879,26 +1250,26 @@ uint8_t* DigestResponse::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:kapa.tarracsh.app.server.digest.DigestResponse)
+  // @@protoc_insertion_point(serialize_to_array_end:kapa.tarracsh.app.server.digest.DiffResponse)
   return target;
 }
 
-size_t DigestResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:kapa.tarracsh.app.server.digest.DigestResponse)
+size_t DiffResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:kapa.tarracsh.app.server.digest.DiffResponse)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .kapa.tarracsh.app.server.digest.FileDigestResult jars = 1;
-  total_size += 1UL * this->_internal_jars_size();
-  for (const auto& msg : this->_impl_.jars_) {
+  // repeated .kapa.tarracsh.app.server.digest.FileDigestResult files = 1;
+  total_size += 1UL * this->_internal_files_size();
+  for (const auto& msg : this->_impl_.files_) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  // repeated .kapa.tarracsh.app.server.digest.FileDigestResult classfiles = 2;
+  // repeated .kapa.tarracsh.app.server.digest.ClassDigestResult classfiles = 2;
   total_size += 1UL * this->_internal_classfiles_size();
   for (const auto& msg : this->_impl_.classfiles_) {
     total_size +=
@@ -908,48 +1279,48 @@ size_t DigestResponse::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DigestResponse::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DiffResponse::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    DigestResponse::MergeImpl
+    DiffResponse::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DigestResponse::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DiffResponse::GetClassData() const { return &_class_data_; }
 
 
-void DigestResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<DigestResponse*>(&to_msg);
-  auto& from = static_cast<const DigestResponse&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:kapa.tarracsh.app.server.digest.DigestResponse)
+void DiffResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<DiffResponse*>(&to_msg);
+  auto& from = static_cast<const DiffResponse&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:kapa.tarracsh.app.server.digest.DiffResponse)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  _this->_impl_.jars_.MergeFrom(from._impl_.jars_);
+  _this->_impl_.files_.MergeFrom(from._impl_.files_);
   _this->_impl_.classfiles_.MergeFrom(from._impl_.classfiles_);
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void DigestResponse::CopyFrom(const DigestResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:kapa.tarracsh.app.server.digest.DigestResponse)
+void DiffResponse::CopyFrom(const DiffResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:kapa.tarracsh.app.server.digest.DiffResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool DigestResponse::IsInitialized() const {
+bool DiffResponse::IsInitialized() const {
   return true;
 }
 
-void DigestResponse::InternalSwap(DigestResponse* other) {
+void DiffResponse::InternalSwap(DiffResponse* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  _impl_.jars_.InternalSwap(&other->_impl_.jars_);
+  _impl_.files_.InternalSwap(&other->_impl_.files_);
   _impl_.classfiles_.InternalSwap(&other->_impl_.classfiles_);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata DigestResponse::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata DiffResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Server_2eproto_getter, &descriptor_table_Server_2eproto_once,
-      file_level_metadata_Server_2eproto[3]);
+      file_level_metadata_Server_2eproto[4]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -963,17 +1334,21 @@ template<> PROTOBUF_NOINLINE ::kapa::tarracsh::app::server::digest::Empty*
 Arena::CreateMaybeMessage< ::kapa::tarracsh::app::server::digest::Empty >(Arena* arena) {
   return Arena::CreateMessageInternal< ::kapa::tarracsh::app::server::digest::Empty >(arena);
 }
-template<> PROTOBUF_NOINLINE ::kapa::tarracsh::app::server::digest::DigestRequest*
-Arena::CreateMaybeMessage< ::kapa::tarracsh::app::server::digest::DigestRequest >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::kapa::tarracsh::app::server::digest::DigestRequest >(arena);
+template<> PROTOBUF_NOINLINE ::kapa::tarracsh::app::server::digest::DiffRequest*
+Arena::CreateMaybeMessage< ::kapa::tarracsh::app::server::digest::DiffRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::kapa::tarracsh::app::server::digest::DiffRequest >(arena);
 }
 template<> PROTOBUF_NOINLINE ::kapa::tarracsh::app::server::digest::FileDigestResult*
 Arena::CreateMaybeMessage< ::kapa::tarracsh::app::server::digest::FileDigestResult >(Arena* arena) {
   return Arena::CreateMessageInternal< ::kapa::tarracsh::app::server::digest::FileDigestResult >(arena);
 }
-template<> PROTOBUF_NOINLINE ::kapa::tarracsh::app::server::digest::DigestResponse*
-Arena::CreateMaybeMessage< ::kapa::tarracsh::app::server::digest::DigestResponse >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::kapa::tarracsh::app::server::digest::DigestResponse >(arena);
+template<> PROTOBUF_NOINLINE ::kapa::tarracsh::app::server::digest::ClassDigestResult*
+Arena::CreateMaybeMessage< ::kapa::tarracsh::app::server::digest::ClassDigestResult >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::kapa::tarracsh::app::server::digest::ClassDigestResult >(arena);
+}
+template<> PROTOBUF_NOINLINE ::kapa::tarracsh::app::server::digest::DiffResponse*
+Arena::CreateMaybeMessage< ::kapa::tarracsh::app::server::digest::DiffResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::kapa::tarracsh::app::server::digest::DiffResponse >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

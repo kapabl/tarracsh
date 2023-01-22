@@ -10,12 +10,12 @@ package kapa.tarracsh.app.server.digest;
 
 service PublicDigest {
   rpc Quit(Empty) returns (Empty) {}
-  rpc Check(DigestRequest) returns (DigestResponse) {}
+  rpc Diff(DiffRequest) returns (DiffResponse) {}
 }
 
 message Empty {}
 
-message DigestRequest {
+message DiffRequest {
     string input = 1;
     bool dryRun = 2;
 }
@@ -23,11 +23,20 @@ message DigestRequest {
 message FileDigestResult {
     string filename = 1;
     bool isNew = 2;
-    bool isChanged = 3;
+    bool isModified = 3;
     bool isSameDigest = 4;
+    bool failed = 5;
 }
 
-message DigestResponse {
-    repeated FileDigestResult jars = 1;
-    repeated FileDigestResult classfiles = 2;
+message ClassDigestResult {
+    string strongClassname = 1;
+    bool isNew = 2;
+    bool isModified = 3;
+    bool isSameDigest = 4;
+    bool failed = 5;
+}
+
+message DiffResponse {
+    repeated FileDigestResult files = 1;
+    repeated ClassDigestResult classfiles = 2;
 }

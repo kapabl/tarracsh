@@ -9,6 +9,7 @@
 #include <format>
 #include <vector>
 
+
 namespace kapa::infrastructure::string::stringUtils {
 
 
@@ -42,7 +43,7 @@ inline std::wstring u162wstring(const std::u16string &str) {
     return result;
 }
 
-inline std::u16string utf82u32string(const char* source, const bool withEscape = false) {
+inline std::u16string utf82u32string(const char *source, const bool withEscape = false) {
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utf16conv;
     std::u16string u16s = utf16conv.from_bytes(source);
 
@@ -52,16 +53,14 @@ inline std::u16string utf82u32string(const char* source, const bool withEscape =
         for (const auto wchar : u16s) {
             if (wchar < 256 && std::isgraph(wchar)) {
                 result.push_back(wchar);
-            }
-            else {
+            } else {
                 auto formatted = std::format(L"{:#06x}", static_cast<int>(wchar));
                 formatted.erase(0, 2);
                 auto unicodeCode = L"\\u" + formatted;
-                result.append((char16_t*)unicodeCode.c_str());
+                result.append((char16_t *)unicodeCode.c_str());
             }
         }
-    }
-    else {
+    } else {
         result = u16s;
     }
     return result;
@@ -143,6 +142,7 @@ inline std::string pathToClassname(std::string path) {
     std::ranges::replace(path, '/', '.');
     return path;
 }
+
 inline std::string bytesToHexString(const unsigned char *bytes, int length) {
     std::string result;
     for (int i = 0; i < length; i++) {
@@ -150,6 +150,24 @@ inline std::string bytesToHexString(const unsigned char *bytes, int length) {
     }
     return result;
 }
+
+inline std::vector<std::string> split(const std::string &value, const std::string &separator) {
+    std::vector<std::string> result;
+    std::string::size_type start = 0;
+    const auto separatorSize = separator.size();
+    while (start < value.size()) {
+        const auto index = value.find(separator, start);
+        if (index != std::string::npos) {
+            result.push_back(value.substr(start, index - start));
+            start += index + separatorSize;
+        } else {
+            result.push_back(value.substr(start));
+            start = value.size();
+        }
+    }
+    return result;
+}
+
 
 }
 

@@ -6,10 +6,10 @@
 #include "../infrastructure/log/Log.h"
 
 namespace kapa::tarracsh::app {
-class Config {
+class Context {
 
 public:
-    virtual ~Config() = default;
+    virtual ~Context() = default;
     virtual domain::stats::Results& getResults() = 0;
     virtual domain::Options &getOptions() = 0;
     virtual infrastructure::log::Log &getLog() = 0;

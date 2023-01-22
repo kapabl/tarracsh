@@ -24,7 +24,7 @@ kapa::infrastructure::app::cli::ExitCode CallGraphCommand::run() {
     ExitCode result = 0;
     if (initDb()) {
         Analyzer analyzer(App::getApp(), _db);
-        analyzer.run();
+        analyzer.runWithPrint();
     } else {
         _results.log->writeln("Error initializing call-graph Db", true);
         result = 1;

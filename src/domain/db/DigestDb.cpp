@@ -23,7 +23,7 @@ std::shared_ptr<DigestDb> DigestDb::create(
 
     const auto db = std::make_shared<DigestDb>( dataDir, log);
 
-    if ( Database::init(*result, doClean) ) {
+    if ( Database::init(*db, doClean) ) {
         result = db;
     }
     return result;

@@ -4,7 +4,10 @@
 using namespace kapa::tarracsh::domain;
 
 bool Options::canPrintProgress() const {
-    const auto result = !printClassParse && !printConstantPool && !printDiffReport;
+    const auto result = !printClassParse && 
+        !printConstantPool && 
+        !diff.print && 
+        !digestServer.isServerMode;
     return result;
 }
 
@@ -27,12 +30,12 @@ bool Options::processInput() {
     return result;
 }
 
-std::string ServerOptions::getListenServerAddress() const {
+std::string DigestServerOptions::getListenServerAddress() const {
     auto result = format("{}:{}", listenAddress, port);
     return result;
 }
 
-std::string ServerOptions::getServerAddress() const {
+std::string DigestClientOptions::getServerAddress() const {
     auto result = format("{}:{}", host, port);
     return result;
 }

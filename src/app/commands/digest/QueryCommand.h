@@ -16,33 +16,37 @@ namespace kapa::tarracsh::app::commands::digest {
 
 class QueryCommand {
 public:
-    static void run(app::App& app) {
-        const QueryCommand queryCommand(app);
-        queryCommand.execute();
+    static bool run(Context& config) {
+        const QueryCommand queryCommand(config);
+        const auto result = queryCommand.execute();
+        return result;
     }
 
 private:
-    QueryCommand(app::App& app)
-        : _options(app.getOptions()), _results(app.getResults()) {
+    QueryCommand(Context& config)
+        : _options(config.getOptions()), _results(config.getResults()) {
 
         if (_options.isPublicDigest) {
-            _db = std::make_unique<domain::db::digest::DigestDb>(_options.outputDir, app.getLog() );
+            _db = std::make_unique<domain::db::digest::DigestDb>(_options.outputDir, config.getLog() );
         } else {
-            _db = std::make_unique<domain::db::callgraph::CallGraphDb>(_options.outputDir, app.getLog());
+            _db = std::make_unique<domain::db::callgraph::CallGraphDb>(_options.outputDir, config.getLog());
         }
         _db->init();
 
     }
 
 
-    void execute() const {
+    bool execute() const {
         _db->init();
-        if ( _options.queryValue == TQ_SCHEMA ) {
+        const auto result = _options.queryValue == TQ_SCHEMA;
+        if ( result ) {
             _db->printSchema();
         }
         else {
             _results.log->writeln("Invalid queryValue command");
         }
+
+        return result;
     }
 
     std::unique_ptr<infrastructure::db::Database> _db;
