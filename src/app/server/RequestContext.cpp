@@ -7,15 +7,15 @@ using namespace kapa::tarracsh::server;
 using kapa::tarracsh::app::server::digest::DiffRequest;
 
 RequestContext::RequestContext()
-    : _results(_options) {
-    _results.log = app::App::getContext().getResults().log;
-}
-
-bool RequestContext::update(const DiffRequest& request) {
+    : _results(_options),
+      _appContext(app::App::getContext()) {
+    _results.log = _appContext.getResults().log;
     _options.digestServer.isServerMode = true;
     _options.isPublicDigest = true;
-    //_options.logFile = _context.getOptions().logFile;
+    _options.logFile = _appContext.getOptions().logFile;
+}
 
+bool RequestContext::update(const DiffRequest &request) {
     _options.input = request.input();
     _options.dryRun = request.dryrun();
     const auto result = _options.processInput();
@@ -26,4 +26,3 @@ bool RequestContext::update(const DiffRequest& request) {
 
     return result;
 }
-

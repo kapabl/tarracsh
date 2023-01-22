@@ -152,21 +152,19 @@ Status ServiceImpl::Diff(ServerContext *context, const DiffRequest *request, Dif
     ScopedTimer::timeWithPrint(
         "server-diff",
         [this, request, response, &result]() -> void {
-            RequestContext requestConfig;
-            if (requestConfig.update(*request)) {
-                app::Analyzer analyzer(requestConfig, _db);
+            RequestContext requestContext;
+            if (requestContext.update(*request)) {
+                app::Analyzer analyzer(requestContext, _db);
                 analyzer.run();
-                requestConfig.getResults().report->print();
+                requestContext.getResults().report->print();
                 reportToResponse(
-                    requestConfig.getResults().report, *response);
+                    requestContext.getResults().report, *response);
             } else {
                 result = Status(
                     StatusCode::INVALID_ARGUMENT,
-                    requestConfig.getErrorMessage());
+                    requestContext.getErrorMessage());
             }
         });
-
-    duration;
 
     return result;
 }

@@ -261,8 +261,7 @@ void Analyzer::serverLog(const std::string &string, const bool doStdout) const {
 }
 
 void Analyzer::processDirInput() {
-    serverLog(std::format("processing {}", _options.directory));
-
+  
     for (auto const &dirEntry : std::filesystem::recursive_directory_iterator(_options.directory)) {
         if (dirEntry.is_regular_file()) {
             processFile(dirEntry);
@@ -272,10 +271,13 @@ void Analyzer::processDirInput() {
 
 void Analyzer::analyzeInput() {
     if (isDirInput()) {
+        serverLog(std::format("processing directory: {}", _options.input), true);
         processDirInput();
     } else if (isJarInput()) {
+        serverLog(std::format("processing jar: {}", _options.input), true);
         processJar(_options.jarFile);
     } else if (isClassfileInput()) {
+        serverLog(std::format("processing classfile: {}", _options.input), true);
         processClassfile(_options.classFilePath);
     }
 
