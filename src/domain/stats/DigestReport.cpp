@@ -216,6 +216,7 @@ void DigestReport::print() const {
     std::cout << "Files:" << std::endl;
     
     for (auto &fileResult : _fileResults) {
+        if (!fileResult.isNew && !fileResult.isModified) continue;
         std::string flags;
         if (fileResult.isNew) {
             flags.push_back('N');
@@ -240,7 +241,10 @@ void DigestReport::print() const {
     std::cout << "Classes:" << std::endl;
 
     for (auto &classResult : _classResults) {
+        if (!classResult.isNew && !classResult.isModified) continue;
+
         std::string flags;
+
         if (classResult.isNew) {
             flags.push_back('N');
         } else {

@@ -23,6 +23,7 @@ private:
     std::vector<std::string> _errors;
 
     std::string _errorMessage;
+    Context& _appContext;
 };
 
 
