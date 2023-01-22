@@ -27,7 +27,7 @@ namespace digest {
 
 static const char* PublicDigest_method_names[] = {
   "/kapa.tarracsh.app.server.digest.PublicDigest/Quit",
-  "/kapa.tarracsh.app.server.digest.PublicDigest/Check",
+  "/kapa.tarracsh.app.server.digest.PublicDigest/Diff",
 };
 
 std::unique_ptr< PublicDigest::Stub> PublicDigest::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -38,7 +38,7 @@ std::unique_ptr< PublicDigest::Stub> PublicDigest::NewStub(const std::shared_ptr
 
 PublicDigest::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_Quit_(PublicDigest_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_Check_(PublicDigest_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Diff_(PublicDigest_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status PublicDigest::Stub::Quit(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty& request, ::kapa::tarracsh::app::server::digest::Empty* response) {
@@ -64,25 +64,25 @@ void PublicDigest::Stub::async::Quit(::grpc::ClientContext* context, const ::kap
   return result;
 }
 
-::grpc::Status PublicDigest::Stub::Check(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::kapa::tarracsh::app::server::digest::DigestResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::kapa::tarracsh::app::server::digest::DigestRequest, ::kapa::tarracsh::app::server::digest::DigestResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Check_, context, request, response);
+::grpc::Status PublicDigest::Stub::Diff(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest& request, ::kapa::tarracsh::app::server::digest::DiffResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::kapa::tarracsh::app::server::digest::DiffRequest, ::kapa::tarracsh::app::server::digest::DiffResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Diff_, context, request, response);
 }
 
-void PublicDigest::Stub::async::Check(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest* request, ::kapa::tarracsh::app::server::digest::DigestResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::kapa::tarracsh::app::server::digest::DigestRequest, ::kapa::tarracsh::app::server::digest::DigestResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Check_, context, request, response, std::move(f));
+void PublicDigest::Stub::async::Diff(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest* request, ::kapa::tarracsh::app::server::digest::DiffResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::kapa::tarracsh::app::server::digest::DiffRequest, ::kapa::tarracsh::app::server::digest::DiffResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Diff_, context, request, response, std::move(f));
 }
 
-void PublicDigest::Stub::async::Check(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest* request, ::kapa::tarracsh::app::server::digest::DigestResponse* response, ::grpc::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Check_, context, request, response, reactor);
+void PublicDigest::Stub::async::Diff(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest* request, ::kapa::tarracsh::app::server::digest::DiffResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Diff_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DigestResponse>* PublicDigest::Stub::PrepareAsyncCheckRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::kapa::tarracsh::app::server::digest::DigestResponse, ::kapa::tarracsh::app::server::digest::DigestRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Check_, context, request);
+::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DiffResponse>* PublicDigest::Stub::PrepareAsyncDiffRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::kapa::tarracsh::app::server::digest::DiffResponse, ::kapa::tarracsh::app::server::digest::DiffRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Diff_, context, request);
 }
 
-::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DigestResponse>* PublicDigest::Stub::AsyncCheckRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DiffResponse>* PublicDigest::Stub::AsyncDiffRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest& request, ::grpc::CompletionQueue* cq) {
   auto* result =
-    this->PrepareAsyncCheckRaw(context, request, cq);
+    this->PrepareAsyncDiffRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -101,12 +101,12 @@ PublicDigest::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       PublicDigest_method_names[1],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< PublicDigest::Service, ::kapa::tarracsh::app::server::digest::DigestRequest, ::kapa::tarracsh::app::server::digest::DigestResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+      new ::grpc::internal::RpcMethodHandler< PublicDigest::Service, ::kapa::tarracsh::app::server::digest::DiffRequest, ::kapa::tarracsh::app::server::digest::DiffResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](PublicDigest::Service* service,
              ::grpc::ServerContext* ctx,
-             const ::kapa::tarracsh::app::server::digest::DigestRequest* req,
-             ::kapa::tarracsh::app::server::digest::DigestResponse* resp) {
-               return service->Check(ctx, req, resp);
+             const ::kapa::tarracsh::app::server::digest::DiffRequest* req,
+             ::kapa::tarracsh::app::server::digest::DiffResponse* resp) {
+               return service->Diff(ctx, req, resp);
              }, this)));
 }
 
@@ -120,7 +120,7 @@ PublicDigest::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status PublicDigest::Service::Check(::grpc::ServerContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest* request, ::kapa::tarracsh::app::server::digest::DigestResponse* response) {
+::grpc::Status PublicDigest::Service::Diff(::grpc::ServerContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest* request, ::kapa::tarracsh::app::server::digest::DiffResponse* response) {
   (void) context;
   (void) request;
   (void) response;

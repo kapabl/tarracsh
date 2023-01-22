@@ -115,3 +115,4 @@ void Results::printAll() {
 
     std::cout << "\r" << std::flush;
 }
+

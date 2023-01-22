@@ -8,8 +8,10 @@
 
 using kapa::tarracsh::app::server::digest::ServerCommand;
 using kapa::tarracsh::app::commands::digest::QueryCommand;
-using kapa::tarracsh::domain::ServerOptions;
+using kapa::tarracsh::domain::DigestServerOptions;
+using kapa::tarracsh::domain::DigestClientOptions;
 using kapa::infrastructure::app::cli::ExitCode;
+using kapa::tarracsh::domain::stats::profiler::ScopedTimer;
 
 using namespace kapa::tarracsh::app::commands::digest;
 
@@ -20,38 +22,66 @@ PublicDigest::PublicDigest(CLI::App *parent)
 
 bool PublicDigest::initDb() {
 
-    domain::stats::profiler::ScopedTimer timer(&_results.profileData->initDb);
+    ScopedTimer timer(&_results.profileData->initDb);
 
-    _db = domain::db::digest::DigestDb::create( _options.outputDir, *_results.log, _options.rebuild);
+    _db = domain::db::digest::DigestDb::create(_options.outputDir, *_results.log, _options.rebuild);
     const auto result = _db.get() != nullptr;
     return result;
 
 }
 
+bool PublicDigest::runAsStandalone() {
+    const auto result = initDb();
+    if (result) {
+        Analyzer analyzer(App::getContext(), _db);
+        analyzer.runWithPrint();
+    } else {
+        _results.log->writeln("Error initializing digest Db", true);
+    }
+    return result;
+}
+
 ExitCode PublicDigest::digestInput() {
     ExitCode result = 0;
-    if (App::isValidInput(_options)) {
-        if (initDb()) {
-            Analyzer analyzer(App::getApp(), _db);
-            analyzer.run();
-        } else {
-            _results.log->writeln("Error initializing digest Db", true);
-            result = 1;
-        }
-    } else {
-        result = 1;
-    }
 
+    ScopedTimer::timeWithPrint(
+        "digest-input",
+        [this, &result]()-> void {
+            if (App::isValidInput(_options)) {
+                if (isClientMode()) {
+                    result = runAsClient() ? 0 : 1;
+                } else {
+                    result = runAsStandalone() ? 0 : 1;
+                }
+
+                if (result == 0 && _options.diff.print) {
+                    _results.report->print();
+                }
+            } else {
+                result = 1;
+            }
+        });
+
+    return result;
+}
+
+bool PublicDigest::isServerMode() const {
+    const auto result = _options.digestServer.isServerMode;
+    return result;
+}
+
+bool PublicDigest::runAsServer() {
+    const auto result = ServerCommand::run(App::getContext());
     return result;
 }
 
 ExitCode PublicDigest::run() {
     ExitCode result = 0;
-    _options.digestServer.enabled = _subCommand->got_subcommand(_digestServerOptions);
-    if (_options.digestServer.enabled) {
-        ServerCommand::run(App::getApp());
+    _options.digestServer.isServerMode = _subCommand->got_subcommand(_serverSubCommand);
+    if (isServerMode()) {
+        result = runAsServer();
     } else if (!_options.queryValue.empty()) {
-        QueryCommand::run(App::getApp());
+        result = QueryCommand::run(App::getContext());
     } else {
         result = digestInput();
     }
@@ -59,28 +89,60 @@ ExitCode PublicDigest::run() {
 
 }
 
-CLI::App *PublicDigest::addServerOptions() const {
+CLI::App *PublicDigest::addServerSubCommand() const {
     const auto result = _subCommand->add_subcommand("server", "Server commands - Default start server");
 
-    ServerOptions &serverOptions = _options.digestServer;
+    DigestServerOptions &serverOptions = _options.digestServer;
 
-    result->add_option("--port", serverOptions.port, "Server Port")->default_val(serverOptions.port);
+    const auto port = result->add_option("--port", serverOptions.port, "Server Port")->default_val(serverOptions.port);
     const auto listenAddress = result->add_option("--listen-addr", serverOptions.listenAddress, "Listen address")->
                                        default_val("0.0.0.0");
 
-    const auto stop = result->add_flag("--stop", serverOptions.stopServer, "Stop Server")->excludes(listenAddress);
-    result->add_flag("--host", serverOptions.host, "Server Host")
-          ->excludes(listenAddress)
-          ->default_val("localhost");
+    const auto stop = result->add_flag("--stop", serverOptions.stopServer, "Stop Server")->excludes(listenAddress)->
+                              excludes(port);
 
+    return result;
+}
+
+CLI::Option *PublicDigest::addClientOptions() const {
+
+    DigestClientOptions &clientOptions = _options.digestClient;
+
+    const auto diffOnServer = _subCommand->add_flag("--server", clientOptions.isClientMode,
+                                                    "Run Diff against server")
+                                         ->default_val(false);
+
+    const auto port = _subCommand->add_option("--port", clientOptions.port, "Server Port")->default_val(
+        clientOptions.port);
+    const auto listenAddress = _subCommand->add_option("--host", clientOptions.host, "Server host name")
+                                          ->default_val(clientOptions.host);
+
+    return diffOnServer;
+
+}
+
+bool PublicDigest::isClientMode() const {
+    const auto result = _options.digestClient.isClientMode;
+    return result;
+}
+
+bool PublicDigest::runAsClient() {
+    const auto result = ServerCommand::run(App::getContext());
+    return result;
+}
+
+CLI::Option *PublicDigest::addQueryOptions() const {
+    const auto result = _subCommand->add_option("--query", _options.queryValue, "TODO Query Help - schema");
     return result;
 }
 
 void PublicDigest::addCommand() {
 
     _subCommand = _parent->add_subcommand("public-digest", "Public digest of jar files and classfiles");
-    const auto input = _subCommand->
-        add_option("--input,-i", _options.input, "Input: directory, jar file or class file");
+    _subCommand->add_flag("--verbose, -v", _options.verbose, "Verbose output");
+
+    const auto input = _subCommand->add_option("--input,-i", _options.input,
+                                               "Input: directory, jar file or class file");
 
     const auto rebuild = _subCommand->add_flag("--rebuild", _options.rebuild, "Rebuild Digest Db")
                                     ->needs(input);
@@ -91,18 +153,22 @@ void PublicDigest::addCommand() {
 
     rebuild->excludes(dryRun);
 
-    const auto diff = _subCommand->add_flag("--diff", _options.doDiffReport, "Create Diff report")
+    const auto diff = _subCommand->add_flag("--diff", _options.diff.enabled, "Create Diff report")
                                  ->needs(input);
-    _subCommand->add_flag("--print-diff", _options.printDiffReport,
+
+    _subCommand->add_flag("--print-diff", _options.diff.print,
                           "Print Diff report to stdout")->needs(diff)
                ->needs(input);
 
-    _subCommand->add_flag("--verbose, -v", _options.verbose, "Verbose output");
+    const auto clientOptions = addClientOptions();
+    clientOptions
+        ->needs(diff)
+        ->needs(input);
 
-    const auto query = _subCommand->add_option("--query", _options.queryValue, "TODO Query Help - schema")
-                                  ->excludes(input);
+    const auto query = addQueryOptions();
+    query->excludes(input);
 
-    _digestServerOptions = addServerOptions();
-    _digestServerOptions->excludes(input);
+    _serverSubCommand = addServerSubCommand();
+    _serverSubCommand->excludes(input);
 
 }

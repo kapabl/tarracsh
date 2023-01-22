@@ -69,7 +69,7 @@ ExitCode App::start(const int argc, char *argv[]) {
 }
 
 void App::controlCHandler() {
-    if (_options.digestServer.enabled) {
+    if (_options.digestServer.isServerMode) {
         std::cout << "Terminating..." << std::endl;
         tarracsh::server::digest::ServiceImpl::signalQuick();
     }
@@ -174,7 +174,7 @@ int __stdcall App::ctrlHandler(unsigned long fdwCtrlType) {
     switch (fdwCtrlType) {
         case CTRL_C_EVENT:
             _app->controlCHandler();
-            return _app->getOptions().digestServer.enabled;
+            return _app->getOptions().digestServer.isServerMode;
 
         case CTRL_CLOSE_EVENT:
             _app->controlCHandler();

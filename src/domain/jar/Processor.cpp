@@ -14,7 +14,7 @@ using namespace std;
 
 
 Processor::Processor(Options options, Results &results,
-                     Task &task)
+                           Task &task)
     : _task(task),
       _results(results),
       _jarOptions(std::move(options)) {
@@ -47,7 +47,7 @@ void Processor::run() {
         const auto entries = zipArchive.getEntries();
         std::atomic<int> index{0};
 
-        for (auto entry : entries) {
+        for (auto &entry : entries) {
 
             if (index % 100 == 0) {
                 if (_jarOptions.canPrintProgress()) {
@@ -64,7 +64,8 @@ void Processor::run() {
                 this,
                 entry,
                 &index,
-                buffer] {
+                buffer] 
+                {
                 const JarEntry jarEntry(entry, buffer);
                 if (jarEntry.isClassfile()) {
                     ++_classfileCount;

@@ -3,7 +3,7 @@
 
 #include "../infrastructure/app/CliApp.h"
 #include "../domain/Options.h"
-#include "Config.h"
+#include "Context.h"
 
 #include "commands/digest/PublicDigest.h"
 #include "commands/CallGraphCommand.h"
@@ -15,7 +15,7 @@ namespace kapa::tarracsh::app {
 using ExitCode = infrastructure::app::cli::ExitCode;
 
 
-class App final : public CliApp, public Config {
+class App final : public CliApp, public Context {
 
 public:
 
@@ -26,6 +26,7 @@ public:
     [[nodiscard]] static domain::Options &getGlobalOptions() { return _app->_options; }    
     [[nodiscard]] static bool isValidInput(domain::Options& options);
     [[nodiscard]] static App& getApp() { return *_app; }
+    [[nodiscard]] static Context& getContext() { return *_app; }
 
     [[nodiscard]] domain::stats::Results& getResults() override { return _results; }
     [[nodiscard]] domain::Options& getOptions() override { return _options; }

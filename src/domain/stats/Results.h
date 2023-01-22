@@ -46,18 +46,15 @@ struct Results {
     Options& options;
     explicit Results(Options& options);
 
-    ClassfileStats standaloneClassfiles;
-    JarfileStats jarfiles;
-
-    FileTime classfileTime{};
-    FileTime jarfileTime{};
-    
     void print() const;
     void forcePrint() const;
     void printAll();
 
+    ClassfileStats standaloneClassfiles;
+    JarfileStats jarfiles;
+    FileTime classfileTime{};
+    FileTime jarfileTime{};
     mutable std::chrono::time_point<std::chrono::steady_clock> lastPrint{std::chrono::high_resolution_clock::now()};
-
     std::unique_ptr<report::DigestReport> report;
     std::unique_ptr<profiler::ProfileData> profileData;
     std::shared_ptr<infrastructure::log::Log> log;

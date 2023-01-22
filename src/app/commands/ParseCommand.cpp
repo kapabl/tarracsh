@@ -16,7 +16,8 @@ ParseCommand::ParseCommand(CLI::App* parent)
 ExitCode ParseCommand::run() {
     ExitCode result = 0;
     Analyzer analyzer(App::getApp());
-    analyzer.run();
+    analyzer.runWithPrint();
+
     return result;
 }
 

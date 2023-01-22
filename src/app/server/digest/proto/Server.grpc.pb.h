@@ -46,20 +46,20 @@ class PublicDigest final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::Empty>> PrepareAsyncQuit(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::Empty>>(PrepareAsyncQuitRaw(context, request, cq));
     }
-    virtual ::grpc::Status Check(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::kapa::tarracsh::app::server::digest::DigestResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::DigestResponse>> AsyncCheck(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::DigestResponse>>(AsyncCheckRaw(context, request, cq));
+    virtual ::grpc::Status Diff(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest& request, ::kapa::tarracsh::app::server::digest::DiffResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::DiffResponse>> AsyncDiff(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::DiffResponse>>(AsyncDiffRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::DigestResponse>> PrepareAsyncCheck(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::DigestResponse>>(PrepareAsyncCheckRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::DiffResponse>> PrepareAsyncDiff(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::DiffResponse>>(PrepareAsyncDiffRaw(context, request, cq));
     }
     class async_interface {
      public:
       virtual ~async_interface() {}
       virtual void Quit(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty* request, ::kapa::tarracsh::app::server::digest::Empty* response, std::function<void(::grpc::Status)>) = 0;
       virtual void Quit(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty* request, ::kapa::tarracsh::app::server::digest::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      virtual void Check(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest* request, ::kapa::tarracsh::app::server::digest::DigestResponse* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void Check(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest* request, ::kapa::tarracsh::app::server::digest::DigestResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void Diff(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest* request, ::kapa::tarracsh::app::server::digest::DiffResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Diff(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest* request, ::kapa::tarracsh::app::server::digest::DiffResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -67,8 +67,8 @@ class PublicDigest final {
    private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::Empty>* AsyncQuitRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::Empty>* PrepareAsyncQuitRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::DigestResponse>* AsyncCheckRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::DigestResponse>* PrepareAsyncCheckRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::DiffResponse>* AsyncDiffRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::kapa::tarracsh::app::server::digest::DiffResponse>* PrepareAsyncDiffRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -80,20 +80,20 @@ class PublicDigest final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::Empty>> PrepareAsyncQuit(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::Empty>>(PrepareAsyncQuitRaw(context, request, cq));
     }
-    ::grpc::Status Check(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::kapa::tarracsh::app::server::digest::DigestResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DigestResponse>> AsyncCheck(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DigestResponse>>(AsyncCheckRaw(context, request, cq));
+    ::grpc::Status Diff(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest& request, ::kapa::tarracsh::app::server::digest::DiffResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DiffResponse>> AsyncDiff(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DiffResponse>>(AsyncDiffRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DigestResponse>> PrepareAsyncCheck(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DigestResponse>>(PrepareAsyncCheckRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DiffResponse>> PrepareAsyncDiff(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DiffResponse>>(PrepareAsyncDiffRaw(context, request, cq));
     }
     class async final :
       public StubInterface::async_interface {
      public:
       void Quit(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty* request, ::kapa::tarracsh::app::server::digest::Empty* response, std::function<void(::grpc::Status)>) override;
       void Quit(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty* request, ::kapa::tarracsh::app::server::digest::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void Check(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest* request, ::kapa::tarracsh::app::server::digest::DigestResponse* response, std::function<void(::grpc::Status)>) override;
-      void Check(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest* request, ::kapa::tarracsh::app::server::digest::DigestResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void Diff(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest* request, ::kapa::tarracsh::app::server::digest::DiffResponse* response, std::function<void(::grpc::Status)>) override;
+      void Diff(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest* request, ::kapa::tarracsh::app::server::digest::DiffResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -107,10 +107,10 @@ class PublicDigest final {
     class async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::Empty>* AsyncQuitRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::Empty>* PrepareAsyncQuitRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::Empty& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DigestResponse>* AsyncCheckRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DigestResponse>* PrepareAsyncCheckRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DiffResponse>* AsyncDiffRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::kapa::tarracsh::app::server::digest::DiffResponse>* PrepareAsyncDiffRaw(::grpc::ClientContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_Quit_;
-    const ::grpc::internal::RpcMethod rpcmethod_Check_;
+    const ::grpc::internal::RpcMethod rpcmethod_Diff_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -119,7 +119,7 @@ class PublicDigest final {
     Service();
     virtual ~Service();
     virtual ::grpc::Status Quit(::grpc::ServerContext* context, const ::kapa::tarracsh::app::server::digest::Empty* request, ::kapa::tarracsh::app::server::digest::Empty* response);
-    virtual ::grpc::Status Check(::grpc::ServerContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest* request, ::kapa::tarracsh::app::server::digest::DigestResponse* response);
+    virtual ::grpc::Status Diff(::grpc::ServerContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest* request, ::kapa::tarracsh::app::server::digest::DiffResponse* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_Quit : public BaseClass {
@@ -142,26 +142,26 @@ class PublicDigest final {
     }
   };
   template <class BaseClass>
-  class WithAsyncMethod_Check : public BaseClass {
+  class WithAsyncMethod_Diff : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithAsyncMethod_Check() {
+    WithAsyncMethod_Diff() {
       ::grpc::Service::MarkMethodAsync(1);
     }
-    ~WithAsyncMethod_Check() override {
+    ~WithAsyncMethod_Diff() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Check(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DigestRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DigestResponse* /*response*/) override {
+    ::grpc::Status Diff(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DiffRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DiffResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestCheck(::grpc::ServerContext* context, ::kapa::tarracsh::app::server::digest::DigestRequest* request, ::grpc::ServerAsyncResponseWriter< ::kapa::tarracsh::app::server::digest::DigestResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestDiff(::grpc::ServerContext* context, ::kapa::tarracsh::app::server::digest::DiffRequest* request, ::grpc::ServerAsyncResponseWriter< ::kapa::tarracsh::app::server::digest::DiffResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_Quit<WithAsyncMethod_Check<Service > > AsyncService;
+  typedef WithAsyncMethod_Quit<WithAsyncMethod_Diff<Service > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_Quit : public BaseClass {
    private:
@@ -190,33 +190,33 @@ class PublicDigest final {
       ::grpc::CallbackServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::Empty* /*request*/, ::kapa::tarracsh::app::server::digest::Empty* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithCallbackMethod_Check : public BaseClass {
+  class WithCallbackMethod_Diff : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithCallbackMethod_Check() {
+    WithCallbackMethod_Diff() {
       ::grpc::Service::MarkMethodCallback(1,
-          new ::grpc::internal::CallbackUnaryHandler< ::kapa::tarracsh::app::server::digest::DigestRequest, ::kapa::tarracsh::app::server::digest::DigestResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::kapa::tarracsh::app::server::digest::DiffRequest, ::kapa::tarracsh::app::server::digest::DiffResponse>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::kapa::tarracsh::app::server::digest::DigestRequest* request, ::kapa::tarracsh::app::server::digest::DigestResponse* response) { return this->Check(context, request, response); }));}
-    void SetMessageAllocatorFor_Check(
-        ::grpc::MessageAllocator< ::kapa::tarracsh::app::server::digest::DigestRequest, ::kapa::tarracsh::app::server::digest::DigestResponse>* allocator) {
+                   ::grpc::CallbackServerContext* context, const ::kapa::tarracsh::app::server::digest::DiffRequest* request, ::kapa::tarracsh::app::server::digest::DiffResponse* response) { return this->Diff(context, request, response); }));}
+    void SetMessageAllocatorFor_Diff(
+        ::grpc::MessageAllocator< ::kapa::tarracsh::app::server::digest::DiffRequest, ::kapa::tarracsh::app::server::digest::DiffResponse>* allocator) {
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::kapa::tarracsh::app::server::digest::DigestRequest, ::kapa::tarracsh::app::server::digest::DigestResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::kapa::tarracsh::app::server::digest::DiffRequest, ::kapa::tarracsh::app::server::digest::DiffResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
-    ~WithCallbackMethod_Check() override {
+    ~WithCallbackMethod_Diff() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Check(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DigestRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DigestResponse* /*response*/) override {
+    ::grpc::Status Diff(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DiffRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DiffResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerUnaryReactor* Check(
-      ::grpc::CallbackServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DigestRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DigestResponse* /*response*/)  { return nullptr; }
+    virtual ::grpc::ServerUnaryReactor* Diff(
+      ::grpc::CallbackServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DiffRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DiffResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_Quit<WithCallbackMethod_Check<Service > > CallbackService;
+  typedef WithCallbackMethod_Quit<WithCallbackMethod_Diff<Service > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_Quit : public BaseClass {
@@ -236,18 +236,18 @@ class PublicDigest final {
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_Check : public BaseClass {
+  class WithGenericMethod_Diff : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithGenericMethod_Check() {
+    WithGenericMethod_Diff() {
       ::grpc::Service::MarkMethodGeneric(1);
     }
-    ~WithGenericMethod_Check() override {
+    ~WithGenericMethod_Diff() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Check(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DigestRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DigestResponse* /*response*/) override {
+    ::grpc::Status Diff(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DiffRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DiffResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -273,22 +273,22 @@ class PublicDigest final {
     }
   };
   template <class BaseClass>
-  class WithRawMethod_Check : public BaseClass {
+  class WithRawMethod_Diff : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawMethod_Check() {
+    WithRawMethod_Diff() {
       ::grpc::Service::MarkMethodRaw(1);
     }
-    ~WithRawMethod_Check() override {
+    ~WithRawMethod_Diff() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Check(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DigestRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DigestResponse* /*response*/) override {
+    ::grpc::Status Diff(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DiffRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DiffResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestCheck(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestDiff(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -315,25 +315,25 @@ class PublicDigest final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithRawCallbackMethod_Check : public BaseClass {
+  class WithRawCallbackMethod_Diff : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawCallbackMethod_Check() {
+    WithRawCallbackMethod_Diff() {
       ::grpc::Service::MarkMethodRawCallback(1,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Check(context, request, response); }));
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Diff(context, request, response); }));
     }
-    ~WithRawCallbackMethod_Check() override {
+    ~WithRawCallbackMethod_Diff() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Check(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DigestRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DigestResponse* /*response*/) override {
+    ::grpc::Status Diff(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DiffRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DiffResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerUnaryReactor* Check(
+    virtual ::grpc::ServerUnaryReactor* Diff(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -364,35 +364,35 @@ class PublicDigest final {
     virtual ::grpc::Status StreamedQuit(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::kapa::tarracsh::app::server::digest::Empty,::kapa::tarracsh::app::server::digest::Empty>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_Check : public BaseClass {
+  class WithStreamedUnaryMethod_Diff : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithStreamedUnaryMethod_Check() {
+    WithStreamedUnaryMethod_Diff() {
       ::grpc::Service::MarkMethodStreamed(1,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::kapa::tarracsh::app::server::digest::DigestRequest, ::kapa::tarracsh::app::server::digest::DigestResponse>(
+          ::kapa::tarracsh::app::server::digest::DiffRequest, ::kapa::tarracsh::app::server::digest::DiffResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::kapa::tarracsh::app::server::digest::DigestRequest, ::kapa::tarracsh::app::server::digest::DigestResponse>* streamer) {
-                       return this->StreamedCheck(context,
+                     ::kapa::tarracsh::app::server::digest::DiffRequest, ::kapa::tarracsh::app::server::digest::DiffResponse>* streamer) {
+                       return this->StreamedDiff(context,
                          streamer);
                   }));
     }
-    ~WithStreamedUnaryMethod_Check() override {
+    ~WithStreamedUnaryMethod_Diff() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status Check(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DigestRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DigestResponse* /*response*/) override {
+    ::grpc::Status Diff(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DiffRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DiffResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedCheck(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::kapa::tarracsh::app::server::digest::DigestRequest,::kapa::tarracsh::app::server::digest::DigestResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedDiff(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::kapa::tarracsh::app::server::digest::DiffRequest,::kapa::tarracsh::app::server::digest::DiffResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_Quit<WithStreamedUnaryMethod_Check<Service > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_Quit<WithStreamedUnaryMethod_Diff<Service > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_Quit<WithStreamedUnaryMethod_Check<Service > > StreamedService;
+  typedef WithStreamedUnaryMethod_Quit<WithStreamedUnaryMethod_Diff<Service > > StreamedService;
 };
 
 }  // namespace digest

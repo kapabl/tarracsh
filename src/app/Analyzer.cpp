@@ -56,17 +56,15 @@ bool Analyzer::isClassfileInput() const {
     return !_options.classFilePath.empty();
 }
 
-Analyzer::Analyzer(Config &config, const std::shared_ptr<infrastructure::db::Database> db)
+Analyzer::Analyzer(Context &config, const std::shared_ptr<infrastructure::db::Database> db)
     : _options(config.getOptions()),
       _results(config.getResults()),
-      _db(db)
-{
+      _db(db) {
 }
 
-Analyzer::Analyzer(Config& config)
+Analyzer::Analyzer(Context &config)
     : _options(config.getOptions()),
-    _results(config.getResults())
-{
+      _results(config.getResults()) {
 }
 
 void Analyzer::parseClassfile(const std::string &filename) const {
@@ -94,22 +92,22 @@ bool Analyzer::isFileUnchanged(const uintmax_t size, const long long timestamp, 
     return result;
 }
 
-DigestDb& Analyzer::getDigestDb() const {
-    auto& result = reinterpret_cast<DigestDb&>(*_db);
+DigestDb &Analyzer::getDigestDb() const {
+    auto &result = reinterpret_cast<DigestDb &>(*_db);
     return result;
 }
 
-CallGraphDb& Analyzer::getCallGraphDb() const {
-    auto& result = reinterpret_cast<CallGraphDb&>(*_db);
+CallGraphDb &Analyzer::getCallGraphDb() const {
+    auto &result = reinterpret_cast<CallGraphDb &>(*_db);
     return result;
 }
 
 
 void Analyzer::updateDbInMemory(const StandaloneClassFileInfo &classFileInfo,
                                 const ClassFileParser &parser,
-                                const DigestCol &digest) {
+                                const DigestCol &digest) const {
 
-    auto& digestDb = getDigestDb();
+    auto &digestDb = getDigestDb();
     const auto files = digestDb.getFiles();
     FileRow fileRow;
     fileRow.filename = digestDb.getPoolString(classFileInfo.filename);
@@ -128,7 +126,7 @@ void Analyzer::updateDbInMemory(const StandaloneClassFileInfo &classFileInfo,
 }
 
 void Analyzer::digestClassfile(const std::string &filename) {
-    auto& digestDb = getDigestDb();
+    auto &digestDb = getDigestDb();
 
     StandaloneClassFileInfo fileInfo(filename);
 
@@ -160,13 +158,15 @@ void Analyzer::digestClassfile(const std::string &filename) {
                     _results.log->writeln(std::format("Same public digest of changed file:{}",
                                                       fileInfo.filename));
                 }
-                _results.report->asModifiedClassfile(filename, isSamePublicDigest, strongClassname);
+                _results.report->asModifiedClassfile(isSamePublicDigest, strongClassname);
             } else {
-                _results.report->asNewClassfile(filename, strongClassname);
+                _results.report->asNewClassfile(strongClassname);
             }
 
             ++_results.standaloneClassfiles.parsedCount;
-            updateDbInMemory(fileInfo, classFileParser, digest);
+            if (!_options.dryRun) {
+                updateDbInMemory(fileInfo, classFileParser, digest);
+            }
 
         } else {
             _results.report->asFailedClassfile(filename);
@@ -197,14 +197,13 @@ void Analyzer::processClassfile(const std::string &filename) {
 
 }
 
-void Analyzer::classFileParserDone(ClassFileParser& parser) const {
+void Analyzer::classFileParserDone(ClassFileParser &parser) const {
     if (!parser.succeeded()) return;
 
     if (_options.printConstantPool) {
         ConstantPoolPrinter constantPoolPrinter(parser);
         constantPoolPrinter.print();
-    }
-    else if (_options.printCPoolHtmlNav) {
+    } else if (_options.printCPoolHtmlNav) {
         HtmlGen htmlGen(parser);
         htmlGen.print();
     }
@@ -222,7 +221,7 @@ void Analyzer::processJar(const std::string &filename) {
 
         ++_results.jarfiles.count;
         if (_options.isPublicDigest) {
-            DigestTask jarDigestTask(jarOptions, _results, reinterpret_cast<domain::db::digest::DigestDb&>(_db));
+            DigestTask jarDigestTask(jarOptions, _results, reinterpret_cast<DigestDb &>(*_db));
             Processor jarProcessor(jarOptions, _results, jarDigestTask);
             jarProcessor.run();
         } else if (_options.isCallGraph) {
@@ -231,30 +230,13 @@ void Analyzer::processJar(const std::string &filename) {
             // Processor jarProcessor(jarOptions, _results, jarGraphTask);
             // jarProcessor.run();
         } else {
-            ParserTask jarParserTask(jarOptions, _results,[this]( ClassFileParser& parser) -> void {
+            ParserTask jarParserTask(jarOptions, _results, [this](ClassFileParser &parser) -> void {
                 classFileParserDone(parser);
             });
             Processor jarProcessor(jarOptions, _results, jarParserTask);
             jarProcessor.run();
         }
     });
-}
-
-
-bool Analyzer::initDb(infrastructure::db::Database &db) const {
-
-    ScopedTimer timer(&_results.profileData->initDb);
-    auto result = true;
-
-    db.init();
-
-    if (_options.rebuild) {
-        db.clean();
-    } else {
-        result = db.read();
-    }
-
-    return result;
 }
 
 
@@ -266,20 +248,21 @@ void Analyzer::processFile(const std::filesystem::directory_entry &dirEntry) {
     }
 }
 
-bool Analyzer::initAnalyzer() {
+bool Analyzer::initAnalyzer() const {
     ScopedTimer timer(&_results.profileData->initAnalyzer);
     _results.log->setFile(_options.logFile);
-//TODO extract
-    // if (_options.isPublicDigest) {
-    //     if (!initDb(_digestDb)) return false;
-    // } else if (_options.isCallGraph) {
-    //     if (!initDb(_callGraphDb)) return false;
-    // }
     return true;
 }
 
+void Analyzer::serverLog(const std::string &string, const bool doStdout) const {
+    if (!_options.digestServer.isServerMode) return;
+    _results.log->writeln(string, doStdout);
+
+}
 
 void Analyzer::processDirInput() {
+    serverLog(std::format("processing {}", _options.directory));
+
     for (auto const &dirEntry : std::filesystem::recursive_directory_iterator(_options.directory)) {
         if (dirEntry.is_regular_file()) {
             processFile(dirEntry);
@@ -301,7 +284,9 @@ void Analyzer::analyzeInput() {
 
 
 void Analyzer::updateDbs() {
-    //TODO extract
+    //TODO extract: what do to with the DB in server mode?
+    //when to update??
+
     // if (_options.isPublicDigest) {
     //     ScopedTimer timer(&_results.profileData->writeDigestDb);
     //     _digestDb.write();
@@ -326,14 +311,13 @@ void Analyzer::run() {
             endAnalysis();
         }
     }
+}
 
+void Analyzer::runWithPrint() {
+    run();
     if (_options.canPrintProgress()) {
         _results.forcePrint();
         _results.printAll();
-    }
-
-    if (_options.printDiffReport) {
-        _results.report->print();
     }
 
 }

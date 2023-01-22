@@ -29,12 +29,6 @@ DigestTask::DigestTask(
       _options(move(options)) {
 }
 
-string DigestTask::getStrongClassname(const JarEntry &jarEntry) const {
-    const auto result = _digestDb.getClassfiles()->getStrongClassname(
-        *_jarFileRow, jarEntry.getClassname().c_str());
-    return result;
-}
-
 void DigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
     const auto filename = _digestDb.getFiles()->getFilename(getJarFileRow());
     const DigestJarEntryInfo digestEntryInfo(filename, jarEntry);
@@ -48,20 +42,20 @@ void DigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
     }
 
     const auto isUnchanged = classExists && isClassfileUnchanged(jarEntry, classfileRow);
-    const std::optional<columns::DigestCol> classDigest =
-        isUnchanged
-            ? classfileRow->digest
-            : digestEntry(digestEntryInfo, classfileRow);
+    if (isUnchanged) {
+        _results.report->asUnchangedJarClass(digestEntryInfo.strongClassname);
+        std::unique_lock lock(taskMutex);
+        _digestMap[jarEntry.getClassname()] = classfileRow->digest;
+    } else {
+        const auto digest = digestEntry(digestEntryInfo, classfileRow);
+        if (digest.has_value()) {
+            std::unique_lock lock(taskMutex);
+            _digestMap[jarEntry.getClassname()] = digest.value();
+        }
+    }
 
     ++_results.jarfiles.classfiles.count;
     ++_results.jarfiles.classfiles.digest.count;
-
-    if (isUnchanged) {
-        _results.report->asUnchangedJarClass(digestEntryInfo.strongClassname);
-    }
-
-    std::unique_lock lock(taskMutex);
-    _digestMap[jarEntry.getClassname()] = classDigest.value();
 
 }
 
@@ -70,6 +64,16 @@ void DigestTask::updateFileTableInMemory(const digestUtils::DigestVector &digest
     _jarFileRow->lastWriteTime = _jarTimestamp;
     _jarFileRow->fileSize = _jarSize;
     _digestDb.getFiles()->update(*_jarFileRow);
+}
+
+bool DigestTask::start() {
+    const auto& filename = _options.jarFile;
+    _jarSize = filesystem::file_size(filename);
+    _jarTimestamp = utils::getLastWriteTimestamp(filename);
+    _jarFileRow = const_cast<FileRow*>(getOrCreateFileRow(filename));
+    _isFileUnchanged = isFileUnchanged();
+    const auto result = !_isFileUnchanged;
+    return result;
 }
 
 void DigestTask::end() {
@@ -96,9 +100,9 @@ void DigestTask::end() {
     } else {
         const auto isSameDigest = _jarFileRow->digest == digest;
         _results.report->asModifiedJar(filename, isSameDigest);
-
+    }
+    if (!_options.dryRun) {
         updateFileTableInMemory(digest);
-        // updateClassfileTableInMemory(jarEntry, result.value(), classFileParser);
     }
 }
 
@@ -116,8 +120,12 @@ const FileRow *DigestTask::createJarFileRow(const std::string &filename) const {
     jarFileRow.type = columns::EntryType::Jar;
     jarFileRow.lastWriteTime = _jarTimestamp;
     jarFileRow.fileSize = _jarSize;
-    const auto id = _digestDb.getFiles()->add(jarFileRow);
-    const auto result = _digestDb.getFiles()->getRow(id);
+    const FileRow* result{ nullptr };
+    if ( !_options.dryRun ) {
+        const auto id = _digestDb.getFiles()->add(jarFileRow);
+        result = _digestDb.getFiles()->getRow(id);
+    }
+
     return result;
 
 }
@@ -133,20 +141,10 @@ const FileRow *DigestTask::getOrCreateFileRow(const std::string &filename) {
     return result;
 }
 
-bool DigestTask::start() {
-    const auto &filename = _options.jarFile;
-    _jarSize = filesystem::file_size(filename);
-    _jarTimestamp = utils::getLastWriteTimestamp(filename);
-    _jarFileRow = const_cast<FileRow *>(getOrCreateFileRow(filename));
-    _isFileUnchanged = isFileUnchanged();
-    const auto result = !_isFileUnchanged;
-    return result;
-}
-
 string DigestTask::getUniqueClassname(
     const JarEntry &jarEntry,
     const ClassFileParser &classFileParser) {
-    const auto result = jarEntry.isMultiReleaseEntry()
+    auto result = jarEntry.isMultiReleaseEntry()
                             ? jarEntry.getClassname()
                             : classFileParser.getMainClassname();
     return result;
@@ -165,7 +163,7 @@ void DigestTask::updateClassfileTableInMemory(const JarEntry &jarEntry, const co
     classfileRow.id = _digestDb.getClassfiles()->addOrUpdate(classfileRow);
 }
 
-optional<columns::DigestCol> DigestTask::digestEntry(const digest::DigestJarEntryInfo &digestEntryInfo,
+optional<columns::DigestCol> DigestTask::digestEntry(const DigestJarEntryInfo &digestEntryInfo,
                                                      const ClassfileRow *row) const {
     const auto &jarEntry = digestEntryInfo.jarEntry;
 
@@ -191,9 +189,12 @@ optional<columns::DigestCol> DigestTask::digestEntry(const digest::DigestJarEntr
 
         ++_results.jarfiles.classfiles.parsedCount;
 
-        updateClassfileTableInMemory(jarEntry, result.value(), classFileParser);
+        if (!_options.dryRun) {
+            updateClassfileTableInMemory(jarEntry, result.value(), classFileParser);
+        }
 
     } else {
+        _results.report->asFailedJarClass(digestEntryInfo.strongClassname);
         ++_results.jarfiles.classfiles.errors;
     }
     return result;
