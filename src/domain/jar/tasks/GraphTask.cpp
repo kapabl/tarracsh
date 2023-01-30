@@ -43,7 +43,7 @@ const db::digest::ClassfileRow *GraphTask::getClassfileRow(const JarEntry &jarEn
 }
 
 bool GraphTask::start() {
-    const auto& filename = _options.jarFile;
+    const auto& filename = _options.digest.input;
     _jarSize = filesystem::file_size(filename);
     _jarTimestamp = utils::getLastWriteTimestamp(filename);
     _jarFileRow = const_cast<FileRow*>(getJarFileRow(filename));
@@ -92,7 +92,7 @@ void GraphTask::end() {
     }
     const auto digest = digestUtils::digest(buffer);
 
-    const auto &filename = _options.jarFile;
+    const auto &filename = _options.digest.input;
     const auto isSameDigest = !_isNewJarFile && _jarFileRow->digest == digest;
 
     if (isSameDigest) {
@@ -150,7 +150,6 @@ optional<columns::DigestCol> GraphTask::parseEntry(const JarEntry &jarEntry,
                                                               const ClassfileRow *row) const {
     optional<columns::DigestCol> result;
     Options classfileOptions(_options);
-    classfileOptions.classFilePath = jarEntry.getName();
     reader::MemoryReader reader(jarEntry);
 
     ClassFileParser classFileParser(reader, classfileOptions, _results);

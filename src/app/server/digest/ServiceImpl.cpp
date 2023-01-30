@@ -63,11 +63,17 @@ bool ServiceImpl::start(app::Context &config) {
 
 bool ServiceImpl::initDb() {
 
+    //TODO start saving db thread
+
     auto result = false;
     MillisecondDuration duration{0};
     {
         ScopedTimer timer(&duration);
-        _db = DigestDb::create(_context.getOptions().outputDir, _context.getLog(), false);
+        _db = DigestDb::create(
+            _context.getOptions().outputDir, 
+            _context.getLog(), 
+            false,
+            true);
     }
     cout << std::format("Db init duration:{}", duration) << endl;
     if (_db) {
@@ -82,7 +88,7 @@ bool ServiceImpl::initDb() {
 }
 
 void ServiceImpl::startServer() {
-    const auto serverAddress = _context.getOptions().digestServer.getListenServerAddress();
+    const auto serverAddress = _context.getOptions().digest.server.getListenServerAddress();
 
     ServerBuilder builder;
     builder.AddListeningPort(serverAddress, InsecureServerCredentials())
@@ -107,6 +113,8 @@ void ServiceImpl::init() {
     cout << "Initializing..." << endl;
     if (initDb()) {
         startServer();
+        _db->stop();
+        
     }
 
 }

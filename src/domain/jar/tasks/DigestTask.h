@@ -33,6 +33,7 @@ private:
     bool _isFileUnchanged{false};
     bool _isNewJarFile{false};
     std::map<std::string, db::digest::columns::DigestCol> _digestMap;
+    std::unique_ptr<db::digest::FileRow> _pNewJarFileRow{};
 
     [[nodiscard]] std::optional<db::digest::columns::DigestCol> digestEntry(
         const digest::DigestJarEntryInfo &digestEntryInfo,
@@ -40,7 +41,7 @@ private:
 
     [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const db::digest::ClassfileRow *classRow);
     [[nodiscard]] bool isFileUnchanged() const;
-    [[nodiscard]] const db::digest::FileRow *createJarFileRow(const std::string &filename) const;
+    [[nodiscard]] const db::digest::FileRow *createJarFileRow(const std::string &filename);
     [[nodiscard]] const db::digest::FileRow *getOrCreateFileRow(const std::string &filename);
 
     void updateFileTableInMemory(const digestUtils::DigestVector& digest) const;

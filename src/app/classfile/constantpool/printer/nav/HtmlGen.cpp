@@ -18,7 +18,7 @@ inja::Template HtmlGen::_implementationsTemplate;
 inja::Environment HtmlGen::_injaEnvironment;
 
 
-HtmlGen::HtmlGen(const ClassFileParser &classFileParser)
+HtmlGen::HtmlGen(ClassFileParser &classFileParser)
     : ConstantPoolPrinter(classFileParser) {
     _mainClassname = classFileParser.getMainClassname();
     _implementation = filesystem::path(_classFileParser.getContainingFile()).filename().string();

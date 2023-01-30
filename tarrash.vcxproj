@@ -948,7 +948,9 @@
     <ClCompile Include="src\domain\db\DigestDb.cpp" />
     <ClCompile Include="src\domain\db\table\FilesTable.cpp" />
     <ClCompile Include="src\infrastructure\db\StringPool.cpp" />
-    <ClCompile Include="src\infrastructure\db\table\Table.inl" />
+    <ClInclude Include="src\infrastructure\db\table\Table.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
     <ClCompile Include="src\infrastructure\filesystem\Utils.cpp" />
     <ClInclude Include="src\app\commands\CallGraphCommand.h" />
     <ClInclude Include="src\domain\digest\DigestEntryInfo.h" />

@@ -3,6 +3,7 @@
 #include "Analyzer.h"
 #include "../infrastructure/filesystem/Utils.h"
 #include "../infrastructure/db/Database.h"
+#include "../infrastructure/db/table/Table.inl"
 
 #include "classfile/constantpool/printer/ConstantPoolPrinter.h"
 #include "classfile/constantpool/printer/nav/HtmlGen.h"
@@ -43,35 +44,24 @@ using kapa::tarracsh::domain::stats::profiler::ScopedTimer;
 
 using namespace kapa::tarracsh::app;
 
-
-bool Analyzer::isJarInput() const {
-    return !_options.jarFile.empty();
-}
-
-bool Analyzer::isDirInput() const {
-    return !_options.directory.empty();
-}
-
-bool Analyzer::isClassfileInput() const {
-    return !_options.classFilePath.empty();
-}
-
 Analyzer::Analyzer(Context &config, const std::shared_ptr<infrastructure::db::Database> db)
     : _options(config.getOptions()),
+      _inputOptions(_options.getInputOptions()),
       _results(config.getResults()),
       _db(db) {
 }
 
 Analyzer::Analyzer(Context &config)
     : _options(config.getOptions()),
+      _inputOptions(_options.getInputOptions()),
       _results(config.getResults()) {
 }
 
 void Analyzer::parseClassfile(const std::string &filename) const {
     domain::Options classfileOptions(_options);
-    classfileOptions.classFilePath = filename;
+    classfileOptions.digest.input = filename;
 
-    FileReader reader(classfileOptions.classFilePath);
+    FileReader reader(filename);
 
     ClassFileParser parser(reader, classfileOptions, _results);
     if (parser.parse()) {
@@ -139,7 +129,7 @@ void Analyzer::digestClassfile(const std::string &filename) {
     if (isFileChanged) {
 
         Options classfileOptions(_options);
-        classfileOptions.classFilePath = fileInfo.filename;
+        classfileOptions.digest.input = fileInfo.filename;
         FileReader reader(fileInfo.filename);
 
         ClassFileParser classFileParser(reader, classfileOptions, _results);
@@ -164,7 +154,7 @@ void Analyzer::digestClassfile(const std::string &filename) {
             }
 
             ++_results.standaloneClassfiles.parsedCount;
-            if (!_options.dryRun) {
+            if (!_options.digest.dryRun) {
                 updateDbInMemory(fileInfo, classFileParser, digest);
             }
 
@@ -200,15 +190,15 @@ void Analyzer::processClassfile(const std::string &filename) {
 void Analyzer::classFileParserDone(ClassFileParser &parser) const {
     if (!parser.succeeded()) return;
 
-    if (_options.printConstantPool) {
+    if (_options.parse.printConstantPool) {
         ConstantPoolPrinter constantPoolPrinter(parser);
         constantPoolPrinter.print();
-    } else if (_options.printCPoolHtmlNav) {
+    } else if (_options.parse.printCPoolHtmlNav) {
         HtmlGen htmlGen(parser);
         htmlGen.print();
     }
 
-    if (_options.printClassParse) {
+    if (_options.parse.print) {
         ParserPrinter parserPrinter(parser);
         parserPrinter.print();
     }
@@ -217,7 +207,7 @@ void Analyzer::classFileParserDone(ClassFileParser &parser) const {
 void Analyzer::processJar(const std::string &filename) {
     _fileThreadPool.push_task([this,filename] {
         Options jarOptions(_options);
-        jarOptions.jarFile = filename;
+        jarOptions.getInputOptions().input = filename;
 
         ++_results.jarfiles.count;
         if (_options.isPublicDigest) {
@@ -255,14 +245,14 @@ bool Analyzer::initAnalyzer() const {
 }
 
 void Analyzer::serverLog(const std::string &string, const bool doStdout) const {
-    if (!_options.digestServer.isServerMode) return;
+    if (!_options.digest.server.isServerMode) return;
     _results.log->writeln(string, doStdout);
 
 }
 
 void Analyzer::processDirInput() {
   
-    for (auto const &dirEntry : std::filesystem::recursive_directory_iterator(_options.directory)) {
+    for (auto const &dirEntry : std::filesystem::recursive_directory_iterator(_inputOptions.input)) {
         if (dirEntry.is_regular_file()) {
             processFile(dirEntry);
         }
@@ -270,15 +260,15 @@ void Analyzer::processDirInput() {
 }
 
 void Analyzer::analyzeInput() {
-    if (isDirInput()) {
-        serverLog(std::format("processing directory: {}", _options.input), true);
+    if (_options.digest.isDir) {
+        serverLog(std::format("processing directory: {}", _options.digest.input), true);
         processDirInput();
-    } else if (isJarInput()) {
-        serverLog(std::format("processing jar: {}", _options.input), true);
-        processJar(_options.jarFile);
-    } else if (isClassfileInput()) {
-        serverLog(std::format("processing classfile: {}", _options.input), true);
-        processClassfile(_options.classFilePath);
+    } else if (_options.digest.isJar) {
+        serverLog(std::format("processing jar: {}", _options.digest.input), true);
+        processJar(_inputOptions.input);
+    } else if (_options.digest.isClassfile) {
+        serverLog(std::format("processing classfile: {}", _options.digest.input), true);
+        processClassfile(_inputOptions.input);
     }
 
     _fileThreadPool.wait_for_tasks();
@@ -286,21 +276,23 @@ void Analyzer::analyzeInput() {
 
 
 void Analyzer::updateDbs() {
-    //TODO extract: what do to with the DB in server mode?
-    //when to update??
 
-    // if (_options.isPublicDigest) {
-    //     ScopedTimer timer(&_results.profileData->writeDigestDb);
-    //     _digestDb.write();
-    // } else if (_options.isCallGraph) {
-    //     ScopedTimer timer(&_results.profileData->writeCallGraphDb);
-    //     _callGraphDb.write();
-    // }
+    if (_options.isPublicDigest) {
+        ScopedTimer timer(&_results.profileData->writeDigestDb);
+        _db->stop();
+        //_db->write();
+    } else if (_options.isCallGraph) {
+        ScopedTimer timer(&_results.profileData->writeCallGraphDb);
+        _db->stop();
+        //_db->write();
+    }
 }
 
 void Analyzer::endAnalysis() {
-    if (!_options.dryRun) {
-        updateDbs();
+    if (!_options.digest.dryRun) {
+        if (!_options.digest.server.isServerMode) {
+            updateDbs();
+        }
     }
 }
 
@@ -318,7 +310,7 @@ void Analyzer::run() {
 void Analyzer::runWithPrint() {
     run();
     if (_options.canPrintProgress()) {
-        _results.forcePrint();
+        _results.printProgress();
         _results.printAll();
     }
 

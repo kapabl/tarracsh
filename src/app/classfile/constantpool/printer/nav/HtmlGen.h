@@ -11,7 +11,7 @@ namespace kapa::tarracsh::app::classfile::constantpool::printer::nav {
 
 class HtmlGen final: public classfile::constantpool::printer::ConstantPoolPrinter {
 public:
-    explicit HtmlGen(const domain::classfile::ClassFileParser &classFileParser);
+    explicit HtmlGen(domain::classfile::ClassFileParser &classFileParser);
     ~HtmlGen() override = default;
     void print() override;
     static void init();

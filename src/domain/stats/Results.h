@@ -47,14 +47,19 @@ struct Results {
     explicit Results(Options& options);
 
     void print() const;
-    void forcePrint() const;
-    void printAll();
+    void printProgress() const;
+    void printAll() const;
 
     ClassfileStats standaloneClassfiles;
     JarfileStats jarfiles;
     FileTime classfileTime{};
     FileTime jarfileTime{};
     mutable std::chrono::time_point<std::chrono::steady_clock> lastPrint{std::chrono::high_resolution_clock::now()};
+    mutable uint32_t lastJarCountPrint{ 0u };
+    mutable uint32_t lastClassfileCountPrint{ 0u };
+    mutable bool progressStarted{ false };
+
+
     std::unique_ptr<report::DigestReport> report;
     std::unique_ptr<profiler::ProfileData> profileData;
     std::shared_ptr<infrastructure::log::Log> log;

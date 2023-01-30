@@ -27,7 +27,7 @@ private:
         : _options(config.getOptions()), _results(config.getResults()) {
 
         if (_options.isPublicDigest) {
-            _db = std::make_unique<domain::db::digest::DigestDb>(_options.outputDir, config.getLog() );
+            _db = std::make_unique<domain::db::digest::DigestDb>(_options.outputDir, config.getLog(), false );
         } else {
             _db = std::make_unique<domain::db::callgraph::CallGraphDb>(_options.outputDir, config.getLog());
         }
@@ -36,9 +36,9 @@ private:
     }
 
 
-    bool execute() const {
+    [[nodiscard]] bool execute() const {
         _db->init();
-        const auto result = _options.queryValue == TQ_SCHEMA;
+        const auto result = _options.digest.queryValue == TQ_SCHEMA;
         if ( result ) {
             _db->printSchema();
         }

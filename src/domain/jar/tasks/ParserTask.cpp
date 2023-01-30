@@ -33,8 +33,6 @@ bool ParserTask::start() {
 
 void ParserTask::prepareOptions(const JarEntry &jarEntry, Options &options) const {
     options = _jarOptions;
-    options.classFilePath = jarEntry.getName();
-    options.jarFile = _jarOptions.jarFile;
 }
 
 void ParserTask::parseEntry(const JarEntry &jarEntry) const {
