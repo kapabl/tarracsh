@@ -1,6 +1,8 @@
 #ifndef TARRACSH_OPTIONS_H
 #define TARRACSH_OPTIONS_H
+#include <format>
 #include <functional>
+#include <iostream>
 #include <string>
 
 namespace kapa::tarracsh::domain {
@@ -15,48 +17,61 @@ struct DigestServerOptions {
 };
 
 struct DigestClientOptions {
-    bool isClientMode{ false };
-    int port{ 0xCA9A };
-    std::string host{ "localhost" };
+    bool isClientMode{false};
+    int port{0xCA9A};
+    std::string host{"localhost"};
 
     [[nodiscard]] std::string getServerAddress() const;
 };
 
-struct Options {
-    std::string classFilePath;
+struct InputOptions {
     std::string input;
-    std::string directory;
-    std::string jarFile;
-    std::string classPath;
+    bool isDir{ false };
+    bool isJar{ false };
+    bool isClassfile{ false };
+    [[nodiscard]] bool processInput();
+    [[nodiscard]] bool isValidInput();
+};
+
+struct DigestOptions : InputOptions {
+    bool dryRun{false};
+    bool rebuild{false};
+    bool isDiff{false};
     std::string queryValue;
+    DigestServerOptions server;
+    DigestClientOptions client;
+};
+
+struct CallGraphOptions : InputOptions {
+    //TODO
+};
+
+struct ParseOptions : InputOptions {
+    bool print{false};
+    bool printConstantPool{false};
+    bool printCPoolHtmlNav{false};
+    bool descriptiveCPoolEntries{true};
+};
+
+struct Options {
     std::string outputDir;
     bool isParse{false};
     bool isPublicDigest{false};
     bool isCallGraph{false};
-    bool printClassParse{false};
-    bool printConstantPool{false};
-    bool rebuild{false};
-    bool dryRun{false};
-   
-    struct Diff {
-        bool enabled{ true };
-        bool print{ false };
-    } diff;
+
+    DigestOptions digest;
+    CallGraphOptions callGraph;
+    ParseOptions parse;
 
     std::string logFile;
     int workers{4};
     bool useFileTimestamp{true};
     bool pause{false};
     bool printProfiler{false};
-    bool printCPoolHtmlNav{false};
-    bool descriptiveCPoolEntries{true};
     bool verbose{false};
-    DigestServerOptions digestServer;
-    DigestClientOptions digestClient;
-    bool diffOnServer;
-
+    
     [[nodiscard]] bool canPrintProgress() const;
-    [[nodiscard]] bool processInput();
+    InputOptions& getInputOptions();
 
 
 };

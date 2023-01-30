@@ -8,6 +8,7 @@
 #include "../domain/digest/DigestEntryInfo.h"
 #include "../domain/digest/DigestUtils.h"
 #include "../../../infrastructure/filesystem/Utils.h"
+#include "../../../infrastructure/db/table/Table.inl"
 
 using namespace kapa::infrastructure::filesystem;
 using namespace kapa::tarracsh::domain::digest;
@@ -67,7 +68,7 @@ void DigestTask::updateFileTableInMemory(const digestUtils::DigestVector &digest
 }
 
 bool DigestTask::start() {
-    const auto& filename = _options.jarFile;
+    const auto& filename = _options.digest.input;
     _jarSize = filesystem::file_size(filename);
     _jarTimestamp = utils::getLastWriteTimestamp(filename);
     _jarFileRow = const_cast<FileRow*>(getOrCreateFileRow(filename));
@@ -83,7 +84,7 @@ void DigestTask::end() {
     if (_isFileUnchanged) {
         _results.jarfiles.classfiles.digest.count += _jarFileRow->classfileCount;
         _results.jarfiles.classfiles.digest.unchangedCount += _jarFileRow->classfileCount;
-        _results.report->asUnchangedJar(_options.jarFile);
+        _results.report->asUnchangedJar(_options.digest.input);
         return;
     }
 
@@ -93,7 +94,7 @@ void DigestTask::end() {
     }
     const auto digest = digestUtils::digest(buffer);
 
-    const auto &filename = _options.jarFile;
+    const auto &filename = _options.digest.input;
 
     if (_isNewJarFile) {
         _results.report->asNewJar(filename);
@@ -101,7 +102,7 @@ void DigestTask::end() {
         const auto isSameDigest = _jarFileRow->digest == digest;
         _results.report->asModifiedJar(filename, isSameDigest);
     }
-    if (!_options.dryRun) {
+    if (!_options.digest.dryRun) {
         updateFileTableInMemory(digest);
     }
 }
@@ -114,19 +115,18 @@ bool DigestTask::isFileUnchanged() const {
     return result;
 }
 
-const FileRow *DigestTask::createJarFileRow(const std::string &filename) const {
-    FileRow jarFileRow;
-    jarFileRow.filename = _digestDb.getPoolString(filename);
-    jarFileRow.type = columns::EntryType::Jar;
-    jarFileRow.lastWriteTime = _jarTimestamp;
-    jarFileRow.fileSize = _jarSize;
-    const FileRow* result{ nullptr };
-    if ( !_options.dryRun ) {
-        const auto id = _digestDb.getFiles()->add(jarFileRow);
-        result = _digestDb.getFiles()->getRow(id);
+const FileRow *DigestTask::createJarFileRow(const std::string &filename) {
+    _pNewJarFileRow = make_unique<FileRow>();
+    _pNewJarFileRow->filename = _digestDb.getPoolString(filename);
+    _pNewJarFileRow->type = columns::EntryType::Jar;
+    _pNewJarFileRow->lastWriteTime = _jarTimestamp;
+    _pNewJarFileRow->fileSize = _jarSize;
+
+    if ( !_options.digest.dryRun ) {
+        _pNewJarFileRow->id = _digestDb.getFiles()->add(*_pNewJarFileRow);
     }
 
-    return result;
+    return _pNewJarFileRow.get();
 
 }
 
@@ -170,7 +170,6 @@ optional<columns::DigestCol> DigestTask::digestEntry(const DigestJarEntryInfo &d
     optional<columns::DigestCol> result;
 
     Options options(_options);
-    options.classFilePath = jarEntry.getName();
     reader::MemoryReader reader(jarEntry);
 
     ClassFileParser classFileParser(reader, options, _results);
@@ -189,7 +188,7 @@ optional<columns::DigestCol> DigestTask::digestEntry(const DigestJarEntryInfo &d
 
         ++_results.jarfiles.classfiles.parsedCount;
 
-        if (!_options.dryRun) {
+        if (!_options.digest.dryRun) {
             updateClassfileTableInMemory(jarEntry, result.value(), classFileParser);
         }
 

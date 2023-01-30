@@ -24,7 +24,6 @@ public:
 
     [[nodiscard]] static domain::stats::Results &getGlobalResults() { return _app->_results; }
     [[nodiscard]] static domain::Options &getGlobalOptions() { return _app->_options; }    
-    [[nodiscard]] static bool isValidInput(domain::Options& options);
     [[nodiscard]] static App& getApp() { return *_app; }
     [[nodiscard]] static Context& getContext() { return *_app; }
 

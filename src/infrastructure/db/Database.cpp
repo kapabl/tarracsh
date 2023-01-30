@@ -15,12 +15,20 @@ Database::Database(const std::string &dataDir, log::Log &log)
 
 }
 
+void Database::stop() {
+    write();
+}
+
 void Database::init() {
     _stringPool = std::make_shared<db::StringPool>(generateStringPoolFilename("sp"));
 }
 
 void Database::clean() {
     _stringPool->clean();
+}
+
+void Database::backup() {
+    _stringPool->backup();
 }
 
 bool Database::read() {
@@ -50,6 +58,7 @@ bool Database::init(Database &db, const bool doClean) {
     db.init();
 
     if (doClean) {
+        db.backup();
         db.clean();
     } else {
         result = db.read();

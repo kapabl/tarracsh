@@ -13,19 +13,25 @@ void DigestDb::init() {
     _classfilesTable = std::make_shared<ClassfilesTable>(*this, "classfiles", _filesTable);
     _filesTable->init();
     _classfilesTable->init();
+    if (_hasSaveThread) {
+        createSaveThread();
+    }
 }
 
-std::shared_ptr<DigestDb> DigestDb::create( 
-    const std::string& dataDir,
-    infrastructure::log::Log& log, const bool doClean ) {
+std::shared_ptr<DigestDb> DigestDb::create(
+    const std::string &dataDir,
+    infrastructure::log::Log &log,
+    const bool doClean,
+    const bool hasSaveThread) {
 
     std::shared_ptr<DigestDb> result;
 
-    const auto db = std::make_shared<DigestDb>( dataDir, log);
+    const auto db = std::make_shared<DigestDb>(dataDir, log, hasSaveThread);
 
-    if ( Database::init(*db, doClean) ) {
+    if (Database::init(*db, doClean)) {
         result = db;
     }
+
     return result;
 
 }
@@ -58,4 +64,36 @@ void DigestDb::printSchema() {
 void DigestDb::outputStats() const {
     cout << std::format("Number of files - jars and classfiles: {}", _filesTable->size()) << endl;
     cout << std::format("Number of classes: {}", _classfilesTable->size()) << endl;
+}
+
+void DigestDb::createSaveThread() {
+
+    _saveThread = std::jthread([this](std::stop_token stopToken) -> void {
+        std::mutex mutex;
+        std::unique_lock lock(mutex);
+        while (true) {
+            condition_variable_any().wait_for(lock, stopToken, 10s, [&stopToken] {
+                return stopToken.stop_requested();
+            });
+
+            if (stopToken.stop_requested()) {
+                break;
+            }
+            write();
+        }
+
+    });
+}
+
+void DigestDb::stop() {
+    if (_saveThread.get_id() != std::jthread::id()) {
+        _saveThread.request_stop();
+    }
+    write();
+}
+
+void DigestDb::backup() {
+    Database::backup();
+    _filesTable->backup();
+    _classfilesTable->backup();
 }

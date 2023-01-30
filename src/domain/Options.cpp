@@ -4,28 +4,38 @@
 using namespace kapa::tarracsh::domain;
 
 bool Options::canPrintProgress() const {
-    const auto result = !printClassParse && 
-        !printConstantPool && 
-        !diff.print && 
-        !digestServer.isServerMode;
+    const auto result = !parse.print &&
+        !parse.printConstantPool &&
+        !digest.isDiff &&
+        !digest.server.isServerMode;
     return result;
 }
 
-bool Options::processInput() {
-    auto result = true;
-    if (std::filesystem::is_directory(input)) {
-        directory = input;
-    } else if (std::filesystem::exists(input)) {
+InputOptions & Options::getInputOptions() {
+    if (isPublicDigest) return digest;
+    if (isCallGraph) return callGraph;
+    return parse;
+}
+
+bool InputOptions::processInput() {
+    isDir = std::filesystem::is_directory(input);
+    if (isDir) return true;
+
+    if (std::filesystem::exists(input)) {
         const auto path = std::filesystem::path(input);
-        if (infrastructure::filesystem::utils::isJar(path)) {
-            jarFile = input;
-        } else if (infrastructure::filesystem::utils::isClassfile(path)) {
-            classFilePath = input;
-        } else {
-            result = false;
-        }
-    } else {
-        result = false;
+        isJar = infrastructure::filesystem::utils::isJar(path);
+        if (isJar) return true;
+
+        isClassfile = infrastructure::filesystem::utils::isClassfile(path);
+        if(isClassfile) return true;        
+    }
+    return false;
+}
+
+bool InputOptions::isValidInput() {
+    const auto result = processInput();
+    if (!result) {
+        std::cout << std::format("Input should be a directory, jar or class file. Invalid input:{}", input) << std::endl;
     }
     return result;
 }

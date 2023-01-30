@@ -17,7 +17,7 @@ DigestReport::DigestReport(Results &results)
 
 void DigestReport::asNewJar(const std::string &filename) {
     ++_jarfiles.digest.newFile;
-    if (_options.diff.enabled) {
+    if (_options.digest.isDiff) {
         addNewFile(filename);
     }
 }
@@ -33,7 +33,7 @@ void DigestReport::addNewFile(const std::string &filename) {
 
 void DigestReport::asNewClassfile(const std::string &strongClassname) {
     ++_classfiles.digest.newFile;
-    if (_options.diff.enabled) {
+    if (_options.digest.isDiff) {
         const auto parts = digestUtils::splitStrongClassname(strongClassname);
         addNewFile(parts[0]);
         addNewClass(strongClassname);
@@ -57,7 +57,7 @@ void DigestReport::asModifiedJar(const std::string &filename, const bool isSameP
         ++_jarfiles.digest.differentDigest;
     }
 
-    if (_options.diff.enabled) {
+    if (_options.digest.isDiff) {
         addModifiedFile(filename, isSamePublicDigest);
     }
 }
@@ -70,7 +70,7 @@ void DigestReport::asModifiedClassfile(const bool isSamePublicDigest,
         ++_classfiles.digest.differentDigest;
     }
 
-    if (_options.diff.enabled) {
+    if (_options.digest.isDiff) {
         const auto parts = digestUtils::splitStrongClassname(strongClassname);
         addModifiedFile(parts[0], isSamePublicDigest);
         addModifiedClass(strongClassname, isSamePublicDigest);
@@ -103,7 +103,7 @@ void DigestReport::addFailedFile(const std::string &filename) {
 void DigestReport::asUnchangedJar(const std::string &filename) {
     ++_jarfiles.digest.unchangedCount;
 
-    if (_options.diff.enabled) {
+    if (_options.digest.isDiff) {
         addUnchangedFile(filename);
     }
 
@@ -112,21 +112,21 @@ void DigestReport::asUnchangedJar(const std::string &filename) {
 void DigestReport::asUnchangedClassfile(const std::string &filename) {
     ++_classfiles.digest.unchangedCount;
 
-    if (_options.diff.enabled) {
+    if (_options.digest.isDiff) {
         addUnchangedFile(filename);
     }
 }
 
 void DigestReport::asFailedJar(const std::string &filename) {
     ++_jarfiles.errors;
-    if (_options.diff.enabled) {
+    if (_options.digest.isDiff) {
         addFailedFile(filename);
     }
 }
 
 void DigestReport::asFailedClassfile(const std::string &filename) {
     ++_classfiles.errors;
-    if (_options.diff.enabled) {
+    if (_options.digest.isDiff) {
         addFailedFile(filename);
     }
 }
@@ -143,7 +143,7 @@ void DigestReport::addNewClass( const std::string &strongClassname) {
 void DigestReport::asNewJarClass(const std::string &strongClassname) {
     ++_results.jarfiles.classfiles.digest.newFile;
 
-    if (_options.diff.enabled) {
+    if (_options.digest.isDiff) {
         addNewClass(strongClassname);
     }
 }
@@ -162,7 +162,7 @@ void DigestReport::addUnchangedClass(const std::string &strongClassname) {
 void DigestReport::asUnchangedJarClass(const std::string &strongClassname) {
     ++_results.jarfiles.classfiles.digest.unchangedCount;
 
-    if (_options.diff.enabled) {
+    if (_options.digest.isDiff) {
         addUnchangedClass(strongClassname);
     }
 
@@ -172,7 +172,7 @@ void DigestReport::asFailedJarClass(const std::string &strongClassname) {
     ++_results.jarfiles.classfiles.errors;
 
 
-    if (_options.diff.enabled) {
+    if (_options.digest.isDiff) {
         addUnchangedClass(strongClassname);
     }
 }
@@ -193,7 +193,7 @@ void DigestReport::asModifiedJarClass(const std::string &strongClassname, const 
         ++_results.jarfiles.classfiles.digest.differentDigest;
     }
 
-    if (_options.diff.enabled) {
+    if (_options.digest.isDiff) {
         addModifiedClass(strongClassname, isSamePublicDigest);
     }
 
@@ -234,7 +234,7 @@ void DigestReport::print() const {
             }
         }
 
-        std::cout << fileResult.filename << "\t" << flags << std::endl;
+        std::cout << std::format("{} {}", fileResult.filename, flags ) << std::endl;
     }
 
     std::cout << std::endl;
@@ -260,8 +260,7 @@ void DigestReport::print() const {
                 flags.push_back('D');
             }
         }
-
-        std::cout << classResult.strongClassname << "\t" << flags << std::endl;
+        std::cout << std::format("{} {}", classResult.strongClassname, flags) << std::endl;
     }
     std::cout << std::endl;
 }

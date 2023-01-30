@@ -10,7 +10,7 @@ using kapa::tarracsh::server::digest::ServiceImpl;
 ServerCommand::ServerCommand(Context &appConfig)
     : _appConfig(appConfig) {
 
-    const auto channel = grpc::CreateChannel(_appConfig.getOptions().digestClient.getServerAddress(),
+    const auto channel = grpc::CreateChannel(_appConfig.getOptions().digest.client.getServerAddress(),
                                              grpc::InsecureChannelCredentials());
 
     _stub = PublicDigest::NewStub(channel);
@@ -20,10 +20,9 @@ bool ServerCommand::run(Context &appConfig) {
     const ServerCommand serverCommand(appConfig);
     const auto options = appConfig.getOptions();
     auto result = false;
-    if (options.digestServer.stopServer) {
+    if (options.digest.server.stopServer) {
         result = serverCommand.stop();
-    }
-    if (options.digestClient.isClientMode) {
+    } else if (options.digest.client.isClientMode) {
         result = serverCommand.diff();
     } else {
         result = serverCommand.start();
@@ -54,8 +53,8 @@ bool ServerCommand::start() const {
 
 void ServerCommand::optionsToRequest(DiffRequest &request) const {
     const auto options = _appConfig.getOptions();
-    request.set_input(options.input);
-    request.set_dryrun(options.dryRun);
+    request.set_input(options.digest.input);
+    request.set_dryrun(options.digest.dryRun);
 }
 
 void ServerCommand::responseToReport(const DiffResponse &response) const {

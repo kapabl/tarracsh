@@ -24,11 +24,6 @@ public:
     explicit Analyzer(Context& config);
     explicit Analyzer(Context& config, std::shared_ptr<infrastructure::db::Database> db);
     
-    [[nodiscard]] bool isJarInput() const;
-    [[nodiscard]] bool isDirInput() const;
-    [[nodiscard]] bool isClassfileInput() const;
-
-
     Analyzer(const Analyzer &) = delete;
     Analyzer(const Analyzer &&) = delete;
     Analyzer &operator=(const Analyzer &) = delete;
@@ -43,6 +38,7 @@ public:
 
 private:
     domain::Options _options;
+    domain::InputOptions _inputOptions;
     domain::stats::Results& _results;
     void processJar(const std::string &filename);
 
@@ -74,6 +70,7 @@ private:
     void digestClassfile(const std::string& filename);
     void processClassfile(const std::string& filename);
     void classFileParserDone(ClassFileParser &parser) const;
+
 };
 }
 #endif

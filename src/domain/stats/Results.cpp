@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+#define OOF_IMPL
+#include <oof.h>
+
 
 using namespace kapa::tarracsh::domain::stats;
 
@@ -19,24 +22,32 @@ void Results::print() const {
     if (result.count() < 500) return;
 
     lastPrint = std::chrono::high_resolution_clock::now();
-    forcePrint();
+    printProgress();
 
 }
 
-void Results::forcePrint() const {
-    printf("\033[2J");
-    printf("\033[%d;%dH", 0, 0);
+void Results::printProgress() const {
 
-    std::cout << "\r";
+    if (standaloneClassfiles.count + jarfiles.classfiles.count == lastClassfileCountPrint ||
+        jarfiles.count == lastJarCountPrint) return;
 
-    std::cout << "classfiles: " <<
-        standaloneClassfiles.count + jarfiles.classfiles.count <<
-        " jars: " << jarfiles.count;
+    lastClassfileCountPrint = standaloneClassfiles.count + jarfiles.classfiles.count;
+    lastJarCountPrint = jarfiles.count;
 
+    // if ( progressRow == - 1 ) {
+    //     
+    // }
+    if ( progressStarted ) {
+        std::cout << oof::move_up(1);
+    }
+    std::cout << oof::hposition(0);
+          
+    std::cout << std::format("classfiles: {}, jars : {}\n", lastClassfileCountPrint, lastJarCountPrint );
     std::cout << std::flush;
+    progressStarted = true;
 }
 
-void Results::printAll() {
+void Results::printAll() const {
 
     std::cout << std::endl << std::endl;
     std::cout << "classfiles:" << std::endl << std::right

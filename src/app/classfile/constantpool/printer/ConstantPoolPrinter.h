@@ -10,7 +10,7 @@ using kapa::tarracsh::domain::classfile::ClassFileParser;
 
 class ConstantPoolPrinter {
 public:
-    explicit ConstantPoolPrinter(const ClassFileParser &classFileParser);
+    explicit ConstantPoolPrinter(ClassFileParser &classFileParser);
     virtual ~ConstantPoolPrinter() = default;
 
     virtual void print();
@@ -20,7 +20,7 @@ public:
 
 
 protected:
-    const domain::classfile::ClassFileParser &_classFileParser;
+    domain::classfile::ClassFileParser &_classFileParser;
     const domain::classfile::constantpool::ConstantPool &_constantPool;
     std::string _currentLine;
     static std::mutex _cpoolStdoutMutex;

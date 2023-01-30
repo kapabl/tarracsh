@@ -44,7 +44,7 @@ public:
     [[nodiscard]] std::string getMainClassname() const;
 
     Options& getOptions() { return _options; }
-    [[nodiscard]] std::string getContainingFile() const;
+    [[nodiscard]] std::string getContainingFile();
 
 private:
     Options _options;

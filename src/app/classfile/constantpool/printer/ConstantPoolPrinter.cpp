@@ -20,7 +20,7 @@ int ConstantPoolPrinter::_cpoolStringIndex = 1;
 mutex ConstantPoolPrinter::_cpoolStdoutMutex;
 
 
-ConstantPoolPrinter::ConstantPoolPrinter(const ClassFileParser &classFileParser)
+ConstantPoolPrinter::ConstantPoolPrinter(ClassFileParser &classFileParser)
     : _classFileParser(classFileParser),
       _constantPool(classFileParser.getConstantPool()) {
 }
@@ -269,5 +269,5 @@ void ConstantPoolPrinter::initStringMaps() {
 void ConstantPoolPrinter::init() {
     initStringMaps();
     //TODO fix this dependency from the app layer
-    _cpoolStringIndex = app::App::getGlobalOptions().descriptiveCPoolEntries ? 1 : 0;
+    _cpoolStringIndex = App::getContext().getOptions().parse.descriptiveCPoolEntries ? 1 : 0;
 }

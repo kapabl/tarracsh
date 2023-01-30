@@ -14,7 +14,8 @@ CallGraphCommand::CallGraphCommand(CLI::App* parent)
 bool CallGraphCommand::initDb() {
 
     domain::stats::profiler::ScopedTimer timer(&_results.profileData->initDb);
-    _db = domain::db::callgraph::CallGraphDb::create(_options.outputDir, *_results.log, _options.rebuild);
+    //TODO use _options.callGraph
+    _db = domain::db::callgraph::CallGraphDb::create(_options.outputDir, *_results.log, _options.digest.rebuild);
     const auto result = _db.get() != nullptr;
     return result;
 
@@ -34,5 +35,5 @@ kapa::infrastructure::app::cli::ExitCode CallGraphCommand::run() {
 
 void CallGraphCommand::addCommand() {
     _subCommand = _parent->add_subcommand("call-graph", "Call Graph for jar or classfiles");
-    _subCommand->add_option("--input,-i", _options.input, "Input: directory, jar file or class file")->required();
+    _subCommand->add_option("--input,-i", _options.callGraph.input, "Input: directory, jar file or class file")->required();
 }

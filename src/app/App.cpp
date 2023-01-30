@@ -69,7 +69,7 @@ ExitCode App::start(const int argc, char *argv[]) {
 }
 
 void App::controlCHandler() {
-    if (_options.digestServer.isServerMode) {
+    if (_options.digest.server.isServerMode) {
         std::cout << "Terminating..." << std::endl;
         tarracsh::server::digest::ServiceImpl::signalQuick();
     }
@@ -105,14 +105,6 @@ void App::setupCliOptions() {
 
 }
 
-bool App::isValidInput(domain::Options &options) {
-    const auto result = options.processInput();
-    if (!result) {
-        std::cout << std::format("Input should be a directory, jar or class file. Invalid input:{}", options.input) << std::endl;
-    }
-    return result;
-}
-
 int App::parseCli(int argc, char **argv) {
     auto result = 0;
     setupCliOptions();
@@ -139,10 +131,6 @@ int App::parseCli(int argc, char **argv) {
             _options.logFile = logFile.string();
         }
 
-        if (!_options.input.empty() && !isValidInput(_options)) {
-            result = 1;
-        }
-
     } catch (const CLI::ParseError &e) {
         result = exit(e);
     }
@@ -158,13 +146,16 @@ void App::prepareConsoleForUTF8() {
 
 void App::prepareConsoleForVT100() {
     const auto stdOutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleMode(stdOutHandle, ENABLE_VIRTUAL_TERMINAL_PROCESSING | ENABLE_PROCESSED_OUTPUT);
+    unsigned long ulMode;
+    GetConsoleMode(stdOutHandle, &ulMode);
+    SetConsoleMode(stdOutHandle, ulMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+    // SetConsoleMode(stdOutHandle, ENABLE_VIRTUAL_TERMINAL_PROCESSING | ENABLE_PROCESSED_OUTPUT);
 }
 #endif
 
 
 bool App::isCPoolPrinterNeeded() const {
-    const auto result = _options.printConstantPool || _options.printCPoolHtmlNav;
+    const auto result = _options.parse.printConstantPool || _options.parse.printCPoolHtmlNav;
     return result;
 }
 
@@ -174,7 +165,7 @@ int __stdcall App::ctrlHandler(unsigned long fdwCtrlType) {
     switch (fdwCtrlType) {
         case CTRL_C_EVENT:
             _app->controlCHandler();
-            return _app->getOptions().digestServer.isServerMode;
+            return _app->getOptions().digest.server.isServerMode;
 
         case CTRL_CLOSE_EVENT:
             _app->controlCHandler();
@@ -214,7 +205,7 @@ void App::init() const {
 
     if (isCPoolPrinterNeeded()) {
         ConstantPoolPrinter::init();
-        if (_options.printCPoolHtmlNav) {
+        if (_options.parse.printCPoolHtmlNav) {
             HtmlGen::init();
         }
     }

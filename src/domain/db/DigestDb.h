@@ -13,12 +13,19 @@ namespace kapa::tarracsh::domain::db::digest {
 
 class DigestDb : public infrastructure::db::Database {
 public:
-    DigestDb(const std::string &dataDir, infrastructure::log::Log& log)
-        : Database(dataDir, log) {
+    DigestDb(const std::string &dataDir, infrastructure::log::Log& log, const bool hasSaveThread)
+        : Database(dataDir, log), _hasSaveThread( hasSaveThread ) {
     }
 
+    static std::shared_ptr<DigestDb> create(
+        const std::string& dataDir,
+        infrastructure::log::Log& log,
+        const bool doClean,
+        const bool hasSaveThread);
+
     void init() override;
-    static std::shared_ptr<DigestDb> create(const std::string &dataDir, infrastructure::log::Log &log, bool doClean);
+    void stop() override;
+    void backup() override;
     void clean() override;
     bool read() override;
     bool write() override;
@@ -31,6 +38,11 @@ public:
 private:
     std::shared_ptr<FilesTable> _filesTable;
     std::shared_ptr<ClassfilesTable> _classfilesTable;
+    std::atomic_bool _stopSaveThread;
+    bool _hasSaveThread;
+    std::jthread _saveThread;
+
+    void createSaveThread();
 };
 
 

@@ -41,7 +41,7 @@ void Processor::waitForAvailableBuffer() {
 void Processor::run() {
     if (_task.start()) {
 
-        ZipArchive zipArchive(_jarOptions.jarFile);
+        ZipArchive zipArchive(_jarOptions.getInputOptions().input);
         zipArchive.open(ZipArchive::ReadOnly);
 
         const auto entries = zipArchive.getEntries();
