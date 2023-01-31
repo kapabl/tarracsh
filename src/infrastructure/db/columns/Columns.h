@@ -1,8 +1,15 @@
 #ifndef KAPA_DB_COLUMNS_H
 #define KAPA_DB_COLUMNS_H
+#include <functional>
 #include <string>
+#include <cassert>
+#include <unordered_map>
 
 #pragma pack( push, 1 )
+
+namespace kapa::infrastructure::db {
+class Database;
+}
 
 namespace kapa::infrastructure::db::tables::columns {
 
@@ -45,35 +52,11 @@ enum DisplayAs {
     AsDigest,
     AsDatetime,
     AsSize,
-    AsEntryType
+    AsEntryType,
+    AsBool
 };
 
-inline std::string DisplayAsToString(const DisplayAs displayAs) {
-    switch (displayAs) {
-
-        case AsInt32:
-            return "signed 32 bits";
-        case AsUInt32:
-            return "unsigned 32 bits";
-        case AsUInt64:
-            return "unsigned 64 bits";
-        case AsRef:
-            return "reference into another table";
-        case AsString:
-            return "String";
-        case AsDigest:
-            return "Digest";
-        case AsDatetime:
-            return "Datetime";
-        case AsSize:
-            return "Size";
-        case AsEntryType:
-            return "EntryType(Classfile, Jar, Directory)";
-  
-    }
-
-    return "unknown";
-}
+std::string displayAsToString(const DisplayAs displayAs);
 
 #define MAX_COLUMN_NAME 128
 
@@ -82,20 +65,17 @@ struct Properties {
     char name[MAX_COLUMN_NAME]{};
     StorageType type{StorageType::UInt64};
     DisplayAs displayAs{DisplayAs::AsUInt64};
+    int offsetInRow{ 0 };
 
-    Properties()
-        : type(StorageType::UInt64),
-          displayAs(DisplayAs::AsUInt64) {
-        memset(name, 0, MAX_COLUMN_NAME);
+    Properties();
 
-    }
+    Properties(const char *name, const StorageType type, const DisplayAs displayAs, int offsetInRow);
+    std::string valueToString(char *pValue, Database& db);
 
-    Properties(const char *name, const StorageType type, const DisplayAs displayAs) {
-        memset(this->name, 0, MAX_COLUMN_NAME);
-        strcpy_s(this->name, name);
-        this->type = type;
-        this->displayAs = displayAs;
-    }
+    typedef std::function < std::string(char* pValue, Properties& properties, Database& db)> ToStringFunc;
+
+    static void registerColumn(int displayAsValue, const ToStringFunc& func);
+    static std::unordered_map<int, ToStringFunc > toStringMap;
 };
 
 
@@ -107,6 +87,18 @@ typedef uint64_t UInt64Col;
 typedef int64_t Int64Col;
 typedef int32_t Int32Col;
 typedef uint32_t UInt32Col;
+
+#define SHA_256_DIGEST_LENGTH 40
+#define DIGEST_LENGTH SHA_256_DIGEST_LENGTH
+
+struct DigestCol {
+    unsigned char buf[DIGEST_LENGTH]{};
+    bool operator==(const DigestCol& right) const;
+
+    bool operator==(const std::vector<unsigned char>& left) const;
+
+    DigestCol& operator=(const std::vector<unsigned char>& left);
+};
 
 }
 

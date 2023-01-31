@@ -15,7 +15,7 @@ struct ClassfileRow : infrastructure::db::tables::AutoIncrementedRow {
     infrastructure::db::tables::columns::UInt64Col lastWriteTime{};
     infrastructure::db::tables::columns::UInt64Col size{};
     infrastructure::db::tables::columns::Int32Col crc{};
-    columns::DigestCol digest{};
+    infrastructure::db::tables::columns::DigestCol digest{};
 
     ClassfileRow() = default;
 
@@ -30,37 +30,11 @@ class ClassfilesTable : public  infrastructure::db::tables::Table<ClassfileRow> 
 public:
     explicit ClassfilesTable(infrastructure::db::Database &db,
                              const std::string &tablename,
-                             std::shared_ptr<FilesTable> filesTable)
-        : Table(db, tablename), _filesTable(std::move(filesTable)) {
-    }
+                             std::shared_ptr<FilesTable> filesTable);
 
     [[nodiscard]] std::string getStrongClassname(const FileRow &fileRow, const char *classname) const;
-
-    // void updateClassnameIndex(const ClassfileRow *pBeforeRow, const ClassfileRow *pAfterRow);
-    //
-    // void updateDigestIndex(const ClassfileRow *pBeforeRow, const ClassfileRow *pAfterRow);
-
-    void updateIndexes(const ClassfileRow *pBeforeRow, const ClassfileRow *pAfterRow) override {
-        //TODO 
-        // if (pAfterRow->type == EntryType::Jar) {
-        //     updateJarIndex(pBeforeRow, pAfterRow);
-        // }
-        // updateClassnameIndex(pBeforeRow, pAfterRow);
-        // updateDigestIndex(pBeforeRow, pAfterRow);
-    }
-
-
-    std::string getKey(const ClassfileRow &row) override {
-        return getStrongClassname(row);
-    }
-
-
-    [[nodiscard]] std::string getStrongClassname(const ClassfileRow &row) const {
-        const auto pFileRow = _filesTable->getRow(row.file.id);
-
-        auto result = getStrongClassname(*pFileRow, _stringPool->getCString(row.classname));
-        return result;
-    }
+    std::string getKey(const ClassfileRow &row) override;
+    [[nodiscard]] std::string getStrongClassname(const ClassfileRow &row) const;
 
     void defineColumns() override;
 

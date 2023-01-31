@@ -910,7 +910,7 @@
     <ClCompile Include="src\app\server\digest\ServerCommand.cpp" />
     <ClCompile Include="src\app\Analyzer.cpp" />
     <ClCompile Include="src\app\server\RequestContext.cpp" />
-    <ClCompile Include="src\domain\db\table\DigestTablesImpl.cpp" />
+    <ClCompile Include="src\infrastructure\db\columns\Columns.cpp" />
     <ClCompile Include="src\infrastructure\log\Log.cpp" />
     <ClCompile Include="src\app\Main.cpp" />
     <ClCompile Include="src\domain\Options.cpp" />

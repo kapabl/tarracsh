@@ -9,6 +9,7 @@
 #include "../domain/classfile/ClassFileParser.h"
 #include "../domain/classfile/StandaloneClassFileInfo.h"
 #include "../infrastructure/db/Database.h"
+#include "../infrastructure/db/columns/Columns.h"
 #include "../domain/db/DigestDb.h"
 #include "../domain/db/CallGraphDb.h"
 
@@ -66,7 +67,7 @@ private:
     void updateDbInMemory(
         const StandaloneClassFileInfo &classFileInfo, 
         const ClassFileParser &parser,
-        const domain::db::digest::columns::DigestCol &digest) const;
+        const infrastructure::db::tables::columns::DigestCol &digest) const;
     void digestClassfile(const std::string& filename);
     void processClassfile(const std::string& filename);
     void classFileParserDone(ClassFileParser &parser) const;

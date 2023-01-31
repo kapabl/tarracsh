@@ -4,6 +4,7 @@
 #include "QueryCommand.h"
 #include "../../server/digest/ServerCommand.h"
 #include "../../../domain/stats/ScopedTimer.h"
+#include "../../../infrastructure/db/table/Table.inl"
 
 
 using kapa::tarracsh::app::server::digest::ServerCommand;

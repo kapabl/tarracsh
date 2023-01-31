@@ -14,6 +14,8 @@ using namespace kapa::tarracsh::domain::digest;
 
 using namespace kapa::tarracsh::domain;
 
+using kapa::infrastructure::db::tables::columns::DigestCol;
+
 using namespace classfile;
 using namespace db;
 using namespace db::callgraph;
@@ -43,10 +45,10 @@ const db::digest::ClassfileRow *GraphTask::getClassfileRow(const JarEntry &jarEn
 }
 
 bool GraphTask::start() {
-    const auto& filename = _options.digest.input;
+    const auto &filename = _options.digest.input;
     _jarSize = filesystem::file_size(filename);
     _jarTimestamp = utils::getLastWriteTimestamp(filename);
-    _jarFileRow = const_cast<FileRow*>(getJarFileRow(filename));
+    _jarFileRow = const_cast<FileRow *>(getJarFileRow(filename));
     _isFileUnchanged = isFileUnchanged();
     const auto result = !_isFileUnchanged;
     return result;
@@ -57,7 +59,7 @@ void GraphTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
     const auto *row = getClassfileRow(jarEntry);
 
     const auto isUnchanged = row != nullptr && isClassfileUnchanged(jarEntry, row);
-    const std::optional<columns::DigestCol> classDigest =
+    const std::optional<DigestCol> classDigest =
         isUnchanged
             ? row->digest
             : parseEntry(jarEntry, row);
@@ -145,10 +147,9 @@ const FileRow *GraphTask::getJarFileRow(const std::string &filename) {
 }
 
 
-
-optional<columns::DigestCol> GraphTask::parseEntry(const JarEntry &jarEntry,
-                                                              const ClassfileRow *row) const {
-    optional<columns::DigestCol> result;
+optional<DigestCol> GraphTask::parseEntry(const JarEntry &jarEntry,
+                                          const ClassfileRow *row) const {
+    optional<DigestCol> result;
     Options classfileOptions(_options);
     reader::MemoryReader reader(jarEntry);
 

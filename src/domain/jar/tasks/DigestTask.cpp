@@ -14,6 +14,8 @@ using namespace kapa::infrastructure::filesystem;
 using namespace kapa::tarracsh::domain::digest;
 using namespace kapa::tarracsh::domain;
 
+using kapa::infrastructure::db::tables::columns::DigestCol;
+
 using namespace classfile;
 using namespace db;
 using namespace db::digest;
@@ -151,7 +153,7 @@ string DigestTask::getUniqueClassname(
 
 }
 
-void DigestTask::updateClassfileTableInMemory(const JarEntry &jarEntry, const columns::DigestCol &result,
+void DigestTask::updateClassfileTableInMemory(const JarEntry &jarEntry, const DigestCol &result,
                                               const ClassFileParser &classFileParser) const {
     const auto classname = getUniqueClassname(jarEntry, classFileParser);
     ClassfileRow classfileRow(*_jarFileRow);
@@ -163,11 +165,11 @@ void DigestTask::updateClassfileTableInMemory(const JarEntry &jarEntry, const co
     classfileRow.id = _digestDb.getClassfiles()->addOrUpdate(classfileRow);
 }
 
-optional<columns::DigestCol> DigestTask::digestEntry(const DigestJarEntryInfo &digestEntryInfo,
+optional<DigestCol> DigestTask::digestEntry(const DigestJarEntryInfo &digestEntryInfo,
                                                      const ClassfileRow *row) const {
     const auto &jarEntry = digestEntryInfo.jarEntry;
 
-    optional<columns::DigestCol> result;
+    optional<DigestCol> result;
 
     Options options(_options);
     reader::MemoryReader reader(jarEntry);

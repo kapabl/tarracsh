@@ -35,11 +35,12 @@ using kapa::tarracsh::domain::db::digest::DigestDb;
 using kapa::tarracsh::domain::db::callgraph::CallGraphDb;
 using kapa::tarracsh::domain::db::digest::FileRow;
 using kapa::tarracsh::domain::db::digest::ClassfileRow;
-using kapa::tarracsh::domain::db::digest::columns::DigestCol;
 using kapa::tarracsh::domain::db::digest::columns::EntryType;
 using kapa::tarracsh::domain::digest::ClassFileDigest;
 using kapa::tarracsh::domain::Options;
 using kapa::tarracsh::domain::stats::profiler::ScopedTimer;
+
+using kapa::infrastructure::db::tables::columns::DigestCol;
 
 
 using namespace kapa::tarracsh::app;

@@ -25,7 +25,7 @@ public:
 
 
     ~ClassFileDigest() = default;
-    [[nodiscard]] db::digest::columns::DigestCol digest() const;
+    [[nodiscard]] infrastructure::db::tables::columns::DigestCol digest() const;
 
 
 private:

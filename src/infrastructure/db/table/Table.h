@@ -52,7 +52,7 @@ struct TableLayout {
 
 
 #define DECLARE_COLUMN_PROP( name, storage, displayAs ) \
-    const Properties name##Prop( #name, storage, displayAs ); \
+    const Properties name##Prop( #name, storage, displayAs, offsetof( RowType, name )); \
     _columns.push_back( name##Prop ); \
     _layout.header.columnCount = _columns.size()
 
@@ -61,6 +61,9 @@ template <typename T>
 class Table {
 
 public:
+
+    typedef T RowType;
+
     explicit Table(db::Database &db, const std::string &tablename);
     virtual ~Table() = default;
 
@@ -78,25 +81,34 @@ public:
     [[nodiscard]] std::shared_ptr<StringPool> getStringPool() const;
     [[nodiscard]] const T *findByKey(const std::string &key);
     void printSchema();
+    void list();
     [[nodiscard]] uint64_t size() { return _rows.size(); }
+
+    enum {
+        RowSize = sizeof(T)
+    };
 
 
 protected:
     db::Database &_db;
     std::unordered_map<std::string, T> _rows;
-    std::vector<const T *> _autoIncrementIndex;
+    std::vector<T *> _autoIncrementIndex;
     std::unordered_map<const T *, uint64_t> _reverseAutoincrementIndex;
     std::string _filename;
     bool _isDirty{false};
-    std::unordered_set<uint64_t> _dirtyRows;
-    unsigned int _rowSize = sizeof(T);
+
+    enum DirtyType {
+        isUpdate,
+        isNew
+    };
+    std::unordered_map<uint64_t, DirtyType> _dirtyRows;
+   
     std::shared_mutex _mutex;
     const std::shared_ptr<StringPool> _stringPool;
     std::vector<columns::Properties> _columns;
     TableLayout _layout;
 
     virtual void defineColumns() {}
-    virtual void updateIndexes(const T* pBeforeRow, const T* pAfterRow) {}
     virtual std::string getKey(const T& row) = 0;
 
     [[nodiscard]] uint64_t getFileSize() const;
@@ -112,6 +124,9 @@ protected:
     bool readSchema(FILE* file);
     void internalAdd(T &row, const std::string &key);
     void internalUpdate(T &row, const std::string &key);
+
+    std::string generateStdOutHeader() const;
+    std::string generateStdOutRow(T* pRow );
 };
 
 
