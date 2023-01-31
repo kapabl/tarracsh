@@ -5,7 +5,6 @@
 
 #include "../JarEntry.h"
 #include "Task.h"
-#include "../domain/db/columns/Columns.h"
 #include "../domain/db/CallGraphDb.h"
 #include "../domain/db/table/FilesTable.h"
 #include "../domain/db/table/ClassfilesTable.h"
@@ -19,7 +18,7 @@ class GraphTask : public Task {
 public:
     explicit GraphTask(
         Options options, Results &results,
-        db::callgraph::CallGraphDb& callGraphDb
+        db::callgraph::CallGraphDb &callGraphDb
         );
 
     void processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) override;
@@ -27,15 +26,16 @@ public:
     void end() override;
 
 private:
-    db::callgraph::CallGraphDb& _callGraphDb;
+    db::callgraph::CallGraphDb &_callGraphDb;
     Results &_results;
     Options _options;
     bool _isFileUnchanged{false};
     bool _isNewJarFile{false};
-    std::map<std::string, db::digest::columns::DigestCol> _digestMap;
+    std::map<std::string, infrastructure::db::tables::columns::DigestCol> _digestMap;
 
-    [[nodiscard]] std::optional<db::digest::columns::DigestCol> parseEntry(const JarEntry &jarEntry,
-                                                                           const db::digest::ClassfileRow *row) const;
+    [[nodiscard]] std::optional<infrastructure::db::tables::columns::DigestCol> parseEntry(
+        const JarEntry &jarEntry,
+        const db::digest::ClassfileRow *row) const;
 
     [[nodiscard]] const db::digest::ClassfileRow *getClassfileRow(const JarEntry &jarEntry) const;
     [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const db::digest::ClassfileRow *classRow);

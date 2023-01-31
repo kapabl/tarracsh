@@ -32,10 +32,10 @@ private:
     Options _options;
     bool _isFileUnchanged{false};
     bool _isNewJarFile{false};
-    std::map<std::string, db::digest::columns::DigestCol> _digestMap;
+    std::map<std::string, infrastructure::db::tables::columns::DigestCol> _digestMap;
     std::unique_ptr<db::digest::FileRow> _pNewJarFileRow{};
 
-    [[nodiscard]] std::optional<db::digest::columns::DigestCol> digestEntry(
+    [[nodiscard]] std::optional<infrastructure::db::tables::columns::DigestCol> digestEntry(
         const digest::DigestJarEntryInfo &digestEntryInfo,
         const db::digest::ClassfileRow *row) const;
 
@@ -49,7 +49,7 @@ private:
     static std::string getUniqueClassname(
         const JarEntry& jarEntry,
         const classfile::ClassFileParser& classFileParser);
-    void updateClassfileTableInMemory(const JarEntry& jarEntry, const db::digest::columns::DigestCol& result,
+    void updateClassfileTableInMemory(const JarEntry& jarEntry, const infrastructure::db::tables::columns::DigestCol& result,
         const classfile::ClassFileParser& classFileParser) const;
 
 };

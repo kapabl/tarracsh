@@ -1,9 +1,25 @@
 #include "ClassfilesTable.h"
+#include "../../../infrastructure/db/table/Table.inl"
 
 using namespace kapa::tarracsh::domain::db::digest;
 using namespace kapa::infrastructure::db::tables::columns;
 using namespace columns;
 
+
+ClassfilesTable::ClassfilesTable(infrastructure::db::Database &db, const std::string &tablename,
+    std::shared_ptr<FilesTable> filesTable): Table(db, tablename), _filesTable(std::move(filesTable)) {
+}
+
+std::string ClassfilesTable::getKey(const ClassfileRow &row) {
+    return getStrongClassname(row);
+}
+
+std::string ClassfilesTable::getStrongClassname(const ClassfileRow &row) const {
+    const auto pFileRow = _filesTable->getRow(row.file.id);
+
+    auto result = getStrongClassname(*pFileRow, _stringPool->getCString(row.classname));
+    return result;
+}
 
 std::string ClassfilesTable::getStrongClassname(const FileRow &fileRow, const char *classname) const {
     std::string result(digestUtils::getStrongClassname(_filesTable->getFilename(fileRow), classname));

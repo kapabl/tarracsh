@@ -1,3 +1,6 @@
+#ifndef KAPA_TABLE_INL
+#define KAPA_TABLE_INL
+
 #include "Table.h"
 
 namespace kapa::infrastructure::db::tables {
@@ -7,6 +10,41 @@ template <typename T>
 void Table<T>::printSchema() {
     printLayout();
 }
+
+template <typename T> std::string Table<T>::generateStdOutHeader() const {
+    std::string result;
+    for(const auto& columnProperties: _columns ) {
+        if (!result.empty()) {
+            result += ",";
+        }
+        result += columnProperties.name;
+    }
+    return result;
+}
+
+
+template <typename T> std::string Table<T>::generateStdOutRow(T* pRow) {
+    std::string result;
+
+    for(auto& columnProperties: _columns) {
+        char* pValue = reinterpret_cast<char*>(pRow) + columnProperties.offsetInRow;
+        if ( !result.empty()) {
+            result += ",";
+        }
+        result += columnProperties.valueToString(pValue, _db);
+    }
+
+    return result;
+}
+
+template <typename T> void Table<T>::list() {
+    std::cout << std::format("table: {}", _layout.header.name) << std::endl;
+    std::cout << generateStdOutHeader() << std::endl;
+    for( auto pRow: _autoIncrementIndex ) {
+        std::cout << generateStdOutRow( pRow ) << std::endl;
+    }
+}
+
 
 template <typename T>
 void Table<T>::printLayout() {
@@ -22,7 +60,7 @@ void Table<T>::printLayout() {
             << std::setw(7) << std::format("no: {}, ", index)
             << std::setw(25) << std::format("name: {}, ", column.name)
             << std::setw(25) << std::format("type: {}, ", StorageTypeToString(column.type))
-            << std::setw(25) << std::format("display as: {}", DisplayAsToString(column.displayAs))
+            << std::setw(25) << std::format("display as: {}", displayAsToString(column.displayAs))
             << std::endl;
         index++;
     }
@@ -35,23 +73,45 @@ template <typename T> void Table<T>::writeRows(FILE *file) {
 
     uint64_t autoincrement = 0;
     auto rowsWritten = 0u;
+    auto skippedRows = 0u;
     while (autoincrement < _autoIncrementIndex.size()) {
 
         const auto pRow = _autoIncrementIndex[autoincrement];
         assert(pRow->id == autoincrement);
 
         if (_dirtyRows.contains(autoincrement)) {
-            std::fwrite(reinterpret_cast<const char *>(pRow), _rowSize, 1, file);
+            if ( skippedRows > 0 ) {
+                const auto newPosition = getHeaderSize() + autoincrement * RowSize;
+                if (std::fseek(file, newPosition, SEEK_SET) != 0) {
+                    _db.log().writeln(std::format("File seek error: {}", _filename), true);
+                    break;
+                }
+#ifdef _DEBUG
+                if (std::ftell(file) != newPosition) {
+                    _db.log().writeln(std::format("File seek failed: {}, expected position: {}, got: {}",
+                        _filename, newPosition, std::ftell(file)), true);
+                }
+#endif
+                skippedRows = 0;
+            }
+#ifdef _DEBUG
+            if ( _dirtyRows[ autoincrement] == DirtyType::isUpdate ) {
+                T row;
+                const auto readBytes = std::fread(&row, 1, RowSize, file);
+                assert(readBytes == RowSize);
+                assert(row.id == autoincrement);
+                std::fseek(file, -RowSize, SEEK_CUR);
+            }
+            
+#endif
+            const auto bytesWritten = std::fwrite(pRow, 1, RowSize, file);
+            if ( bytesWritten != RowSize ) {
+                _db.log().writeln(std::format("File write error: {}", _filename), true);
+                break;
+            }
             rowsWritten++;
         } else {
-            auto newPosition = getHeaderSize() + autoincrement * _rowSize;
-            if (std::fseek(file, newPosition, SEEK_SET) != 0) {
-                _db.log().writeln(std::format("File seek error: {}", _filename), true);
-            }
-            if (std::ftell(file) != newPosition) {
-                _db.log().writeln(std::format("File seek failed: {}, expected position: {}, got: {}",
-                                              _filename, newPosition, std::ftell(file)), true);
-            }
+            skippedRows++;
         }
         ++autoincrement;
     }
@@ -73,11 +133,11 @@ template <typename T> void Table<T>::writeSchema(FILE *file) const {
 template <typename T> bool Table<T>::readRows(FILE *file) {
     while (!std::feof(file)) {
         T row;
-        const auto bytesRead = std::fread(reinterpret_cast<char*>(&row), 1, _rowSize, file);
+        const auto bytesRead = std::fread(reinterpret_cast<char*>(&row), 1, RowSize, file);
         if ( bytesRead == 0 ) {
             continue;
         }
-        if (bytesRead != _rowSize ) {
+        if (bytesRead != RowSize ) {
             _db.log().writeln(std::format("Error reading table: {}", _filename), true);
             return false;
         }
@@ -135,7 +195,8 @@ template <typename T> void Table<T>::internalUpdate(T &row, const std::string &k
     _rows[key] = row;
 }
 
-template <typename T> Table<T>::Table(db::Database &db, const std::string &tablename): _db(db),
+template <typename T> Table<T>::Table(db::Database &db, const std::string &tablename):
+    _db(db),
     _stringPool(db.getStringPool()) {
     _layout.header.signature = KAPA_TABLE_SIGNATURE;
     strcpy_s(_layout.header.name, tablename.c_str());
@@ -158,7 +219,7 @@ template <typename T> uint64_t Table<T>::getHeaderSize() const {
 }
 
 template <typename T> uint64_t Table<T>::calculateRowCount() const {
-    const auto result = (getFileSize() - getHeaderSize()) / _rowSize;
+    const auto result = (getFileSize() - getHeaderSize()) / RowSize;
     return result;
 }
 
@@ -176,7 +237,9 @@ template <typename T> void Table<T>::update(T &row) {
     auto key = getKey(row);
     internalUpdate(row, key);
     _isDirty = true;
-    _dirtyRows.insert(row.id);
+    if (!_dirtyRows.contains(row.id)) {
+        _dirtyRows[row.id] = DirtyType::isUpdate;
+    }
 }
 
 template <typename T> uint64_t Table<T>::addOrUpdate(T &row) {
@@ -186,15 +249,17 @@ template <typename T> uint64_t Table<T>::addOrUpdate(T &row) {
 
     if (_rows.contains(key)) {
         internalUpdate(row, key);
+        if (!_dirtyRows.contains(row.id)) {
+            _dirtyRows[row.id] = DirtyType::isUpdate;
+        }
     } else {
         internalAdd(row, key);
+        _dirtyRows[row.id] = DirtyType::isNew;
     }
 
     const auto result = row.id;
 
     _isDirty = true;
-    _dirtyRows.insert(result);
-
     return result;
 }
 
@@ -210,7 +275,7 @@ template <typename T> uint64_t Table<T>::add(T &row) {
     const auto result = row.id;
 
     _isDirty = true;
-    _dirtyRows.insert(result);
+    _dirtyRows[row.id] = DirtyType::isNew;
 
     return result;
 }
@@ -221,9 +286,10 @@ template <typename T> bool Table<T>::write() {
     std::lock_guard lock(_mutex);
 
     const auto fileExists = std::filesystem::exists(_filename);
+    const auto mode = fileExists ? "rb+" : "wb+";
 
     FILE *file = nullptr;
-    if (fopen_s(&file, _filename.c_str(), "ab+") == 0) {
+    if (fopen_s(&file, _filename.c_str(), mode) == 0) {
         if ( std::fseek(file, 0, SEEK_SET) != 0 ) {
             _db.log().writeln(std::format("Error seeking file {}", _filename), true);
             return false;
@@ -300,3 +366,4 @@ template <typename T> const T *Table<T>::findByKey(const std::string &key) {
     return result;
 }
 }
+#endif

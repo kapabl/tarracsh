@@ -12,6 +12,7 @@ namespace kapa::tarracsh::app::commands::digest {
 
 
 #define TQ_SCHEMA "schema"
+#define TQ_LIST "list"
 
 
 class QueryCommand {
@@ -37,12 +38,15 @@ private:
 
 
     [[nodiscard]] bool execute() const {
+        auto result = true;
         _db->init();
-        const auto result = _options.digest.queryValue == TQ_SCHEMA;
-        if ( result ) {
+        if (_options.digest.queryValue == TQ_SCHEMA) {
             _db->printSchema();
-        }
-        else {
+        } else if (_options.digest.queryValue == TQ_LIST) {
+            _db->read();
+            (reinterpret_cast<domain::db::digest::DigestDb&>(*_db)).getFiles()->list();
+        } else {
+            result = false;
             _results.log->writeln("Invalid queryValue command");
         }
 

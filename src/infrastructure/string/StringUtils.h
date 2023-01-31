@@ -168,6 +168,23 @@ inline std::vector<std::string> split(const std::string &value, const std::strin
     return result;
 }
 
+inline std::string sizeToHumanReadable(uint64_t bytes) {
+    std::vector<std::string> suffix{"B", "KB", "MB", "GB", "TB"};
+
+    auto i = 0u;
+    double doubleBytes = bytes;
+
+    if (bytes > 1024) {
+        for (i = 0; (bytes / 1024) > 0 && i < suffix.size() - 1; i++, bytes /= 1024) {
+            doubleBytes = bytes / 1024.0;
+        }
+    }
+
+    std::string result = std::format("{:.2f} {}", doubleBytes, suffix[i]);
+
+    return result;
+}
+
 
 }
 

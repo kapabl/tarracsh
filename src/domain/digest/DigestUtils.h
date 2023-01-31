@@ -6,13 +6,11 @@
 #include <locale>
 #include <format>
 
-
-#define SHA_256_DIGEST_LENGTH 40
-#define DIGEST_LENGTH SHA_256_DIGEST_LENGTH
 #include <sodium/crypto_hash_sha256.h>
 
 
 #include "../infrastructure/string/StringUtils.h"
+#include "../infrastructure/db/columns/Columns.h"
 
 namespace kapa::tarracsh::domain::digestUtils {
 
