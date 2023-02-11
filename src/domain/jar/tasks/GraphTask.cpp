@@ -55,59 +55,59 @@ bool GraphTask::start() {
 }
 
 void GraphTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
-
-    const auto *row = getClassfileRow(jarEntry);
-
-    const auto isUnchanged = row != nullptr && isClassfileUnchanged(jarEntry, row);
-    const std::optional<DigestCol> classDigest =
-        isUnchanged
-            ? row->digest
-            : parseEntry(jarEntry, row);
-
-    ++_results.jarfiles.classfiles.count;
-    ++_results.jarfiles.classfiles.digest.count;
-
-    if (isUnchanged) {
-        ++_results.jarfiles.classfiles.digest.unchangedCount;
-    }
-    ++_jarFileRow->classfileCount;
-    std::unique_lock lock(taskMutex);
-    _digestMap[jarEntry.getClassname()] = classDigest.value();
+    //
+    // const auto *row = getClassfileRow(jarEntry);
+    //
+    // const auto isUnchanged = row != nullptr && isClassfileUnchanged(jarEntry, row);
+    // const std::optional<DigestCol> classDigest =
+    //     isUnchanged
+    //         ? row->digest
+    //         : parseEntry(jarEntry, row);
+    //
+    // ++_results.jarfiles.classfiles.count;
+    // ++_results.jarfiles.classfiles.digest.count;
+    //
+    // if (isUnchanged) {
+    //     ++_results.jarfiles.classfiles.digest.unchangedCount;
+    // }
+    // ++_jarFileRow->classfileCount;
+    // std::unique_lock lock(taskMutex);
+    // _digestMap[jarEntry.getClassname()] = classDigest.value();
 
 }
 
 
 void GraphTask::end() {
-    ++_results.jarfiles.digest.count;
-    _results.jarfiles.classfileCount += _jarFileRow->classfileCount;
-
-    if (_isFileUnchanged) {
-        _results.jarfiles.classfiles.digest.count += _jarFileRow->classfileCount;
-        _results.jarfiles.classfiles.digest.unchangedCount += _jarFileRow->classfileCount;
-        ++_results.jarfiles.digest.unchangedCount;
-        return;
-    }
-
-    digestUtils::DigestBuffer buffer;
-    for (auto &[buf] : _digestMap | views::values) {
-        buffer.append(buf, DIGEST_LENGTH);
-    }
-    const auto digest = digestUtils::digest(buffer);
-
-    const auto &filename = _options.digest.input;
-    const auto isSameDigest = !_isNewJarFile && _jarFileRow->digest == digest;
-
-    if (isSameDigest) {
-        _results.log->writeln(std::format("Same public digestEntry of changed jar file:{}", filename));
-        ++_results.jarfiles.digest.same;
-    } else {
-        _jarFileRow->digest = digest;
-        if (_isNewJarFile) {
-            ++_results.jarfiles.digest.newFile;
-        } else {
-            ++_results.jarfiles.digest.differentDigest;
-        }
-    }
+    // ++_results.jarfiles.digest.count;
+    // _results.jarfiles.classfileCount += _jarFileRow->classfileCount;
+    //
+    // if (_isFileUnchanged) {
+    //     _results.jarfiles.classfiles.digest.count += _jarFileRow->classfileCount;
+    //     _results.jarfiles.classfiles.digest.unchangedCount += _jarFileRow->classfileCount;
+    //     ++_results.jarfiles.digest.unchangedCount;
+    //     return;
+    // }
+    //
+    // digestUtils::DigestBuffer buffer;
+    // for (auto &[buf] : _digestMap | views::values) {
+    //     buffer.append(buf, DIGEST_LENGTH);
+    // }
+    // const auto digest = digestUtils::digest(buffer);
+    //
+    // const auto &filename = _options.digest.input;
+    // const auto isSameDigest = !_isNewJarFile && _jarFileRow->digest == digest;
+    //
+    // if (isSameDigest) {
+    //     _results.log->writeln(std::format("Same public digestEntry of changed jar file:{}", filename));
+    //     ++_results.jarfiles.digest.same;
+    // } else {
+    //     _jarFileRow->digest = digest;
+    //     if (_isNewJarFile) {
+    //         ++_results.jarfiles.digest.newFile;
+    //     } else {
+    //         ++_results.jarfiles.digest.differentDigest;
+    //     }
+    // }
 
 }
 

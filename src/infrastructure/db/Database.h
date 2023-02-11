@@ -7,6 +7,9 @@
 
 
 namespace kapa::infrastructure::db {
+namespace tables {
+class Table;
+}
 
 class Database {
 
@@ -15,6 +18,8 @@ public:
     explicit Database(const std::string& dataDir, log::Log& log);
     virtual ~Database() = default;
     virtual void stop();
+    void list(const std::string& tablename, bool displayRaw);
+    tables::Table& getTable(const std::string& tablename);
 
     Database(const Database& other) = delete;
     Database(const Database&& other) = delete;
@@ -27,7 +32,7 @@ public:
     virtual bool read();
     virtual bool write();
 
-    virtual void printSchema() = 0;
+    virtual void printSchema();
 
 
     [[nodiscard]] tables::columns::StringCol getPoolString(const std::string& value) const;
@@ -45,6 +50,9 @@ protected:
     std::shared_ptr<StringPool> _stringPool;
     std::string _dataDir;
     log::Log& _log;
+
+
+    std::unordered_map<std::string, tables::Table*> _tables;
 };
 
 

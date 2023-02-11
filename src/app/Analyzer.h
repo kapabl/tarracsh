@@ -69,7 +69,7 @@ private:
         const ClassFileParser &parser,
         const infrastructure::db::tables::columns::DigestCol &digest) const;
     void digestClassfile(const std::string& filename);
-    void processClassfile(const std::string& filename);
+    void processStandaloneClassfile(const std::string& filename);
     void classFileParserDone(ClassFileParser &parser) const;
 
 };

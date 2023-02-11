@@ -3,7 +3,6 @@
 #include "Analyzer.h"
 #include "../infrastructure/filesystem/Utils.h"
 #include "../infrastructure/db/Database.h"
-#include "../infrastructure/db/table/Table.inl"
 
 #include "classfile/constantpool/printer/ConstantPoolPrinter.h"
 #include "classfile/constantpool/printer/nav/HtmlGen.h"
@@ -100,20 +99,24 @@ void Analyzer::updateDbInMemory(const StandaloneClassFileInfo &classFileInfo,
 
     auto &digestDb = getDigestDb();
     const auto files = digestDb.getFiles();
-    FileRow fileRow;
+    auto &fileRow = static_cast<FileRow &>(*files->allocateRow());
+    new (&fileRow) FileRow();
+
     fileRow.filename = digestDb.getPoolString(classFileInfo.filename);
     fileRow.type = EntryType::Classfile;
     fileRow.lastWriteTime = classFileInfo.timestamp;
     fileRow.fileSize = classFileInfo.size;
     fileRow.digest = digest;
-    fileRow.id = files->addOrUpdate(fileRow);
+    files->addOrUpdate(&fileRow);
 
-    ClassfileRow digestRow(fileRow);
-    digestRow.size = classFileInfo.size;
-    digestRow.lastWriteTime = classFileInfo.timestamp;
-    digestRow.digest = digest;
-    digestRow.classname = digestDb.getPoolString(parser.getMainClassname());
-    digestRow.id = digestDb.getClassfiles()->addOrUpdate(digestRow);
+    auto &classfileRow = static_cast<ClassfileRow&>(*digestDb.getClassfiles()->allocateRow());
+    new (&classfileRow) ClassfileRow(fileRow);
+
+    classfileRow.size = classFileInfo.size;
+    classfileRow.lastWriteTime = classFileInfo.timestamp;
+    classfileRow.digest = digest;
+    classfileRow.classname = digestDb.getPoolString(parser.getMainClassname());
+    digestDb.getClassfiles()->addOrUpdate(&classfileRow);
 }
 
 void Analyzer::digestClassfile(const std::string &filename) {
@@ -121,7 +124,7 @@ void Analyzer::digestClassfile(const std::string &filename) {
 
     StandaloneClassFileInfo fileInfo(filename);
 
-    const FileRow *fileRow = digestDb.getFiles()->findByKey(fileInfo.filename);
+    const FileRow *fileRow = static_cast<FileRow *>(digestDb.getFiles()->findByKey(fileInfo.filename));
     const bool fileExists = fileRow != nullptr;
     const auto isFileChanged = !isFileUnchanged(fileInfo.size, fileInfo.timestamp, fileRow);
 
@@ -169,7 +172,7 @@ void Analyzer::digestClassfile(const std::string &filename) {
 
 }
 
-void Analyzer::processClassfile(const std::string &filename) {
+void Analyzer::processStandaloneClassfile(const std::string &filename) {
     _fileThreadPool.push_task([this, filename] {
         ++_results.standaloneClassfiles.count;
         if (_options.isPublicDigest) {
@@ -235,7 +238,7 @@ void Analyzer::processFile(const std::filesystem::directory_entry &dirEntry) {
     if (infrastructure::filesystem::utils::isJar(dirEntry)) {
         processJar(dirEntry.path().string());
     } else if (infrastructure::filesystem::utils::isClassfile(dirEntry)) {
-        processClassfile(dirEntry.path().string());
+        processStandaloneClassfile(dirEntry.path().string());
     }
 }
 
@@ -269,7 +272,7 @@ void Analyzer::analyzeInput() {
         processJar(_inputOptions.input);
     } else if (_options.digest.isClassfile) {
         serverLog(std::format("processing classfile: {}", _options.digest.input), true);
-        processClassfile(_inputOptions.input);
+        processStandaloneClassfile(_inputOptions.input);
     }
 
     _fileThreadPool.wait_for_tasks();

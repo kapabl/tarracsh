@@ -2,6 +2,7 @@
 #include <format>
 #include <chrono>
 #include "../Database.h"
+#include "../table/Table.h"
 
 
 using namespace kapa::infrastructure::db::tables::columns;
@@ -43,7 +44,7 @@ Properties::Properties()
 }
 
 Properties::Properties(const char *name, const StorageType type,
-                       const DisplayAs displayAs, int offsetInRow) {
+                       const DisplayAs displayAs, uint64_t offsetInRow) {
     memset(this->name, 0, MAX_COLUMN_NAME);
     strcpy_s(this->name, name);
     this->type = type;
@@ -51,8 +52,24 @@ Properties::Properties(const char *name, const StorageType type,
     this->offsetInRow = offsetInRow;
 }
 
-std::string Properties::valueToString(char *pValue, Database &db) {
-    std::string result = toStringMap[displayAs](pValue, *this, db);
+Properties::Properties(const char *name, const StorageType type,
+                       const DisplayAs displayAs, uint64_t offsetInRow,
+                       const char *refTable, const char *displayColumn) {
+    memset(this->name, 0, MAX_COLUMN_NAME);
+    strcpy_s(this->name, name);
+
+    memset(this->refColProperties.table, 0, MAX_COLUMN_NAME);
+    strcpy_s(this->refColProperties.table, refTable);
+
+    memset(this->refColProperties.displayColumn, 0, MAX_COLUMN_NAME);
+    strcpy_s(this->refColProperties.displayColumn, displayColumn);
+    this->type = type;
+    this->displayAs = displayAs;
+    this->offsetInRow = offsetInRow;
+}
+
+std::string Properties::valueToString(char *pValue, Database &db, const bool displayRaw) const {
+    std::string result = toStringMap[displayAs](pValue, *this, db, displayRaw);
     return result;
 }
 
@@ -80,7 +97,8 @@ DigestCol &DigestCol::operator=(const std::vector<unsigned char> &left) {
 static bool registerColumns() {
     Properties::registerColumn(
         DisplayAs::AsDatetime,
-        [](char *pValue, Properties &properties, kapa::infrastructure::db::Database &db) -> std::string {
+        [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
+           bool displayRaw) -> std::string {
             const auto microseconds = std::chrono::microseconds(*reinterpret_cast<uint64_t *>(pValue));
             std::chrono::file_clock::time_point timePoint(microseconds);
             auto result = std::format("{:%F %T}", timePoint);
@@ -88,50 +106,69 @@ static bool registerColumns() {
         });
     Properties::registerColumn(
         DisplayAs::AsSize,
-        [](char *pValue, Properties &properties, kapa::infrastructure::db::Database &db) -> std::string {
+        [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
+           bool displayRaw) -> std::string {
             const auto value = *reinterpret_cast<uint64_t *>(pValue);
             auto result = kapa::infrastructure::string::stringUtils::sizeToHumanReadable(value);
             return result;
         });
     Properties::registerColumn(
         DisplayAs::AsInt32,
-        [](char *pValue, Properties &properties, kapa::infrastructure::db::Database &db) -> std::string {
+        [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
+           bool displayRaw) -> std::string {
             auto result = std::format("{}", reinterpret_cast<int32_t &>(*pValue));
             return result;
         });
 
     Properties::registerColumn(
         DisplayAs::AsUInt32,
-        [](char *pValue, Properties &properties, kapa::infrastructure::db::Database &db) -> std::string {
+        [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
+           bool displayRaw) -> std::string {
             auto result = std::format("{}", reinterpret_cast<uint32_t &>(*pValue));
             return result;
         });
 
     Properties::registerColumn(
         DisplayAs::AsUInt64,
-        [](char *pValue, Properties &properties, kapa::infrastructure::db::Database &db) -> std::string {
+        [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
+           bool displayRaw) -> std::string {
             auto result = std::format("{}", reinterpret_cast<uint64_t &>(*pValue));
             return result;
         });
 
     Properties::registerColumn(
         DisplayAs::AsString,
-        [](char *pValue, Properties &properties, kapa::infrastructure::db::Database &db) -> std::string {
-            std::string result = db.getStringPool()->getCString(reinterpret_cast<StringCol &>(*pValue));
+        [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
+           bool displayRaw) -> std::string {
+            std::string result;
+            auto &stringCol = reinterpret_cast<StringCol &>(*pValue);
+            if (displayRaw) {
+                result = std::format("{}", stringCol);
+            } else {
+                result = db.getStringPool()->getCString(stringCol);
+            }
             return result;
         });
 
     Properties::registerColumn(
         DisplayAs::AsRef,
-        [](char *pValue, Properties &properties, kapa::infrastructure::db::Database &db) -> std::string {
-            //TODO lookup on the referenced table
-            auto result = std::format("{}", reinterpret_cast<uint64_t &>(*pValue));
+        [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
+           bool displayRaw) -> std::string {
+            std::string result;
+            const auto ref = reinterpret_cast<uint64_t &>(*pValue);
+            if (displayRaw) {
+                result = std::format("{}", ref);
+            } else {
+                auto &table = db.getTable(properties.refColProperties.table);
+                result = std::format("{}", table.getColumnValue(ref, properties.refColProperties.displayColumn));
+            }
             return result;
         });
 
     Properties::registerColumn(
         DisplayAs::AsDigest,
-        [](char *pValue, Properties &properties, kapa::infrastructure::db::Database &db) -> std::string {
+        [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
+           bool displayRaw) -> std::string {
             std::string result;
             for (auto i = 0u; i < DIGEST_LENGTH; i++) {
                 result += std::format(" {:02x}", static_cast<unsigned char>(pValue[i]));
@@ -141,7 +178,8 @@ static bool registerColumns() {
 
     Properties::registerColumn(
         DisplayAs::AsBool,
-        [](char *pValue, Properties &properties, kapa::infrastructure::db::Database &db) -> std::string {
+        [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
+           bool displayRaw) -> std::string {
             auto result = (*pValue & 1) == 1 ? "true" : "false";
             return result;
         });

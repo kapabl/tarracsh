@@ -1,0 +1,9 @@
+#ifndef KAPA_DB_CONSTS
+#define KAPA_DB_CONSTS
+
+
+#define KAPA_TABLE_SIGNATURE 0xca5ab1a9ca
+#define MAX_TABLE_NAME 128
+#define MAX_COLUMN_NAME 128
+
+#endif

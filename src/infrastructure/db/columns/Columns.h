@@ -2,8 +2,8 @@
 #define KAPA_DB_COLUMNS_H
 #include <functional>
 #include <string>
-#include <cassert>
 #include <unordered_map>
+#include "../DbConsts.h"
 
 #pragma pack( push, 1 )
 
@@ -58,30 +58,40 @@ enum DisplayAs {
 
 std::string displayAsToString(const DisplayAs displayAs);
 
-#define MAX_COLUMN_NAME 128
 
+
+struct RefCol {
+    uint64_t id;
+};
+
+struct RefColProperties {
+    char table[MAX_TABLE_NAME];
+    char displayColumn[MAX_COLUMN_NAME];
+};
 
 struct Properties {
     char name[MAX_COLUMN_NAME]{};
     StorageType type{StorageType::UInt64};
     DisplayAs displayAs{DisplayAs::AsUInt64};
-    int offsetInRow{ 0 };
+    uint64_t offsetInRow{ 0 };
+    RefColProperties refColProperties{};
 
     Properties();
 
-    Properties(const char *name, const StorageType type, const DisplayAs displayAs, int offsetInRow);
-    std::string valueToString(char *pValue, Database& db);
+    explicit Properties(const char *name, const StorageType type, const DisplayAs displayAs, uint64_t offsetInRow);
+    explicit Properties(const char *name, const StorageType type, const DisplayAs displayAs, uint64_t offsetInRow,
+        const char* refTable, const char* displayColumn );
 
-    typedef std::function < std::string(char* pValue, Properties& properties, Database& db)> ToStringFunc;
+    std::string valueToString(char *pValue, Database& db, bool displayRaw) const;
+
+    typedef std::function < std::string(char* pValue, const Properties& properties, Database& db, bool displayRaw )> ToStringFunc;
 
     static void registerColumn(int displayAsValue, const ToStringFunc& func);
     static std::unordered_map<int, ToStringFunc > toStringMap;
 };
 
 
-struct RefCol {
-    uint64_t id;
-};
+
 
 typedef uint64_t UInt64Col;
 typedef int64_t Int64Col;

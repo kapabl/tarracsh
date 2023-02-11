@@ -4,8 +4,6 @@
 #include "QueryCommand.h"
 #include "../../server/digest/ServerCommand.h"
 #include "../../../domain/stats/ScopedTimer.h"
-#include "../../../infrastructure/db/table/Table.inl"
-
 
 using kapa::tarracsh::app::server::digest::ServerCommand;
 using kapa::tarracsh::app::commands::digest::QueryCommand;
@@ -134,6 +132,8 @@ bool PublicDigest::runAsClient() {
 
 CLI::Option *PublicDigest::addQueryOptions() const {
     const auto result = _subCommand->add_option("--query", _options.digest.queryValue, "TODO Query Help - schema");
+    _subCommand->add_flag("--display-raw", _options.digest.displayRaw, "Display row value of columns")
+        ->needs(result);
     return result;
 }
 

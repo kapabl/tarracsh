@@ -5,6 +5,7 @@
 
 #include "table/ClassfilesTable.h"
 #include "../infrastructure/db/Database.h"
+#include "../infrastructure/db/table/Table.h"
 #include "table/FilesTable.h"
 
 
@@ -26,12 +27,6 @@ public:
     void init() override;
     void stop() override;
     void backup() override;
-    void clean() override;
-    bool read() override;
-    bool write() override;
-
-    void printSchema() override;
-
     auto getFiles() { return _filesTable; }
     std::shared_ptr<ClassfilesTable> getClassfiles() { return _classfilesTable; }
     void outputStats() const;
@@ -43,6 +38,7 @@ private:
     std::jthread _saveThread;
 
     void createSaveThread();
+
 };
 
 

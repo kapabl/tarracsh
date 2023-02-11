@@ -1,5 +1,4 @@
 #include "DigestDb.h"
-#include "../infrastructure/db/table/Table.inl"
 #include <memory>
 #include "../infrastructure/db/StringPool.h"
 
@@ -10,9 +9,14 @@ using namespace kapa::tarracsh::domain::db::digest;
 void DigestDb::init() {
     Database::init();
     _filesTable = std::make_shared<FilesTable>(*this, "files");
+    _tables[_filesTable->getName()] = _filesTable.get();
+
     _classfilesTable = std::make_shared<ClassfilesTable>(*this, "classfiles", _filesTable);
+    _tables[_classfilesTable->getName()] = _classfilesTable.get();
+
     _filesTable->init();
     _classfilesTable->init();
+   
     if (_hasSaveThread) {
         createSaveThread();
     }
@@ -34,31 +38,6 @@ std::shared_ptr<DigestDb> DigestDb::create(
 
     return result;
 
-}
-
-void DigestDb::clean() {
-    Database::clean();
-    _filesTable->clean();
-    _classfilesTable->clean();
-}
-
-bool DigestDb::read() {
-    const auto result = Database::read() &&
-                        _filesTable->read() &&
-                        _classfilesTable->read();
-    return result;
-}
-
-bool DigestDb::write() {
-    const auto result = Database::write() &&
-                        _filesTable->write() &&
-                        _classfilesTable->write();
-    return result;
-}
-
-void DigestDb::printSchema() {
-    _filesTable->printSchema();
-    _classfilesTable->printSchema();
 }
 
 void DigestDb::outputStats() const {

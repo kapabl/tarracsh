@@ -32,9 +32,11 @@
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'">
-    <LocalDebuggerCommandArguments>public-digest --query list</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>public-digest --query "list classfiles"</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerEnvironment>
+$(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelJarDirMd5|x64'">
     <LocalDebuggerCommandArguments>--dir D:\temp\reti\test-subjects\jars --generate-public-digest=yes --rebuild=no</LocalDebuggerCommandArguments>
@@ -62,7 +64,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel2|x64'">
-    <LocalDebuggerCommandArguments>public-digest --input d:\temp\reti\test-subjects\jars\tarracsh-lib1.jar --server --diff --print-diff</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>public-digest --input=d:\temp\reti\test-subjects\jars --rebuild</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>

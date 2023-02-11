@@ -17,41 +17,15 @@ namespace kapa::tarracsh::app::commands::digest {
 
 class QueryCommand {
 public:
-    static bool run(Context& config) {
-        const QueryCommand queryCommand(config);
-        const auto result = queryCommand.execute();
-        return result;
-    }
+    static bool run(Context& config);
 
 private:
-    QueryCommand(Context& config)
-        : _options(config.getOptions()), _results(config.getResults()) {
-
-        if (_options.isPublicDigest) {
-            _db = std::make_unique<domain::db::digest::DigestDb>(_options.outputDir, config.getLog(), false );
-        } else {
-            _db = std::make_unique<domain::db::callgraph::CallGraphDb>(_options.outputDir, config.getLog());
-        }
-        _db->init();
-
-    }
+    QueryCommand(Context& config);
 
 
-    [[nodiscard]] bool execute() const {
-        auto result = true;
-        _db->init();
-        if (_options.digest.queryValue == TQ_SCHEMA) {
-            _db->printSchema();
-        } else if (_options.digest.queryValue == TQ_LIST) {
-            _db->read();
-            (reinterpret_cast<domain::db::digest::DigestDb&>(*_db)).getFiles()->list();
-        } else {
-            result = false;
-            _results.log->writeln("Invalid queryValue command");
-        }
+    void executeListQuery(const std::vector<std::string>& parts) const;
 
-        return result;
-    }
+    [[nodiscard]] bool execute() const;
 
     std::unique_ptr<infrastructure::db::Database> _db;
     domain::Options &_options;
@@ -59,6 +33,48 @@ private:
 };
 
 
+inline bool QueryCommand::run(Context &config) {
+    const QueryCommand queryCommand(config);
+    const auto result = queryCommand.execute();
+    return result;
+}
+
+inline QueryCommand::QueryCommand(Context &config): _options(config.getOptions()), _results(config.getResults()) {
+
+    if (_options.isPublicDigest) {
+        _db = std::make_unique<domain::db::digest::DigestDb>(_options.outputDir, config.getLog(), false );
+    } else {
+        _db = std::make_unique<domain::db::callgraph::CallGraphDb>(_options.outputDir, config.getLog());
+    }
+    _db->init();
+
+}
+
+inline void QueryCommand::executeListQuery(const std::vector<std::string>& parts) const {
+    if ( parts.size() <= 1) {
+        _results.log->writeln("Invalid queryValue list command, expecting table name", true);
+        return;
+    } 
+    _db->read();
+    _db->list(parts[1], _options.digest.displayRaw );
+}
+
+inline bool QueryCommand::execute() const {
+    auto result = true;
+    _db->init();
+    const std::vector<std::string> parts = infrastructure::string::stringUtils::split(_options.digest.queryValue, " ");
+    const auto& command = parts[0];
+    if (command == TQ_SCHEMA) {
+        _db->printSchema();
+    } else if (command == TQ_LIST) {
+        executeListQuery(parts);
+    } else {
+        result = false;
+        _results.log->writeln("Invalid queryValue command", true);
+    }
+
+    return result;
+}
 }
 
 

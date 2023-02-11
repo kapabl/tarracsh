@@ -14,7 +14,7 @@ public:
 
     void write(const std::string &value, bool doStdout = false);
     void writeln(const std::string &value, bool doStdout = false);
-    void setFile(std::string logFile);
+    void setFile(const std::string& logFile);
     void init(const std::string &logFile);
     static void emptyLogFile(const std::string &file);
 

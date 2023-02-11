@@ -18,14 +18,17 @@ struct ClassfileRow : infrastructure::db::tables::AutoIncrementedRow {
     infrastructure::db::tables::columns::DigestCol digest{};
 
     ClassfileRow() = default;
+    explicit ClassfileRow(const FileRow& fileRow) {
+        setFile(fileRow);
+    }
 
-    explicit ClassfileRow(const FileRow &fileRow) {
+    void setFile(const FileRow &fileRow) {
         file.id = fileRow.id;
     }
 
 };
 
-class ClassfilesTable : public  infrastructure::db::tables::Table<ClassfileRow> {
+class ClassfilesTable : public  infrastructure::db::tables::Table {
 
 public:
     explicit ClassfilesTable(infrastructure::db::Database &db,
@@ -33,7 +36,7 @@ public:
                              std::shared_ptr<FilesTable> filesTable);
 
     [[nodiscard]] std::string getStrongClassname(const FileRow &fileRow, const char *classname) const;
-    std::string getKey(const ClassfileRow &row) override;
+    [[nodiscard]] std::string getKey(const infrastructure::db::tables::AutoIncrementedRow* row) override;
     [[nodiscard]] std::string getStrongClassname(const ClassfileRow &row) const;
 
     void defineColumns() override;

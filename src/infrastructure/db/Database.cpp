@@ -4,6 +4,8 @@
 #include <string>
 #include <filesystem>
 #include <memory>
+#include <ranges>
+
 #include "StringPool.h"
 
 using namespace kapa::infrastructure::db;
@@ -19,12 +21,27 @@ void Database::stop() {
     write();
 }
 
+void Database::list(const std::string &tablename, bool displayRaw ) {
+    if ( !_tables.contains(tablename)) {
+        _log.writeln(format("Invalid table name: {}", tablename));
+    }
+    _tables[tablename]->list(displayRaw);
+}
+
+Table& Database::getTable(const std::string &tablename) {
+    auto& result = *_tables[tablename];
+    return result;
+}
+
 void Database::init() {
     _stringPool = std::make_shared<db::StringPool>(generateStringPoolFilename("sp"));
 }
 
 void Database::clean() {
     _stringPool->clean();
+    for (const auto& table : _tables | std::views::values) {
+        table->clean();
+    }
 }
 
 void Database::backup() {
@@ -32,13 +49,27 @@ void Database::backup() {
 }
 
 bool Database::read() {
-    const auto result = _stringPool->read();
-    return result;
+    if (!_stringPool->read()) return false;
+
+    for(const auto &table : _tables | std::views::values) {
+        if (!table->read()) return false;
+    }
+    return true;
 }
 
 bool Database::write() {
-    const auto result = _stringPool->write();
-    return result;
+    if (!_stringPool->write()) return false;
+    for (const auto& table : _tables | std::views::values) {
+        if (!table->write()) return false;
+    }
+    return true;
+
+}
+
+void Database::printSchema() {
+    for (const auto& table : _tables | std::views::values) {
+        table->printSchema();
+    }
 }
 
 columns::StringCol Database::getPoolString(const std::string &value) const {

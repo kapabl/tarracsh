@@ -118,7 +118,11 @@ void Results::printAll() const {
     long long totalClassfiles = standaloneClassfiles.count + jarfiles.classfileCount;
     const auto totalTime = profileData->analyzerTime.count();
     std::cout << std::endl;
-    log->writeln(std::format("classfiles: {:L}", totalClassfiles), true);
+    log->writeln(std::format(".class files: {}, in jars: {}, total: {}",
+        static_cast<uint32_t>(standaloneClassfiles.count),
+        static_cast<uint32_t>(jarfiles.classfileCount),
+        totalClassfiles), true);
+
     log->writeln(std::format("speed: {:.2f} classfile/s",
         1000.0 * totalClassfiles / totalTime), true);
     log->writeln(std::format("total time: {}", profileData->analyzerTime), true);

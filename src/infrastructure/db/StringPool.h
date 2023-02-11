@@ -53,7 +53,7 @@ private:
     char *_pool{nullptr};
     uint64_t _position{0};
 
-    std::unordered_map<std::string, uint64_t> _hash;
+    std::unordered_map<std::string_view, uint64_t> _hash;
 
     uint64_t _size{StartPoolSize};
     std::string _filename;
