@@ -948,9 +948,9 @@
     <ClCompile Include="src\domain\db\DigestDb.cpp" />
     <ClCompile Include="src\domain\db\table\FilesTable.cpp" />
     <ClCompile Include="src\infrastructure\db\StringPool.cpp" />
-    <ClInclude Include="src\infrastructure\db\table\Table.inl">
+    <ClCompile Include="src\infrastructure\db\table\Table.cpp">
       <FileType>Document</FileType>
-    </ClInclude>
+    </ClCompile>
     <ClCompile Include="src\infrastructure\filesystem\Utils.cpp" />
     <ClInclude Include="src\app\commands\CallGraphCommand.h" />
     <ClInclude Include="src\domain\digest\DigestEntryInfo.h" />
@@ -963,6 +963,7 @@
     <ClInclude Include="src\app\server\digest\ServiceImpl.h" />
     <ClInclude Include="src\app\server\digest\ServerCommand.h" />
     <ClInclude Include="src\app\Analyzer.h" />
+    <ClInclude Include="src\infrastructure\db\DbConsts.h" />
     <ClInclude Include="src\infrastructure\log\Log.h" />
     <ClInclude Include="src\domain\Options.h" />
     <ClInclude Include="src\domain\stats\ProfileData.h" />

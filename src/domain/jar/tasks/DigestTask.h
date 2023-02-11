@@ -20,20 +20,23 @@ public:
         db::digest::DigestDb &digestDb
         );
 
+    ~DigestTask() override;
+
+
     void processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) override;
     bool start() override;
     void end() override;
 
-    [[ nodiscard ]] db::digest::DigestDb &getDb() const { return _digestDb; }
+    [[ nodiscard ]] db::digest::DigestDb &getDb() const { return _db; }
 
 private:
-    db::digest::DigestDb &_digestDb;
+    db::digest::DigestDb &_db;
     stats::Results &_results;
     Options _options;
     bool _isFileUnchanged{false};
     bool _isNewJarFile{false};
     std::map<std::string, infrastructure::db::tables::columns::DigestCol> _digestMap;
-    std::unique_ptr<db::digest::FileRow> _pNewJarFileRow{};
+    db::digest::FileRow * _tempFileRow{nullptr};
 
     [[nodiscard]] std::optional<infrastructure::db::tables::columns::DigestCol> digestEntry(
         const digest::DigestJarEntryInfo &digestEntryInfo,
@@ -41,8 +44,8 @@ private:
 
     [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const db::digest::ClassfileRow *classRow);
     [[nodiscard]] bool isFileUnchanged() const;
-    [[nodiscard]] const db::digest::FileRow *createJarFileRow(const std::string &filename);
-    [[nodiscard]] const db::digest::FileRow *getOrCreateFileRow(const std::string &filename);
+    [[nodiscard]] db::digest::FileRow *createJarFileRow(const std::string &filename) const;
+    [[nodiscard]] db::digest::FileRow *getOrCreateFileRow(const std::string &filename);
 
     void updateFileTableInMemory(const digestUtils::DigestVector& digest) const;
 

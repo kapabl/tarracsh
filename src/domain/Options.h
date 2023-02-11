@@ -40,6 +40,7 @@ struct DigestOptions : InputOptions {
     std::string queryValue;
     DigestServerOptions server;
     DigestClientOptions client;
+    bool displayRaw{ false };
 };
 
 struct CallGraphOptions : InputOptions {

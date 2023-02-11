@@ -43,7 +43,7 @@ bool StringPool::read() {
     uint64_t currentPosition = 0;
 
     while (currentPosition < _position) {
-        std::string value(&_pool[currentPosition]);
+        std::string_view value(&_pool[currentPosition]);
         _hash[value] = currentPosition;
         currentPosition += value.length() + 1;
     }
@@ -80,19 +80,19 @@ tables::columns::StringCol StringPool::internalAdd(const std::string &stringValu
         if (stringValue.length() + _position >= _size) {
             reallocPool();
         }
-
-        _hash[stringValue] = _position;
-        _isDirty = true;
-        //TODO do something about progressive writing
         result = _position;
         if (stringValue.length() > 0) {
-            const char *begin = &*stringValue.begin();
+            const char* begin = &*stringValue.begin();
             std::memcpy(&_pool[result], begin, stringValue.length());
         }
 
         _position += stringValue.length();
         _pool[_position] = 0;
         _position++;
+
+        const std::string_view key(&_pool[result]);        
+        _hash[key] = result;
+        _isDirty = true;
 
     } else {
         result = it->second;

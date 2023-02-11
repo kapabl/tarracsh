@@ -1,72 +1,88 @@
-#ifndef KAPA_TABLE_INL
-#define KAPA_TABLE_INL
+#include <ranges>
 
 #include "Table.h"
 
-namespace kapa::infrastructure::db::tables {
+using namespace kapa::infrastructure::db::tables;
 
 
-template <typename T>
-void Table<T>::printSchema() {
+void Table::printSchema() {
     printLayout();
 }
 
-template <typename T> std::string Table<T>::generateStdOutHeader() const {
+std::string Table::generateStdOutHeader() const {
     std::string result;
-    for(const auto& columnProperties: _columns ) {
+    forEachColumn([&result](const auto &properties, auto index) -> void {
         if (!result.empty()) {
             result += ",";
         }
-        result += columnProperties.name;
-    }
+        result += properties.name;
+    });
+
     return result;
 }
 
 
-template <typename T> std::string Table<T>::generateStdOutRow(T* pRow) {
+std::string Table::generateStdOutRow(AutoIncrementedRow *row, bool displayRaw) const {
     std::string result;
 
-    for(auto& columnProperties: _columns) {
-        char* pValue = reinterpret_cast<char*>(pRow) + columnProperties.offsetInRow;
-        if ( !result.empty()) {
+    forEachColumn([&result,&row,&displayRaw,this](const auto &properties, auto index) -> void {
+        char *pValue = reinterpret_cast<char *>(row) + properties.offsetInRow;
+        if (!result.empty()) {
             result += ",";
         }
-        result += columnProperties.valueToString(pValue, _db);
-    }
+        result += properties.valueToString(pValue, _db, displayRaw);
+    });
 
     return result;
 }
 
-template <typename T> void Table<T>::list() {
+void Table::list(bool displayRaw) {
     std::cout << std::format("table: {}", _layout.header.name) << std::endl;
     std::cout << generateStdOutHeader() << std::endl;
-    for( auto pRow: _autoIncrementIndex ) {
-        std::cout << generateStdOutRow( pRow ) << std::endl;
+    for (const auto pRow : _autoIncrementIndex) {
+        std::cout << generateStdOutRow(pRow, displayRaw) << std::endl;
     }
 }
 
+uint64_t Table::size() const { return _rows.size(); }
 
-template <typename T>
-void Table<T>::printLayout() {
+std::string Table::getColumnValue(const uint64_t id, const char *columnName) {
+    const auto row = _autoIncrementIndex[id];
+    assert(_columnByName.contains(columnName));
+    const auto& columnProperties = _columns[_columnByName[columnName]];
+    char *pValue = reinterpret_cast<char *>(row) + columnProperties.offsetInRow;
+    auto result = columnProperties.valueToString(pValue, _db, false);
+    return result;
+}
+
+AutoIncrementedRow *Table::allocateRow() const {
+    const auto result = (AutoIncrementedRow *)malloc(_rowSize);
+    return result;
+}
+
+void Table::freeRow(AutoIncrementedRow *row) {
+    free(row);
+}
+
+
+void Table::printLayout() {
     std::cout << std::endl;
     std::cout << std::format("table name: {}", _layout.header.name) << std::endl;
     std::cout << std::format("column count: {}", _layout.header.columnCount) << std::endl;
     std::cout << std::format("row count: {}", calculateRowCount()) << std::endl;
     std::cout << std::endl;
     std::cout << "columns:" << std::endl;
-    auto index = 1u;
-    for (auto &column : _columns) {
+    forEachColumn([](const auto &properties, auto index) -> void {
         std::cout << std::right
             << std::setw(7) << std::format("no: {}, ", index)
-            << std::setw(25) << std::format("name: {}, ", column.name)
-            << std::setw(25) << std::format("type: {}, ", StorageTypeToString(column.type))
-            << std::setw(25) << std::format("display as: {}", displayAsToString(column.displayAs))
+            << std::setw(25) << std::format("name: {}, ", properties.name)
+            << std::setw(25) << std::format("type: {}, ", columns::StorageTypeToString(properties.type))
+            << std::setw(25) << std::format("display as: {}", columns::displayAsToString(properties.displayAs))
             << std::endl;
-        index++;
-    }
+    });
 }
 
-template <typename T> void Table<T>::writeRows(FILE *file) {
+void Table::writeRows(FILE *file) {
     if (std::fseek(file, getHeaderSize(), SEEK_SET) != 0) {
         _db.log().writeln(std::format("File seek error: {}", _filename), true);
     }
@@ -74,38 +90,24 @@ template <typename T> void Table<T>::writeRows(FILE *file) {
     uint64_t autoincrement = 0;
     auto rowsWritten = 0u;
     auto skippedRows = 0u;
+
     while (autoincrement < _autoIncrementIndex.size()) {
 
         const auto pRow = _autoIncrementIndex[autoincrement];
         assert(pRow->id == autoincrement);
 
         if (_dirtyRows.contains(autoincrement)) {
-            if ( skippedRows > 0 ) {
-                const auto newPosition = getHeaderSize() + autoincrement * RowSize;
+            if (skippedRows > 0) {
+                const auto newPosition = getHeaderSize() + autoincrement * _rowSize;
                 if (std::fseek(file, newPosition, SEEK_SET) != 0) {
                     _db.log().writeln(std::format("File seek error: {}", _filename), true);
                     break;
                 }
-#ifdef _DEBUG
-                if (std::ftell(file) != newPosition) {
-                    _db.log().writeln(std::format("File seek failed: {}, expected position: {}, got: {}",
-                        _filename, newPosition, std::ftell(file)), true);
-                }
-#endif
                 skippedRows = 0;
             }
-#ifdef _DEBUG
-            if ( _dirtyRows[ autoincrement] == DirtyType::isUpdate ) {
-                T row;
-                const auto readBytes = std::fread(&row, 1, RowSize, file);
-                assert(readBytes == RowSize);
-                assert(row.id == autoincrement);
-                std::fseek(file, -RowSize, SEEK_CUR);
-            }
-            
-#endif
-            const auto bytesWritten = std::fwrite(pRow, 1, RowSize, file);
-            if ( bytesWritten != RowSize ) {
+
+            const auto bytesWritten = std::fwrite(pRow, 1, _rowSize, file);
+            if (bytesWritten != _rowSize) {
                 _db.log().writeln(std::format("File write error: {}", _filename), true);
                 break;
             }
@@ -120,24 +122,24 @@ template <typename T> void Table<T>::writeRows(FILE *file) {
     _dirtyRows.clear();
 }
 
-template <typename T> void Table<T>::writeHeader(FILE *file) {
+void Table::writeHeader(FILE *file) {
     _layout.header.columnCount = _columns.size();
     std::fwrite(&_layout.header, sizeof(TableLayout::Header), 1, file);
 }
 
-template <typename T> void Table<T>::writeSchema(FILE *file) const {
-    const auto buffer = reinterpret_cast<const char *>(&*_columns.begin());
-    std::fwrite(buffer, sizeof(columns::Properties), _columns.size(), file);
+void Table::writeSchema(FILE *file) const {
+    std::fwrite(&*_columns.begin(), sizeof(columns::Properties), _columns.size(), file);
 }
 
-template <typename T> bool Table<T>::readRows(FILE *file) {
+bool Table::readRows(FILE *file) {
+
     while (!std::feof(file)) {
-        T row;
-        const auto bytesRead = std::fread(reinterpret_cast<char*>(&row), 1, RowSize, file);
-        if ( bytesRead == 0 ) {
+        auto *row = allocateRow();
+        const auto blocksRead = std::fread(row, _rowSize, 1, file);
+        if (blocksRead == 0) {
             continue;
         }
-        if (bytesRead != RowSize ) {
+        if (blocksRead != 1) {
             _db.log().writeln(std::format("Error reading table: {}", _filename), true);
             return false;
         }
@@ -147,7 +149,7 @@ template <typename T> bool Table<T>::readRows(FILE *file) {
     return true;
 }
 
-template <typename T> bool Table<T>::readHeader(FILE *file) {
+bool Table::readHeader(FILE *file) {
     if (std::fread(&_layout.header, sizeof(TableLayout::Header), 1, file) != 1) {
         _db.log().writeln(std::format("Error reading table: {}", _filename), true);
         return false;
@@ -162,125 +164,148 @@ template <typename T> bool Table<T>::readHeader(FILE *file) {
     return result;
 }
 
-template <typename T> bool Table<T>::readSchema(FILE *file) {
-    auto const bytesToRead = _layout.header.columnCount * sizeof(columns::Properties);
-    _columns.resize(_layout.header.columnCount);
-    if (std::fread(&*_columns.begin(), bytesToRead, 1, file) != 1) {
-        _db.log().writeln(std::format("Error reading table: {}", _filename), true);
-        return false;
-    }
+bool Table::readSchema(FILE *file) {
+    _columns.resize( _layout.header.columnCount);
+    std::fread(&*_columns.begin(), sizeof(columns::Properties), _columns.size(), file);
 
+    forEachColumn([this](const auto &properties, const auto index) -> void {
+        _columnByName[properties.name] = index;
+    });
     return true;
 
 }
 
-template <typename T> void Table<T>::internalAdd(T &row, const std::string &key) {
+void Table::internalAdd(AutoIncrementedRow *row, const std::string &key) {
 
-    const auto &it = _rows.find(key);
     assert(!_rows.contains(key));
 
-    T *pRow = &(_rows.insert({key, row}).first->second);
-    const auto id = _autoIncrementIndex.size();
-    pRow->id = id;
-    row.id = id;
-    _autoIncrementIndex.push_back(pRow);
-    _reverseAutoincrementIndex[pRow] = id;
-
-}
-
-template <typename T> void Table<T>::internalUpdate(T &row, const std::string &key) {
-    assert(_rows.contains(key));
-    const auto id = _rows[key].id;
-    row.id = id;
+    row->id = _autoIncrementIndex.size();
     _rows[key] = row;
+    _autoIncrementIndex.push_back(row);
+
+    if ( _autoIncrementIndex[0]->id != 0) {
+        std::cout << "*stop here*";
+    }
+
 }
 
-template <typename T> Table<T>::Table(db::Database &db, const std::string &tablename):
-    _db(db),
-    _stringPool(db.getStringPool()) {
+void Table::internalUpdate(AutoIncrementedRow *row, const std::string &key) {
+    assert(_rows.contains(key));
+    const auto destRow = _rows[key];
+    if (destRow == row) {
+        return;
+    }
+
+    row->id = destRow->id;
+    memcpy_s(destRow, _rowSize, row, _rowSize);
+    freeRow(row);
+}
+
+Table::Table(db::Database &db, const std::string &name, uint64_t rowSize)
+    : _db(db),
+      _rowSize(rowSize),
+      _name(name),
+      _stringPool(db.getStringPool()) {
     _layout.header.signature = KAPA_TABLE_SIGNATURE;
-    strcpy_s(_layout.header.name, tablename.c_str());
-    _filename = db.generateTableFilename(tablename);
+    strcpy_s(_layout.header.name, name.c_str());
+    _filename = db.generateTableFilename(name);
 
 }
 
-template <typename T> void Table<T>::init() {
+inline Table::~Table() {
+    for (const auto row : _rows | std::views::values) {
+        freeRow(row);
+    }
+}
+
+std::string Table::getName() const { return _name; }
+
+void Table::init() {
     defineColumns();
 }
 
-template <typename T> uint64_t Table<T>::getFileSize() const {
+void Table::forEachColumn(const std::function<void(const columns::Properties &, const int index)> &func) const {
+    auto index = 0u;
+    while (index < _layout.header.columnCount) {
+        func(_columns[index], index);
+        index++;
+    }
+}
+
+uint64_t Table::getFileSize() const {
     const auto result = std::filesystem::file_size(_filename);
     return result;
 }
 
-template <typename T> uint64_t Table<T>::getHeaderSize() const {
+uint64_t Table::getHeaderSize() const {
     const auto result = sizeof(TableLayout) + (_layout.header.columnCount - 1) * sizeof(columns::Properties);
     return result;
 }
 
-template <typename T> uint64_t Table<T>::calculateRowCount() const {
-    const auto result = (getFileSize() - getHeaderSize()) / RowSize;
+uint64_t Table::calculateRowCount() const {
+    const auto result = (getFileSize() - getHeaderSize()) / _rowSize;
     return result;
 }
 
-template <typename T> std::optional<T> Table<T>::get(std::string key) const {
-    std::optional<T> result;
+AutoIncrementedRow *Table::get(std::string key) const {
+    AutoIncrementedRow *result{nullptr};
+
     const auto &it = _rows.find(key);
     if (it != _rows.end()) {
-        result = *it;
+        result = it->second;
     }
     return result;
 }
 
-template <typename T> void Table<T>::update(T &row) {
+void Table::update(AutoIncrementedRow *row) {
     std::lock_guard lock(_mutex);
-    auto key = getKey(row);
+    const auto key = getKey(row);
     internalUpdate(row, key);
     _isDirty = true;
-    if (!_dirtyRows.contains(row.id)) {
-        _dirtyRows[row.id] = DirtyType::isUpdate;
+    if (!_dirtyRows.contains(row->id)) {
+        _dirtyRows[row->id] = DirtyType::isUpdate;
     }
 }
 
-template <typename T> uint64_t Table<T>::addOrUpdate(T &row) {
+uint64_t Table::addOrUpdate(AutoIncrementedRow *row) {
 
     std::lock_guard lock(_mutex);
-    auto key = getKey(row);
+    const auto key = getKey(row);
 
     if (_rows.contains(key)) {
         internalUpdate(row, key);
-        if (!_dirtyRows.contains(row.id)) {
-            _dirtyRows[row.id] = DirtyType::isUpdate;
+        if (!_dirtyRows.contains(row->id)) {
+            _dirtyRows[row->id] = DirtyType::isUpdate;
         }
     } else {
         internalAdd(row, key);
-        _dirtyRows[row.id] = DirtyType::isNew;
+        _dirtyRows[row->id] = DirtyType::isNew;
     }
 
-    const auto result = row.id;
+    const auto result = row->id;
 
     _isDirty = true;
     return result;
 }
 
-template <typename T> const T * Table<T>::getRow(uint64_t id) {
+const AutoIncrementedRow *Table::getRow(uint64_t id) {
     const auto result = _autoIncrementIndex[id];
     return result;
 }
 
-template <typename T> uint64_t Table<T>::add(T &row) {
+uint64_t Table::add(AutoIncrementedRow *row) {
     std::lock_guard lock(_mutex);
-    auto key = getKey(row);
+    const auto key = getKey(row);
     internalAdd(row, key);
-    const auto result = row.id;
+    const auto result = row->id;
 
     _isDirty = true;
-    _dirtyRows[row.id] = DirtyType::isNew;
+    _dirtyRows[row->id] = DirtyType::isNew;
 
     return result;
 }
 
-template <typename T> bool Table<T>::write() {
+bool Table::write() {
     if (!_isDirty) return true;
 
     std::lock_guard lock(_mutex);
@@ -290,7 +315,7 @@ template <typename T> bool Table<T>::write() {
 
     FILE *file = nullptr;
     if (fopen_s(&file, _filename.c_str(), mode) == 0) {
-        if ( std::fseek(file, 0, SEEK_SET) != 0 ) {
+        if (std::fseek(file, 0, SEEK_SET) != 0) {
             _db.log().writeln(std::format("Error seeking file {}", _filename), true);
             return false;
         }
@@ -299,7 +324,7 @@ template <typename T> bool Table<T>::write() {
             writeSchema(file);
         }
         writeRows(file);
-        if ( fclose(file) == -1 ) {
+        if (fclose(file) == -1) {
             _db.log().writeln(std::format("Error closing file {}", _filename), true);
             return false;
         }
@@ -312,7 +337,7 @@ template <typename T> bool Table<T>::write() {
     return true;
 }
 
-template <typename T> bool Table<T>::clean() {
+bool Table::clean() {
     std::lock_guard lock(_mutex);
     const auto stringPoolCleaned = _stringPool->clean();
     auto tableFileCleaned = true;
@@ -328,11 +353,11 @@ template <typename T> bool Table<T>::clean() {
     return result;
 }
 
-template <typename T> void Table<T>::backup() {
+void Table::backup() {
     filesystem::utils::backupPrevFile(_filename);
 }
 
-template <typename T> bool Table<T>::read() {
+bool Table::read() {
     std::lock_guard lock(_mutex);
 
     if (!std::filesystem::exists(_filename)) return true;
@@ -352,18 +377,16 @@ template <typename T> bool Table<T>::read() {
     return result;
 }
 
-template <typename T> std::shared_ptr<StringPool> Table<T>::getStringPool() const {
+std::shared_ptr<kapa::infrastructure::db::StringPool> Table::getStringPool() const {
     return _stringPool;
 }
 
-template <typename T> const T *Table<T>::findByKey(const std::string &key) {
+AutoIncrementedRow *Table::findByKey(const std::string &key) {
     std::shared_lock lock(_mutex);
-    T *result{};
+    AutoIncrementedRow *result{nullptr};
     const auto it = _rows.find(key);
     if (it != _rows.end()) {
-        result = &it->second;
+        result = it->second;
     }
     return result;
 }
-}
-#endif

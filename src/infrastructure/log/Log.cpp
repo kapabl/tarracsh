@@ -28,8 +28,8 @@ void Log::writeln(const std::string &value, const bool doStdout ) {
 
 }
 
-void Log::setFile(std::string logFile) {
-    _logFile = std::move(logFile);
+void Log::setFile(const std::string& logFile) {
+    _logFile = logFile;
 }
 
 void Log::init(const std::string &logFile) {

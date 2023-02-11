@@ -1,5 +1,4 @@
 #include "FilesTable.h"
-#include "../../../infrastructure/db/table/Table.inl"
 
 using namespace kapa::tarracsh::domain::db::digest;
 using namespace kapa::infrastructure::db::tables::columns;
@@ -7,8 +6,8 @@ using namespace columns;
 
 namespace kapa::tarracsh::domain::db::digest {
 
-FilesTable::FilesTable(infrastructure::db::Database &db, const std::string &tablename)
-    : Table(db, tablename) {
+FilesTable::FilesTable(infrastructure::db::Database &db, const std::string &name)
+    : Table(db, name, sizeof(FileRow)) {
 }
 
 std::string FilesTable::createKey(const char *filename) {
@@ -21,33 +20,37 @@ std::string FilesTable::createKey(const infrastructure::db::tables::columns::Str
     return result;
 }
 
-std::string FilesTable::getKey(const FileRow &row) {
-    return createKey(row);
-}
-
-const char *FilesTable::getFilename(const FileRow &row) const {
-    const auto result = _stringPool->getCString(row.filename);
+std::string FilesTable::getKey(const infrastructure::db::tables::AutoIncrementedRow *row) {
+    std::string result = createKey(row);
     return result;
 }
 
-std::string FilesTable::createKey(const FileRow &row) const {
-    auto result = createKey(row.filename);
+const char *FilesTable::getFilename(const FileRow *row) const {
+    const auto result = _stringPool->getCString(row->filename);
+    return result;
+}
+
+std::string FilesTable::createKey(const infrastructure::db::tables::AutoIncrementedRow *row) const {
+    const auto fileRow = static_cast<const FileRow *>(row);
+    auto result = createKey(fileRow->filename);
     return result;
 }
 
 void FilesTable::defineColumns() {
-    DECLARE_COLUMN_PROP(id, StorageType::UInt64, DisplayAs::AsUInt64);
-    DECLARE_COLUMN_PROP(type, StorageType::Int32, DisplayAs::AsEntryType);
-    DECLARE_COLUMN_PROP(filename, StorageType::String, DisplayAs::AsString);
-    DECLARE_COLUMN_PROP(lastWriteTime, StorageType::UInt64, DisplayAs::AsDatetime);
-    DECLARE_COLUMN_PROP(fileSize, StorageType::UInt64, DisplayAs::AsSize);
-    DECLARE_COLUMN_PROP(classfileCount, StorageType::UInt32, DisplayAs::AsUInt32);
-    DECLARE_COLUMN_PROP(digest, StorageType::Digest, DisplayAs::AsDigest);
+    DECLARE_COLUMN_PROP(FileRow, id, StorageType::UInt64, DisplayAs::AsUInt64);
+    DECLARE_COLUMN_PROP(FileRow, type, StorageType::Int32, DisplayAs::AsEntryType);
+    DECLARE_COLUMN_PROP(FileRow, filename, StorageType::String, DisplayAs::AsString);
+    DECLARE_COLUMN_PROP(FileRow, lastWriteTime, StorageType::UInt64, DisplayAs::AsDatetime);
+    DECLARE_COLUMN_PROP(FileRow, fileSize, StorageType::UInt64, DisplayAs::AsSize);
+    DECLARE_COLUMN_PROP(FileRow, classfileCount, StorageType::UInt32, DisplayAs::AsUInt32);
+    DECLARE_COLUMN_PROP(FileRow, digest, StorageType::Digest, DisplayAs::AsDigest);
 
     Properties::registerColumn(
         DisplayAs::AsEntryType,
-        [](char *pValue, Properties &properties, kapa::infrastructure::db::Database &db) -> std::string {
+        [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
+           bool displayRaw) -> std::string {
             const auto entryType = static_cast<EntryType>(*reinterpret_cast<int *>(pValue));
+            if (displayRaw) return std::format("{}", static_cast<int>(entryType));
             switch (entryType) {
                 case Classfile:
                     return "classfile";

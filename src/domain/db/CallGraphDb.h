@@ -15,11 +15,6 @@ public:
     }
 
     void init() override;
-    void clean() override;
-    bool read() override;
-    bool write() override;
-
-    void printSchema() override;
     static std::shared_ptr<CallGraphDb> create(const std::string &dataDir, infrastructure::log::Log &log, bool doClean);
 private:
 };
