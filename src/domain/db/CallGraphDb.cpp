@@ -11,12 +11,11 @@ void CallGraphDb::init() {
 }
 
 std::shared_ptr<CallGraphDb> CallGraphDb::create(
-    const std::string& dataDir,
-    infrastructure::log::Log& log, const bool doClean) {
+    const Config& config, const bool doClean) {
 
     std::shared_ptr<CallGraphDb> result;
 
-    const auto db = std::make_shared<CallGraphDb>(dataDir, log);
+    const auto db = std::make_shared<CallGraphDb>(config);
 
     if (Database::init(*result, doClean)) {
         result = db;

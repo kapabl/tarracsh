@@ -159,8 +159,8 @@ static bool registerColumns() {
             if (displayRaw) {
                 result = std::format("{}", ref);
             } else {
-                auto &table = db.getTable(properties.refColProperties.table);
-                result = std::format("{}", table.getColumnValue(ref, properties.refColProperties.displayColumn));
+                auto table = db.getTable(properties.refColProperties.table);
+                result = std::format("{}", table->getColumnValue(ref, properties.refColProperties.displayColumn));
             }
             return result;
         });

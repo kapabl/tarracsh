@@ -12,24 +12,17 @@ using namespace kapa::infrastructure::db;
 using namespace tables;
 
 
-Database::Database(const std::string &dataDir, log::Log &log)
-    : _dataDir(dataDir), _log(log) {
-
+Database::Database(const Config& config)
+    : _log(*config.log), _config(config) {
+    _queryEngine = std::make_unique<query::Engine>(*this);
 }
 
 void Database::stop() {
     write();
 }
 
-void Database::list(const std::string &tablename, bool displayRaw ) {
-    if ( !_tables.contains(tablename)) {
-        _log.writeln(format("Invalid table name: {}", tablename));
-    }
-    _tables[tablename]->list(displayRaw);
-}
-
-Table& Database::getTable(const std::string &tablename) {
-    auto& result = *_tables[tablename];
+Table *Database::getTable(const std::string &tablename) {
+    const auto result = _tables.contains(tablename ) ? _tables[tablename] : nullptr;
     return result;
 }
 
@@ -49,11 +42,13 @@ void Database::backup() {
 }
 
 bool Database::read() {
+    if (_read) return false;
     if (!_stringPool->read()) return false;
 
     for(const auto &table : _tables | std::views::values) {
         if (!table->read()) return false;
     }
+    _read = true;
     return true;
 }
 
@@ -79,7 +74,7 @@ columns::StringCol Database::getPoolString(const std::string &value) const {
 
 std::string Database::generateTableFilename(const std::string &name) const {
     std::string result(name + TableExtension);
-    result = (std::filesystem::path(_dataDir) / result).string();
+    result = (std::filesystem::path(_config.dataDir) / result).string();
 
     return result;
 }
@@ -98,9 +93,14 @@ bool Database::init(Database &db, const bool doClean) {
     return result;
 }
 
+bool Database::executeQuery(const std::string &query, const bool displayRaw) {
+    const auto result = _queryEngine->execute(query, displayRaw);
+    return result;
+}
+
 std::string Database::generateStringPoolFilename(const std::string &name) const {
     std::string result(name + StringPoolExtension);
-    result = (std::filesystem::path(_dataDir) / result).string();
+    result = (std::filesystem::path(_config.dataDir) / result).string();
 
     return result;
 }

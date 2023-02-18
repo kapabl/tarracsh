@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <string>
 #include "StringPool.h"
+#include "query/Engine.h"
 #include "../log/Log.h"
 
 
@@ -15,11 +16,16 @@ class Database {
 
 public:
 
-    explicit Database(const std::string& dataDir, log::Log& log);
+
+    struct Config {
+        std::string dataDir;
+        log::Log* log{ nullptr };
+    };
+
+    explicit Database(const Config& config);
     virtual ~Database() = default;
     virtual void stop();
-    void list(const std::string& tablename, bool displayRaw);
-    tables::Table& getTable(const std::string& tablename);
+    tables::Table *getTable(const std::string &tablename);
 
     Database(const Database& other) = delete;
     Database(const Database&& other) = delete;
@@ -33,26 +39,24 @@ public:
     virtual bool write();
 
     virtual void printSchema();
-
-
     [[nodiscard]] tables::columns::StringCol getPoolString(const std::string& value) const;
-
     std::shared_ptr<StringPool> getStringPool() { return _stringPool; }
     [[nodiscard]] std::string generateTableFilename(const std::string& name) const;
-
     [[nodiscard]] log::Log& log() const { return _log; }
-
     static bool init( Database& db, const bool doClean );
+    bool executeQuery(const std::string &query, const bool displayRaw);
+
 
 protected:
 
     [[nodiscard]] std::string generateStringPoolFilename(const std::string &name) const;
     std::shared_ptr<StringPool> _stringPool;
-    std::string _dataDir;
+    std::unique_ptr<query::Engine> _queryEngine;
     log::Log& _log;
-
-
     std::unordered_map<std::string, tables::Table*> _tables;
+    bool _read{false};
+
+    Config _config;
 };
 
 

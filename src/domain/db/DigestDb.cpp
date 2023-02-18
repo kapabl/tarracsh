@@ -23,14 +23,13 @@ void DigestDb::init() {
 }
 
 std::shared_ptr<DigestDb> DigestDb::create(
-    const std::string &dataDir,
-    infrastructure::log::Log &log,
+    const Config& config,
     const bool doClean,
     const bool hasSaveThread) {
 
     std::shared_ptr<DigestDb> result;
 
-    const auto db = std::make_shared<DigestDb>(dataDir, log, hasSaveThread);
+    const auto db = std::make_shared<DigestDb>(config, hasSaveThread);
 
     if (Database::init(*db, doClean)) {
         result = db;

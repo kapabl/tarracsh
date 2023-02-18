@@ -14,13 +14,12 @@ namespace kapa::tarracsh::domain::db::digest {
 
 class DigestDb : public infrastructure::db::Database {
 public:
-    DigestDb(const std::string &dataDir, infrastructure::log::Log& log, const bool hasSaveThread)
-        : Database(dataDir, log), _hasSaveThread( hasSaveThread ) {
+    explicit DigestDb(const Config& config, const bool hasSaveThread)
+        : Database(config), _hasSaveThread( hasSaveThread ) {
     }
 
     static std::shared_ptr<DigestDb> create(
-        const std::string& dataDir,
-        infrastructure::log::Log& log,
+        const Config& config,
         const bool doClean,
         const bool hasSaveThread);
 
