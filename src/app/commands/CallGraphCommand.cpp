@@ -14,9 +14,8 @@ CallGraphCommand::CallGraphCommand(CLI::App* parent)
 bool CallGraphCommand::initDb() {
 
     domain::stats::profiler::ScopedTimer timer(&_results.profileData->initDb);
-    //TODO use _options.callGraph
-    _db = domain::db::callgraph::CallGraphDb::create(_options.outputDir, *_results.log, _options.digest.rebuild);
-    const auto result = _db.get() != nullptr;
+    _db = domain::db::callgraph::CallGraphDb::create({ _options.outputDir, _results.log.get()}, _options.digest.rebuild);
+    const auto result = _db != nullptr;
     return result;
 
 }

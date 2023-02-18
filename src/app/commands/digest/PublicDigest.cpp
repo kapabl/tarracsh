@@ -23,7 +23,8 @@ bool PublicDigest::initDb() {
 
     ScopedTimer timer(&_results.profileData->initDb);
 
-    _db = domain::db::digest::DigestDb::create(_options.outputDir, *_results.log, _options.digest.rebuild, false );
+
+    _db = domain::db::digest::DigestDb::create({ _options.outputDir, _results.log.get()}, _options.digest.rebuild, false);
     const auto result = _db.get() != nullptr;
     return result;
 

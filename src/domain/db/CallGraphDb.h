@@ -9,13 +9,13 @@ namespace kapa::tarracsh::domain::db::callgraph {
 
 class CallGraphDb : public infrastructure::db::Database {
 public:
-    CallGraphDb(const std::string& dataDir, infrastructure::log::Log& log)
-        : Database(dataDir, log) {
+    explicit CallGraphDb(const Config& config)
+        : Database(config) {
 
     }
 
     void init() override;
-    static std::shared_ptr<CallGraphDb> create(const std::string &dataDir, infrastructure::log::Log &log, bool doClean);
+    static std::shared_ptr<CallGraphDb> create(const Config& config, bool doClean);
 private:
 };
 

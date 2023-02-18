@@ -70,8 +70,8 @@ bool ServiceImpl::initDb() {
     {
         ScopedTimer timer(&duration);
         _db = DigestDb::create(
-            _context.getOptions().outputDir, 
-            _context.getLog(), 
+            {_context.getOptions().outputDir,
+             &_context.getLog()},
             false,
             true);
     }
@@ -114,7 +114,7 @@ void ServiceImpl::init() {
     if (initDb()) {
         startServer();
         _db->stop();
-        
+
     }
 
 }

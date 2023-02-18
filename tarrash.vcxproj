@@ -901,6 +901,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\infrastructure\db\query\Engine.cpp" />
     <ClCompile Include="src\app\commands\CallGraphCommand.cpp" />
     <ClCompile Include="src\app\commands\ParseCommand.cpp" />
     <ClCompile Include="src\app\commands\digest\PublicDigest.cpp" />
@@ -952,6 +953,7 @@
       <FileType>Document</FileType>
     </ClCompile>
     <ClCompile Include="src\infrastructure\filesystem\Utils.cpp" />
+    <ClInclude Include="src\infrastructure\db\query\Engine.h" />
     <ClInclude Include="src\app\commands\CallGraphCommand.h" />
     <ClInclude Include="src\domain\digest\DigestEntryInfo.h" />
     <ClInclude Include="src\infrastructure\app\Command.h" />
