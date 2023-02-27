@@ -94,7 +94,7 @@ bool Database::init(Database &db, const bool doClean) {
 }
 
 bool Database::executeQuery(const std::string &query, const bool displayRaw) {
-    const auto result = _queryEngine->execute(query, displayRaw);
+    const auto result = _queryEngine->execute2(query, displayRaw);
     return result;
 }
 
