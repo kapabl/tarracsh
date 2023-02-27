@@ -18,6 +18,7 @@ public:
     void log(const std::string &msg, bool doStdout = false) const;
     void executeListQuery(const std::vector<std::string> &parts, const bool displayRaw) const;
     bool execute(const std::string &query, const bool displayRaw);
+    bool execute2(const std::string &query, bool displayRaw);
 
 private:
     Database& _db;

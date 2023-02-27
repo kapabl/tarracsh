@@ -32,7 +32,7 @@
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'">
-    <LocalDebuggerCommandArguments>public-digest --query "list classfiles"</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>public-digest --query "list files where aas"</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
     <LocalDebuggerEnvironment>
