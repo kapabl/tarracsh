@@ -16,13 +16,10 @@ class Engine {
 public:
     explicit Engine(Database& db);
     void log(const std::string &msg, bool doStdout = false) const;
-    void executeListQuery(const std::vector<std::string> &parts, const bool displayRaw) const;
-    bool execute(const std::string &query, const bool displayRaw);
-    bool execute2(const std::string &query, bool displayRaw);
+    [[nodiscard]] auto execute(const std::string &query, bool displayRaw) const -> bool;
 
 private:
     Database& _db;
-    void list(const std::string& tablename, bool displayRaw) const;
 
 };
 

@@ -1,50 +1,77 @@
 #ifndef KAPA_DB_QUERY_LISTENER
 #define KAPA_DB_QUERY_LISTENER
 
+#include <functional>
+#include <regex>
 
+#include "../../Database.h"
+#include "../../table/Table.h"
 #include "antlr4-runtime.h"
 #include "KapaQueryBaseListener.h"
 
 
 namespace kapa::infrastructure::db::query {
 
-class ListenerImpl final : public KapaQueryBaseListener {
-public:
+    class ListenerImpl final : public KapaQueryBaseListener {
+    public:
+        explicit ListenerImpl(Database& db, const bool displayRaw);
 
-  virtual void enterQuery(KapaQueryParser::QueryContext * /*ctx*/) override;
-  virtual void exitQuery(KapaQueryParser::QueryContext * /*ctx*/) override;
+        void enterQuery(KapaQueryParser::QueryContext* /*ctx*/) override;
+        void exitQuery(KapaQueryParser::QueryContext* /*ctx*/) override;
 
-  virtual void enterStatement(KapaQueryParser::StatementContext * /*ctx*/) override;
-  virtual void exitStatement(KapaQueryParser::StatementContext * /*ctx*/) override;
+        void enterStatement(KapaQueryParser::StatementContext* /*ctx*/) override;
+        void exitStatement(KapaQueryParser::StatementContext* /*ctx*/) override;
 
-  virtual void enterSchema(KapaQueryParser::SchemaContext * /*ctx*/) override;
-  virtual void exitSchema(KapaQueryParser::SchemaContext * /*ctx*/) override;
+        void enterSchema(KapaQueryParser::SchemaContext* /*ctx*/) override;
+        void exitSchema(KapaQueryParser::SchemaContext* /*ctx*/) override;
 
-  virtual void enterList(KapaQueryParser::ListContext * /*ctx*/) override;
-  virtual void exitList(KapaQueryParser::ListContext * /*ctx*/) override;
+        void enterList(KapaQueryParser::ListContext* /*ctx*/) override;
+        void exitList(KapaQueryParser::ListContext* /*ctx*/) override;
 
-  virtual void enterWhere(KapaQueryParser::WhereContext * /*ctx*/) override;
-  virtual void exitWhere(KapaQueryParser::WhereContext * /*ctx*/) override;
+        void enterWhere(KapaQueryParser::WhereContext* /*ctx*/) override;
+        void exitWhere(KapaQueryParser::WhereContext* /*ctx*/) override;
 
-  virtual void enterExpr(KapaQueryParser::ExprContext * /*ctx*/) override;
-  virtual void exitExpr(KapaQueryParser::ExprContext * /*ctx*/) override;
+        void enterExpr(KapaQueryParser::ExprContext* /*ctx*/) override;
+        void exitExpr(KapaQueryParser::ExprContext* /*ctx*/) override;
 
-  virtual void enterFilter(KapaQueryParser::FilterContext * /*ctx*/) override;
-  virtual void exitFilter(KapaQueryParser::FilterContext * /*ctx*/) override;
+       
+        void enterFilter(KapaQueryParser::FilterContext* /*ctx*/) override;
+        void exitFilter(KapaQueryParser::FilterContext* /*ctx*/) override;
 
-  virtual void enterTablename(KapaQueryParser::TablenameContext * /*ctx*/) override;
-  virtual void exitTablename(KapaQueryParser::TablenameContext * /*ctx*/) override;
+        void enterTablename(KapaQueryParser::TablenameContext* /*ctx*/) override;
+        void exitTablename(KapaQueryParser::TablenameContext* /*ctx*/) override;
 
-  virtual void enterColumn(KapaQueryParser::ColumnContext * /*ctx*/) override;
-  virtual void exitColumn(KapaQueryParser::ColumnContext * /*ctx*/) override;
+        void enterColumn(KapaQueryParser::ColumnContext* /*ctx*/) override;
+        void exitColumn(KapaQueryParser::ColumnContext* /*ctx*/) override;
 
 
-  virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override;
-  virtual void exitEveryRule(antlr4::ParserRuleContext * /*ctx*/) override;
-  virtual void visitTerminal(antlr4::tree::TerminalNode * /*node*/) override;
-  virtual void visitErrorNode(antlr4::tree::ErrorNode * /*node*/) override;
+        void enterEveryRule(antlr4::ParserRuleContext* /*ctx*/) override;
+        void exitEveryRule(antlr4::ParserRuleContext* /*ctx*/) override;
+        void visitTerminal(antlr4::tree::TerminalNode* /*node*/) override;
+        void visitErrorNode(antlr4::tree::ErrorNode* /*node*/) override;
 
-};
+    private:
+        Database& _db;
+        bool _displayRaw;
+        std::vector<std::string> _semanticErrors;
 
-}  // namespace kapa::infrastructure::db::query
+        mutable std::unordered_map<std::string, std::unique_ptr<std::regex>> _regexCache;
+        mutable std::unordered_map<std::string, std::string> _sanitizedStringCache;
+
+        typedef std::function<bool(tables::AutoIncrementedRow&)> RowPredicate;
+        RowPredicate _where = [](auto& row) -> bool { return true; };
+        //RowPredicate _whereExpr = [](auto& row) -> bool { return true; };
+        tables::Table * _mainTable{nullptr};
+        [[nodiscard]] std::string getColumnValue(const tables::AutoIncrementedRow& row, const std::string& columnName) const;
+
+        std::unordered_map<antlr4::ParserRuleContext*, RowPredicate> _rulePredicates;
+
+        [[nodiscard]] bool hasSemanticErrors() const { return _semanticErrors.size() > 0; }
+
+        [[nodiscard]] std::regex *getRegex(const std::string &right, const bool isCaseInsensitive) const;
+        std::string getSanitizedString(const std::string &value) const;
+
+    };
+
+} // namespace kapa::infrastructure::db::query
 #endif

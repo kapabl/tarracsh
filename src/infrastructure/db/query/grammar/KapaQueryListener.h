@@ -43,6 +43,12 @@ public:
   virtual void enterColumn(KapaQueryParser::ColumnContext *ctx) = 0;
   virtual void exitColumn(KapaQueryParser::ColumnContext *ctx) = 0;
 
+  virtual void enterOper(KapaQueryParser::OperContext *ctx) = 0;
+  virtual void exitOper(KapaQueryParser::OperContext *ctx) = 0;
+
+  virtual void enterLogical_oper(KapaQueryParser::Logical_operContext *ctx) = 0;
+  virtual void exitLogical_oper(KapaQueryParser::Logical_operContext *ctx) = 0;
+
 
 };
 

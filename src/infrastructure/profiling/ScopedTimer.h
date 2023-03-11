@@ -2,13 +2,15 @@
 #define TARRACSH_SCOPED_TIMER_H
 
 #include <iostream>
+#include <functional>
 #include <string>
 
-#include "ProfileData.h"
 #include "../../infrastructure/filesystem/Utils.h"
 
 
-namespace kapa::tarracsh::domain::stats::profiler {
+namespace kapa::infrastructure::profiler {
+
+using MillisecondDuration = std::chrono::milliseconds;
 
 
 class ScopedTimer {

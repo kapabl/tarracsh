@@ -2,7 +2,13 @@
 
 #include "Table.h"
 
+#include <BS_thread_pool.hpp>
+#include <map>
+
+#include "../infrastructure/profiling/ScopedTimer.h"
+
 using namespace kapa::infrastructure::db::tables;
+using kapa::infrastructure::profiler::ScopedTimer;
 
 
 void Table::printSchema() {
@@ -36,12 +42,73 @@ std::string Table::generateStdOutRow(AutoIncrementedRow *row, bool displayRaw) c
     return result;
 }
 
-void Table::list(bool displayRaw) {
+void Table::list(const std::function<bool(AutoIncrementedRow &)> &filter, const bool displayRaw) {
+
+    std::atomic<int> rowsFound = 0;
+    auto rowsScanned = _autoIncrementIndex.size();
+    profiler::MillisecondDuration duration{0};
+    std::vector<std::vector<AutoIncrementedRow *>> outputByChuck;
+    {
+        ScopedTimer timer(&duration);
+
+        const auto threadCount = std::thread::hardware_concurrency() * 4 / 5;
+        outputByChuck.resize(threadCount);
+
+        //const auto threadCount = 1;
+        BS::thread_pool threadPool{std::max<unsigned int>(1u, threadCount)};
+
+        const auto chunkSize = rowsScanned / threadCount;
+        auto start = 0ull;
+        uint64_t end;
+        int chunkIndex = 0;
+
+        do {
+            end = std::min<unsigned long long>(start + chunkSize, _autoIncrementIndex.size());
+            threadPool.push_task([this,
+                    start,
+                    end,
+                    chunkIndex,
+                    &filter,
+                    &rowsFound,
+                    &outputByChuck]() -> void {
+
+                    auto index = start;
+                    auto &outputById = outputByChuck[chunkIndex];
+                    while (index < end) {
+                        const auto pRow = _autoIncrementIndex[index];
+                        if (filter(*pRow)) {
+                            outputById.push_back(pRow);
+                            ++rowsFound;
+                        }
+                        index++;
+                    }
+                });
+            start += chunkSize;
+            chunkIndex++;
+        } while (end < rowsScanned);
+
+        threadPool.wait_for_tasks();
+    }
+
     std::cout << std::format("table: {}", _layout.header.name) << std::endl;
     std::cout << generateStdOutHeader() << std::endl;
-    for (const auto pRow : _autoIncrementIndex) {
-        std::cout << generateStdOutRow(pRow, displayRaw) << std::endl;
+
+    for (auto &outputByDbId : outputByChuck) {
+        for (const auto pRow : outputByDbId) {
+            std::cout << generateStdOutRow(pRow, displayRaw) << "\n";
+        }
     }
+
+    std::cout << std::flush;
+
+    profiler::MillisecondDuration dbReadDuration{_db.getReadTime()};
+    std::cout <<
+        std::format(
+            "rows found: {}, rows scanned: {}, rows processing time:{}, db read time: {}",
+            rowsFound.load(),
+            rowsScanned,
+            duration,
+            dbReadDuration) << std::endl;
 }
 
 uint64_t Table::size() const { return _rows.size(); }
@@ -49,7 +116,7 @@ uint64_t Table::size() const { return _rows.size(); }
 std::string Table::getColumnValue(const uint64_t id, const char *columnName) {
     const auto row = _autoIncrementIndex[id];
     assert(_columnByName.contains(columnName));
-    const auto& columnProperties = _columns[_columnByName[columnName]];
+    const auto &columnProperties = _columns[_columnByName[columnName]];
     char *pValue = reinterpret_cast<char *>(row) + columnProperties.offsetInRow;
     auto result = columnProperties.valueToString(pValue, _db, false);
     return result;
@@ -62,6 +129,11 @@ AutoIncrementedRow *Table::allocateRow() const {
 
 void Table::freeRow(AutoIncrementedRow *row) {
     free(row);
+}
+
+bool Table::isValidColumn(const std::string &columnName) const {
+    const auto result = _columnByName.contains(columnName);
+    return result;
 }
 
 
@@ -165,7 +237,7 @@ bool Table::readHeader(FILE *file) {
 }
 
 bool Table::readSchema(FILE *file) {
-    _columns.resize( _layout.header.columnCount);
+    _columns.resize(_layout.header.columnCount);
     std::fread(&*_columns.begin(), sizeof(columns::Properties), _columns.size(), file);
 
     forEachColumn([this](const auto &properties, const auto index) -> void {
@@ -183,7 +255,7 @@ void Table::internalAdd(AutoIncrementedRow *row, const std::string &key) {
     _rows[key] = row;
     _autoIncrementIndex.push_back(row);
 
-    if ( _autoIncrementIndex[0]->id != 0) {
+    if (_autoIncrementIndex[0]->id != 0) {
         std::cout << "*stop here*";
     }
 

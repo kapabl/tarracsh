@@ -12,6 +12,29 @@
 
 namespace kapa::infrastructure::string::stringUtils {
 
+inline std::string replaceAll(const std::string &value, const std::string &oldSubstring,
+                              const std::string &newSubstring) {
+    size_t pos = value.find(oldSubstring);
+    auto result = value;
+
+    while (pos != std::string::npos) {
+        result.replace(pos, oldSubstring.length(), newSubstring);
+        pos = result.find(oldSubstring, pos + newSubstring.length());
+    }
+
+    return result;
+}
+
+inline std::string_view trimView(std::string_view str, const std::string &chars = " \t\n\r") {
+    str.remove_prefix(std::min(str.find_first_not_of(chars), str.size()));
+    str.remove_suffix(std::min(str.size() - str.find_last_not_of(chars) - 1, str.size()));
+    return str;
+}
+
+inline std::string trim(const std::string &str, const std::string &chars = " \t\n\r") {
+    return std::string(trimView(str, chars));
+}
+
 
 inline std::string toLower(const std::string &data) {
     std::string result;

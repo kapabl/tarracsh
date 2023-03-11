@@ -45,6 +45,12 @@ public:
   virtual void enterColumn(KapaQueryParser::ColumnContext * /*ctx*/) override { }
   virtual void exitColumn(KapaQueryParser::ColumnContext * /*ctx*/) override { }
 
+  virtual void enterOper(KapaQueryParser::OperContext * /*ctx*/) override { }
+  virtual void exitOper(KapaQueryParser::OperContext * /*ctx*/) override { }
+
+  virtual void enterLogical_oper(KapaQueryParser::Logical_operContext * /*ctx*/) override { }
+  virtual void exitLogical_oper(KapaQueryParser::Logical_operContext * /*ctx*/) override { }
+
 
   virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }
   virtual void exitEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }

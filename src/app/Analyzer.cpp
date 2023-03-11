@@ -15,7 +15,7 @@
 #include "../domain/jar/Processor.h"
 #include "../domain/classfile/reader/FileReader.h"
 #include "../domain/stats/Results.h"
-#include "../domain/stats/ScopedTimer.h"
+#include "../infrastructure/profiling/ScopedTimer.h"
 
 using namespace std;
 
@@ -37,7 +37,7 @@ using kapa::tarracsh::domain::db::digest::ClassfileRow;
 using kapa::tarracsh::domain::db::digest::columns::EntryType;
 using kapa::tarracsh::domain::digest::ClassFileDigest;
 using kapa::tarracsh::domain::Options;
-using kapa::tarracsh::domain::stats::profiler::ScopedTimer;
+using kapa::infrastructure::profiler::ScopedTimer;
 
 using kapa::infrastructure::db::tables::columns::DigestCol;
 

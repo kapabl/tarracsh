@@ -13,13 +13,13 @@
 #include "ServerCommand.h"
 #include "../RequestContext.h"
 #include "../app/Analyzer.h"
-#include "../domain/stats/ScopedTimer.h"
+#include "../infrastructure/profiling/ScopedTimer.h"
 
 
 using kapa::tarracsh::server::digest::ServiceImpl;
 using kapa::tarracsh::domain::db::digest::DigestDb;
 using kapa::tarracsh::domain::stats::profiler::MillisecondDuration;
-using kapa::tarracsh::domain::stats::profiler::ScopedTimer;
+using kapa::infrastructure::profiler::ScopedTimer;
 using kapa::tarracsh::domain::stats::report::DigestReport;
 using kapa::tarracsh::app::server::digest::DiffRequest;
 using kapa::tarracsh::app::server::digest::DiffResponse;

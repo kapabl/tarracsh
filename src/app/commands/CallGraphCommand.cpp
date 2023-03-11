@@ -1,7 +1,7 @@
 #include "CallGraphCommand.h"
 #include "../App.h"
 #include "../Analyzer.h"
-#include "../../domain/stats/ScopedTimer.h"
+#include "../../infrastructure/profiling/ScopedTimer.h"
 
 
 using namespace kapa::infrastructure::app::cli::command;
@@ -13,7 +13,7 @@ CallGraphCommand::CallGraphCommand(CLI::App* parent)
 
 bool CallGraphCommand::initDb() {
 
-    domain::stats::profiler::ScopedTimer timer(&_results.profileData->initDb);
+    infrastructure::profiler::ScopedTimer timer(&_results.profileData->initDb);
     _db = domain::db::callgraph::CallGraphDb::create({ _options.outputDir, _results.log.get()}, _options.digest.rebuild);
     const auto result = _db != nullptr;
     return result;
