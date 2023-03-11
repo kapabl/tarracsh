@@ -84,12 +84,14 @@ public:
     [[nodiscard]] std::shared_ptr<StringPool> getStringPool() const;
     [[nodiscard]] AutoIncrementedRow *findByKey(const std::string &key);
     void printSchema();
-    void list(bool displayRaw);
+    void list(const std::function<bool(AutoIncrementedRow&)>& filter, bool displayRaw );
     [[nodiscard]] uint64_t size() const;
     std::string getColumnValue(uint64_t id, const char* columnName);
 
     [[nodiscard]] AutoIncrementedRow* allocateRow() const;
     static void freeRow(AutoIncrementedRow* row);
+
+    bool isValidColumn(const std::string& columnName) const;
 
 
 protected:

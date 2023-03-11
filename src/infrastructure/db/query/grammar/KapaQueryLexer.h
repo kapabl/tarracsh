@@ -13,8 +13,9 @@ namespace kapa::infrastructure::db::query {
 class  KapaQueryLexer : public antlr4::Lexer {
 public:
   enum {
-    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
-    OP = 8, Identifier = 9, WS = 10, EscapedString = 11
+    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, NOT_EQUAL = 7, 
+    EQUAL = 8, REGEX = 9, STARS_WITH = 10, END_WITH = 11, AND = 12, OR = 13, 
+    Identifier = 14, WS = 15, EscapedString = 16
   };
 
   explicit KapaQueryLexer(antlr4::CharStream *input);

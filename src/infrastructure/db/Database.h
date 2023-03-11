@@ -5,6 +5,7 @@
 #include "StringPool.h"
 #include "query/Engine.h"
 #include "../log/Log.h"
+#include "../infrastructure/profiling/ScopedTimer.h"
 
 
 namespace kapa::infrastructure::db {
@@ -45,6 +46,7 @@ public:
     [[nodiscard]] log::Log& log() const { return _log; }
     static bool init( Database& db, const bool doClean );
     bool executeQuery(const std::string &query, const bool displayRaw);
+    [[nodiscard]] profiler::MillisecondDuration getReadTime() const;
 
 
 protected:
@@ -55,9 +57,11 @@ protected:
     log::Log& _log;
     std::unordered_map<std::string, tables::Table*> _tables;
     bool _read{false};
+    profiler::MillisecondDuration _readTime{ 0 };
 
     Config _config;
 };
+
 
 
 

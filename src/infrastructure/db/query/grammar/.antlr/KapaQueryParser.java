@@ -16,29 +16,31 @@ public class KapaQueryParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, OP=8, Identifier=9, 
-		WS=10, NONWS=11;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, NOT_EQUAL=6, EQUAL=7, REGEX=8, 
+		STARS_WITH=9, END_WITH=10, AND=11, OR=12, Identifier=13, WS=14, EscapedString=15;
 	public static final int
-		RULE_query = 0, RULE_schema = 1, RULE_list = 2, RULE_filters = 3, RULE_expr = 4, 
-		RULE_filter = 5, RULE_filterValue = 6, RULE_tablename = 7, RULE_column = 8;
+		RULE_query = 0, RULE_statement = 1, RULE_schema = 2, RULE_list = 3, RULE_where = 4, 
+		RULE_expr = 5, RULE_filter = 6, RULE_tablename = 7, RULE_column = 8, RULE_oper = 9, 
+		RULE_logical_oper = 10;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"query", "schema", "list", "filters", "expr", "filter", "filterValue", 
-			"tablename", "column"
+			"query", "statement", "schema", "list", "where", "expr", "filter", "tablename", 
+			"column", "oper", "logical_oper"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'schema'", "'list'", "'('", "'AND'", "')'", "'OR'", "'\"'"
+			null, "'schema'", "'list'", "'where'", "'('", "')'", "'!='", "'='", "'*^*'", 
+			"'^*'", "'*^'", "'and'", "'or'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, null, null, null, "OP", "Identifier", "WS", 
-			"NONWS"
+			null, null, null, null, null, null, "NOT_EQUAL", "EQUAL", "REGEX", "STARS_WITH", 
+			"END_WITH", "AND", "OR", "Identifier", "WS", "EscapedString"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -93,13 +95,9 @@ public class KapaQueryParser extends Parser {
 	}
 
 	public static class QueryContext extends ParserRuleContext {
-		public ListContext list() {
-			return getRuleContext(ListContext.class,0);
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
 		}
-		public SchemaContext schema() {
-			return getRuleContext(SchemaContext.class,0);
-		}
-		public TerminalNode EOF() { return getToken(KapaQueryParser.EOF, 0); }
 		public QueryContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -110,23 +108,55 @@ public class KapaQueryParser extends Parser {
 		QueryContext _localctx = new QueryContext(_ctx, getState());
 		enterRule(_localctx, 0, RULE_query);
 		try {
+			enterOuterAlt(_localctx, 1);
+			{
 			setState(22);
+			statement();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class StatementContext extends ParserRuleContext {
+		public ListContext list() {
+			return getRuleContext(ListContext.class,0);
+		}
+		public SchemaContext schema() {
+			return getRuleContext(SchemaContext.class,0);
+		}
+		public StatementContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_statement; }
+	}
+
+	public final StatementContext statement() throws RecognitionException {
+		StatementContext _localctx = new StatementContext(_ctx, getState());
+		enterRule(_localctx, 2, RULE_statement);
+		try {
+			setState(26);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(18);
+				setState(24);
 				list();
 				}
 				break;
 			case T__0:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(19);
+				setState(25);
 				schema();
-				setState(20);
-				match(EOF);
 				}
 				break;
 			default:
@@ -153,11 +183,11 @@ public class KapaQueryParser extends Parser {
 
 	public final SchemaContext schema() throws RecognitionException {
 		SchemaContext _localctx = new SchemaContext(_ctx, getState());
-		enterRule(_localctx, 2, RULE_schema);
+		enterRule(_localctx, 4, RULE_schema);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(24);
+			setState(28);
 			match(T__0);
 			}
 		}
@@ -176,8 +206,8 @@ public class KapaQueryParser extends Parser {
 		public TablenameContext tablename() {
 			return getRuleContext(TablenameContext.class,0);
 		}
-		public FiltersContext filters() {
-			return getRuleContext(FiltersContext.class,0);
+		public WhereContext where() {
+			return getRuleContext(WhereContext.class,0);
 		}
 		public ListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -187,16 +217,30 @@ public class KapaQueryParser extends Parser {
 
 	public final ListContext list() throws RecognitionException {
 		ListContext _localctx = new ListContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_list);
+		enterRule(_localctx, 6, RULE_list);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(26);
+			setState(30);
 			match(T__1);
-			setState(27);
+			setState(31);
 			tablename();
-			setState(28);
-			filters();
+			setState(34);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case T__2:
+				{
+				setState(32);
+				where();
+				}
+				break;
+			case EOF:
+				{
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -210,23 +254,25 @@ public class KapaQueryParser extends Parser {
 		return _localctx;
 	}
 
-	public static class FiltersContext extends ParserRuleContext {
+	public static class WhereContext extends ParserRuleContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public FiltersContext(ParserRuleContext parent, int invokingState) {
+		public WhereContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_filters; }
+		@Override public int getRuleIndex() { return RULE_where; }
 	}
 
-	public final FiltersContext filters() throws RecognitionException {
-		FiltersContext _localctx = new FiltersContext(_ctx, getState());
-		enterRule(_localctx, 6, RULE_filters);
+	public final WhereContext where() throws RecognitionException {
+		WhereContext _localctx = new WhereContext(_ctx, getState());
+		enterRule(_localctx, 8, RULE_where);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(30);
+			setState(36);
+			match(T__2);
+			setState(37);
 			expr();
 			}
 		}
@@ -251,6 +297,9 @@ public class KapaQueryParser extends Parser {
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
+		public Logical_operContext logical_oper() {
+			return getRuleContext(Logical_operContext.class,0);
+		}
 		public ExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -259,48 +308,35 @@ public class KapaQueryParser extends Parser {
 
 	public final ExprContext expr() throws RecognitionException {
 		ExprContext _localctx = new ExprContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_expr);
+		enterRule(_localctx, 10, RULE_expr);
 		try {
-			setState(45);
+			setState(46);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
-			case 1:
+			switch (_input.LA(1)) {
+			case Identifier:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(32);
+				setState(39);
 				filter();
 				}
 				break;
-			case 2:
+			case T__3:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(33);
-				match(T__2);
-				setState(34);
-				expr();
-				setState(35);
-				match(T__3);
-				setState(36);
-				expr();
-				setState(37);
-				match(T__4);
-				}
-				break;
-			case 3:
-				enterOuterAlt(_localctx, 3);
-				{
-				setState(39);
-				match(T__2);
 				setState(40);
-				expr();
+				match(T__3);
 				setState(41);
-				match(T__5);
-				setState(42);
 				expr();
+				setState(42);
+				logical_oper();
 				setState(43);
+				expr();
+				setState(44);
 				match(T__4);
 				}
 				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -318,10 +354,10 @@ public class KapaQueryParser extends Parser {
 		public ColumnContext column() {
 			return getRuleContext(ColumnContext.class,0);
 		}
-		public TerminalNode OP() { return getToken(KapaQueryParser.OP, 0); }
-		public FilterValueContext filterValue() {
-			return getRuleContext(FilterValueContext.class,0);
+		public OperContext oper() {
+			return getRuleContext(OperContext.class,0);
 		}
+		public TerminalNode EscapedString() { return getToken(KapaQueryParser.EscapedString, 0); }
 		public FilterContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -330,67 +366,16 @@ public class KapaQueryParser extends Parser {
 
 	public final FilterContext filter() throws RecognitionException {
 		FilterContext _localctx = new FilterContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_filter);
+		enterRule(_localctx, 12, RULE_filter);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(47);
-			column();
 			setState(48);
-			match(OP);
+			column();
 			setState(49);
-			filterValue();
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class FilterValueContext extends ParserRuleContext {
-		public FilterValueContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_filterValue; }
-	}
-
-	public final FilterValueContext filterValue() throws RecognitionException {
-		FilterValueContext _localctx = new FilterValueContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_filterValue);
-		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(51);
-			match(T__6);
-			setState(53); 
-			_errHandler.sync(this);
-			_alt = 1+1;
-			do {
-				switch (_alt) {
-				case 1+1:
-					{
-					{
-					setState(52);
-					matchWildcard();
-					}
-					}
-					break;
-				default:
-					throw new NoViableAltException(this);
-				}
-				setState(55); 
-				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
-			} while ( _alt!=1 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER );
-			setState(57);
-			match(T__6);
+			oper();
+			setState(50);
+			match(EscapedString);
 			}
 		}
 		catch (RecognitionException re) {
@@ -418,7 +403,7 @@ public class KapaQueryParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(59);
+			setState(52);
 			match(Identifier);
 			}
 		}
@@ -447,7 +432,7 @@ public class KapaQueryParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(61);
+			setState(54);
 			match(Identifier);
 			}
 		}
@@ -462,23 +447,101 @@ public class KapaQueryParser extends Parser {
 		return _localctx;
 	}
 
+	public static class OperContext extends ParserRuleContext {
+		public TerminalNode REGEX() { return getToken(KapaQueryParser.REGEX, 0); }
+		public TerminalNode EQUAL() { return getToken(KapaQueryParser.EQUAL, 0); }
+		public TerminalNode NOT_EQUAL() { return getToken(KapaQueryParser.NOT_EQUAL, 0); }
+		public OperContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_oper; }
+	}
+
+	public final OperContext oper() throws RecognitionException {
+		OperContext _localctx = new OperContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_oper);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(56);
+			_la = _input.LA(1);
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << NOT_EQUAL) | (1L << EQUAL) | (1L << REGEX))) != 0)) ) {
+			_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class Logical_operContext extends ParserRuleContext {
+		public TerminalNode AND() { return getToken(KapaQueryParser.AND, 0); }
+		public TerminalNode OR() { return getToken(KapaQueryParser.OR, 0); }
+		public Logical_operContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_logical_oper; }
+	}
+
+	public final Logical_operContext logical_oper() throws RecognitionException {
+		Logical_operContext _localctx = new Logical_operContext(_ctx, getState());
+		enterRule(_localctx, 20, RULE_logical_oper);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(58);
+			_la = _input.LA(1);
+			if ( !(_la==AND || _la==OR) ) {
+			_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\rB\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\3\2\3\2\3\2"+
-		"\3\2\5\2\31\n\2\3\3\3\3\3\4\3\4\3\4\3\4\3\5\3\5\3\6\3\6\3\6\3\6\3\6\3"+
-		"\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6\60\n\6\3\7\3\7\3\7\3\7\3\b\3\b\6\b"+
-		"8\n\b\r\b\16\b9\3\b\3\b\3\t\3\t\3\n\3\n\3\n\39\2\13\2\4\6\b\n\f\16\20"+
-		"\22\2\2\2<\2\30\3\2\2\2\4\32\3\2\2\2\6\34\3\2\2\2\b \3\2\2\2\n/\3\2\2"+
-		"\2\f\61\3\2\2\2\16\65\3\2\2\2\20=\3\2\2\2\22?\3\2\2\2\24\31\5\6\4\2\25"+
-		"\26\5\4\3\2\26\27\7\2\2\3\27\31\3\2\2\2\30\24\3\2\2\2\30\25\3\2\2\2\31"+
-		"\3\3\2\2\2\32\33\7\3\2\2\33\5\3\2\2\2\34\35\7\4\2\2\35\36\5\20\t\2\36"+
-		"\37\5\b\5\2\37\7\3\2\2\2 !\5\n\6\2!\t\3\2\2\2\"\60\5\f\7\2#$\7\5\2\2$"+
-		"%\5\n\6\2%&\7\6\2\2&\'\5\n\6\2\'(\7\7\2\2(\60\3\2\2\2)*\7\5\2\2*+\5\n"+
-		"\6\2+,\7\b\2\2,-\5\n\6\2-.\7\7\2\2.\60\3\2\2\2/\"\3\2\2\2/#\3\2\2\2/)"+
-		"\3\2\2\2\60\13\3\2\2\2\61\62\5\22\n\2\62\63\7\n\2\2\63\64\5\16\b\2\64"+
-		"\r\3\2\2\2\65\67\7\t\2\2\668\13\2\2\2\67\66\3\2\2\289\3\2\2\29:\3\2\2"+
-		"\29\67\3\2\2\2:;\3\2\2\2;<\7\t\2\2<\17\3\2\2\2=>\7\13\2\2>\21\3\2\2\2"+
-		"?@\7\13\2\2@\23\3\2\2\2\5\30/9";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\21?\4\2\t\2\4\3\t"+
+		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4"+
+		"\f\t\f\3\2\3\2\3\3\3\3\5\3\35\n\3\3\4\3\4\3\5\3\5\3\5\3\5\5\5%\n\5\3\6"+
+		"\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\7\3\7\5\7\61\n\7\3\b\3\b\3\b\3\b\3\t\3"+
+		"\t\3\n\3\n\3\13\3\13\3\f\3\f\3\f\2\2\r\2\4\6\b\n\f\16\20\22\24\26\2\4"+
+		"\3\2\b\n\3\2\r\16\2\66\2\30\3\2\2\2\4\34\3\2\2\2\6\36\3\2\2\2\b \3\2\2"+
+		"\2\n&\3\2\2\2\f\60\3\2\2\2\16\62\3\2\2\2\20\66\3\2\2\2\228\3\2\2\2\24"+
+		":\3\2\2\2\26<\3\2\2\2\30\31\5\4\3\2\31\3\3\2\2\2\32\35\5\b\5\2\33\35\5"+
+		"\6\4\2\34\32\3\2\2\2\34\33\3\2\2\2\35\5\3\2\2\2\36\37\7\3\2\2\37\7\3\2"+
+		"\2\2 !\7\4\2\2!$\5\20\t\2\"%\5\n\6\2#%\3\2\2\2$\"\3\2\2\2$#\3\2\2\2%\t"+
+		"\3\2\2\2&\'\7\5\2\2\'(\5\f\7\2(\13\3\2\2\2)\61\5\16\b\2*+\7\6\2\2+,\5"+
+		"\f\7\2,-\5\26\f\2-.\5\f\7\2./\7\7\2\2/\61\3\2\2\2\60)\3\2\2\2\60*\3\2"+
+		"\2\2\61\r\3\2\2\2\62\63\5\22\n\2\63\64\5\24\13\2\64\65\7\21\2\2\65\17"+
+		"\3\2\2\2\66\67\7\17\2\2\67\21\3\2\2\289\7\17\2\29\23\3\2\2\2:;\t\2\2\2"+
+		";\25\3\2\2\2<=\t\3\2\2=\27\3\2\2\2\5\34$\60";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

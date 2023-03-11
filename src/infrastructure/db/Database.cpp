@@ -12,6 +12,11 @@ using namespace kapa::infrastructure::db;
 using namespace tables;
 
 
+kapa::infrastructure::profiler::MillisecondDuration Database::getReadTime() const {
+    return _readTime;
+}
+
+
 Database::Database(const Config& config)
     : _log(*config.log), _config(config) {
     _queryEngine = std::make_unique<query::Engine>(*this);
@@ -43,6 +48,7 @@ void Database::backup() {
 
 bool Database::read() {
     if (_read) return false;
+    profiler::ScopedTimer timer(&_readTime);
     if (!_stringPool->read()) return false;
 
     for(const auto &table : _tables | std::views::values) {
@@ -94,7 +100,7 @@ bool Database::init(Database &db, const bool doClean) {
 }
 
 bool Database::executeQuery(const std::string &query, const bool displayRaw) {
-    const auto result = _queryEngine->execute2(query, displayRaw);
+    const auto result = _queryEngine->execute(query, displayRaw);
     return result;
 }
 

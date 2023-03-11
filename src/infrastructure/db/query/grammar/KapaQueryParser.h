@@ -13,13 +13,15 @@ namespace kapa::infrastructure::db::query {
 class  KapaQueryParser : public antlr4::Parser {
 public:
   enum {
-    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
-    OP = 8, Identifier = 9, WS = 10, EscapedString = 11
+    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, NOT_EQUAL = 7, 
+    EQUAL = 8, REGEX = 9, STARS_WITH = 10, END_WITH = 11, AND = 12, OR = 13, 
+    Identifier = 14, WS = 15, EscapedString = 16
   };
 
   enum {
     RuleQuery = 0, RuleStatement = 1, RuleSchema = 2, RuleList = 3, RuleWhere = 4, 
-    RuleExpr = 5, RuleFilter = 6, RuleTablename = 7, RuleColumn = 8
+    RuleExpr = 5, RuleFilter = 6, RuleTablename = 7, RuleColumn = 8, RuleOper = 9, 
+    RuleLogical_oper = 10
   };
 
   explicit KapaQueryParser(antlr4::TokenStream *input);
@@ -47,7 +49,9 @@ public:
   class ExprContext;
   class FilterContext;
   class TablenameContext;
-  class ColumnContext; 
+  class ColumnContext;
+  class OperContext;
+  class Logical_operContext; 
 
   class  QueryContext : public antlr4::ParserRuleContext {
   public:
@@ -122,6 +126,7 @@ public:
     FilterContext *filter();
     std::vector<ExprContext *> expr();
     ExprContext* expr(size_t i);
+    Logical_operContext *logical_oper();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -135,7 +140,7 @@ public:
     FilterContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ColumnContext *column();
-    antlr4::tree::TerminalNode *OP();
+    OperContext *oper();
     antlr4::tree::TerminalNode *EscapedString();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -170,6 +175,37 @@ public:
   };
 
   ColumnContext* column();
+
+  class  OperContext : public antlr4::ParserRuleContext {
+  public:
+    OperContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *REGEX();
+    antlr4::tree::TerminalNode *EQUAL();
+    antlr4::tree::TerminalNode *NOT_EQUAL();
+    antlr4::tree::TerminalNode *STARS_WITH();
+    antlr4::tree::TerminalNode *END_WITH();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  OperContext* oper();
+
+  class  Logical_operContext : public antlr4::ParserRuleContext {
+  public:
+    Logical_operContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *AND();
+    antlr4::tree::TerminalNode *OR();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  Logical_operContext* logical_oper();
 
 
   // By default the static state used to implement the parser is lazily initialized during the first

@@ -3,14 +3,14 @@
 #include "../../Analyzer.h"
 #include "QueryCommand.h"
 #include "../../server/digest/ServerCommand.h"
-#include "../../../domain/stats/ScopedTimer.h"
+#include "../../../infrastructure/profiling/ScopedTimer.h"
 
 using kapa::tarracsh::app::server::digest::ServerCommand;
 using kapa::tarracsh::app::commands::digest::QueryCommand;
 using kapa::tarracsh::domain::DigestServerOptions;
 using kapa::tarracsh::domain::DigestClientOptions;
 using kapa::infrastructure::app::cli::ExitCode;
-using kapa::tarracsh::domain::stats::profiler::ScopedTimer;
+using kapa::infrastructure::profiler::ScopedTimer;
 
 using namespace kapa::tarracsh::app::commands::digest;
 
