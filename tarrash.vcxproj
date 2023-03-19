@@ -901,6 +901,11 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\domain\classfile\signature\grammar\JavaSignatureListenerImpl.cpp" />
+    <ClCompile Include="src\domain\classfile\signature\grammar\JvmSignatureBaseListener.cpp" />
+    <ClCompile Include="src\domain\classfile\signature\grammar\JvmSignatureLexer.cpp" />
+    <ClCompile Include="src\domain\classfile\signature\grammar\JvmSignatureListener.cpp" />
+    <ClCompile Include="src\domain\classfile\signature\grammar\JvmSignatureParser.cpp" />
     <ClCompile Include="src\infrastructure\db\query\Engine.cpp" />
     <ClCompile Include="src\app\commands\CallGraphCommand.cpp" />
     <ClCompile Include="src\app\commands\ParseCommand.cpp" />
@@ -934,13 +939,6 @@
     <ClCompile Include="src\domain\classfile\reader\ClassFileReader.cpp" />
     <ClCompile Include="src\domain\classfile\reader\FileReader.cpp" />
     <ClCompile Include="src\domain\classfile\reader\MemoryReader.cpp" />
-    <ClCompile Include="src\domain\classfile\signature\rules\JvmIdentifier.cpp" />
-    <ClCompile Include="src\domain\classfile\signature\rules\Kleene.cpp" />
-    <ClCompile Include="src\domain\classfile\signature\rules\Optional.cpp" />
-    <ClCompile Include="src\domain\classfile\signature\rules\Or.cpp" />
-    <ClCompile Include="src\domain\classfile\signature\rules\ParsingRules.cpp" />
-    <ClCompile Include="src\domain\classfile\signature\rules\Rule.cpp" />
-    <ClCompile Include="src\domain\classfile\signature\rules\Terminal.cpp" />
     <ClCompile Include="src\domain\classfile\signature\SignatureParser.cpp" />
     <ClCompile Include="src\domain\jar\tasks\ParserTask.cpp" />
     <ClCompile Include="src\domain\jar\tasks\DigestTask.cpp" />
@@ -958,6 +956,12 @@
       <FileType>Document</FileType>
     </ClCompile>
     <ClCompile Include="src\infrastructure\filesystem\Utils.cpp" />
+    <ClInclude Include="src\domain\classfile\signature\grammar\JavaSignatureListenerImpl.h" />
+    <ClInclude Include="src\domain\classfile\signature\grammar\antlr4-runtime.h" />
+    <ClInclude Include="src\domain\classfile\signature\grammar\JvmSignatureBaseListener.h" />
+    <ClInclude Include="src\domain\classfile\signature\grammar\JvmSignatureLexer.h" />
+    <ClInclude Include="src\domain\classfile\signature\grammar\JvmSignatureListener.h" />
+    <ClInclude Include="src\domain\classfile\signature\grammar\JvmSignatureParser.h" />
     <ClInclude Include="src\infrastructure\db\query\Engine.h" />
     <ClInclude Include="src\app\commands\CallGraphCommand.h" />
     <ClInclude Include="src\domain\digest\DigestEntryInfo.h" />
@@ -1005,15 +1009,6 @@
     <ClInclude Include="src\domain\classfile\reader\ClassFileReader.h" />
     <ClInclude Include="src\domain\classfile\reader\FileReader.h" />
     <ClInclude Include="src\domain\classfile\reader\MemoryReader.h" />
-    <ClInclude Include="src\domain\classfile\signature\rules\JvmIdentifier.h" />
-    <ClInclude Include="src\domain\classfile\signature\rules\Kleene.h" />
-    <ClInclude Include="src\domain\classfile\signature\rules\NodeTraits.h" />
-    <ClInclude Include="src\domain\classfile\signature\rules\Optional.h" />
-    <ClInclude Include="src\domain\classfile\signature\rules\Or.h" />
-    <ClInclude Include="src\domain\classfile\signature\rules\ParsingRules.h" />
-    <ClInclude Include="src\domain\classfile\signature\rules\Rule.h" />
-    <ClInclude Include="src\domain\classfile\signature\rules\RuleFuncs.h" />
-    <ClInclude Include="src\domain\classfile\signature\rules\Terminal.h" />
     <ClInclude Include="src\domain\classfile\signature\SignatureParser.h" />
     <ClInclude Include="src\domain\classfile\signature\SignatureScanner.h" />
     <ClInclude Include="src\domain\classfile\signature\SignatureStructures.h" />
@@ -1079,6 +1074,12 @@
     </CopyFileToFolders>
     <None Include="server-proto-build.bat" />
     <None Include="src\app\server\digest\proto\Server.proto" />
+    <None Include="src\domain\classfile\signature\grammar\JvmSignature.g4" />
+    <None Include="src\domain\classfile\signature\grammar\JvmSignature.interp" />
+    <None Include="src\domain\classfile\signature\grammar\JvmSignature.tokens" />
+    <None Include="src\domain\classfile\signature\grammar\JvmSignatureLexer.interp" />
+    <None Include="src\domain\classfile\signature\grammar\JvmSignatureLexer.tokens" />
+    <None Include="src\domain\classfile\signature\grammar\README.md" />
     <None Include="src\infrastructure\db\query\grammar\KapaQuery.g4" />
     <None Include="src\infrastructure\db\query\grammar\KapaQuery.interp" />
     <None Include="src\infrastructure\db\query\grammar\KapaQuery.tokens" />

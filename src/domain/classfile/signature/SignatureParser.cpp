@@ -1,16 +1,6 @@
-#include "rules/Rule.h"
-#include "rules/Kleene.h"
-#include "rules/Or.h"
-#include "rules/Terminal.h"
-#include "rules/Optional.h"
-#include "rules/JvmIdentifier.h"
-#include "rules/RuleFuncs.h"
-
 #include "SignatureParser.h"
 
-#include <cassert>
-
-#include "rules/ParsingRules.h"
+#include "grammar/JvmSignatureLexer.h"
 
 using namespace kapa::tarracsh::domain::classfile::signature;
 using namespace kapa::tarracsh::domain::classfile::attribute;
@@ -36,38 +26,6 @@ using namespace std;
  *  )V
  */
 
-void SignatureParser::parse(const ClassSignature &classSignature, ClassSignatureNode& node) const {
-
-    const auto signatureString = _constantPool.getString(classSignature.signatureIndex);
-    SignatureScanner scanner(signatureString);
-
-    const auto &classRule = ParsingRules::getInstance().getClassRule();
-    const bool matched = classRule->match(scanner, node);
-
-    assert(matched);
-
-}
-
-void SignatureParser::parse(const MethodSignature &signature, MethodSignatureNode& node) const {
-    const auto signatureString = _constantPool.getString(signature.signatureIndex);
-    SignatureScanner scanner(signatureString);
-
-    const auto &methodRule = ParsingRules::getInstance().getMethodRule();
-    const bool matched = methodRule->match(scanner, node);
-    assert(matched);
-
-}
-
-void SignatureParser::parse(const FieldSignature &signature, FieldTypeSignature& node) const {
-    const auto signatureString = _constantPool.getString(signature.signatureIndex);
-    SignatureScanner scanner(signatureString);
-    const auto &fieldRule = ParsingRules::getInstance().getFieldRule();
-    const bool matched = fieldRule->match(scanner, node);
-    assert(matched);
-
-
-}
-
 void SignatureParser::read(ClassSignature &classSignature) const {
 
     classSignature.nameIndex = _attribute.nameIndex;
@@ -89,19 +47,33 @@ void SignatureParser::read(FieldSignature &signature) const {
     signature.signatureIndex = _reader.readU2();
 }
 
-std::string SignatureParser::getString(const ClassSignature & signature) const {
-    const auto result = _constantPool.getString(signature.signatureIndex);
+std::string SignatureParser::getString(const ClassSignature &signature) const {
+    auto result = getStringInternal(signature, [](parser::JvmSignatureParser &parser)-> antlr4::tree::ParseTree* {
+        const auto parseTree = parser.classSignature();
+        return parseTree;
+    });
+
     return result;
 
 }
 
 std::string SignatureParser::getString(const MethodSignature &signature) const {
-    const auto result = _constantPool.getString(signature.signatureIndex);
+    auto result = getStringInternal(signature, [](parser::JvmSignatureParser &parser)-> antlr4::tree::ParseTree* {
+        const auto parseTree = parser.fieldSignature();
+        return parseTree;
+    });
+
     return result;
+
 }
 
 std::string SignatureParser::getString(const FieldSignature &signature) const {
-    const auto result = _constantPool.getString(signature.signatureIndex);
+
+    auto result = getStringInternal(signature, [](parser::JvmSignatureParser &parser)-> antlr4::tree::ParseTree* {
+        const auto parseTree = parser.methodSignature();
+        return parseTree;
+    });
+
     return result;
 
 }
@@ -145,5 +117,33 @@ string SignatureParser::toString() const {
             break;
         }
     }
+    return result;
+}
+
+std::string SignatureParser::getStringInternal(const SignatureBase &signature,
+                                               std::function<antlr4::tree::ParseTree*(parser::JvmSignatureParser &)>
+                                               parserFunc) const {
+    // const auto signatureString = _constantPool.getString(signature.signatureIndex);
+    //
+    // std::string result;
+    // antlr4::ANTLRInputStream input(signatureString.c_str());
+    //
+    // parser::JvmSignatureLexer lexer(&input);
+    // antlr4::CommonTokenStream tokens(&lexer);
+    // parser::JvmSignatureParser parser(&tokens);
+    //
+    // auto parseTree = parserFunc(parser);
+    // auto parsed = parser.getNumberOfSyntaxErrors() == 0;
+    //
+    // if (parsed) {
+    //     parser::JavaSignatureListenerImpl listener;
+    //     antlr4::tree::ParseTreeWalker::DEFAULT.walk(&listener, parseTree);
+    //     result = listener.getResult();
+    // } else {
+    //     std::cout << std::format("Invalid java signature: {}", signatureString) << std::endl;
+    // }
+
+    std::string result;
+    //TODO
     return result;
 }
