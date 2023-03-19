@@ -264,14 +264,14 @@ void Analyzer::processDirInput() {
 }
 
 void Analyzer::analyzeInput() {
-    if (_options.digest.isDir) {
-        serverLog(std::format("processing directory: {}", _options.digest.input), true);
+    if (_inputOptions.isDir) {
+        serverLog(std::format("processing directory: {}", _inputOptions.input), true);
         processDirInput();
-    } else if (_options.digest.isJar) {
-        serverLog(std::format("processing jar: {}", _options.digest.input), true);
+    } else if ( _inputOptions.isJar) {
+        serverLog(std::format("processing jar: {}", _inputOptions.input), true);
         processJar(_inputOptions.input);
-    } else if (_options.digest.isClassfile) {
-        serverLog(std::format("processing classfile: {}", _options.digest.input), true);
+    } else if (_inputOptions.isClassfile) {
+        serverLog(std::format("processing classfile: {}", _inputOptions.input), true);
         processStandaloneClassfile(_inputOptions.input);
     }
 

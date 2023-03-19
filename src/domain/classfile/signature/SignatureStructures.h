@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "../constantpool/StructsCommon.h"
-#include "rules/NodeTraits.h"
 #include "../AttributeStructures.h"
 #include "visit_struct/visit_struct_intrusive.hpp"
 
@@ -22,7 +21,7 @@ struct MethodSignature : SignatureBase {
 
 struct FieldSignature : SignatureBase {
 };
-
+/*
 struct Identifier {
     BEGIN_VISITABLES(Identifier);
     VISITABLE(std::wstring, value);
@@ -198,6 +197,8 @@ struct MethodSignatureNode {
     VISITABLE(std::vector<ThrowsSignature>, throwsSignatures);
     END_VISITABLES;
 };
+
+*/
 
 }
 
