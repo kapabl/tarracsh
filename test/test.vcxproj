@@ -76,12 +76,6 @@
     <ClInclude Include="src\domain\classfile\reader\FileReader.h" />
     <ClInclude Include="src\domain\classfile\reader\MemoryReader.h" />
     <ClInclude Include="src\domain\classfile\reader\VectorReader.h" />
-    <ClInclude Include="src\domain\classfile\signature\grammar\antlr4-runtime.h" />
-    <ClInclude Include="src\domain\classfile\signature\grammar\JavaSignatureListenerImpl.h" />
-    <ClInclude Include="src\domain\classfile\signature\grammar\JvmSignatureBaseListener.h" />
-    <ClInclude Include="src\domain\classfile\signature\grammar\JvmSignatureLexer.h" />
-    <ClInclude Include="src\domain\classfile\signature\grammar\JvmSignatureListener.h" />
-    <ClInclude Include="src\domain\classfile\signature\grammar\JvmSignatureParser.h" />
     <ClInclude Include="src\domain\classfile\signature\nodes\Nodes.h" />
     <ClInclude Include="src\domain\classfile\signature\parser\Parser.h" />
     <ClInclude Include="src\domain\classfile\signature\SignatureParser.h" />
@@ -145,11 +139,6 @@
     <ClCompile Include="src\domain\classfile\reader\ClassFileReader.cpp" />
     <ClCompile Include="src\domain\classfile\reader\FileReader.cpp" />
     <ClCompile Include="src\domain\classfile\reader\MemoryReader.cpp" />
-    <ClCompile Include="src\domain\classfile\signature\grammar\JavaSignatureListenerImpl.cpp" />
-    <ClCompile Include="src\domain\classfile\signature\grammar\JvmSignatureBaseListener.cpp" />
-    <ClCompile Include="src\domain\classfile\signature\grammar\JvmSignatureLexer.cpp" />
-    <ClCompile Include="src\domain\classfile\signature\grammar\JvmSignatureListener.cpp" />
-    <ClCompile Include="src\domain\classfile\signature\grammar\JvmSignatureParser.cpp" />
     <ClCompile Include="src\domain\classfile\signature\nodes\Nodes.cpp" />
     <ClCompile Include="src\domain\classfile\signature\parser\Parser.cpp" />
     <ClCompile Include="src\domain\classfile\signature\SignatureParser.cpp" />
@@ -180,7 +169,10 @@
     <ClCompile Include="src\infrastructure\filesystem\Utils.cpp" />
     <ClCompile Include="src\infrastructure\log\Log.cpp" />
     <ClCompile Include="src\infrastructure\profiling\ScopedTimer.cpp" />
-    <ClCompile Include="test.cpp" />
+    <ClCompile Include="test.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -188,7 +180,6 @@
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.7\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets" Condition="Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.7\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" />
     <Import Project="..\packages\vcpkg.D.dev.kapa.repos.vcpkg.1.0.0\build\native\vcpkg.D.dev.kapa.repos.vcpkg.targets" Condition="Exists('..\packages\vcpkg.D.dev.kapa.repos.vcpkg.1.0.0\build\native\vcpkg.D.dev.kapa.repos.vcpkg.targets')" />
   </ImportGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -209,7 +200,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>test-pch.h</PrecompiledHeaderFile>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>X64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -242,7 +233,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>test-pch.h</PrecompiledHeaderFile>
       <PreprocessorDefinitions>X64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -261,7 +252,6 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.7\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.7\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets'))" />
     <Error Condition="!Exists('..\packages\vcpkg.D.dev.kapa.repos.vcpkg.1.0.0\build\native\vcpkg.D.dev.kapa.repos.vcpkg.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\vcpkg.D.dev.kapa.repos.vcpkg.1.0.0\build\native\vcpkg.D.dev.kapa.repos.vcpkg.props'))" />
     <Error Condition="!Exists('..\packages\vcpkg.D.dev.kapa.repos.vcpkg.1.0.0\build\native\vcpkg.D.dev.kapa.repos.vcpkg.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\vcpkg.D.dev.kapa.repos.vcpkg.1.0.0\build\native\vcpkg.D.dev.kapa.repos.vcpkg.targets'))" />
   </Target>

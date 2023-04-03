@@ -45,14 +45,6 @@ private:
     const constantpool::ConstantPool &_constantPool;
     const attribute::AttributeInfo &_attribute;
     reader::VectorReader &_reader;
-
-    // [[nodiscard]] std::string getStringInternal(const SignatureBase &signature,
-    //     const std::function<antlr4::tree::ParseTree*(parser::JvmSignatureParser&)>
-    //     &parserFunc) const;
-
-
-    [[nodiscard]] std::string getStringInternal(const SignatureBase& signature,
-        const std::function<std::shared_ptr<parser::TypeTree> (std::shared_ptr<parser::Parser>)> parserFunc) const;
     
 
 
