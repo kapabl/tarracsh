@@ -13,3 +13,5 @@
 /output/digest.kapamd
 /output/files.kapamd
 /output/sp.string-pool
+/test/x64/
+/test/test.vcxproj.user
