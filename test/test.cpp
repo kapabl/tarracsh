@@ -26,64 +26,64 @@ std::vector<const char *> testJvmMethodSignatures{
 TEST_CASE("JVM Method Signature", "Method Sig") {
 
     const auto parser = Parser::make();
-    try {
-        for (const auto &testSig : testJvmMethodSignatures) {
-            std::cout << std::format("testing method sig:{}", testSig) << std::endl;
-            parser->reset();
+
+    for (const auto &testSig : testJvmMethodSignatures) {
+        std::cout << std::format("testing method sig:{}", testSig) << std::endl;
+        parser->reset();
+        try {
             const auto tree = parser->parseMethodSig(testSig);
             REQUIRE(tree);
-
+        } catch (std::exception &error) {
+            std::cout << error.what() << std::endl;
+            REQUIRE(false);
         }
-    } catch (std::exception &error) {
-        std::cout << error.what() << std::endl;
-        REQUIRE(false);
+
     }
 
 }
 
-std::vector<const char*> testJvmClassSignatures{
+std::vector<const char *> testJvmClassSignatures{
 };
 
-TEST_CASE("JVM Class Signature") {
+TEST_CASE("JVM Class Signature", "Class Sig") {
 
     const auto parser = Parser::make();
-    try {
-        for (const auto& testSig : testJvmClassSignatures) {
-            std::cout << std::format("testing class sig:{}", testSig) << std::endl;
-            parser->reset();
+
+    for (const auto &testSig : testJvmClassSignatures) {
+        std::cout << std::format("testing Class sig:{}", testSig) << std::endl;
+        parser->reset();
+        try {
             const auto tree = parser->parseClassSig(testSig);
             REQUIRE(tree);
-
+        } catch (std::exception &error) {
+            std::cout << error.what() << std::endl;
+            REQUIRE(false);
         }
-    }
-    catch (std::exception& error) {
-        std::cout << error.what() << std::endl;
-        REQUIRE(false);
     }
 
 }
 
-std::vector<const char*> testJvmFieldSignatures{
-    "[Ljava/lang/String",
+std::vector<const char *> testJvmFieldSignatures{
+    "[Ljava/lang/String;",
     "I",
     "Ljava/util/List<Ljava/lang/String;>;"
 };
 
-TEST_CASE("JVM Class Signature") {
+TEST_CASE("JVM Types Signature", "Type Sig") {
 
     const auto parser = Parser::make();
-    try {
-        for (const auto& testSig : testJvmFieldSignatures) {
-            std::cout << std::format("testing field sig:{}", testSig) << std::endl;
-            parser->reset();
+
+    for (const auto &testSig : testJvmFieldSignatures) {
+        std::cout << std::format("testing field sig:{}", testSig) << std::endl;
+        parser->reset();
+        try {
             const auto tree = parser->parseTypeSig(testSig);
             REQUIRE(tree);
-
+        } catch (std::exception &error) {
+            std::cout << error.what() << std::endl;
+            REQUIRE(false);
         }
-    }
-    catch (std::exception& error) {
-        std::cout << error.what() << std::endl;
-        REQUIRE(false);
+
     }
 
 }
