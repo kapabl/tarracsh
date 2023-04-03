@@ -37,8 +37,8 @@ void Parser::progress(const uint64_t startingPosition) {
 
 Parser::Parser() = default;
 
-unique_ptr<Parser> Parser::make() {
-    return make_unique<Parser>();
+shared_ptr<Parser> Parser::make() {
+    return make_shared<Parser>();
 }
 
 std::shared_ptr<ClassSignature> Parser::parseClassSig(const string &signature) {

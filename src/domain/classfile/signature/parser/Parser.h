@@ -15,8 +15,7 @@ namespace kapa::tarracsh::domain::classfile::signature::parser {
 
 class Parser {
 
-private
-:
+private:
     std::string _input;
     uint64_t _position = 0;
 
@@ -37,7 +36,7 @@ private
 
 public:
     Parser();
-    static std::unique_ptr<Parser> make();
+    static std::shared_ptr<Parser> make();
     std::shared_ptr<ClassSignature> parseClassSig(const std::string &signature);
     std::shared_ptr<MethodTypeSignature> parseMethodSig(const std::string &signature);
     std::shared_ptr<TypeSignature> parseTypeSig(const std::string &signature);
