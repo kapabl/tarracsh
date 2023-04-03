@@ -5,7 +5,7 @@
 #include <BS_thread_pool.hpp>
 #include <map>
 
-#include "../infrastructure/profiling/ScopedTimer.h"
+#include "../../profiling/ScopedTimer.h"
 
 using namespace kapa::infrastructure::db::tables;
 using kapa::infrastructure::profiler::ScopedTimer;
@@ -155,7 +155,7 @@ void Table::printLayout() {
 }
 
 void Table::writeRows(FILE *file) {
-    if (std::fseek(file, getHeaderSize(), SEEK_SET) != 0) {
+    if (std::fseek(file, static_cast<long>(getHeaderSize()), SEEK_SET) != 0) {
         _db.log().writeln(std::format("File seek error: {}", _filename), true);
     }
 
@@ -171,7 +171,7 @@ void Table::writeRows(FILE *file) {
         if (_dirtyRows.contains(autoincrement)) {
             if (skippedRows > 0) {
                 const auto newPosition = getHeaderSize() + autoincrement * _rowSize;
-                if (std::fseek(file, newPosition, SEEK_SET) != 0) {
+                if (std::fseek(file, static_cast<long>(newPosition), SEEK_SET) != 0) {
                     _db.log().writeln(std::format("File seek error: {}", _filename), true);
                     break;
                 }

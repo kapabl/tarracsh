@@ -1,7 +1,7 @@
 #ifndef KAPA_CLI_COMMAND_H
 #define KAPA_CLI_COMMAND_H
 
-#include  <CLI11.hpp>
+#include <CLI/CLI.hpp>
 
 #include "CliApp.h"
 
@@ -21,7 +21,6 @@ public:
 protected:
     CLI::App* _parent{ nullptr };
     CLI::App* _subCommand{ nullptr };
-;
 };
 
 

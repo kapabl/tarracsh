@@ -1,7 +1,7 @@
 #ifndef TARRACSH_REQUEST_CONFIG_H
 #define TARRACSH_REQUEST_CONFIG_H
 
-#include "../app/Context.h"
+#include "../Context.h"
 #include "digest/proto/Server.pb.h"
 
 namespace kapa::tarracsh::server {

@@ -9,8 +9,8 @@
 #include <sodium/crypto_hash_sha256.h>
 
 
-#include "../infrastructure/string/StringUtils.h"
-#include "../infrastructure/db/columns/Columns.h"
+#include "../../infrastructure/string/StringUtils.h"
+#include "../../infrastructure/db/columns/Columns.h"
 
 namespace kapa::tarracsh::domain::digestUtils {
 
@@ -45,7 +45,7 @@ struct DigestBuffer : std::vector<unsigned char> {
     }
 };
 
-inline DigestVector digest(const char *bytes, const int length) {
+inline DigestVector digest(const char *bytes, const uint64_t length) {
     DigestVector result(DIGEST_LENGTH);
     crypto_hash_sha256(
         &*result.begin(),

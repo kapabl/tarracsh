@@ -16,17 +16,18 @@ public:
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
     T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
     T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, T__18 = 19, T__19 = 20, 
-    T__20 = 21, T__21 = 22, Identifier = 23, WS = 24
+    T__20 = 21, T__21 = 22, T__22 = 23, Identifier = 24
   };
 
   enum {
-    RuleClassSignature = 0, RuleSimpleClassTypeSignature = 1, RuleSuperclassSignature = 2, 
-    RuleInterfaceSignature = 3, RuleTypeArguments = 4, RuleTypeArgument = 5, 
-    RuleWildcardIndicator = 6, RuleWildcardBound = 7, RuleTypeSignature = 8, 
-    RuleClassTypeSignature = 9, RuleFieldSignature = 10, RuleMethodSignature = 11, 
-    RulePackageSpecifier = 12, RuleArrayTypeSignature = 13, RuleFieldTypeSignature = 14, 
-    RuleMethodTypeSignature = 15, RuleParameterTypeSignature = 16, RuleReturnType = 17, 
-    RuleThrowsSignature = 18, RulePrimitiveType = 19
+    RuleJavaTypeSignature = 0, RuleBaseType = 1, RuleReferenceTypeSignature = 2, 
+    RuleClassTypeSignature = 3, RulePackageSpecifier = 4, RuleSimpleClassTypeSignature = 5, 
+    RuleTypeArguments = 6, RuleTypeArgument = 7, RuleWildcardIndicator = 8, 
+    RuleClassTypeSignatureSuffix = 9, RuleTypeVariableSignature = 10, RuleArrayTypeSignature = 11, 
+    RuleClassSignature = 12, RuleTypeParameters = 13, RuleTypeParameter = 14, 
+    RuleClassBound = 15, RuleSuperclassSignature = 16, RuleSuperInterfaceSignature = 17, 
+    RuleInterfaceBound = 18, RuleMethodSignature = 19, RuleResult = 20, 
+    RuleThrowsSignature = 21, RuleVoidDescriptor = 22, RuleFieldSignature = 23
   };
 
   explicit JvmSignatureParser(antlr4::TokenStream *input);
@@ -46,47 +47,101 @@ public:
   antlr4::atn::SerializedATNView getSerializedATN() const override;
 
 
-  class ClassSignatureContext;
+  class JavaTypeSignatureContext;
+  class BaseTypeContext;
+  class ReferenceTypeSignatureContext;
+  class ClassTypeSignatureContext;
+  class PackageSpecifierContext;
   class SimpleClassTypeSignatureContext;
-  class SuperclassSignatureContext;
-  class InterfaceSignatureContext;
   class TypeArgumentsContext;
   class TypeArgumentContext;
   class WildcardIndicatorContext;
-  class WildcardBoundContext;
-  class TypeSignatureContext;
-  class ClassTypeSignatureContext;
-  class FieldSignatureContext;
-  class MethodSignatureContext;
-  class PackageSpecifierContext;
+  class ClassTypeSignatureSuffixContext;
+  class TypeVariableSignatureContext;
   class ArrayTypeSignatureContext;
-  class FieldTypeSignatureContext;
-  class MethodTypeSignatureContext;
-  class ParameterTypeSignatureContext;
-  class ReturnTypeContext;
+  class ClassSignatureContext;
+  class TypeParametersContext;
+  class TypeParameterContext;
+  class ClassBoundContext;
+  class SuperclassSignatureContext;
+  class SuperInterfaceSignatureContext;
+  class InterfaceBoundContext;
+  class MethodSignatureContext;
+  class ResultContext;
   class ThrowsSignatureContext;
-  class PrimitiveTypeContext; 
+  class VoidDescriptorContext;
+  class FieldSignatureContext; 
 
-  class  ClassSignatureContext : public antlr4::ParserRuleContext {
+  class  JavaTypeSignatureContext : public antlr4::ParserRuleContext {
   public:
-    ClassSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    JavaTypeSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    SimpleClassTypeSignatureContext *simpleClassTypeSignature();
-    PackageSpecifierContext *packageSpecifier();
-    SuperclassSignatureContext *superclassSignature();
-    std::vector<InterfaceSignatureContext *> interfaceSignature();
-    InterfaceSignatureContext* interfaceSignature(size_t i);
-    std::vector<FieldSignatureContext *> fieldSignature();
-    FieldSignatureContext* fieldSignature(size_t i);
-    std::vector<MethodSignatureContext *> methodSignature();
-    MethodSignatureContext* methodSignature(size_t i);
+    ReferenceTypeSignatureContext *referenceTypeSignature();
+    BaseTypeContext *baseType();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
    
   };
 
-  ClassSignatureContext* classSignature();
+  JavaTypeSignatureContext* javaTypeSignature();
+
+  class  BaseTypeContext : public antlr4::ParserRuleContext {
+  public:
+    BaseTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  BaseTypeContext* baseType();
+
+  class  ReferenceTypeSignatureContext : public antlr4::ParserRuleContext {
+  public:
+    ReferenceTypeSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ClassTypeSignatureContext *classTypeSignature();
+    TypeVariableSignatureContext *typeVariableSignature();
+    ArrayTypeSignatureContext *arrayTypeSignature();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  ReferenceTypeSignatureContext* referenceTypeSignature();
+
+  class  ClassTypeSignatureContext : public antlr4::ParserRuleContext {
+  public:
+    ClassTypeSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    SimpleClassTypeSignatureContext *simpleClassTypeSignature();
+    PackageSpecifierContext *packageSpecifier();
+    std::vector<ClassTypeSignatureSuffixContext *> classTypeSignatureSuffix();
+    ClassTypeSignatureSuffixContext* classTypeSignatureSuffix(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  ClassTypeSignatureContext* classTypeSignature();
+
+  class  PackageSpecifierContext : public antlr4::ParserRuleContext {
+  public:
+    PackageSpecifierContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *Identifier();
+    PackageSpecifierContext *packageSpecifier();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  PackageSpecifierContext* packageSpecifier();
 
   class  SimpleClassTypeSignatureContext : public antlr4::ParserRuleContext {
   public:
@@ -101,32 +156,6 @@ public:
   };
 
   SimpleClassTypeSignatureContext* simpleClassTypeSignature();
-
-  class  SuperclassSignatureContext : public antlr4::ParserRuleContext {
-  public:
-    SuperclassSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    ClassTypeSignatureContext *classTypeSignature();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  SuperclassSignatureContext* superclassSignature();
-
-  class  InterfaceSignatureContext : public antlr4::ParserRuleContext {
-  public:
-    InterfaceSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    ClassTypeSignatureContext *classTypeSignature();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  InterfaceSignatureContext* interfaceSignature();
 
   class  TypeArgumentsContext : public antlr4::ParserRuleContext {
   public:
@@ -146,7 +175,7 @@ public:
   public:
     TypeArgumentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    TypeSignatureContext *typeSignature();
+    ReferenceTypeSignatureContext *referenceTypeSignature();
     WildcardIndicatorContext *wildcardIndicator();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -160,7 +189,6 @@ public:
   public:
     WildcardIndicatorContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    WildcardBoundContext *wildcardBound();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -169,80 +197,22 @@ public:
 
   WildcardIndicatorContext* wildcardIndicator();
 
-  class  WildcardBoundContext : public antlr4::ParserRuleContext {
+  class  ClassTypeSignatureSuffixContext : public antlr4::ParserRuleContext {
   public:
-    WildcardBoundContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ClassTypeSignatureSuffixContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    TypeSignatureContext *typeSignature();
+    SimpleClassTypeSignatureContext *simpleClassTypeSignature();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
    
   };
 
-  WildcardBoundContext* wildcardBound();
+  ClassTypeSignatureSuffixContext* classTypeSignatureSuffix();
 
-  class  TypeSignatureContext : public antlr4::ParserRuleContext {
+  class  TypeVariableSignatureContext : public antlr4::ParserRuleContext {
   public:
-    TypeSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    ClassTypeSignatureContext *classTypeSignature();
-    ArrayTypeSignatureContext *arrayTypeSignature();
-    PrimitiveTypeContext *primitiveType();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  TypeSignatureContext* typeSignature();
-
-  class  ClassTypeSignatureContext : public antlr4::ParserRuleContext {
-  public:
-    ClassTypeSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    std::vector<antlr4::tree::TerminalNode *> Identifier();
-    antlr4::tree::TerminalNode* Identifier(size_t i);
-    PackageSpecifierContext *packageSpecifier();
-    std::vector<TypeArgumentsContext *> typeArguments();
-    TypeArgumentsContext* typeArguments(size_t i);
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  ClassTypeSignatureContext* classTypeSignature();
-
-  class  FieldSignatureContext : public antlr4::ParserRuleContext {
-  public:
-    FieldSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    FieldTypeSignatureContext *fieldTypeSignature();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  FieldSignatureContext* fieldSignature();
-
-  class  MethodSignatureContext : public antlr4::ParserRuleContext {
-  public:
-    MethodSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    MethodTypeSignatureContext *methodTypeSignature();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  MethodSignatureContext* methodSignature();
-
-  class  PackageSpecifierContext : public antlr4::ParserRuleContext {
-  public:
-    PackageSpecifierContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    TypeVariableSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *Identifier();
 
@@ -251,13 +221,13 @@ public:
    
   };
 
-  PackageSpecifierContext* packageSpecifier();
+  TypeVariableSignatureContext* typeVariableSignature();
 
   class  ArrayTypeSignatureContext : public antlr4::ParserRuleContext {
   public:
     ArrayTypeSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    TypeSignatureContext *typeSignature();
+    JavaTypeSignatureContext *javaTypeSignature();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -266,65 +236,68 @@ public:
 
   ArrayTypeSignatureContext* arrayTypeSignature();
 
-  class  FieldTypeSignatureContext : public antlr4::ParserRuleContext {
+  class  ClassSignatureContext : public antlr4::ParserRuleContext {
   public:
-    FieldTypeSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ClassSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    TypeSignatureContext *typeSignature();
+    SuperclassSignatureContext *superclassSignature();
+    TypeParametersContext *typeParameters();
+    std::vector<SuperInterfaceSignatureContext *> superInterfaceSignature();
+    SuperInterfaceSignatureContext* superInterfaceSignature(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
    
   };
 
-  FieldTypeSignatureContext* fieldTypeSignature();
+  ClassSignatureContext* classSignature();
 
-  class  MethodTypeSignatureContext : public antlr4::ParserRuleContext {
+  class  TypeParametersContext : public antlr4::ParserRuleContext {
   public:
-    MethodTypeSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    TypeParametersContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    ReturnTypeContext *returnType();
-    std::vector<ParameterTypeSignatureContext *> parameterTypeSignature();
-    ParameterTypeSignatureContext* parameterTypeSignature(size_t i);
-    std::vector<ThrowsSignatureContext *> throwsSignature();
-    ThrowsSignatureContext* throwsSignature(size_t i);
+    std::vector<TypeParameterContext *> typeParameter();
+    TypeParameterContext* typeParameter(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
    
   };
 
-  MethodTypeSignatureContext* methodTypeSignature();
+  TypeParametersContext* typeParameters();
 
-  class  ParameterTypeSignatureContext : public antlr4::ParserRuleContext {
+  class  TypeParameterContext : public antlr4::ParserRuleContext {
   public:
-    ParameterTypeSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    TypeParameterContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    TypeSignatureContext *typeSignature();
+    antlr4::tree::TerminalNode *Identifier();
+    ClassBoundContext *classBound();
+    std::vector<InterfaceBoundContext *> interfaceBound();
+    InterfaceBoundContext* interfaceBound(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
    
   };
 
-  ParameterTypeSignatureContext* parameterTypeSignature();
+  TypeParameterContext* typeParameter();
 
-  class  ReturnTypeContext : public antlr4::ParserRuleContext {
+  class  ClassBoundContext : public antlr4::ParserRuleContext {
   public:
-    ReturnTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ClassBoundContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    TypeSignatureContext *typeSignature();
+    ReferenceTypeSignatureContext *referenceTypeSignature();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
    
   };
 
-  ReturnTypeContext* returnType();
+  ClassBoundContext* classBound();
 
-  class  ThrowsSignatureContext : public antlr4::ParserRuleContext {
+  class  SuperclassSignatureContext : public antlr4::ParserRuleContext {
   public:
-    ThrowsSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    SuperclassSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ClassTypeSignatureContext *classTypeSignature();
 
@@ -333,11 +306,83 @@ public:
    
   };
 
+  SuperclassSignatureContext* superclassSignature();
+
+  class  SuperInterfaceSignatureContext : public antlr4::ParserRuleContext {
+  public:
+    SuperInterfaceSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ClassTypeSignatureContext *classTypeSignature();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  SuperInterfaceSignatureContext* superInterfaceSignature();
+
+  class  InterfaceBoundContext : public antlr4::ParserRuleContext {
+  public:
+    InterfaceBoundContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ReferenceTypeSignatureContext *referenceTypeSignature();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  InterfaceBoundContext* interfaceBound();
+
+  class  MethodSignatureContext : public antlr4::ParserRuleContext {
+  public:
+    MethodSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ResultContext *result();
+    TypeParameterContext *typeParameter();
+    std::vector<JavaTypeSignatureContext *> javaTypeSignature();
+    JavaTypeSignatureContext* javaTypeSignature(size_t i);
+    std::vector<ThrowsSignatureContext *> throwsSignature();
+    ThrowsSignatureContext* throwsSignature(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  MethodSignatureContext* methodSignature();
+
+  class  ResultContext : public antlr4::ParserRuleContext {
+  public:
+    ResultContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    JavaTypeSignatureContext *javaTypeSignature();
+    VoidDescriptorContext *voidDescriptor();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  ResultContext* result();
+
+  class  ThrowsSignatureContext : public antlr4::ParserRuleContext {
+  public:
+    ThrowsSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ClassTypeSignatureContext *classTypeSignature();
+    TypeVariableSignatureContext *typeVariableSignature();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
   ThrowsSignatureContext* throwsSignature();
 
-  class  PrimitiveTypeContext : public antlr4::ParserRuleContext {
+  class  VoidDescriptorContext : public antlr4::ParserRuleContext {
   public:
-    PrimitiveTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    VoidDescriptorContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -345,7 +390,20 @@ public:
    
   };
 
-  PrimitiveTypeContext* primitiveType();
+  VoidDescriptorContext* voidDescriptor();
+
+  class  FieldSignatureContext : public antlr4::ParserRuleContext {
+  public:
+    FieldSignatureContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ReferenceTypeSignatureContext *referenceTypeSignature();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  FieldSignatureContext* fieldSignature();
 
 
   // By default the static state used to implement the parser is lazily initialized during the first

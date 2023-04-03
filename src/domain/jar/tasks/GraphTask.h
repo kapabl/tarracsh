@@ -5,9 +5,9 @@
 
 #include "../JarEntry.h"
 #include "Task.h"
-#include "../domain/db/CallGraphDb.h"
-#include "../domain/db/table/FilesTable.h"
-#include "../domain/db/table/ClassfilesTable.h"
+#include "../../db/CallGraphDb.h"
+#include "../../db/table/FilesTable.h"
+#include "../../db/table/ClassfilesTable.h"
 
 
 namespace kapa::tarracsh::domain::jar::tasks {

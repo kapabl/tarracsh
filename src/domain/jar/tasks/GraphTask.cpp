@@ -3,11 +3,11 @@
 #include <ranges>
 #include <utility>
 
-#include "../domain/digest/ClassFileDigest.h"
-#include "../domain/classfile/ClassFileParser.h"
-#include "../domain/classfile/reader/MemoryReader.h"
-#include "../domain/digest/DigestUtils.h"
-#include "../infrastructure/filesystem/Utils.h"
+#include "../../digest/ClassFileDigest.h"
+#include "../../classfile/ClassFileParser.h"
+#include "../../classfile/reader/MemoryReader.h"
+#include "../../digest/DigestUtils.h"
+#include "../../../infrastructure/filesystem/Utils.h"
 
 using namespace kapa::infrastructure::filesystem;
 using namespace kapa::tarracsh::domain::digest;

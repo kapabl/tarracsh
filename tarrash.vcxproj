@@ -482,7 +482,7 @@
     <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'">
-    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)src\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelJarDirMd5|x64'">
     <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
@@ -497,7 +497,7 @@
     <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel2|x64'">
-    <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)src\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RDigest|x64'">
     <IncludePath>$(ProjectDir)\src\includes;$(IncludePath)</IncludePath>
@@ -784,18 +784,26 @@
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugDir|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DbDirMd5|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DbJarDirMd5|x64'">
@@ -803,6 +811,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
     <Link />
     <Link>
@@ -816,6 +826,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
     <Link />
   </ItemDefinitionGroup>
@@ -824,6 +836,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
     <Link />
   </ItemDefinitionGroup>
@@ -832,6 +846,9 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
     </ClCompile>
     <Link />
   </ItemDefinitionGroup>
@@ -840,6 +857,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
     <Link />
   </ItemDefinitionGroup>
@@ -847,18 +866,24 @@
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugJar|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel2|x64'">
@@ -866,6 +891,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RDigest|x64'">
@@ -873,6 +900,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RCheckOnly|x64'">
@@ -880,24 +909,32 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDir|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelBigDir|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelDirMd5|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -906,13 +943,17 @@
     <ClCompile Include="src\domain\classfile\signature\grammar\JvmSignatureLexer.cpp" />
     <ClCompile Include="src\domain\classfile\signature\grammar\JvmSignatureListener.cpp" />
     <ClCompile Include="src\domain\classfile\signature\grammar\JvmSignatureParser.cpp" />
+    <ClCompile Include="src\domain\classfile\signature\nodes\Nodes.cpp" />
+    <ClCompile Include="src\domain\classfile\signature\parser\Parser.cpp" />
     <ClCompile Include="src\infrastructure\db\query\Engine.cpp" />
     <ClCompile Include="src\app\commands\CallGraphCommand.cpp" />
     <ClCompile Include="src\app\commands\ParseCommand.cpp" />
     <ClCompile Include="src\app\commands\digest\PublicDigest.cpp" />
     <ClCompile Include="src\app\server\digest\proto\Server.grpc.pb.cc" />
     <ClCompile Include="src\app\server\digest\proto\Server.pb.cc" />
-    <ClCompile Include="src\app\server\digest\ServiceImpl.cpp" />
+    <ClCompile Include="src\app\server\digest\ServiceImpl.cpp">
+      <PreprocessSuppressLineNumbers Condition="'$(Configuration)|$(Platform)'=='QQuery|x64'">false</PreprocessSuppressLineNumbers>
+    </ClCompile>
     <ClCompile Include="src\app\server\digest\ServerCommand.cpp" />
     <ClCompile Include="src\app\Analyzer.cpp" />
     <ClCompile Include="src\app\server\RequestContext.cpp" />
@@ -962,6 +1003,8 @@
     <ClInclude Include="src\domain\classfile\signature\grammar\JvmSignatureLexer.h" />
     <ClInclude Include="src\domain\classfile\signature\grammar\JvmSignatureListener.h" />
     <ClInclude Include="src\domain\classfile\signature\grammar\JvmSignatureParser.h" />
+    <ClInclude Include="src\domain\classfile\signature\nodes\Nodes.h" />
+    <ClInclude Include="src\domain\classfile\signature\parser\Parser.h" />
     <ClInclude Include="src\infrastructure\db\query\Engine.h" />
     <ClInclude Include="src\app\commands\CallGraphCommand.h" />
     <ClInclude Include="src\domain\digest\DigestEntryInfo.h" />
@@ -1040,7 +1083,6 @@
     <ClInclude Include="src\infrastructure\string\StringUtils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\includes\CLI11.hpp" />
     <ClInclude Include="src\classfile\SignatureScanner.h" />
     <ClInclude Include="src\domain\classfile\AttributeTags.h" />
     <ClInclude Include="src\domain\classfile\ClassFileConstants.h" />
@@ -1048,10 +1090,6 @@
     <ClInclude Include="src\domain\classfile\constantpool\StackFrame.h" />
     <ClInclude Include="src\domain\classfile\constantpool\StructsCommon.h" />
     <ClInclude Include="src\domain\classfile\reader\VectorReader.h" />
-    <ClInclude Include="src\includes\visit_struct\visit_struct.hpp" />
-    <ClInclude Include="src\includes\visit_struct\visit_struct_boost_fusion.hpp" />
-    <ClInclude Include="src\includes\visit_struct\visit_struct_boost_hana.hpp" />
-    <ClInclude Include="src\includes\visit_struct\visit_struct_intrusive.hpp" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="src\resources\constant-pool\sub-templates.yaml">

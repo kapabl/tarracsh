@@ -1,6 +1,6 @@
 #ifndef TARRACSH_SERVER_H
 #define TARRACSH_SERVER_H
-#include "../app/Context.h"
+#include "../../Context.h"
 #include <grpcpp/security/server_credentials.h>
 #include <grpcpp/server.h>
 #include "proto/Server.grpc.pb.h"

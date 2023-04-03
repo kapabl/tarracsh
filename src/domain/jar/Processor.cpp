@@ -5,7 +5,7 @@
 #include <libzippp/libzippp.h>
 
 #include "JarEntry.h"
-#include "../domain/classfile/ClassFileParser.h"
+#include "../classfile/ClassFileParser.h"
 using namespace libzippp;
 
 

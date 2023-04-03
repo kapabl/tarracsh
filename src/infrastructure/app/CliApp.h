@@ -1,7 +1,7 @@
 #ifndef KAPA_APP_H
 #define KAPA_APP_H
 
-#include <CLI11.hpp>
+#include <CLI/CLI.hpp>
 #include "../log/Log.h"
 
 
