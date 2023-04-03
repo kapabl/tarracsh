@@ -1,45 +1,46 @@
 grammar JvmSignature;
 
-classSignature : 'L' packageSpecifier? simpleClassTypeSignature superclassSignature? interfaceSignature* fieldSignature* methodSignature* ';' ;
 
+all: fieldSignature | methodSignature | classSignature ;
+
+javaTypeSignature : referenceTypeSignature | baseType ;
+baseType : 'B' | 'C' | 'D' | 'F' | 'I' | 'J' | 'S' | 'Z' ;
+
+referenceTypeSignature:
+      classTypeSignature
+    | typeVariableSignature
+    | arrayTypeSignature
+    ;
+
+
+
+classTypeSignature : 'L' packageSpecifier? simpleClassTypeSignature classTypeSignatureSuffix* ';' ;
+
+packageSpecifier : Identifier '/' packageSpecifier ;
 simpleClassTypeSignature : Identifier typeArguments? ;
+typeArguments : '<' typeArgument typeArgument* '>' ;
+typeArgument : wildcardIndicator? referenceTypeSignature '*' ;
+wildcardIndicator : '+' | '-' ;
+classTypeSignatureSuffix : '.' simpleClassTypeSignature ;
+typeVariableSignature : 'T' Identifier ';' ;
+arrayTypeSignature: '[' javaTypeSignature ;
 
-superclassSignature : 'L' classTypeSignature ';' ;
+classSignature : typeParameters? superclassSignature superInterfaceSignature* EOF;
+typeParameters : '<' typeParameter typeParameter* '>' ;
+typeParameter : Identifier classBound interfaceBound* ;
+classBound : referenceTypeSignature? ;
+superclassSignature : classTypeSignature ;
+superInterfaceSignature : classTypeSignature ;
+interfaceBound : referenceTypeSignature ;
 
-interfaceSignature : 'L' classTypeSignature ';' ;
+methodSignature: typeParameter? '(' javaTypeSignature* ')' result throwsSignature* EOF;
+result : javaTypeSignature | voidDescriptor ;
+throwsSignature : 
+    '^' classTypeSignature
+    '^' typeVariableSignature 
+    ;
+voidDescriptor : 'V' ;
 
-typeArguments : '<' typeArgument* '>' ;
+fieldSignature : referenceTypeSignature EOF;
 
-typeArgument : wildcardIndicator? typeSignature ;
-
-wildcardIndicator : '?' wildcardBound? ;
-
-wildcardBound : 'extends' typeSignature | 'super' typeSignature ;
-
-typeSignature : classTypeSignature | arrayTypeSignature | primitiveType ;
-
-classTypeSignature : 'L' packageSpecifier? Identifier typeArguments? ('.' Identifier typeArguments?)* ';' ;
-
-fieldSignature : fieldTypeSignature ;
-
-methodSignature : methodTypeSignature ;
-
-packageSpecifier : Identifier '/' ;
-
-arrayTypeSignature : '[' typeSignature ;
-
-fieldTypeSignature : typeSignature ;
-
-methodTypeSignature : '(' parameterTypeSignature* ')' returnType throwsSignature* ;
-
-parameterTypeSignature : typeSignature ;
-
-returnType : typeSignature | 'V' ;
-
-throwsSignature : '^' classTypeSignature ;
-
-primitiveType : 'B' | 'C' | 'D' | 'F' | 'I' | 'J' | 'S' | 'Z' ;
-
-Identifier : ('a'..'z' | 'A'..'Z' | '_' | '$') ('a'..'z' | 'A'..'Z' | '_' | '$' | '0'..'9')* ;
-
-WS : [ \t\n\r] -> skip ;
+Identifier : ~[\u0000-\u001f.;[/<>:()]+ ;

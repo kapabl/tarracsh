@@ -6,7 +6,7 @@
 #include <array>
 
 #include "ClassFileConstants.h"
-#include "../infrastructure/string/StringUtils.h"
+#include "../../infrastructure/string/StringUtils.h"
 #include "constantpool/StructsCommon.h"
 
 namespace kapa::tarracsh::domain::classfile::accessmodifier {

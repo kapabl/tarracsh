@@ -4,12 +4,12 @@
 
 #include "../JarEntry.h"
 #include "Task.h"
-#include "../domain/db/DigestDb.h"
-#include "../domain/db/columns/Columns.h"
-#include "../domain/db/table/ClassfilesTable.h"
-#include "../domain/classfile/ClassFileParser.h"
-#include "../domain/digest/DigestEntryInfo.h"
-#include "../domain/digest/DigestUtils.h"
+#include "../../db/DigestDb.h"
+#include "../../db/columns/Columns.h"
+#include "../../db/table/ClassfilesTable.h"
+#include "../../classfile/ClassFileParser.h"
+#include "../../digest/DigestEntryInfo.h"
+#include "../../digest/DigestUtils.h"
 
 namespace kapa::tarracsh::domain::jar::tasks {
 

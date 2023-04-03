@@ -133,12 +133,6 @@ inline std::wstring utf82wstring(const unsigned char *source, bool withEscape = 
     return utf82wstring(reinterpret_cast<const char *>(source), withEscape);
 }
 
-
-inline std::string utf16ToUtf8(const std::wstring &utf16Str) {
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-    return conv.to_bytes(utf16Str);
-}
-
 template <typename T, typename T1>
 inline T1 join(const T &parts, T1 delim) {
     T1 result;
@@ -195,7 +189,7 @@ inline std::string sizeToHumanReadable(uint64_t bytes) {
     std::vector<std::string> suffix{"B", "KB", "MB", "GB", "TB"};
 
     auto i = 0u;
-    double doubleBytes = bytes;
+    double doubleBytes = static_cast<double>(bytes);
 
     if (bytes > 1024) {
         for (i = 0; (bytes / 1024) > 0 && i < suffix.size() - 1; i++, bytes /= 1024) {

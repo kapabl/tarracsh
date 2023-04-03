@@ -1,10 +1,13 @@
 #include "SignatureParser.h"
-
-#include "grammar/JvmSignatureLexer.h"
+//
+// #include "grammar/JvmSignatureLexer.h"
+// #include "grammar/JvmSignatureParser.h"
+// #include "grammar/JavaSignatureListenerImpl.h"
 
 using namespace kapa::tarracsh::domain::classfile::signature;
 using namespace kapa::tarracsh::domain::classfile::attribute;
 using namespace std;
+using parser::Parser;
 
 /**
  * example: (
@@ -47,49 +50,35 @@ void SignatureParser::read(FieldSignature &signature) const {
     signature.signatureIndex = _reader.readU2();
 }
 
-std::string SignatureParser::getString(const ClassSignature &signature) const {
-    auto result = getStringInternal(signature, [](parser::JvmSignatureParser &parser)-> antlr4::tree::ParseTree* {
-        const auto parseTree = parser.classSignature();
-        return parseTree;
-    });
+string SignatureParser::getString(const ClassSignature &signature) const {
+
+    const auto signatureString = _constantPool.getString(signature.signatureIndex);
+
+    string result(std::format("TODO toString():{}", signatureString));
+    const auto parser = Parser::make();
+    auto tree = parser->parseClassSig(signatureString);
 
     return result;
 
 }
 
-std::string SignatureParser::getString(const MethodSignature &signature) const {
-    auto result = getStringInternal(signature, [](parser::JvmSignatureParser &parser)-> antlr4::tree::ParseTree* {
-        const auto parseTree = parser.fieldSignature();
-        return parseTree;
-    });
+string SignatureParser::getString(const MethodSignature &signature) const {
+    const auto signatureString = _constantPool.getString(signature.signatureIndex);
 
-    return result;
+    string result(std::format("TODO toString():{}", signatureString));
+    const auto parser = Parser::make();
+    auto tree = parser->parseMethodSig(signatureString);    
 
-}
-
-std::string SignatureParser::getString(const FieldSignature &signature) const {
-
-    auto result = getStringInternal(signature, [](parser::JvmSignatureParser &parser)-> antlr4::tree::ParseTree* {
-        const auto parseTree = parser.methodSignature();
-        return parseTree;
-    });
-
-    return result;
-
-}
-
-string SignatureParser::toString(const ClassSignature &signature) const {
-    string result; //TODO
     return result;
 }
 
-string SignatureParser::toString(const MethodSignature &signature) const {
-    string result; // TODO
-    return result;
-}
+string SignatureParser::getString(const FieldSignature &signature) const {
+    const auto signatureString = _constantPool.getString(signature.signatureIndex);
 
-string SignatureParser::toString(const FieldSignature &signature) const {
-    string result; // TODO
+    string result(std::format("TODO toString():{}", signatureString));
+    const auto parser = Parser::make();
+    auto tree = parser->parseTypeSig(signatureString);
+
     return result;
 }
 
@@ -120,30 +109,3 @@ string SignatureParser::toString() const {
     return result;
 }
 
-std::string SignatureParser::getStringInternal(const SignatureBase &signature,
-                                               std::function<antlr4::tree::ParseTree*(parser::JvmSignatureParser &)>
-                                               parserFunc) const {
-    // const auto signatureString = _constantPool.getString(signature.signatureIndex);
-    //
-    // std::string result;
-    // antlr4::ANTLRInputStream input(signatureString.c_str());
-    //
-    // parser::JvmSignatureLexer lexer(&input);
-    // antlr4::CommonTokenStream tokens(&lexer);
-    // parser::JvmSignatureParser parser(&tokens);
-    //
-    // auto parseTree = parserFunc(parser);
-    // auto parsed = parser.getNumberOfSyntaxErrors() == 0;
-    //
-    // if (parsed) {
-    //     parser::JavaSignatureListenerImpl listener;
-    //     antlr4::tree::ParseTreeWalker::DEFAULT.walk(&listener, parseTree);
-    //     result = listener.getResult();
-    // } else {
-    //     std::cout << std::format("Invalid java signature: {}", signatureString) << std::endl;
-    // }
-
-    std::string result;
-    //TODO
-    return result;
-}

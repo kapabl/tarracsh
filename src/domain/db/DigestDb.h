@@ -4,8 +4,8 @@
 #include <string>
 
 #include "table/ClassfilesTable.h"
-#include "../infrastructure/db/Database.h"
-#include "../infrastructure/db/table/Table.h"
+#include "../../infrastructure/db/Database.h"
+#include "../../infrastructure/db/table/Table.h"
 #include "table/FilesTable.h"
 
 

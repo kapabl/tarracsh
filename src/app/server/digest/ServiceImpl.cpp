@@ -12,8 +12,8 @@
 #include "../../App.h"
 #include "ServerCommand.h"
 #include "../RequestContext.h"
-#include "../app/Analyzer.h"
-#include "../infrastructure/profiling/ScopedTimer.h"
+#include "../../Analyzer.h"
+#include "../../../infrastructure/profiling/ScopedTimer.h"
 
 
 using kapa::tarracsh::server::digest::ServiceImpl;

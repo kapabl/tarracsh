@@ -5,8 +5,8 @@
 #include <BS_thread_pool.hpp>
 
 #include "../JarEntry.h"
-#include "../domain/classfile/ClassFileParser.h"
-#include "../domain/classfile/reader/MemoryReader.h"
+#include "../../classfile/ClassFileParser.h"
+#include "../../classfile/reader/MemoryReader.h"
 using namespace libzippp;
 
 

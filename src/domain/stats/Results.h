@@ -2,7 +2,7 @@
 #define TARRACSH_STATS_H
 
 #include <string>
-#include "../infrastructure/log/Log.h"
+#include "../../infrastructure/log/Log.h"
 #include "../Options.h"
 #include "DigestReport.h"
 #include "ProfileData.h"

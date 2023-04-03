@@ -3,10 +3,10 @@
 #include <ranges>
 #include <utility>
 
-#include "../domain/digest/ClassFileDigest.h"
-#include "../domain/classfile/reader/MemoryReader.h"
-#include "../domain/digest/DigestEntryInfo.h"
-#include "../domain/digest/DigestUtils.h"
+#include "../../digest/ClassFileDigest.h"
+#include "../../classfile/reader/MemoryReader.h"
+#include "../../digest/DigestEntryInfo.h"
+#include "../../digest/DigestUtils.h"
 #include "../../../infrastructure/filesystem/Utils.h"
 
 using namespace kapa::infrastructure::filesystem;

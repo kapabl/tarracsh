@@ -3,7 +3,7 @@
 #include <set>
 #include <inja/inja.hpp>
 
-#include "../domain/classfile/ClassFileParser.h"
+#include "../../../../../domain/classfile/ClassFileParser.h"
 #include "../ConstantPoolPrinter.h"
 
 

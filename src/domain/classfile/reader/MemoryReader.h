@@ -4,7 +4,7 @@
 #include "ClassFileReader.h"
 #include <filesystem>
 #include <libzippp/libzippp.h>
-#include "../domain/jar/JarEntry.h"
+#include "../../jar/JarEntry.h"
 
 
 namespace kapa::tarracsh::domain::classfile::reader {

@@ -1,6 +1,6 @@
 #ifndef TARRACSH_SERVER_COMMAND_H
 #define TARRACSH_SERVER_COMMAND_H
-#include "../app/Context.h"
+#include "../../Context.h"
 
 #include "ServiceImpl.h"
 #include "proto/Server.grpc.pb.h"

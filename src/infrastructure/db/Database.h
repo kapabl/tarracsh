@@ -5,7 +5,7 @@
 #include "StringPool.h"
 #include "query/Engine.h"
 #include "../log/Log.h"
-#include "../infrastructure/profiling/ScopedTimer.h"
+#include "../profiling/ScopedTimer.h"
 
 
 namespace kapa::infrastructure::db {

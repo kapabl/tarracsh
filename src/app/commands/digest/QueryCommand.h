@@ -2,10 +2,10 @@
 #define TARRACSH_QUERY_H
 
 #include "../../App.h"
-#include "../infrastructure/db/Database.h"
-#include "../domain/db/CallGraphDb.h"
-#include "../domain/db/DigestDb.h"
-#include "../domain/stats/Results.h"
+#include "../../../infrastructure/db/Database.h"
+#include "../../../domain/db/CallGraphDb.h"
+#include "../../../domain/db/DigestDb.h"
+#include "../../../domain/stats/Results.h"
 
 
 namespace kapa::tarracsh::app::commands::digest {

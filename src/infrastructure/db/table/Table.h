@@ -22,7 +22,7 @@ struct Row {
 };
 
 struct AutoIncrementedRow : Row {
-    columns::UInt64Col id{-1ull};
+    columns::UInt64Col id{ std::numeric_limits<uint64_t>::max() };
 };
 
 
