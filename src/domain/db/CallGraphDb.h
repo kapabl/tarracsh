@@ -2,7 +2,7 @@
 #define TARRACSH_CALL_GRAPH_DB_H
 #include <filesystem>
 #include <string>
-#include "../../infrastructure/db/Database.h"
+#include "infrastructure/db/Database.h"
 
 
 namespace kapa::tarracsh::domain::db::callgraph {

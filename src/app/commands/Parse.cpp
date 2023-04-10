@@ -1,7 +1,7 @@
-#include "ParseCommand.h"
-#include "../App.h"
-#include "../Analyzer.h"
-#include "../../infrastructure/profiling/ScopedTimer.h"
+#include "Parse.h"
+#include "app/App.h"
+#include "app/Analyzer.h"
+#include "infrastructure/profiling/ScopedTimer.h"
 
 using namespace kapa::tarracsh;
 using namespace app;
@@ -10,12 +10,13 @@ using namespace commands;
 
 using namespace kapa::infrastructure::app::cli::command;
 using kapa::infrastructure::profiler::ScopedTimer;
+using app::Analyzer;
 
-ParseCommand::ParseCommand(CLI::App *parent)
+Parse::Parse(CLI::App *parent)
     : Command(parent), _results(App::getGlobalResults()), _options(App::getGlobalOptions()) {
 }
 
-ExitCode ParseCommand::run() {
+ExitCode Parse::run() {
     ExitCode result = 0;
 
     ScopedTimer::timeWithPrint(
@@ -32,7 +33,7 @@ ExitCode ParseCommand::run() {
     return result;
 }
 
-void ParseCommand::addCommand() {
+void Parse::addCommand() {
     _subCommand = _parent->add_subcommand("parse", "Parse class files, jar or directories");
     _subCommand->add_option("--input,-i", _options.parse.input, "Input: directory, jar file or class file")->
                  required();

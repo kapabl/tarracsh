@@ -12,7 +12,7 @@
 #include "reader/VectorReader.h"
 #include "AnnotationsParser.h"
 #include "signature/SignatureParser.h"
-#include "../../infrastructure/string/StringUtils.h"
+#include "infrastructure/string/StringUtils.h"
 
 
 namespace kapa::tarracsh::domain::classfile::attribute {

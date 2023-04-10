@@ -1,7 +1,7 @@
 #ifndef TARRACSH_CLASSFILE_TABLE_H
 #define TARRACSH_CLASSFILE_TABLE_H
 #include <string>
-#include "../../../infrastructure/db/table/Table.h"
+#include "infrastructure/db/table/Table.h"
 #include "FilesTable.h"
 
 #pragma pack( push, 1 )

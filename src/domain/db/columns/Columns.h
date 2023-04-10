@@ -1,7 +1,7 @@
 #ifndef TARRACSH_COLUMNS_H
 #define TARRACSH_COLUMNS_H
 #include <cassert>
-#include "../../../infrastructure/db/columns/Columns.h"
+#include "infrastructure/db/columns/Columns.h"
 #include "../../digest/DigestUtils.h"
 
 #pragma pack( push, 1 )

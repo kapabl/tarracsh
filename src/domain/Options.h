@@ -8,7 +8,7 @@
 namespace kapa::tarracsh::domain {
 // struct Options;
 
-struct DigestServerOptions {
+struct ServerOptions {
     bool isServerMode{false};
     int port{0xCA9A};
     bool stopServer{false};
@@ -16,7 +16,7 @@ struct DigestServerOptions {
     [[nodiscard]] std::string getListenServerAddress() const;
 };
 
-struct DigestClientOptions {
+struct ClientOptions {
     bool isClientMode{false};
     int port{0xCA9A};
     std::string host{"localhost"};
@@ -24,30 +24,29 @@ struct DigestClientOptions {
     [[nodiscard]] std::string getServerAddress() const;
 };
 
-struct InputOptions {
+struct BaseOptions {
     std::string input;
     bool isDir{ false };
     bool isJar{ false };
     bool isClassfile{ false };
     [[nodiscard]] bool processInput();
     [[nodiscard]] bool isValidInput();
-};
-
-struct DigestOptions : InputOptions {
-    bool dryRun{false};
-    bool rebuild{false};
-    bool isDiff{false};
+    bool dryRun{ false };
+    bool rebuild{ false };
+    bool isDiff{ false };
     std::string queryValue;
-    DigestServerOptions server;
-    DigestClientOptions client;
+    ServerOptions server;
+    ClientOptions client;
     bool displayRaw{ false };
 };
 
-struct CallGraphOptions : InputOptions {
-    //TODO
+struct DigestOptions : BaseOptions {
 };
 
-struct ParseOptions : InputOptions {
+struct CallGraphOptions : BaseOptions {
+};
+
+struct ParseOptions : BaseOptions {
     bool print{false};
     bool printConstantPool{false};
     bool printCPoolHtmlNav{false};
@@ -72,7 +71,7 @@ struct Options {
     bool verbose{false};
     
     [[nodiscard]] bool canPrintProgress() const;
-    InputOptions& getInputOptions();
+    BaseOptions& getBaseOptions();
 
 
 };

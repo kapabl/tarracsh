@@ -13,7 +13,7 @@
 #include "ServerCommand.h"
 #include "../RequestContext.h"
 #include "../../Analyzer.h"
-#include "../../../infrastructure/profiling/ScopedTimer.h"
+#include "infrastructure/profiling/ScopedTimer.h"
 
 
 using kapa::tarracsh::server::digest::ServiceImpl;
@@ -162,6 +162,7 @@ Status ServiceImpl::Diff(ServerContext *context, const DiffRequest *request, Dif
         [this, request, response, &result]() -> void {
             RequestContext requestContext;
             if (requestContext.update(*request)) {
+                //TODO check what analyzer to use?
                 app::Analyzer analyzer(requestContext, _db);
                 analyzer.run();
                 requestContext.getResults().report->print();

@@ -1,7 +1,7 @@
 #ifndef TARRACSH_CONSTANT_POOL_PRINTER_H
 #define TARRACSH_CONSTANT_POOL_PRINTER_H
 #include <unordered_map>
-#include "../../../../domain/classfile/ClassFileParser.h"
+#include "domain/classfile/ClassFileParser.h"
 
 
 namespace kapa::tarracsh::app::classfile::constantpool::printer {

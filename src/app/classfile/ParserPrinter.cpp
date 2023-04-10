@@ -1,8 +1,8 @@
 #include <iostream>
 #include "ParserPrinter.h"
 
-#include "../../domain/classfile/MethodDescriptorParser.h"
-#include "../../domain/classfile/ClassFileParser.h"
+#include "domain/classfile/MethodDescriptorParser.h"
+#include "domain/classfile/ClassFileParser.h"
 
 
 using namespace kapa::tarracsh::app::classfile;

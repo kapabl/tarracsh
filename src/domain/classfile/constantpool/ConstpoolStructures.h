@@ -5,7 +5,7 @@
 #include "StructsCommon.h"
 #include "StackFrame.h"
 #include "../AttributeStructures.h"
-#include "../../../infrastructure/string/StringUtils.h"
+#include "infrastructure/string/StringUtils.h"
 
 #pragma pack(push, 1)
 

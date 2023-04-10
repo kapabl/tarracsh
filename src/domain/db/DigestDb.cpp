@@ -1,6 +1,6 @@
 #include "DigestDb.h"
 #include <memory>
-#include "../../infrastructure/db/StringPool.h"
+#include "infrastructure/db/StringPool.h"
 
 
 using namespace std;
