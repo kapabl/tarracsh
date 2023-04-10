@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
-#include "../../../../../infrastructure/string/StringUtils.h"
-#include "../../../../../infrastructure/filesystem/Utils.h"
+#include "infrastructure/string/StringUtils.h"
+#include "infrastructure/filesystem/Utils.h"
 #include "../../../../App.h"
 #include "HtmlGen.h"
 

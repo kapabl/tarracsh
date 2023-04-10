@@ -2,7 +2,7 @@
 #include <iostream>
 #include "ProfileData.h"
 
-#include "../../infrastructure/filesystem/Utils.h"
+#include "infrastructure/filesystem/Utils.h"
 
 using namespace kapa::tarracsh::domain::stats::profiler;
 

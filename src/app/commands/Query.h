@@ -1,24 +1,24 @@
 #ifndef TARRACSH_QUERY_H
 #define TARRACSH_QUERY_H
 
-#include "../../App.h"
-#include "../../../infrastructure/db/Database.h"
-#include "../../../domain/db/CallGraphDb.h"
-#include "../../../domain/db/DigestDb.h"
-#include "../../../domain/stats/Results.h"
+#include "app/App.h"
+#include "infrastructure/db/Database.h"
+#include "domain/db/CallGraphDb.h"
+#include "domain/db/DigestDb.h"
+#include "domain/stats/Results.h"
 
 
-namespace kapa::tarracsh::app::commands::digest {
+namespace kapa::tarracsh::app::commands {
 
 using infrastructure::db::Database;
 
 
-class QueryCommand {
+class Query {
 public:
     static bool run(Context &config);
 
 private:
-    explicit QueryCommand(Context &context);
+    explicit Query(Context &context);
 
     [[nodiscard]] bool execute() const;
 
@@ -28,13 +28,13 @@ private:
 };
 
 
-inline bool QueryCommand::run(Context &config) {
-    const QueryCommand queryCommand(config);
+inline bool Query::run(Context &config) {
+    const Query queryCommand(config);
     const auto result = queryCommand.execute();
     return result;
 }
 
-inline QueryCommand::QueryCommand(Context &context)
+inline Query::Query(Context &context)
     : _options(context.getOptions()), _results(context.getResults()) {
 
     Database::Config dbConfig{_options.outputDir, &context.getLog()};
@@ -47,7 +47,7 @@ inline QueryCommand::QueryCommand(Context &context)
 
 }
 
-inline bool QueryCommand::execute() const {
+inline bool Query::execute() const {
     _db->init();
     const auto result = _db->executeQuery(_options.digest.queryValue, _options.digest.displayRaw);
     return result;

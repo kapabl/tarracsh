@@ -1,5 +1,5 @@
 #include "App.h"
-#include "../infrastructure/filesystem/Utils.h"
+#include "infrastructure/filesystem/Utils.h"
 #include "Tarracsh.h"
 
 
@@ -81,12 +81,13 @@ void App::setupCliOptions() {
     set_help_all_flag("--help-all");
 
     _digestCommand = std::make_unique<commands::digest::PublicDigest>(this);
+    _digestCommand = std::make_unique<commands::digest::PublicDigest>(this);
     _digestCommand->addCommand();
 
-    _parseCommand = std::make_unique<commands::ParseCommand>(this);
+    _parseCommand = std::make_unique<commands::Parse>(this);
     _parseCommand->addCommand();
 
-    _callGraphCommand = std::make_unique<commands::CallGraphCommand>(this);
+    _callGraphCommand = std::make_unique<commands::callgraph::CallGraph>(this);
     _callGraphCommand->addCommand();
 
     _parseCommand->getSubCommand()->excludes(_digestCommand->getSubCommand());

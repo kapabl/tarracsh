@@ -5,7 +5,7 @@
 #include <functional>
 #include <string>
 
-#include "../../infrastructure/filesystem/Utils.h"
+#include "infrastructure/filesystem/Utils.h"
 
 
 namespace kapa::infrastructure::profiler {

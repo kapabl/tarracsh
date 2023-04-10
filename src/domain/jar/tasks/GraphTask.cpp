@@ -7,7 +7,7 @@
 #include "../../classfile/ClassFileParser.h"
 #include "../../classfile/reader/MemoryReader.h"
 #include "../../digest/DigestUtils.h"
-#include "../../../infrastructure/filesystem/Utils.h"
+#include "infrastructure/filesystem/Utils.h"
 
 using namespace kapa::infrastructure::filesystem;
 using namespace kapa::tarracsh::domain::digest;

@@ -1,7 +1,7 @@
 #ifndef CLASSFILE_INFO_H
 #define CLASSFILE_INFO_H
 #include <filesystem>
-#include "../../infrastructure/filesystem/Utils.h"
+#include "infrastructure/filesystem/Utils.h"
 
 
 namespace kapa::tarracsh::domain::classfile {

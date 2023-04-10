@@ -9,8 +9,8 @@
 #include <sodium/crypto_hash_sha256.h>
 
 
-#include "../../infrastructure/string/StringUtils.h"
-#include "../../infrastructure/db/columns/Columns.h"
+#include "infrastructure/string/StringUtils.h"
+#include "infrastructure/db/columns/Columns.h"
 
 namespace kapa::tarracsh::domain::digestUtils {
 

@@ -1,13 +1,13 @@
 #ifndef TARRACSH_APP_H
 #define TARRACSH_APP_H
 
-#include "../infrastructure/app/CliApp.h"
-#include "../domain/Options.h"
+#include "infrastructure/app/CliApp.h"
+#include "domain/Options.h"
 #include "Context.h"
 
 #include "commands/digest/PublicDigest.h"
-#include "commands/CallGraphCommand.h"
-#include "commands/ParseCommand.h"
+#include "commands/callgraph/CallGraph.h"
+#include "commands/Parse.h"
 
 using CliApp = kapa::infrastructure::app::cli::CliApp;
 
@@ -40,8 +40,8 @@ private:
     domain::Options _options;
     void setupCliOptions();
 
-    std::unique_ptr<commands::ParseCommand> _parseCommand{};
-    std::unique_ptr<commands::CallGraphCommand> _callGraphCommand{};
+    std::unique_ptr<commands::Parse> _parseCommand{};
+    std::unique_ptr<commands::callgraph::CallGraph> _callGraphCommand{};
     std::unique_ptr<commands::digest::PublicDigest> _digestCommand{};
     static std::unique_ptr<App> _app;
 

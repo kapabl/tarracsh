@@ -4,7 +4,7 @@
 #include <grpcpp/security/server_credentials.h>
 #include <grpcpp/server.h>
 #include "proto/Server.grpc.pb.h"
-#include "../../../domain/db/DigestDb.h"
+#include "domain/db/DigestDb.h"
 
 using grpc::Status;
 using grpc::ServerContext;

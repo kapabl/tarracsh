@@ -1,9 +1,9 @@
 #ifndef TARRACSH_CONFIG_H
 #define TARRACSH_CONFIG_H
 
-#include "../domain/Options.h"
-#include "../domain/stats/Results.h"
-#include "../infrastructure/log/Log.h"
+#include "domain/Options.h"
+#include "domain/stats/Results.h"
+#include "infrastructure/log/Log.h"
 
 namespace kapa::tarracsh::app {
 class Context {

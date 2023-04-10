@@ -1,5 +1,5 @@
 #include "Options.h"
-#include "../infrastructure/filesystem/Utils.h"
+#include "infrastructure/filesystem/Utils.h"
 
 using namespace kapa::tarracsh::domain;
 
@@ -11,13 +11,13 @@ bool Options::canPrintProgress() const {
     return result;
 }
 
-InputOptions & Options::getInputOptions() {
+BaseOptions& Options::getBaseOptions() {
     if (isPublicDigest) return digest;
     if (isCallGraph) return callGraph;
     return parse;
 }
 
-bool InputOptions::processInput() {
+bool BaseOptions::processInput() {
     isDir = std::filesystem::is_directory(input);
     if (isDir) return true;
 
@@ -32,7 +32,7 @@ bool InputOptions::processInput() {
     return false;
 }
 
-bool InputOptions::isValidInput() {
+bool BaseOptions::isValidInput() {
     const auto result = processInput();
     if (!result) {
         std::cout << std::format("Input should be a directory, jar or class file. Invalid input:{}", input) << std::endl;
@@ -40,12 +40,12 @@ bool InputOptions::isValidInput() {
     return result;
 }
 
-std::string DigestServerOptions::getListenServerAddress() const {
+std::string ServerOptions::getListenServerAddress() const {
     auto result = format("{}:{}", listenAddress, port);
     return result;
 }
 
-std::string DigestClientOptions::getServerAddress() const {
+std::string ClientOptions::getServerAddress() const {
     auto result = format("{}:{}", host, port);
     return result;
 }

@@ -19,8 +19,11 @@ std::vector<const char *> testJvmMethodSignatures{
     "<T:Ljava/lang/Comparable<TT;>;>(TT;TT;)TT;",
     "<K:Ljava/lang/Object;V:Ljava/lang/Object;>()Ljava/util/Map<TK;TV;>;",
     "<T:Ljava/lang/Object;>([TT;)[TT;",
-    "<T:Ljava/lang/Object;>(Ljava/lang/Class<TT;>;)TT;"
-
+    "<T:Ljava/lang/Object;>(Ljava/lang/Class<TT;>;)TT;",
+    "(Ljava/util/List<+Ljava/lang/Number;>;)Ljava/util/List<+Ljava/lang/Number;>;",
+    "(Ljava/util/function/Consumer<-TT;>;)V",
+    "(Ljava/util/List<TT;>;Ljava/util/function/Predicate<-TT;>;)Ljava/util/List<TT;>;",
+    "(Ljava/util/List<*TT;>;Ljava/util/function/Predicate<*TT;>;)Ljava/util/List<*TT;>;"
 };
 
 TEST_CASE("JVM Method Signature", "Method Sig") {

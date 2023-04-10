@@ -2,8 +2,8 @@
 #define TARRACSH_FILE_TABLE_H
 #include <string>
 #include "../columns/Columns.h"
-#include "../../../infrastructure/db/Database.h"
-#include "../../../infrastructure/db/table/Table.h"
+#include "infrastructure/db/Database.h"
+#include "infrastructure/db/table/Table.h"
 #pragma pack( push, 1 )
 namespace kapa::tarracsh::domain::db::digest {
 

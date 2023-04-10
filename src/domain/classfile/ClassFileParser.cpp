@@ -29,13 +29,13 @@ bool ClassFileParser::internalParse() {
         processFile();
     } catch (const runtime_error &runtimeException) {
         result = false;
-        const auto errorMessage = format("Error parsing file: {}, msg:{}", _options.getInputOptions().input,
+        const auto errorMessage = format("Error parsing file: {}, msg:{}", _options.getBaseOptions().input,
                                          runtimeException.what());
         _results.log->writeln(errorMessage);
     }
     catch (...) {
         result = false;
-        const auto errorMessage = format("Error parsing file: {}", _options.getInputOptions().input);
+        const auto errorMessage = format("Error parsing file: {}", _options.getBaseOptions().input);
         _results.log->writeln(errorMessage);
     }
 
@@ -48,7 +48,7 @@ std::string ClassFileParser::getMainClassname() const {
 }
 
 std::string ClassFileParser::getContainingFile() {
-    std::string result = _options.getInputOptions().input;
+    std::string result = _options.getBaseOptions().input;
 
     return result;
 }
@@ -177,7 +177,7 @@ void ClassFileParser::readConstPoolEntry(int &index) {
 
         default: // NOLINT(clang-diagnostic-covered-switch-default)
             const auto errorMessage = format("Error - Invalid const-pool tag: {} {}", static_cast<int>(tag),
-                                             _options.getInputOptions().input);
+                                             _options.getBaseOptions().input);
             _results.log->writeln(errorMessage);
             throw runtime_error(errorMessage);
     }

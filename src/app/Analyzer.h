@@ -6,13 +6,10 @@
 #include <BS_thread_pool.hpp>
 
 #include "Context.h"
-#include "../domain/classfile/ClassFileParser.h"
-#include "../domain/classfile/StandaloneClassFileInfo.h"
-#include "../infrastructure/db/Database.h"
-#include "../infrastructure/db/columns/Columns.h"
-#include "../domain/db/DigestDb.h"
-#include "../domain/db/CallGraphDb.h"
-
+#include "domain/classfile/ClassFileParser.h"
+#include "domain/classfile/StandaloneClassFileInfo.h"
+#include "infrastructure/db/Database.h"
+#include "infrastructure/db/columns/Columns.h"
 
 using kapa::tarracsh::domain::classfile::ClassFileParser;
 using kapa::tarracsh::domain::classfile::StandaloneClassFileInfo;
@@ -32,16 +29,16 @@ public:
 
     [[nodiscard]] bool isValid() const { return _isValid; }
 
-    ~Analyzer() = default;
+    virtual ~Analyzer() = default;
 
     void run();
     void runWithPrint();
 
-private:
+protected:
     domain::Options _options;
-    domain::InputOptions _inputOptions;
+    domain::BaseOptions _inputOptions;
     domain::stats::Results& _results;
-    void processJar(const std::string &filename);
+
 
     std::shared_ptr<infrastructure::db::Database> _db;
 
@@ -51,25 +48,18 @@ private:
 
     bool _isValid{true};
 
-    [[nodiscard]] bool initDb(infrastructure::db::Database &db) const;
     void processFile(const std::filesystem::directory_entry &dirEntry);
     [[nodiscard]] bool initAnalyzer() const;
-    void serverLog(const std::string & string, bool doStdout = false) const;
-    void processDirInput();
-    void analyzeInput();
-    void updateDbs();
-    void endAnalysis();
+    void serverLog(const std::string & string, bool doStdout = false);
 
+    virtual void processStandaloneClassfile(const std::string& filename);
+    virtual void processDirInput();
+    virtual void processJar(const std::string& filename);
+    virtual void endAnalysis();
+    virtual void analyzeStandaloneClassfile(const std::string& filename);
+
+    void analyzeInput();
     void parseClassfile(const std::string& filename) const;
-    [[nodiscard]] bool isFileUnchanged(uintmax_t size, long long timestamp, const domain::db::digest::FileRow *row) const;
-    [[nodiscard]] domain::db::digest::DigestDb &getDigestDb() const;
-    [[nodiscard]] domain::db::callgraph::CallGraphDb &getCallGraphDb() const;
-    void updateDbInMemory(
-        const StandaloneClassFileInfo &classFileInfo, 
-        const ClassFileParser &parser,
-        const infrastructure::db::tables::columns::DigestCol &digest) const;
-    void digestClassfile(const std::string& filename);
-    void processStandaloneClassfile(const std::string& filename);
     void classFileParserDone(ClassFileParser &parser) const;
 
 };

@@ -7,10 +7,10 @@
 #include <string>
 #include <vector>
 
-#include "./../../domain/classfile/ClassFileParser.h"
-#include "./../../domain/classfile/AttributesManager.h"
-#include "./../../domain/classfile/AccessModifiers.h"
-#include "./../../domain/classfile/constantpool/ConstantPool.h"
+#include "./domain/classfile/ClassFileParser.h"
+#include "./domain/classfile/AttributesManager.h"
+#include "./domain/classfile/AccessModifiers.h"
+#include "./domain/classfile/constantpool/ConstantPool.h"
 
 
 namespace kapa::tarracsh::app::classfile {
