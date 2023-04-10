@@ -14,7 +14,7 @@ using namespace kapa::tarracsh::domain::digest;
 
 using namespace kapa::tarracsh::domain;
 
-using kapa::infrastructure::db::tables::columns::DigestCol;
+using kapa::infrastructure::db::table::column::DigestCol;
 
 using namespace classfile;
 using namespace db;
@@ -33,7 +33,7 @@ GraphTask::GraphTask(
       _options(move(options)) {
 }
 
-const db::digest::ClassfileRow *GraphTask::getClassfileRow(const JarEntry &jarEntry) const {
+const db::table::ClassfileRow *GraphTask::getClassfileRow(const JarEntry &jarEntry) const {
     // const auto key = _callGraphDb.getClassfiles()->getStrongClassname(
     //     *_jarFileRow,
     //     jarEntry.getClassname().c_str());
@@ -48,7 +48,7 @@ bool GraphTask::start() {
     const auto &filename = _options.digest.input;
     _jarSize = filesystem::file_size(filename);
     _jarTimestamp = utils::getLastWriteTimestamp(filename);
-    _jarFileRow = const_cast<FileRow *>(getJarFileRow(filename));
+    _jarFileRow = const_cast<table::FileRow *>(getJarFileRow(filename));
     _isFileUnchanged = isFileUnchanged();
     const auto result = !_isFileUnchanged;
     return result;
@@ -119,7 +119,7 @@ bool GraphTask::isFileUnchanged() const {
     return result;
 }
 
-const FileRow *GraphTask::createJarFileRow(const std::string &filename) const {
+const table::FileRow *GraphTask::createJarFileRow(const std::string &filename) const {
     //TODO
     // tables::FileRow jarFileRow;
     // jarFileRow.filename = _callGraphDb.getPoolString(filename);
@@ -133,7 +133,7 @@ const FileRow *GraphTask::createJarFileRow(const std::string &filename) const {
 
 }
 
-const FileRow *GraphTask::getJarFileRow(const std::string &filename) {
+const table::FileRow *GraphTask::getJarFileRow(const std::string &filename) {
     //TODO
     // auto result = _callGraphDb.getFiles()->findByKey(filename);
     // _isNewJarFile = result == nullptr;
@@ -148,7 +148,7 @@ const FileRow *GraphTask::getJarFileRow(const std::string &filename) {
 
 
 optional<DigestCol> GraphTask::parseEntry(const JarEntry &jarEntry,
-                                          const ClassfileRow *row) const {
+                                          const table::ClassfileRow *row) const {
     optional<DigestCol> result;
     Options classfileOptions(_options);
     reader::MemoryReader reader(jarEntry);
@@ -201,9 +201,3 @@ optional<DigestCol> GraphTask::parseEntry(const JarEntry &jarEntry,
 }
 
 
-bool GraphTask::isClassfileUnchanged(const JarEntry &jarEntry, const ClassfileRow *classRow) {
-    const auto result = classRow->size == jarEntry.getSize() &&
-                        classRow->crc == jarEntry.getCRC() &&
-                        classRow->lastWriteTime == jarEntry.getLastWriteTime();
-    return result;
-}

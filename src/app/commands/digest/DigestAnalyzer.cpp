@@ -28,14 +28,14 @@ using kapa::tarracsh::domain::jar::tasks::ParserTask;
 using kapa::tarracsh::domain::jar::Processor;
 using kapa::tarracsh::domain::db::digest::DigestDb;
 using kapa::tarracsh::domain::db::callgraph::CallGraphDb;
-using kapa::tarracsh::domain::db::digest::FileRow;
-using kapa::tarracsh::domain::db::digest::ClassfileRow;
-using kapa::tarracsh::domain::db::digest::columns::EntryType;
+using kapa::tarracsh::domain::db::table::FileRow;
+using kapa::tarracsh::domain::db::table::ClassfileRow;
+using kapa::tarracsh::domain::db::digest::column::EntryType;
 using kapa::tarracsh::domain::digest::ClassFileDigest;
 using kapa::tarracsh::domain::Options;
 using kapa::infrastructure::profiler::ScopedTimer;
 
-using kapa::infrastructure::db::tables::columns::DigestCol;
+using kapa::infrastructure::db::table::column::DigestCol;
 
 
 using namespace kapa::tarracsh::app::commands::digest;

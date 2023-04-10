@@ -12,7 +12,7 @@
 
 #pragma pack( push, 1 )
 
-namespace kapa::infrastructure::db::tables {
+namespace kapa::infrastructure::db::table {
 
 
 constexpr const char *TableExtension = ".kapamd";
@@ -22,7 +22,7 @@ struct Row {
 };
 
 struct AutoIncrementedRow : Row {
-    columns::UInt64Col id{ std::numeric_limits<uint64_t>::max() };
+    column::UInt64Col id{ std::numeric_limits<uint64_t>::max() };
 };
 
 
@@ -38,7 +38,7 @@ struct TableLayout {
         }
     } header;
 
-    columns::Properties columns[1];
+    column::Properties columns[1];
 
     TableLayout()
         : columns{} {
@@ -112,14 +112,14 @@ protected:
 
     std::shared_mutex _mutex;
     const std::shared_ptr<StringPool> _stringPool;
-    std::vector<columns::Properties> _columns;
+    std::vector<column::Properties> _columns;
     std::unordered_map<std::string, int> _columnByName;
     TableLayout _layout;
 
     virtual void defineColumns() {
     }
 
-    void forEachColumn(const std::function<void(const columns::Properties&, const int index)> &func) const;
+    void forEachColumn(const std::function<void(const column::Properties&, const int index)> &func) const;
 
     virtual std::string getKey(const AutoIncrementedRow *row) = 0;
 

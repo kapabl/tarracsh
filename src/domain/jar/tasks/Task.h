@@ -14,10 +14,10 @@ public:
     virtual uint32_t getCount() { return _jarFileRow->classfileCount; }
     virtual ~Task() = default;
 
-    [[nodiscard]] db::digest::FileRow &getJarFileRow() const { return *_jarFileRow; }
+    [[nodiscard]] db::table::FileRow &getJarFileRow() const { return *_jarFileRow; }
 
 protected:
-    db::digest::FileRow *_jarFileRow = nullptr;
+    db::table::FileRow *_jarFileRow = nullptr;
     uintmax_t _jarSize{};
     long long _jarTimestamp{};
 };

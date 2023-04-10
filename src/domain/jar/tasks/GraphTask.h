@@ -31,17 +31,16 @@ private:
     Options _options;
     bool _isFileUnchanged{false};
     bool _isNewJarFile{false};
-    std::map<std::string, infrastructure::db::tables::columns::DigestCol> _digestMap;
+    std::map<std::string, infrastructure::db::table::column::DigestCol> _digestMap;
 
-    [[nodiscard]] std::optional<infrastructure::db::tables::columns::DigestCol> parseEntry(
+    [[nodiscard]] std::optional<infrastructure::db::table::column::DigestCol> parseEntry(
         const JarEntry &jarEntry,
-        const db::digest::ClassfileRow *row) const;
+        const db::table::ClassfileRow *row) const;
 
-    [[nodiscard]] const db::digest::ClassfileRow *getClassfileRow(const JarEntry &jarEntry) const;
-    [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const db::digest::ClassfileRow *classRow);
+    [[nodiscard]] const db::table::ClassfileRow *getClassfileRow(const JarEntry &jarEntry) const;
     [[nodiscard]] bool isFileUnchanged() const;
-    [[nodiscard]] const db::digest::FileRow *createJarFileRow(const std::string &filename) const;
-    [[nodiscard]] const db::digest::FileRow *getJarFileRow(const std::string &filename);
+    [[nodiscard]] const db::table::FileRow *createJarFileRow(const std::string &filename) const;
+    [[nodiscard]] const db::table::FileRow *getJarFileRow(const std::string &filename);
 
 };
 

@@ -1,9 +1,8 @@
 #include "ClassfilesTable.h"
 
-using namespace kapa::tarracsh::domain::db::digest;
-using namespace kapa::infrastructure::db::tables::columns;
-using kapa::infrastructure::db::tables::AutoIncrementedRow;
-using namespace columns;
+using namespace kapa::tarracsh::domain::db::table;
+using namespace kapa::infrastructure::db::table::column;
+using kapa::infrastructure::db::table::AutoIncrementedRow;
 
 
 ClassfilesTable::ClassfilesTable(infrastructure::db::Database &db, const std::string &tablename,

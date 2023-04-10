@@ -1,7 +1,6 @@
 #ifndef TARRACSH_DIGEST_DB_H
 #define TARRACSH_DIGEST_DB_H
 #include <filesystem>
-#include <string>
 
 #include "table/ClassfilesTable.h"
 #include "infrastructure/db/Database.h"
@@ -27,11 +26,11 @@ public:
     void stop() override;
     void backup() override;
     auto getFiles() { return _filesTable; }
-    std::shared_ptr<ClassfilesTable> getClassfiles() { return _classfilesTable; }
+    std::shared_ptr<table::ClassfilesTable> getClassfiles() { return _classfilesTable; }
     void outputStats() const;
 private:
-    std::shared_ptr<FilesTable> _filesTable;
-    std::shared_ptr<ClassfilesTable> _classfilesTable;
+    std::shared_ptr<table::FilesTable> _filesTable;
+    std::shared_ptr<table::ClassfilesTable> _classfilesTable;
     std::atomic_bool _stopSaveThread;
     bool _hasSaveThread;
     std::jthread _saveThread;

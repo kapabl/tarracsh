@@ -11,7 +11,7 @@ namespace kapa::infrastructure::db {
 class Database;
 }
 
-namespace kapa::infrastructure::db::tables::columns {
+namespace kapa::infrastructure::db::table::column {
 
 
 enum StorageType {

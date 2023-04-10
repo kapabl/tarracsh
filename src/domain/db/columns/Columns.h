@@ -6,7 +6,7 @@
 
 #pragma pack( push, 1 )
 
-namespace kapa::tarracsh::domain::db::digest::columns {
+namespace kapa::tarracsh::domain::db::digest::column {
 
 
 enum EntryType { Classfile, Jar, Directory };

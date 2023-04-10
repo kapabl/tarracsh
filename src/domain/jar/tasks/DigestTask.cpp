@@ -11,10 +11,11 @@
 
 using namespace kapa::infrastructure::filesystem;
 using namespace kapa::tarracsh::domain::digest;
+using namespace kapa::tarracsh::domain::db::table;
 using namespace kapa::tarracsh::domain;
 
-using kapa::infrastructure::db::tables::columns::DigestCol;
-using kapa::infrastructure::db::tables::AutoIncrementedRow;
+using kapa::infrastructure::db::table::column::DigestCol;
+using kapa::infrastructure::db::table::AutoIncrementedRow;
 
 using namespace classfile;
 using namespace db;
@@ -128,7 +129,7 @@ FileRow *DigestTask::createJarFileRow(const std::string &filename) const {
     auto result = static_cast<FileRow *>(_db.getFiles()->allocateRow());
     new (result) FileRow();
     result->filename = _db.getPoolString(filename);
-    result->type = columns::EntryType::Jar;
+    result->type = column::EntryType::Jar;
     result->lastWriteTime = _jarTimestamp;
     result->fileSize = _jarSize;
     result->classfileCount = 0;

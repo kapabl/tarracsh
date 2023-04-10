@@ -1,10 +1,10 @@
 #include "FilesTable.h"
 
 using namespace kapa::tarracsh::domain::db::digest;
-using namespace kapa::infrastructure::db::tables::columns;
-using namespace columns;
+using namespace kapa::infrastructure::db::table::column;
+using namespace column;
 
-namespace kapa::tarracsh::domain::db::digest {
+using namespace kapa::tarracsh::domain::db::table;
 
 FilesTable::FilesTable(infrastructure::db::Database &db, const std::string &name)
     : Table(db, name, sizeof(FileRow)) {
@@ -15,12 +15,12 @@ std::string FilesTable::createKey(const char *filename) {
     return result;
 }
 
-std::string FilesTable::createKey(const infrastructure::db::tables::columns::StringCol &filename) const {
+std::string FilesTable::createKey(const infrastructure::db::table::column::StringCol &filename) const {
     std::string result(createKey(_stringPool->getCString(filename)));
     return result;
 }
 
-std::string FilesTable::getKey(const infrastructure::db::tables::AutoIncrementedRow *row) {
+std::string FilesTable::getKey(const infrastructure::db::table::AutoIncrementedRow *row) {
     std::string result = createKey(row);
     return result;
 }
@@ -30,7 +30,7 @@ const char *FilesTable::getFilename(const FileRow *row) const {
     return result;
 }
 
-std::string FilesTable::createKey(const infrastructure::db::tables::AutoIncrementedRow *row) const {
+std::string FilesTable::createKey(const infrastructure::db::table::AutoIncrementedRow *row) const {
     const auto fileRow = static_cast<const FileRow *>(row);
     auto result = createKey(fileRow->filename);
     return result;
@@ -62,5 +62,4 @@ void FilesTable::defineColumns() {
             return "unknown";
 
         });
-}
 }
