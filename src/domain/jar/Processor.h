@@ -43,7 +43,7 @@ private:
     bool _isValid{true};
     std::atomic<unsigned int> _classfileCount{0};
 
-    [[nodiscard]] db::digest::ClassfileRow* getRow(const JarEntry& jarEntry) const;
+    [[nodiscard]] db::table::ClassfileRow* getRow(const JarEntry& jarEntry) const;
     void waitForAvailableBuffer();
 
 

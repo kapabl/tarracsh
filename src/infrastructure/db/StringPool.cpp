@@ -14,7 +14,7 @@ StringPool::~StringPool() {
     free(_pool);
 }
 
-tables::columns::StringCol StringPool::add(const std::string &stringValue) {
+table::column::StringCol StringPool::add(const std::string &stringValue) {
     const auto result = internalAdd(stringValue);
     return result;
 }
@@ -63,16 +63,16 @@ bool StringPool::write() const {
     return true;
 }
 
-const char * StringPool::getCString(const tables::columns::StringCol &item) {
+const char * StringPool::getCString(const table::column::StringCol &item) {
     std::shared_lock readersLock(_sharedMutex);
     const auto result = &_pool[item];
     return result;
 }
 
-tables::columns::StringCol StringPool::internalAdd(const std::string &stringValue) {
+table::column::StringCol StringPool::internalAdd(const std::string &stringValue) {
     std::unique_lock writeLock(_sharedMutex);
 
-    tables::columns::StringCol result;
+    table::column::StringCol result;
     const auto it = _hash.find(stringValue);
 
     if (it == _hash.end()) {

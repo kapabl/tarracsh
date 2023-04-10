@@ -49,7 +49,7 @@ void ListenerImpl::enterList(KapaQueryParser::ListContext *listContext) {
 
 void ListenerImpl::exitList(KapaQueryParser::ListContext *listContext) {
     if (!hasSemanticErrors()) {
-        _mainTable->list([this](tables::AutoIncrementedRow &row) -> bool {
+        _mainTable->list([this](table::AutoIncrementedRow &row) -> bool {
             const auto result = _where(row);
             return result;
         }, _displayRaw);
@@ -61,7 +61,7 @@ void ListenerImpl::exitList(KapaQueryParser::ListContext *listContext) {
 }
 
 void ListenerImpl::enterWhere(KapaQueryParser::WhereContext *whereContext) {
-    _where = [this, whereContext](tables::AutoIncrementedRow &row)-> bool {
+    _where = [this, whereContext](table::AutoIncrementedRow &row)-> bool {
         const bool result = _rulePredicates[whereContext->expr()](row);
         return result;
     };
@@ -75,12 +75,12 @@ void ListenerImpl::exitWhere(KapaQueryParser::WhereContext *whereContext) {
 void ListenerImpl::enterExpr(KapaQueryParser::ExprContext *exprContext) {
     auto *filterContext = exprContext->filter();
     if (filterContext != nullptr) {
-        _rulePredicates[exprContext] = [this, filterContext](tables::AutoIncrementedRow &row)-> bool {
+        _rulePredicates[exprContext] = [this, filterContext](table::AutoIncrementedRow &row)-> bool {
             const bool result = _rulePredicates[filterContext](row);
             return result;
         };
     } else {
-        _rulePredicates[exprContext] = [this, exprContext](tables::AutoIncrementedRow &row)-> bool {
+        _rulePredicates[exprContext] = [this, exprContext](table::AutoIncrementedRow &row)-> bool {
             const bool left = _rulePredicates[exprContext->expr()[0]](row);
             if (exprContext->logical_oper()->AND() != nullptr) {
                 if (!left) return false;
@@ -129,7 +129,7 @@ void ListenerImpl::enterFilter(KapaQueryParser::FilterContext *filterContext) {
 
 }
 
-std::string ListenerImpl::getColumnValue(const tables::AutoIncrementedRow &row, const std::string &columnName) const {
+std::string ListenerImpl::getColumnValue(const table::AutoIncrementedRow &row, const std::string &columnName) const {
     auto result = _mainTable->getColumnValue(row.id, columnName.c_str());
     return result;
 }

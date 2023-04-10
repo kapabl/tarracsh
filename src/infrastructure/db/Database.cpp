@@ -9,7 +9,7 @@
 #include "StringPool.h"
 
 using namespace kapa::infrastructure::db;
-using namespace tables;
+using namespace table;
 
 
 kapa::infrastructure::profiler::MillisecondDuration Database::getReadTime() const {
@@ -73,7 +73,7 @@ void Database::printSchema() {
     }
 }
 
-columns::StringCol Database::getPoolString(const std::string &value) const {
+column::StringCol Database::getPoolString(const std::string &value) const {
     const auto result = _stringPool->add(value);
     return result;
 }

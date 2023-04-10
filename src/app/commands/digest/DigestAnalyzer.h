@@ -27,10 +27,10 @@ private:
     void analyzeStandaloneClassfile(const std::string& filename) override;
     void processJar(const std::string &filename) override;
     void digestClassfile(const std::string &filename) const;
-    bool isFileUnchanged(const uintmax_t size, const long long timestamp, const domain::db::digest::FileRow *row) const;
+    bool isFileUnchanged(const uintmax_t size, const long long timestamp, const domain::db::table::FileRow *row) const;
     domain::db::digest::DigestDb &getDigestDb() const;
     void updateDbInMemory(const StandaloneClassFileInfo &classFileInfo, const ClassFileParser &parser,
-                          const infrastructure::db::tables::columns::DigestCol &digest) const;
+                          const infrastructure::db::table::column::DigestCol &digest) const;
 
 };
 }

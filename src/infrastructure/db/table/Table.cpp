@@ -7,7 +7,7 @@
 
 #include "../../profiling/ScopedTimer.h"
 
-using namespace kapa::infrastructure::db::tables;
+using namespace kapa::infrastructure::db::table;
 using kapa::infrastructure::profiler::ScopedTimer;
 
 
@@ -148,8 +148,8 @@ void Table::printLayout() {
         std::cout << std::right
             << std::setw(7) << std::format("no: {}, ", index)
             << std::setw(25) << std::format("name: {}, ", properties.name)
-            << std::setw(25) << std::format("type: {}, ", columns::StorageTypeToString(properties.type))
-            << std::setw(25) << std::format("display as: {}", columns::displayAsToString(properties.displayAs))
+            << std::setw(25) << std::format("type: {}, ", column::StorageTypeToString(properties.type))
+            << std::setw(25) << std::format("display as: {}", column::displayAsToString(properties.displayAs))
             << std::endl;
     });
 }
@@ -200,7 +200,7 @@ void Table::writeHeader(FILE *file) {
 }
 
 void Table::writeSchema(FILE *file) const {
-    std::fwrite(&*_columns.begin(), sizeof(columns::Properties), _columns.size(), file);
+    std::fwrite(&*_columns.begin(), sizeof(column::Properties), _columns.size(), file);
 }
 
 bool Table::readRows(FILE *file) {
@@ -238,7 +238,7 @@ bool Table::readHeader(FILE *file) {
 
 bool Table::readSchema(FILE *file) {
     _columns.resize(_layout.header.columnCount);
-    std::fread(&*_columns.begin(), sizeof(columns::Properties), _columns.size(), file);
+    std::fread(&*_columns.begin(), sizeof(column::Properties), _columns.size(), file);
 
     forEachColumn([this](const auto &properties, const auto index) -> void {
         _columnByName[properties.name] = index;
@@ -296,7 +296,7 @@ void Table::init() {
     defineColumns();
 }
 
-void Table::forEachColumn(const std::function<void(const columns::Properties &, const int index)> &func) const {
+void Table::forEachColumn(const std::function<void(const column::Properties &, const int index)> &func) const {
     auto index = 0u;
     while (index < _layout.header.columnCount) {
         func(_columns[index], index);
@@ -310,7 +310,7 @@ uint64_t Table::getFileSize() const {
 }
 
 uint64_t Table::getHeaderSize() const {
-    const auto result = sizeof(TableLayout) + (_layout.header.columnCount - 1) * sizeof(columns::Properties);
+    const auto result = sizeof(TableLayout) + (_layout.header.columnCount - 1) * sizeof(column::Properties);
     return result;
 }
 

@@ -35,24 +35,24 @@ private:
     Options _options;
     bool _isFileUnchanged{false};
     bool _isNewJarFile{false};
-    std::map<std::string, infrastructure::db::tables::columns::DigestCol> _digestMap;
-    db::digest::FileRow * _tempFileRow{nullptr};
+    std::map<std::string, infrastructure::db::table::column::DigestCol> _digestMap;
+    db::table::FileRow * _tempFileRow{nullptr};
 
-    [[nodiscard]] std::optional<infrastructure::db::tables::columns::DigestCol> digestEntry(
+    [[nodiscard]] std::optional<infrastructure::db::table::column::DigestCol> digestEntry(
         const digest::DigestJarEntryInfo &digestEntryInfo,
-        const db::digest::ClassfileRow *row) const;
+        const db::table::ClassfileRow *row) const;
 
-    [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const db::digest::ClassfileRow *classRow);
+    [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const db::table::ClassfileRow *classRow);
     [[nodiscard]] bool isFileUnchanged() const;
-    [[nodiscard]] db::digest::FileRow *createJarFileRow(const std::string &filename) const;
-    [[nodiscard]] db::digest::FileRow *getOrCreateFileRow(const std::string &filename);
+    [[nodiscard]] db::table::FileRow *createJarFileRow(const std::string &filename) const;
+    [[nodiscard]] db::table::FileRow *getOrCreateFileRow(const std::string &filename);
 
     void updateFileTableInMemory(const digestUtils::DigestVector& digest) const;
 
     static std::string getUniqueClassname(
         const JarEntry& jarEntry,
         const classfile::ClassFileParser& classFileParser);
-    void updateClassfileTableInMemory(const JarEntry& jarEntry, const infrastructure::db::tables::columns::DigestCol& result,
+    void updateClassfileTableInMemory(const JarEntry& jarEntry, const infrastructure::db::table::column::DigestCol& result,
         const classfile::ClassFileParser& classFileParser) const;
 
 };

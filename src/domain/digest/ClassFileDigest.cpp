@@ -126,7 +126,7 @@ DigestVector ClassFileDigest::digestMethod(const MethodInfo &methodInfo) const {
     return result;
 }
 
-kapa::infrastructure::db::tables::columns::DigestCol ClassFileDigest::digest() const {
+kapa::infrastructure::db::table::column::DigestCol ClassFileDigest::digest() const {
 
     const auto &mainClassInfo = _classFileParser.getMainClassInfo();
     const auto &attributes = _classFileParser.getAttributes();
@@ -143,7 +143,7 @@ kapa::infrastructure::db::tables::columns::DigestCol ClassFileDigest::digest() c
         .append(mainClassInfo.accessFlags);
 
     const auto digest = digestUtils::digest(reinterpret_cast<const char *>(&*buffer.begin()), buffer.size());
-    infrastructure::db::tables::columns::DigestCol result;
+    infrastructure::db::table::column::DigestCol result;
     memcpy(result.buf, &*digest.begin(), DIGEST_LENGTH);
     return result;
 

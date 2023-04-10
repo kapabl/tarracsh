@@ -58,11 +58,11 @@ namespace kapa::infrastructure::db::query {
         mutable std::unordered_map<std::string, std::unique_ptr<std::regex>> _regexCache;
         mutable std::unordered_map<std::string, std::string> _sanitizedStringCache;
 
-        typedef std::function<bool(tables::AutoIncrementedRow&)> RowPredicate;
+        typedef std::function<bool(table::AutoIncrementedRow&)> RowPredicate;
         RowPredicate _where = [](auto& row) -> bool { return true; };
         //RowPredicate _whereExpr = [](auto& row) -> bool { return true; };
-        tables::Table * _mainTable{nullptr};
-        [[nodiscard]] std::string getColumnValue(const tables::AutoIncrementedRow& row, const std::string& columnName) const;
+        table::Table * _mainTable{nullptr};
+        [[nodiscard]] std::string getColumnValue(const table::AutoIncrementedRow& row, const std::string& columnName) const;
 
         std::unordered_map<antlr4::ParserRuleContext*, RowPredicate> _rulePredicates;
 

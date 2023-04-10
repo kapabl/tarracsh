@@ -19,7 +19,7 @@ namespace kapa::infrastructure::db {
 
 constexpr const char *StringPoolExtension = ".string-pool";
 
-namespace tables::columns {
+namespace table::column {
 
 typedef uint64_t StringCol;
 // struct StringCol {
@@ -40,11 +40,11 @@ public:
 
     ~StringPool();
 
-    tables::columns::StringCol add(const std::string &stringValue);
+    table::column::StringCol add(const std::string &stringValue);
     bool read();
     [[nodiscard]] bool write() const;
     bool clean();
-    [[nodiscard]] const char *getCString(const tables::columns::StringCol &item);
+    [[nodiscard]] const char *getCString(const table::column::StringCol &item);
     void backup();
 
 
@@ -60,7 +60,7 @@ private:
     std::shared_mutex _sharedMutex;
 
 
-    tables::columns::StringCol internalAdd(const std::string &stringValue);
+    table::column::StringCol internalAdd(const std::string &stringValue);
 
     void reallocPool();
 

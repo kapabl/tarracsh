@@ -5,17 +5,17 @@
 #include "FilesTable.h"
 
 #pragma pack( push, 1 )
-namespace kapa::tarracsh::domain::db::digest {
+namespace kapa::tarracsh::domain::db::table {
 
 
-struct ClassfileRow : infrastructure::db::tables::AutoIncrementedRow {
-    infrastructure::db::tables::columns::RefCol file{};
-    infrastructure::db::tables::columns::StringCol classname{};
-    infrastructure::db::tables::columns::StringCol package{};
-    infrastructure::db::tables::columns::UInt64Col lastWriteTime{};
-    infrastructure::db::tables::columns::UInt64Col size{};
-    infrastructure::db::tables::columns::Int32Col crc{};
-    infrastructure::db::tables::columns::DigestCol digest{};
+struct ClassfileRow : infrastructure::db::table::AutoIncrementedRow {
+    infrastructure::db::table::column::RefCol file{};
+    infrastructure::db::table::column::StringCol classname{};
+    infrastructure::db::table::column::StringCol package{};
+    infrastructure::db::table::column::UInt64Col lastWriteTime{};
+    infrastructure::db::table::column::UInt64Col size{};
+    infrastructure::db::table::column::Int32Col crc{};
+    infrastructure::db::table::column::DigestCol digest{};
 
     ClassfileRow() = default;
     explicit ClassfileRow(const FileRow& fileRow) {
@@ -28,7 +28,7 @@ struct ClassfileRow : infrastructure::db::tables::AutoIncrementedRow {
 
 };
 
-class ClassfilesTable : public  infrastructure::db::tables::Table {
+class ClassfilesTable : public  infrastructure::db::table::Table {
 
 public:
     explicit ClassfilesTable(infrastructure::db::Database &db,
@@ -36,7 +36,7 @@ public:
                              std::shared_ptr<FilesTable> filesTable);
 
     [[nodiscard]] std::string getStrongClassname(const FileRow &fileRow, const char *classname) const;
-    [[nodiscard]] std::string getKey(const infrastructure::db::tables::AutoIncrementedRow* row) override;
+    [[nodiscard]] std::string getKey(const infrastructure::db::table::AutoIncrementedRow* row) override;
     [[nodiscard]] std::string getStrongClassname(const ClassfileRow &row) const;
 
     void defineColumns() override;

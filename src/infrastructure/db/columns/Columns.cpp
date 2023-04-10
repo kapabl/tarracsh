@@ -5,9 +5,9 @@
 #include "../table/Table.h"
 
 
-using namespace kapa::infrastructure::db::tables::columns;
+using namespace kapa::infrastructure::db::table::column;
 
-std::string kapa::infrastructure::db::tables::columns::displayAsToString(const DisplayAs displayAs) {
+std::string kapa::infrastructure::db::table::column::displayAsToString(const DisplayAs displayAs) {
     switch (displayAs) {
 
         case AsInt32:
