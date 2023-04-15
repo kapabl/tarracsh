@@ -944,6 +944,7 @@
     <ClCompile Include="src\app\commands\digest\DigestAnalyzer.cpp" />
     <ClCompile Include="src\domain\classfile\signature\nodes\Nodes.cpp" />
     <ClCompile Include="src\domain\classfile\signature\parser\Parser.cpp" />
+    <ClCompile Include="src\domain\db\table\Methods.cpp" />
     <ClCompile Include="src\infrastructure\db\query\Engine.cpp" />
     <ClCompile Include="src\app\commands\Parse.cpp" />
     <ClCompile Include="src\app\commands\digest\PublicDigest.cpp" />
@@ -985,11 +986,11 @@
     <ClCompile Include="src\domain\jar\Processor.cpp" />
     <ClCompile Include="src\app\classfile\constantpool\printer\nav\HtmlGen.cpp" />
     <ClCompile Include="src\domain\db\CallGraphDb.cpp" />
-    <ClCompile Include="src\domain\db\table\ClassfilesTable.cpp" />
+    <ClCompile Include="src\domain\db\table\Classfiles.cpp" />
     <ClCompile Include="src\infrastructure\app\CliApp.cpp" />
     <ClCompile Include="src\infrastructure\db\Database.cpp" />
     <ClCompile Include="src\domain\db\DigestDb.cpp" />
-    <ClCompile Include="src\domain\db\table\FilesTable.cpp" />
+    <ClCompile Include="src\domain\db\table\Files.cpp" />
     <ClCompile Include="src\infrastructure\db\StringPool.cpp" />
     <ClCompile Include="src\infrastructure\db\table\Table.cpp">
       <FileType>Document</FileType>
@@ -1001,6 +1002,7 @@
     <ClInclude Include="src\app\commands\digest\DigestAnalyzer.h" />
     <ClInclude Include="src\domain\classfile\signature\nodes\Nodes.h" />
     <ClInclude Include="src\domain\classfile\signature\parser\Parser.h" />
+    <ClInclude Include="src\domain\db\table\Methods.h" />
     <ClInclude Include="src\infrastructure\db\query\Engine.h" />
     <ClInclude Include="src\domain\digest\DigestEntryInfo.h" />
     <ClInclude Include="src\infrastructure\app\Command.h" />
@@ -1063,13 +1065,13 @@
     <ClInclude Include="src\app\classfile\constantpool\printer\nav\HtmlGen.h" />
     <ClInclude Include="src\app\server\RequestContext.h" />
     <ClInclude Include="src\domain\db\CallGraphDb.h" />
-    <ClInclude Include="src\domain\db\table\ClassfilesTable.h" />
+    <ClInclude Include="src\domain\db\table\Classfiles.h" />
     <ClInclude Include="src\domain\db\columns\Columns.h" />
     <ClInclude Include="src\infrastructure\app\CliApp.h" />
     <ClInclude Include="src\infrastructure\db\columns\Columns.h" />
     <ClInclude Include="src\infrastructure\db\Database.h" />
     <ClInclude Include="src\domain\db\DigestDb.h" />
-    <ClInclude Include="src\domain\db\table\FilesTable.h" />
+    <ClInclude Include="src\domain\db\table\Files.h" />
     <ClInclude Include="src\app\commands\Query.h" />
     <ClInclude Include="src\infrastructure\db\StringPool.h" />
     <ClInclude Include="src\infrastructure\db\table\Table.h" />

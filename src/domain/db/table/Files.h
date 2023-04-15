@@ -22,10 +22,10 @@ struct FileRow : infrastructure::db::table::AutoIncrementedRow {
 
 };
 
-class FilesTable : public infrastructure::db::table::Table {
+class Files : public infrastructure::db::table::Table {
 
 public:
-    explicit FilesTable(infrastructure::db::Database &db, const std::string &name);
+    explicit Files(infrastructure::db::Database &db, const std::string &name);
     [[nodiscard]] static std::string createKey(const char *filename);
     [[nodiscard]] std::string createKey(const infrastructure::db::table::column::StringCol &filename) const;
     std::string getKey(const infrastructure::db::table::AutoIncrementedRow *row) override;

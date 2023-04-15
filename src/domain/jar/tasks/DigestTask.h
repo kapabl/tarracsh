@@ -6,7 +6,7 @@
 #include "Task.h"
 #include "../../db/DigestDb.h"
 #include "../../db/columns/Columns.h"
-#include "../../db/table/ClassfilesTable.h"
+#include "../../db/table/Classfiles.h"
 #include "../../classfile/ClassFileParser.h"
 #include "../../digest/DigestEntryInfo.h"
 #include "../../digest/DigestUtils.h"

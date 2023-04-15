@@ -1,31 +1,39 @@
-#include "ClassfilesTable.h"
+#include "Classfiles.h"
 
 using namespace kapa::tarracsh::domain::db::table;
 using namespace kapa::infrastructure::db::table::column;
 using kapa::infrastructure::db::table::AutoIncrementedRow;
 
 
-ClassfilesTable::ClassfilesTable(infrastructure::db::Database &db, const std::string &tablename,
-    std::shared_ptr<FilesTable> filesTable): Table(db, tablename, sizeof(ClassfileRow)), _filesTable(std::move(filesTable)) {
+Classfiles::Classfiles(infrastructure::db::Database &db, const std::string &tablename,
+    std::shared_ptr<Files> filesTable): Table(db, tablename, sizeof(ClassfileRow)), _filesTable(std::move(filesTable)) {
 }
 
-std::string ClassfilesTable::getKey(const AutoIncrementedRow* row) {
+
+
+std::string Classfiles::getKey(const AutoIncrementedRow* row) {
     return getStrongClassname(reinterpret_cast<const ClassfileRow&>(*row));
 }
 
-std::string ClassfilesTable::getStrongClassname(const ClassfileRow &row) const {
+std::string Classfiles::getStrongClassname(const uint64_t id) {
+    const auto row = reinterpret_cast<const ClassfileRow&>(*getRow(id));
+    auto result = getStrongClassname(row);
+    return result;
+}
+
+std::string Classfiles::getStrongClassname(const ClassfileRow &row) const {
     const auto fileRow = reinterpret_cast<const FileRow&>(*_filesTable->getRow(row.file.id));
 
     auto result = getStrongClassname(fileRow, _stringPool->getCString(row.classname));
     return result;
 }
 
-std::string ClassfilesTable::getStrongClassname(const FileRow &fileRow, const char *classname) const {
+std::string Classfiles::getStrongClassname(const FileRow &fileRow, const char *classname) const {
     std::string result(digestUtils::getStrongClassname(_filesTable->getFilename(&fileRow), classname));
     return result;
 }
 
-void ClassfilesTable::defineColumns() {
+void Classfiles::defineColumns() {
     DECLARE_COLUMN_PROP(ClassfileRow, id, StorageType::UInt64, DisplayAs::AsUInt64);
     DECLARE_FOREIGN_COLUMN_PROP(ClassfileRow, file, StorageType::Ref, DisplayAs::AsRef, _filesTable->getName().c_str(), "filename");
     DECLARE_COLUMN_PROP(ClassfileRow, classname, StorageType::String, DisplayAs::AsString);

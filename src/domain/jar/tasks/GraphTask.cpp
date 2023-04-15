@@ -34,7 +34,7 @@ GraphTask::GraphTask(
 }
 
 const db::table::ClassfileRow *GraphTask::getClassfileRow(const JarEntry &jarEntry) const {
-    // const auto key = _callGraphDb.getClassfiles()->getStrongClassname(
+    // const auto key = _callGraphDb.getClassfiles()->getStrongMethodName(
     //     *_jarFileRow,
     //     jarEntry.getClassname().c_str());
     // const tables::ClassfileRow *result = _callGraphDb.getClassfiles()->findByKey(key);
@@ -166,7 +166,7 @@ optional<DigestCol> GraphTask::parseEntry(const JarEntry &jarEntry,
         //     //TODO
         //     // _results.log->writeln(
         //     //     std::format("Same public digestEntry of changed file:{}",
-        //     //                 _callGraphDb.getClassfiles()->getStrongClassname(*row)));
+        //     //                 _callGraphDb.getClassfiles()->getStrongMethodName(*row)));
         //     // ++_results.jarfiles.classfiles.digest.same;
         //     //
         //     // result = row->digest;

@@ -4,7 +4,7 @@
 #include <BS_thread_pool.hpp>
 
 #include "app/Analyzer.h"
-#include "domain/db/table/FilesTable.h"
+#include "domain/db/table/Files.h"
 #include "domain/db/DigestDb.h"
 
 

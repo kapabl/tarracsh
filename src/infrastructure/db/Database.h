@@ -23,7 +23,7 @@ public:
         log::Log* log{ nullptr };
     };
 
-    explicit Database(const Config& config);
+    explicit Database(const Config& config, const bool hasSaveThread);
     virtual ~Database() = default;
     virtual void stop();
     table::Table *getTable(const std::string &tablename);
@@ -38,6 +38,7 @@ public:
     virtual void backup();
     virtual bool read();
     virtual bool write();
+    virtual void outputStats() const;
 
     virtual void printSchema();
     [[nodiscard]] table::column::StringCol getPoolString(const std::string& value) const;
@@ -45,7 +46,7 @@ public:
     [[nodiscard]] std::string generateTableFilename(const std::string& name) const;
     [[nodiscard]] log::Log& log() const { return _log; }
     static bool init( Database& db, const bool doClean );
-    bool executeQuery(const std::string &query, const bool displayRaw);
+    bool executeQuery(const std::string &query, const bool displayRaw) const;
     [[nodiscard]] profiler::MillisecondDuration getReadTime() const;
 
 
@@ -60,6 +61,13 @@ protected:
     profiler::MillisecondDuration _readTime{ 0 };
 
     Config _config;
+
+    std::atomic_bool _stopSaveThread;
+    bool _hasSaveThread;
+    std::jthread _saveThread;
+
+    void createSaveThread();
+
 };
 
 

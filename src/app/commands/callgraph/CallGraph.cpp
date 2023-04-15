@@ -66,7 +66,7 @@ void CallGraph::addMainSubCommand() {
 bool CallGraph::initDb() {
 
     ScopedTimer timer(&_results.profileData->initDb);
-    _db = domain::db::callgraph::CallGraphDb::create({ _options.outputDir, _results.log.get()}, _options.callGraph.rebuild);
+    _db = domain::db::callgraph::CallGraphDb::create({ _options.outputDir, _results.log.get()}, _options.callGraph.rebuild, false );
     const auto result = _db != nullptr;
     return result;
 

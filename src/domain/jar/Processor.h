@@ -8,7 +8,7 @@
 #include "JarEntry.h"
 #include "tasks/Task.h"
 
-#include "../db/table/ClassfilesTable.h"
+#include "../db/table/Classfiles.h"
 
 
 namespace kapa::tarracsh::domain::jar {

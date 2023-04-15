@@ -2,10 +2,10 @@
 #define TARRACSH_DIGEST_DB_H
 #include <filesystem>
 
-#include "table/ClassfilesTable.h"
+#include "table/Classfiles.h"
 #include "infrastructure/db/Database.h"
 #include "infrastructure/db/table/Table.h"
-#include "table/FilesTable.h"
+#include "table/Files.h"
 
 
 namespace kapa::tarracsh::domain::db::digest {
@@ -14,7 +14,7 @@ namespace kapa::tarracsh::domain::db::digest {
 class DigestDb : public infrastructure::db::Database {
 public:
     explicit DigestDb(const Config& config, const bool hasSaveThread)
-        : Database(config), _hasSaveThread( hasSaveThread ) {
+        : Database(config, hasSaveThread) {
     }
 
     static std::shared_ptr<DigestDb> create(
@@ -23,19 +23,11 @@ public:
         const bool hasSaveThread);
 
     void init() override;
-    void stop() override;
-    void backup() override;
-    auto getFiles() { return _filesTable; }
-    std::shared_ptr<table::ClassfilesTable> getClassfiles() { return _classfilesTable; }
-    void outputStats() const;
+    auto getFiles() { return _files; }
+    auto getClassfiles() { return _classfiles; }
 private:
-    std::shared_ptr<table::FilesTable> _filesTable;
-    std::shared_ptr<table::ClassfilesTable> _classfilesTable;
-    std::atomic_bool _stopSaveThread;
-    bool _hasSaveThread;
-    std::jthread _saveThread;
-
-    void createSaveThread();
+    std::shared_ptr<table::Files> _files;
+    std::shared_ptr<table::Classfiles> _classfiles;
 
 };
 
