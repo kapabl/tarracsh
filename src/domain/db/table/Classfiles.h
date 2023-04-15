@@ -2,7 +2,7 @@
 #define TARRACSH_CLASSFILE_TABLE_H
 #include <string>
 #include "infrastructure/db/table/Table.h"
-#include "FilesTable.h"
+#include "Files.h"
 
 #pragma pack( push, 1 )
 namespace kapa::tarracsh::domain::db::table {
@@ -28,21 +28,22 @@ struct ClassfileRow : infrastructure::db::table::AutoIncrementedRow {
 
 };
 
-class ClassfilesTable : public  infrastructure::db::table::Table {
+class Classfiles : public  infrastructure::db::table::Table {
 
 public:
-    explicit ClassfilesTable(infrastructure::db::Database &db,
+    explicit Classfiles(infrastructure::db::Database &db,
                              const std::string &tablename,
-                             std::shared_ptr<FilesTable> filesTable);
+                             std::shared_ptr<Files> filesTable);
 
     [[nodiscard]] std::string getStrongClassname(const FileRow &fileRow, const char *classname) const;
     [[nodiscard]] std::string getKey(const infrastructure::db::table::AutoIncrementedRow* row) override;
+    [[nodiscard]] std::string getStrongClassname(uint64_t id);
     [[nodiscard]] std::string getStrongClassname(const ClassfileRow &row) const;
 
     void defineColumns() override;
 
 private:
-    const std::shared_ptr<FilesTable> _filesTable;
+    const std::shared_ptr<Files> _filesTable;
     //std::unordered_map<StringCol, std::set<const ClassfileRow *>> _jarIndex;
     // std::unordered_map<StringCol, std::set<const ClassfileRow *>> _classnameIndex;
     //std::unordered_map<std::string, std::set<const ClassfileRow *>> _digestIndex;

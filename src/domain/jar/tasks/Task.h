@@ -2,7 +2,7 @@
 #define TARRACSH_JAR_TASK_H
 
 #include "../JarEntry.h"
-#include "domain/db/table/FilesTable.h"
+#include "domain/db/table/Files.h"
 
 namespace kapa::tarracsh::domain::jar {
 class Task {

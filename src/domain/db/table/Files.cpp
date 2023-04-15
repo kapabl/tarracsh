@@ -1,4 +1,4 @@
-#include "FilesTable.h"
+#include "Files.h"
 
 using namespace kapa::tarracsh::domain::db::digest;
 using namespace kapa::infrastructure::db::table::column;
@@ -6,37 +6,37 @@ using namespace column;
 
 using namespace kapa::tarracsh::domain::db::table;
 
-FilesTable::FilesTable(infrastructure::db::Database &db, const std::string &name)
+Files::Files(infrastructure::db::Database &db, const std::string &name)
     : Table(db, name, sizeof(FileRow)) {
 }
 
-std::string FilesTable::createKey(const char *filename) {
+std::string Files::createKey(const char *filename) {
     std::string result(filename);
     return result;
 }
 
-std::string FilesTable::createKey(const infrastructure::db::table::column::StringCol &filename) const {
+std::string Files::createKey(const infrastructure::db::table::column::StringCol &filename) const {
     std::string result(createKey(_stringPool->getCString(filename)));
     return result;
 }
 
-std::string FilesTable::getKey(const infrastructure::db::table::AutoIncrementedRow *row) {
+std::string Files::getKey(const infrastructure::db::table::AutoIncrementedRow *row) {
     std::string result = createKey(row);
     return result;
 }
 
-const char *FilesTable::getFilename(const FileRow *row) const {
+const char *Files::getFilename(const FileRow *row) const {
     const auto result = _stringPool->getCString(row->filename);
     return result;
 }
 
-std::string FilesTable::createKey(const infrastructure::db::table::AutoIncrementedRow *row) const {
+std::string Files::createKey(const infrastructure::db::table::AutoIncrementedRow *row) const {
     const auto fileRow = static_cast<const FileRow *>(row);
     auto result = createKey(fileRow->filename);
     return result;
 }
 
-void FilesTable::defineColumns() {
+void Files::defineColumns() {
     DECLARE_COLUMN_PROP(FileRow, id, StorageType::UInt64, DisplayAs::AsUInt64);
     DECLARE_COLUMN_PROP(FileRow, type, StorageType::Int32, DisplayAs::AsEntryType);
     DECLARE_COLUMN_PROP(FileRow, filename, StorageType::String, DisplayAs::AsString);

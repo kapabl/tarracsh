@@ -41,7 +41,7 @@ inline Query::Query(Context &context)
     if (_options.isPublicDigest) {
         _db = std::make_unique<domain::db::digest::DigestDb>(dbConfig, false);
     } else {
-        _db = std::make_unique<domain::db::callgraph::CallGraphDb>(dbConfig);
+        _db = std::make_unique<domain::db::callgraph::CallGraphDb>(dbConfig, false);
     }
     _db->init();
 
