@@ -4,12 +4,11 @@
 
 #include "../JarEntry.h"
 #include "Task.h"
-#include "../../db/DigestDb.h"
-#include "../../db/columns/Columns.h"
-#include "../../db/table/Classfiles.h"
-#include "../../classfile/ClassFileParser.h"
-#include "../../digest/DigestEntryInfo.h"
-#include "../../digest/DigestUtils.h"
+#include "domain/db/DigestDb.h"
+#include "domain/db/table/Classfiles.h"
+#include "domain/classfile/ClassFileParser.h"
+#include "domain/jar/JarEntryInfo.h"
+#include "domain/digest/DigestUtils.h"
 
 namespace kapa::tarracsh::domain::jar::tasks {
 
@@ -31,22 +30,11 @@ public:
 
 private:
     db::digest::DigestDb &_db;
-    stats::Results &_results;
-    Options _options;
-    bool _isFileUnchanged{false};
-    bool _isNewJarFile{false};
     std::map<std::string, infrastructure::db::table::column::DigestCol> _digestMap;
-    db::table::FileRow * _tempFileRow{nullptr};
 
     [[nodiscard]] std::optional<infrastructure::db::table::column::DigestCol> digestEntry(
-        const digest::DigestJarEntryInfo &digestEntryInfo,
+        const JarEntryInfo &digestEntryInfo,
         const db::table::ClassfileRow *row) const;
-
-    [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const db::table::ClassfileRow *classRow);
-    [[nodiscard]] bool isFileUnchanged() const;
-    [[nodiscard]] db::table::FileRow *createJarFileRow(const std::string &filename) const;
-    [[nodiscard]] db::table::FileRow *getOrCreateFileRow(const std::string &filename);
-
     void updateFileTableInMemory(const digestUtils::DigestVector& digest) const;
 
     static std::string getUniqueClassname(
@@ -54,6 +42,9 @@ private:
         const classfile::ClassFileParser& classFileParser);
     void updateClassfileTableInMemory(const JarEntry& jarEntry, const infrastructure::db::table::column::DigestCol& result,
         const classfile::ClassFileParser& classFileParser) const;
+
+    std::shared_ptr<db::table::Files> getFileTable() override;
+    infrastructure::db::Database& getDb() override;
 
 };
 

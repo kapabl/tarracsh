@@ -5,6 +5,7 @@
 #include "table/Files.h"
 #include "table/Classfiles.h"
 #include "table/Methods.h"
+#include "table/Fields.h"
 
 
 namespace kapa::tarracsh::domain::db::callgraph {
@@ -23,11 +24,13 @@ public:
     auto getFiles() { return _files; }
     auto getClassfiles() { return _classfiles; }
     auto getMethods() { return _methods; }
+    auto getFields() { return _fields; }
 
 private:
     std::shared_ptr<table::Files> _files;
     std::shared_ptr<table::Classfiles> _classfiles;
     std::shared_ptr<table::Methods> _methods;
+    std::shared_ptr<table::Fields> _fields;
 
 };
 

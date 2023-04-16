@@ -1,5 +1,6 @@
 #include "DigestReport.h"
-#include "../digest/DigestUtils.h"
+#include "domain/Utils.h"
+#include "domain/digest/DigestUtils.h"
 
 #include <iostream>
 
@@ -34,7 +35,7 @@ void DigestReport::addNewFile(const std::string &filename) {
 void DigestReport::asNewClassfile(const std::string &strongClassname) {
     ++_classfiles.digest.newFile;
     if (_options.digest.isDiff) {
-        const auto parts = digestUtils::splitStrongClassname(strongClassname);
+        const auto parts = utils::splitStrongClassname(strongClassname);
         addNewFile(parts[0]);
         addNewClass(strongClassname);
     }
@@ -71,7 +72,7 @@ void DigestReport::asModifiedClassfile(const bool isSamePublicDigest,
     }
 
     if (_options.digest.isDiff) {
-        const auto parts = digestUtils::splitStrongClassname(strongClassname);
+        const auto parts = utils::splitStrongClassname(strongClassname);
         addModifiedFile(parts[0], isSamePublicDigest);
         addModifiedClass(strongClassname, isSamePublicDigest);
     }

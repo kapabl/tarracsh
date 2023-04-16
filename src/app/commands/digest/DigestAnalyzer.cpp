@@ -5,6 +5,7 @@
 #include "app/classfile/constantpool/printer/ConstantPoolPrinter.h"
 #include "app/classfile/constantpool/printer/nav/HtmlGen.h"
 #include "app/classfile/ParserPrinter.h"
+#include "domain/Utils.h"
 #include "domain/digest/ClassFileDigest.h"
 #include "domain/jar/tasks/ParserTask.h"
 #include "domain/jar/tasks/DigestTask.h"
@@ -97,7 +98,7 @@ void DigestAnalyzer::digestClassfile(const std::string& filename) const {
         ClassFileParser classFileParser(reader, classfileOptions, _results);
         if (classFileParser.parse()) {
 
-            const auto strongClassname = domain::digestUtils::getStrongClassname(
+            const auto strongClassname = domain::utils::getStrongClassname(
                 filename.c_str(),
                 classFileParser.getMainClassname().c_str());
 

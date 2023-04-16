@@ -1,4 +1,5 @@
 #include "Classfiles.h"
+#include "domain/Utils.h"
 
 using namespace kapa::tarracsh::domain::db::table;
 using namespace kapa::infrastructure::db::table::column;
@@ -29,7 +30,7 @@ std::string Classfiles::getStrongClassname(const ClassfileRow &row) const {
 }
 
 std::string Classfiles::getStrongClassname(const FileRow &fileRow, const char *classname) const {
-    std::string result(digestUtils::getStrongClassname(_filesTable->getFilename(&fileRow), classname));
+    std::string result(utils::getStrongClassname(_filesTable->getFilename(&fileRow), classname));
     return result;
 }
 

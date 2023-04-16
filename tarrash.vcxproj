@@ -944,7 +944,9 @@
     <ClCompile Include="src\app\commands\digest\DigestAnalyzer.cpp" />
     <ClCompile Include="src\domain\classfile\signature\nodes\Nodes.cpp" />
     <ClCompile Include="src\domain\classfile\signature\parser\Parser.cpp" />
+    <ClCompile Include="src\domain\db\table\Fields.cpp" />
     <ClCompile Include="src\domain\db\table\Methods.cpp" />
+    <ClCompile Include="src\domain\jar\tasks\Task.cpp" />
     <ClCompile Include="src\infrastructure\db\query\Engine.cpp" />
     <ClCompile Include="src\app\commands\Parse.cpp" />
     <ClCompile Include="src\app\commands\digest\PublicDigest.cpp" />
@@ -1002,9 +1004,11 @@
     <ClInclude Include="src\app\commands\digest\DigestAnalyzer.h" />
     <ClInclude Include="src\domain\classfile\signature\nodes\Nodes.h" />
     <ClInclude Include="src\domain\classfile\signature\parser\Parser.h" />
+    <ClInclude Include="src\domain\db\table\Fields.h" />
     <ClInclude Include="src\domain\db\table\Methods.h" />
+    <ClInclude Include="src\domain\Utils.h" />
     <ClInclude Include="src\infrastructure\db\query\Engine.h" />
-    <ClInclude Include="src\domain\digest\DigestEntryInfo.h" />
+    <ClInclude Include="src\domain\jar\JarEntryInfo.h" />
     <ClInclude Include="src\infrastructure\app\Command.h" />
     <ClInclude Include="src\app\commands\Parse.h" />
     <ClInclude Include="src\app\commands\digest\PublicDigest.h" />
