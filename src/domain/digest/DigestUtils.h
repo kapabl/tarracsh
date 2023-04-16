@@ -90,21 +90,6 @@ inline DigestVector digestSet(const std::set<DigestVector> &digestSet) {
     return result;
 }
 
-[[nodiscard]] inline std::string getStrongClassname(const char *filename, const char *jvmClassname) {
-    std::string result(filename);
-
-    if (jvmClassname != nullptr && jvmClassname[0] != 0) {
-        result += "@";
-        result += jvmClassname;
-    }
-
-    return result;
-}
-
-[[nodiscard]] inline std::vector<std::string> splitStrongClassname(const std::string& strongClassname) {
-    auto result = kapa::infrastructure::string::stringUtils::split(strongClassname, "@");
-    return result;
-}
 
 }
 

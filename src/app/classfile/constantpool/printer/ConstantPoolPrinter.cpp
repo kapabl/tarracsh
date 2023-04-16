@@ -6,7 +6,7 @@
 
 #include <mutex>
 
-#include "../../../App.h"
+#include "app/App.h"
 
 
 using namespace kapa::tarracsh::app::classfile::constantpool::printer;
