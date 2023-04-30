@@ -35,7 +35,7 @@ GraphTask::GraphTask(
     Options options, Results &results,
     CallGraphDb &callGraphDb
     )
-    : Task(std::move(options), results), _db(callGraphDb) {
+    : DbBasedTask(std::move(options), results), _db(callGraphDb) {
 }
 
 void GraphTask::recordMethod(const classfile::constantpool::MethodInfo &value) {
@@ -213,4 +213,9 @@ void GraphTask::end() {
 
 kapa::infrastructure::db::Database &GraphTask::getDb() {
     return _db;
+}
+
+std::shared_ptr<table::Files> GraphTask::getFileTable() {
+    const auto result = _db.getFiles();
+    return result;
 }

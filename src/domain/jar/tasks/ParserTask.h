@@ -22,9 +22,8 @@ public:
     bool start() override;
     void end() override;
 
+
 private:
-    Results &_results;
-    Options _jarOptions;
     bool _isValid{true};
     unsigned int _classfileCount{0};
 
@@ -32,6 +31,7 @@ private:
     void parseEntry(const JarEntry &jarEntry) const;
 
     void prepareOptions(const jar::JarEntry& jarEntry, Options& options) const;
+
 };
 }
 #endif

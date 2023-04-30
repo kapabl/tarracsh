@@ -27,7 +27,7 @@ DigestTask::DigestTask(
     Options options, Results &results,
     DigestDb &digestDb
     )
-    : Task(std::move(options), results), _db(digestDb) {
+    : DbBasedTask(std::move(options), results), _db(digestDb) {
 }
 
 DigestTask::~DigestTask() {
