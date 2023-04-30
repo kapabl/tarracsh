@@ -946,6 +946,7 @@
     <ClCompile Include="src\domain\classfile\signature\parser\Parser.cpp" />
     <ClCompile Include="src\domain\db\table\Fields.cpp" />
     <ClCompile Include="src\domain\db\table\Methods.cpp" />
+    <ClCompile Include="src\domain\jar\tasks\DbBasedTask.cpp" />
     <ClCompile Include="src\domain\jar\tasks\Task.cpp" />
     <ClCompile Include="src\infrastructure\db\query\Engine.cpp" />
     <ClCompile Include="src\app\commands\Parse.cpp" />
@@ -1006,6 +1007,7 @@
     <ClInclude Include="src\domain\classfile\signature\parser\Parser.h" />
     <ClInclude Include="src\domain\db\table\Fields.h" />
     <ClInclude Include="src\domain\db\table\Methods.h" />
+    <ClInclude Include="src\domain\jar\tasks\DbBasedTask.h" />
     <ClInclude Include="src\domain\Utils.h" />
     <ClInclude Include="src\infrastructure\db\query\Engine.h" />
     <ClInclude Include="src\domain\jar\JarEntryInfo.h" />

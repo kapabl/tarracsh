@@ -22,8 +22,7 @@ using namespace std;
 
 
 ParserTask::ParserTask(Options jarOptions, Results &results, const std::function<void(ClassFileParser&)> onParserDone)
-    : _results(results),
-      _jarOptions(std::move(jarOptions)),
+    : Task( jarOptions, results ),
       _onParserDone(onParserDone) {
 }
 
@@ -32,7 +31,7 @@ bool ParserTask::start() {
 }
 
 void ParserTask::prepareOptions(const JarEntry &jarEntry, Options &options) const {
-    options = _jarOptions;
+    options = _options;
 }
 
 void ParserTask::parseEntry(const JarEntry &jarEntry) const {

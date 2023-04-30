@@ -4,10 +4,10 @@
 #include <map>
 
 #include "../JarEntry.h"
-#include "Task.h"
-#include "../../db/CallGraphDb.h"
-#include "../../db/table/Files.h"
-#include "../../db/table/Classfiles.h"
+#include "DbBasedTask.h"
+#include "domain/db/CallGraphDb.h"
+#include "domain/db/table/Files.h"
+#include "domain/db/table/Classfiles.h"
 #include "domain/classfile/ClassFileParser.h"
 #include "domain/jar/JarEntryInfo.h"
 
@@ -16,7 +16,7 @@ namespace kapa::tarracsh::domain::jar::tasks {
 
 using kapa::tarracsh::domain::stats::Results;
 
-class GraphTask : public Task {
+class GraphTask : public DbBasedTask {
 public:
     explicit GraphTask(
         Options options, Results &results,
@@ -34,6 +34,7 @@ private:
     [[nodiscard]] const db::table::ClassfileRow *getClassfileRow(const JarEntry &jarEntry) const;
 
     infrastructure::db::Database& getDb() override;
+    std::shared_ptr<db::table::Files> getFileTable() override;
 
     void recordMethod(const classfile::constantpool::MethodInfo& value);
     void recordClassMethods(classfile::ClassFileParser& classFileParser);
@@ -42,6 +43,10 @@ private:
     void recordInterfaceMethodRef(const classfile::constantpool::ConstantPoolRecord& entry);
     void recordFieldRef(const classfile::constantpool::ConstantPoolRecord & entry);
     void recordRefs(classfile::ClassFileParser& classFileParser);
+
+
+
+
 
 };
 

@@ -3,7 +3,7 @@
 #include <map>
 
 #include "../JarEntry.h"
-#include "Task.h"
+#include "DbBasedTask.h"
 #include "domain/db/DigestDb.h"
 #include "domain/db/table/Classfiles.h"
 #include "domain/classfile/ClassFileParser.h"
@@ -12,7 +12,7 @@
 
 namespace kapa::tarracsh::domain::jar::tasks {
 
-class DigestTask : public Task {
+class DigestTask : public DbBasedTask {
 public:
     explicit DigestTask(
         Options options, stats::Results &results,
