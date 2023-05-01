@@ -37,7 +37,7 @@ void DigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
     const auto filename = _db.getFiles()->getFilename(&getJarFileRow());
     const JarEntryInfo jarEntryInfo(filename, jarEntry);
 
-    const auto *classfileRow = static_cast<ClassfileRow *>(_db.getClassfiles()->findByKey(
+    const auto *classfileRow = static_cast<ClassfileRow *>(getClassfiles()->findByKey(
         jarEntryInfo.strongClassname));
 
     const auto classExists = nullptr != classfileRow;
@@ -62,13 +62,6 @@ void DigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
     ++_results.jarfiles.classfiles.count;
     ++_results.jarfiles.classfiles.taskResult.count;
 
-}
-
-void DigestTask::updateFileTableInMemory(const digestUtils::DigestVector &digest) const {
-    _jarFileRow->digest = digest;
-    _jarFileRow->lastWriteTime = _jarTimestamp;
-    _jarFileRow->fileSize = _jarSize;
-    _db.getFiles()->update(_jarFileRow);
 }
 
 bool DigestTask::start() {
@@ -111,31 +104,7 @@ void DigestTask::end() {
     }
 }
 
-
-string DigestTask::getUniqueClassname(
-    const JarEntry &jarEntry,
-    const ClassFileParser &classFileParser) {
-    auto result = jarEntry.isMultiReleaseEntry()
-                      ? jarEntry.getClassname()
-                      : classFileParser.getMainClassname();
-    return result;
-
-}
-
-void DigestTask::updateClassfileTableInMemory(const JarEntry &jarEntry, const DigestCol &result,
-                                              const ClassFileParser &classFileParser) const {
-    const auto classname = getUniqueClassname(jarEntry, classFileParser);
-    auto &classfileRow = *static_cast<ClassfileRow *>(_db.getClassfiles()->allocateRow());
-    new(&classfileRow) ClassfileRow(*_jarFileRow);
-    classfileRow.lastWriteTime = jarEntry.getLastWriteTime();
-    classfileRow.size = jarEntry.getSize();
-    classfileRow.classname = _db.getPoolString(classname);
-    classfileRow.digest = result;
-    classfileRow.crc = jarEntry.getCRC();
-    _db.getClassfiles()->addOrUpdate(&classfileRow);
-}
-
-std::shared_ptr<Files> DigestTask::getFileTable() {
+std::shared_ptr<Files> DigestTask::getFiles() {
     const auto result = _db.getFiles();
     return result;
 }
@@ -144,8 +113,12 @@ kapa::infrastructure::db::Database &DigestTask::getDb() {
     return _db;
 }
 
+auto DigestTask::getClassfiles() -> std::shared_ptr<db::table::Classfiles> {
+    return _db.getClassfiles();
+}
+
 optional<DigestCol> DigestTask::digestEntry(const JarEntryInfo &digestEntryInfo,
-                                            const ClassfileRow *row) const {
+                                            const ClassfileRow *row) {
     const auto &jarEntry = digestEntryInfo.jarEntry;
 
     optional<DigestCol> result;

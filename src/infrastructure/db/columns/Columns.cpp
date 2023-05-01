@@ -79,6 +79,10 @@ void Properties::registerColumn(const int displayAsValue, const ToStringFunc &fu
     toStringMap[displayAsValue] = func;
 }
 
+DigestCol::DigestCol() {
+    std::memset(buf, 0, DIGEST_LENGTH);
+}
+
 bool DigestCol::operator==(const DigestCol &right) const = default;
 
 bool DigestCol::operator==(const std::vector<unsigned char> &left) const {

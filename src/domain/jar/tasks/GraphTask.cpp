@@ -27,15 +27,89 @@ using namespace jar::tasks;
 
 using namespace std;
 
-using kapa::tarracsh::domain::classfile::constantpool::u2;
-using kapa::tarracsh::domain::classfile::constantpool::u1;
-using kapa::tarracsh::domain::classfile::constantpool::u4;
+using constantpool::u2;
+using constantpool::u1;
+using constantpool::u4;
 
 GraphTask::GraphTask(
     Options options, Results &results,
     CallGraphDb &callGraphDb
     )
     : DbBasedTask(std::move(options), results), _db(callGraphDb) {
+}
+
+
+void GraphTask::updateIncompleteRefs(const ClassfileRow* row ) {
+    //TODO check if pending method-refs, class-refs, a field-refs can match
+    //this class and its methods
+}
+
+void GraphTask::processNewClassfile(const JarEntryInfo &jarEntryInfo) {
+    const auto &jarEntry = jarEntryInfo.jarEntry;
+
+    Options options(_options);
+    reader::MemoryReader reader(jarEntry);
+
+    ClassFileParser classFileParser(reader, options, _results);
+    if (classFileParser.parse()) {
+        recordClassMethods(classFileParser);
+        recordRefs(classFileParser);
+    } else {
+        _results.report->asFailedJarClass(jarEntryInfo.strongClassname);
+        ++_results.jarfiles.classfiles.errors;
+    }
+
+    const auto row = getClassfileRow(updateClassfileTableInMemory(jarEntry, classFileParser));
+    updateIncompleteRefs(row);
+}
+
+const ClassfileRow *GraphTask::getClassfileRow(uint64_t id) {
+    const auto result = reinterpret_cast<const ClassfileRow*>(getClassfiles()->getRow(id));
+    return result;
+}
+
+void GraphTask::processIncompleteClassfile(const JarEntryInfo &jarEntryInfo, ClassfileRow *row) {
+    const auto& jarEntry = jarEntryInfo.jarEntry;
+
+    //TODO update file row
+    row->file.id = _jarFileRow->id;
+
+    Options options(_options);
+    reader::MemoryReader reader(jarEntry);
+
+    ClassFileParser classFileParser(reader, options, _results);
+    if (classFileParser.parse()) {
+        recordClassMethods(classFileParser);
+        recordRefs(classFileParser);
+    }
+    else {
+        _results.report->asFailedJarClass(jarEntryInfo.strongClassname);
+        ++_results.jarfiles.classfiles.errors;
+    }
+    updateIncompleteRefs(row);
+}
+
+void GraphTask::markMemberRefsAsIncomplete(ClassfileRow *row) {
+    //TODO
+}
+
+void GraphTask::deleteMembers(ClassfileRow *row) {
+    //TODO
+}
+
+void GraphTask::reProcessClassfile(const JarEntryInfo &jarEntryInfo, db::table::ClassfileRow *row) {
+
+    markMemberRefsAsIncomplete(row);
+    deleteMembers(row);
+    processNewClassfile(jarEntryInfo);
+
+    //TODO check all method refs to this class:
+    //parse and check methods/fields that were deleted and mark refs as incomplete
+    //delete methods -> check refs to it and mark as "incomplete" or set class RefCol to Invalid
+
+
+    //try to complete incompleteMethods
+
 }
 
 void GraphTask::recordMethod(const classfile::constantpool::MethodInfo &value) {
@@ -83,54 +157,21 @@ void GraphTask::recordRefs(ClassFileParser &classFileParser) {
     }
 }
 
-void GraphTask::processClassfile(const JarEntryInfo &jarEntryInfo,
-                                 const ClassfileRow *row) {
-    const auto &jarEntry = jarEntryInfo.jarEntry;
+void GraphTask::processClassfile(const JarEntryInfo &jarEntryInfo, ClassfileRow *row) {
 
-    Options options(_options);
-    reader::MemoryReader reader(jarEntry);
-
-    ClassFileParser classFileParser(reader, options, _results);
-    if (classFileParser.parse()) {
-        recordClassMethods(classFileParser);
-        recordRefs(classFileParser);
-        // const ClassFileDigest classFileDigest(classFileParser);
-        // result = classFileDigest.digest();
-        //
-        // const bool classExists = row != nullptr;
-        //
-        // if (classExists) {
-        //     const auto isSamePublicDigest = result.value() == row->digest;
-        //     _results.report->asModifiedJarClass(jarEntryInfo.strongClassname, isSamePublicDigest);
-        // }
-        // else {
-        //     _results.report->asNewJarClass(jarEntryInfo.strongClassname);
-        // }
-        //
-        // ++_results.jarfiles.classfiles.parsedCount;
-        //
-        // if (!_options.digest.dryRun) {
-        //     updateClassfileTableInMemory(jarEntry, result.value(), classFileParser);
-        // }
-
+    if ( row == nullptr ) {
+        processNewClassfile(jarEntryInfo);
+    } else if ( isIncompleteClassfileRow( row )) {
+        processIncompleteClassfile(jarEntryInfo, row);
     } else {
-        _results.report->asFailedJarClass(jarEntryInfo.strongClassname);
-        ++_results.jarfiles.classfiles.errors;
+        reProcessClassfile(jarEntryInfo, row);
     }
-
 }
 
-const db::table::ClassfileRow *GraphTask::getClassfileRow(const JarEntry &jarEntry) const {
-    // const auto key = _db.getClassfiles()->getStrongMethodName(
-    //     *_jarFileRow,
-    //     jarEntry.getClassname().c_str());
-    // const tables::ClassfileRow *result = _db.getClassfiles()->findByKey(key);
-    //
-    // return result;
-    //TODO
-    return nullptr;
+bool GraphTask::isIncompleteClassfileRow(const db::table::ClassfileRow *classfileRow) {
+    const bool result = !classfileRow->hasValidFile();
+    return result;
 }
-
 
 bool GraphTask::start() {
     const auto &filename = _options.digest.input;
@@ -147,31 +188,27 @@ void GraphTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
     const auto filename = _db.getFiles()->getFilename(&getJarFileRow());
     const JarEntryInfo jarEntryInfo(filename, jarEntry);
 
-    const auto *classfileRow = static_cast<ClassfileRow *>(_db.getClassfiles()->findByKey(
+    auto classfileRow = static_cast<ClassfileRow *>(_db.getClassfiles()->findByKey(
         jarEntryInfo.strongClassname));
 
     const auto classExists = nullptr != classfileRow;
+    //const bool isIncomplete = isIncompleteClassfileRow(classfileRow);
 
-    if (!classExists) {
+    if (!classExists ) {
         ++_jarFileRow->classfileCount;
     }
 
     const auto isUnchanged = classExists && isClassfileUnchanged(jarEntry, classfileRow);
     if (isUnchanged) {
         _results.report->asUnchangedJarClass(jarEntryInfo.strongClassname);
-        // std::unique_lock lock(taskMutex);
-        // _digestMap[jarEntry.getClassname()] = classfileRow->digest;
     } else {
+        if ( classfileRow == nullptr ) {
+            classfileRow = findIncompleteClass(jarEntryInfo);
+        }
         processClassfile(jarEntryInfo, classfileRow);
-        // const auto digest = digestEntry(jarEntryInfo, classfileRow);
-        // if (digest.has_value()) {
-        //     std::unique_lock lock(taskMutex);
-        //     _digestMap[jarEntry.getClassname()] = digest.value();
-        // }
     }
 
     ++_results.jarfiles.classfiles.count;
-    //++_results.jarfiles.classfiles.digest.count;
 
 }
 
@@ -215,7 +252,19 @@ kapa::infrastructure::db::Database &GraphTask::getDb() {
     return _db;
 }
 
-std::shared_ptr<table::Files> GraphTask::getFileTable() {
+auto GraphTask::getClassfiles() -> std::shared_ptr<db::table::Classfiles> {
+    const auto result = _db.getClassfiles();
+    return result;
+}
+
+auto GraphTask::getFiles() -> std::shared_ptr<table::Files> {
     const auto result = _db.getFiles();
+    return result;
+}
+
+
+auto GraphTask::findIncompleteClass(const JarEntryInfo& jarEntryInfo) -> ClassfileRow* {
+    const auto result = nullptr;
+    //TODO
     return result;
 }

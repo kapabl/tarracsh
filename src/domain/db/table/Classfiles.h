@@ -26,6 +26,11 @@ struct ClassfileRow : infrastructure::db::table::AutoIncrementedRow {
         file.id = fileRow.id;
     }
 
+    auto hasValidFile() const {
+        const bool result = !file.isInvalid();
+        return result;
+    }
+
 };
 
 class Classfiles : public  infrastructure::db::table::Table {
