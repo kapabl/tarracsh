@@ -61,7 +61,13 @@ std::string displayAsToString(const DisplayAs displayAs);
 
 
 struct RefCol {
+    const uint64_t InvalidRef = std::numeric_limits<uint64_t>::max();
     uint64_t id;
+
+    auto isInvalid() const {
+        const bool result = id == InvalidRef;
+        return result;
+    }
 };
 
 struct RefColProperties {
@@ -102,6 +108,8 @@ typedef uint32_t UInt32Col;
 #define DIGEST_LENGTH SHA_256_DIGEST_LENGTH
 
 struct DigestCol {
+    DigestCol();
+
     unsigned char buf[DIGEST_LENGTH]{};
     bool operator==(const DigestCol& right) const;
 

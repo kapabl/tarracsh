@@ -6,17 +6,23 @@
 #include "domain/db/table/Files.h"
 #include "domain/stats/Results.h"
 #include "Task.h"
+#include "domain/classfile/ClassFileParser.h"
 
 namespace kapa::tarracsh::domain::jar {
 class DbBasedTask : public Task {
 public:
     DbBasedTask(const Options &options, stats::Results &results);
 
-    virtual std::shared_ptr<db::table::Files> getFileTable() = 0;
     virtual infrastructure::db::Database &getDb() = 0;
     ~DbBasedTask() override;
 
     [[nodiscard]] db::table::FileRow &getJarFileRow() const;
+    std::string getUniqueClassname(const JarEntry &jarEntry, const classfile::ClassFileParser &classFileParser);
+    void updateFileTableInMemory(const digestUtils::DigestVector &digest);
+    uint64_t updateClassfileTableInMemory(const JarEntry &jarEntry, const classfile::ClassFileParser &classFileParser);
+    uint64_t updateClassfileTableInMemory(const JarEntry &jarEntry,
+                                      const infrastructure::db::table::column::DigestCol &digestCol,
+                                      const classfile::ClassFileParser &classFileParser);
 
 protected:
     db::table::FileRow *_tempFileRow{nullptr};
@@ -33,6 +39,9 @@ protected:
     [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const db::table::ClassfileRow *classRow);
     [[nodiscard]] bool isFileUnchanged() const;
 
+
+    virtual auto  getClassfiles() -> std::shared_ptr<db::table::Classfiles> = 0;
+    virtual auto  getFiles() -> std::shared_ptr<db::table::Files> = 0;
 };
 
 }

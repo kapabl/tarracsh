@@ -1,11 +1,17 @@
 #include "DbBasedTask.h"
+#include "domain/classfile/ClassFileParser.h"
 
 
 using namespace kapa::tarracsh::domain::jar;
 using kapa::tarracsh::domain::db::table::FileRow;
+using kapa::tarracsh::domain::db::table::ClassfileRow;
 
 // TODO move EntryType to outside digest namespace
 using kapa::tarracsh::domain::db::digest::column::EntryType;
+
+using kapa::tarracsh::domain::classfile::ClassFileParser;
+using kapa::infrastructure::db::table::column::DigestCol;
+
 
 DbBasedTask::DbBasedTask(const Options &options, stats::Results &results)
     : Task(options, results) {
@@ -15,7 +21,6 @@ DbBasedTask::DbBasedTask(const Options &options, stats::Results &results)
 DbBasedTask::~DbBasedTask() {
     if (_tempFileRow != nullptr) {
         free(_tempFileRow);
-        // getFileTable()->freeRow(_tempFileRow);
     }
 }
 
@@ -26,7 +31,7 @@ FileRow *DbBasedTask::getOrCreateFileRow(const std::string &filename) {
     if (_isNewJarFile) {
         result = createJarFileRow(filename);
         if (!_options.digest.dryRun) {
-            getFileTable()->add(result);
+            getFiles()->add(result);
         } else {
             _tempFileRow = result;
         }
@@ -36,7 +41,7 @@ FileRow *DbBasedTask::getOrCreateFileRow(const std::string &filename) {
 }
 
 FileRow *DbBasedTask::createJarFileRow(const std::string &filename) {
-    auto result = static_cast<FileRow *>(getFileTable()->allocateRow());
+    auto result = static_cast<FileRow *>(getFiles()->allocateRow());
     new(result) FileRow();
     result->filename = getDb().getPoolString(filename);
     result->type = EntryType::Jar;
@@ -48,7 +53,7 @@ FileRow *DbBasedTask::createJarFileRow(const std::string &filename) {
 }
 
 FileRow *DbBasedTask::getFileRow(const std::string &filename) {
-    const auto result = static_cast<FileRow *>(getFileTable()->findByKey(filename));
+    const auto result = static_cast<FileRow *>(getFiles()->findByKey(filename));
     return result;
 }
 
@@ -56,6 +61,7 @@ bool DbBasedTask::isClassfileUnchanged(const JarEntry &jarEntry,
                                        const db::table::ClassfileRow *classRow) {
     return classRow->size == jarEntry.getSize() &&
            classRow->crc == jarEntry.getCRC() &&
+           classRow->hasValidFile() &&
            classRow->lastWriteTime == jarEntry.getLastWriteTime();
 }
 
@@ -68,4 +74,46 @@ bool DbBasedTask::isFileUnchanged() const {
 
 FileRow & DbBasedTask::getJarFileRow() const {
     return *_jarFileRow;
+}
+
+std::string DbBasedTask::getUniqueClassname(
+    const JarEntry& jarEntry,
+    const ClassFileParser& classFileParser) {
+    auto result = jarEntry.isMultiReleaseEntry()
+        ? jarEntry.getClassname()
+        : classFileParser.getMainClassname();
+    return result;
+
+}
+
+void DbBasedTask::updateFileTableInMemory(const digestUtils::DigestVector& digest) {
+    _jarFileRow->digest = digest;
+    _jarFileRow->lastWriteTime = _jarTimestamp;
+    _jarFileRow->fileSize = _jarSize;
+    getFiles()->update(_jarFileRow);
+}
+
+
+uint64_t DbBasedTask::updateClassfileTableInMemory(const JarEntry& jarEntry, const ClassFileParser& classFileParser) {
+    const DigestCol emptyDigestCol;
+    return updateClassfileTableInMemory(jarEntry, emptyDigestCol, classFileParser);
+}
+
+
+uint64_t  DbBasedTask::updateClassfileTableInMemory(const JarEntry& jarEntry, const DigestCol& digestCol,
+    const ClassFileParser& classFileParser) {
+
+    const auto classfileTable = getClassfiles();
+    const auto classname = getUniqueClassname(jarEntry, classFileParser);
+    auto& classfileRow = *static_cast<ClassfileRow*>(classfileTable->allocateRow());
+    new(&classfileRow) ClassfileRow(*_jarFileRow);
+    classfileRow.lastWriteTime = jarEntry.getLastWriteTime();
+    classfileRow.size = jarEntry.getSize();
+    classfileRow.classname = getDb().getPoolString(classname);
+    classfileRow.digest = digestCol;
+    classfileRow.crc = jarEntry.getCRC();
+    classfileTable->addOrUpdate(&classfileRow);
+
+    const auto result = classfileRow.id;
+    return result;
 }

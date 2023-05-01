@@ -14,16 +14,16 @@
 
 namespace kapa::tarracsh::domain::jar::tasks {
 
-using kapa::tarracsh::domain::stats::Results;
+using stats::Results;
 
-class GraphTask : public DbBasedTask {
+class GraphTask final : public DbBasedTask {
 public:
     explicit GraphTask(
         Options options, Results &results,
         db::callgraph::CallGraphDb &callGraphDb
         );
 
-    void processClassfile(const JarEntryInfo &jarEntryInfo, const db::table::ClassfileRow *row);
+
     void processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) override;
     bool start() override;
     void end() override;
@@ -31,10 +31,10 @@ public:
 private:
     db::callgraph::CallGraphDb &_db;
 ;
-    [[nodiscard]] const db::table::ClassfileRow *getClassfileRow(const JarEntry &jarEntry) const;
-
     infrastructure::db::Database& getDb() override;
-    std::shared_ptr<db::table::Files> getFileTable() override;
+
+    auto getClassfiles() -> std::shared_ptr<db::table::Classfiles> override;
+    auto getFiles() -> std::shared_ptr<db::table::Files> override;
 
     void recordMethod(const classfile::constantpool::MethodInfo& value);
     void recordClassMethods(classfile::ClassFileParser& classFileParser);
@@ -45,10 +45,20 @@ private:
     void recordRefs(classfile::ClassFileParser& classFileParser);
 
 
+    void updateIncompleteRefs(const db::table::ClassfileRow* row);
+    void processNewClassfile(const JarEntryInfo& jarEntryInfo);
+    auto getClassfileRow(uint64_t id) -> const db::table::ClassfileRow*;
+    void processIncompleteClassfile(const JarEntryInfo& jarEntryInfo, db::table::ClassfileRow* row);
+    void markMemberRefsAsIncomplete(db::table::ClassfileRow * row);
+    void deleteMembers(db::table::ClassfileRow * row);
+    void reProcessClassfile(const JarEntryInfo& jarEntryInfo, db::table::ClassfileRow* row);
 
-
-
+    void processClassfile(const JarEntryInfo& jarEntryInfo, db::table::ClassfileRow* row);
+    static auto isIncompleteClassfileRow(const db::table::ClassfileRow *classfileRow) -> bool;
+    auto findIncompleteClass(const JarEntryInfo& jarEntryInfo) -> db::table::ClassfileRow*;
+    
 };
+
 
 }
 

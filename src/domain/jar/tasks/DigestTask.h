@@ -34,17 +34,13 @@ private:
 
     [[nodiscard]] std::optional<infrastructure::db::table::column::DigestCol> digestEntry(
         const JarEntryInfo &digestEntryInfo,
-        const db::table::ClassfileRow *row) const;
-    void updateFileTableInMemory(const digestUtils::DigestVector& digest) const;
+        const db::table::ClassfileRow *row);
 
-    static std::string getUniqueClassname(
-        const JarEntry& jarEntry,
-        const classfile::ClassFileParser& classFileParser);
-    void updateClassfileTableInMemory(const JarEntry& jarEntry, const infrastructure::db::table::column::DigestCol& result,
-        const classfile::ClassFileParser& classFileParser) const;
-
-    std::shared_ptr<db::table::Files> getFileTable() override;
     infrastructure::db::Database& getDb() override;
+
+protected:
+    auto getClassfiles() -> std::shared_ptr<db::table::Classfiles> override;
+    auto getFiles() -> std::shared_ptr<db::table::Files> override;
 
 };
 
