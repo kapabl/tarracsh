@@ -60,7 +60,7 @@ void DigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
     }
 
     ++_results.jarfiles.classfiles.count;
-    ++_results.jarfiles.classfiles.digest.count;
+    ++_results.jarfiles.classfiles.taskResult.count;
 
 }
 
@@ -82,12 +82,12 @@ bool DigestTask::start() {
 }
 
 void DigestTask::end() {
-    ++_results.jarfiles.digest.count;
+    ++_results.jarfiles.taskResult.count;
     _results.jarfiles.classfileCount.fetch_add(_jarFileRow->classfileCount);
 
     if (_isFileUnchanged) {
-        _results.jarfiles.classfiles.digest.count.fetch_add(_jarFileRow->classfileCount);
-        _results.jarfiles.classfiles.digest.unchangedCount.fetch_add(_jarFileRow->classfileCount);
+        _results.jarfiles.classfiles.taskResult.count.fetch_add(_jarFileRow->classfileCount);
+        _results.jarfiles.classfiles.taskResult.unchangedCount.fetch_add(_jarFileRow->classfileCount);
         _results.report->asUnchangedJar(_options.digest.input);
         return;
     }
