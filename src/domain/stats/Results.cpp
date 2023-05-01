@@ -10,7 +10,7 @@ using namespace kapa::tarracsh::domain::stats;
 
 
 Results::Results(Options& options): options(options) {
-    report = std::make_unique<report::DigestReport>(*this);
+    report = std::make_unique<report::Report>(*this);
     profileData = std::make_unique<profiler::ProfileData>(*this);
 }
 
@@ -72,46 +72,46 @@ void Results::printAll() const {
 
     if (options.isPublicDigest) {
 
-        std::cout << "standalone classfile digest:" << std::endl << std::right
+        std::cout << "standalone classfile.taskResult." << std::endl << std::right
             << std::setw(10) << "No"
             << std::setw(10) << "New"
             << std::setw(10) << "Same"
             << std::setw(10) << "Diff"
             << std::setw(10) << "Unchanged"
             << std::endl
-            << std::setw(10) << standaloneClassfiles.digest.count
-            << std::setw(10) << standaloneClassfiles.digest.newFile
-            << std::setw(10) << standaloneClassfiles.digest.same
-            << std::setw(10) << standaloneClassfiles.digest.differentDigest
-            << std::setw(10) << standaloneClassfiles.digest.unchangedCount
+            << std::setw(10) << standaloneClassfiles.taskResult.count
+            << std::setw(10) << standaloneClassfiles.taskResult.newFile
+            << std::setw(10) << standaloneClassfiles.taskResult.same
+            << std::setw(10) << standaloneClassfiles.taskResult.differentDigest
+            << std::setw(10) << standaloneClassfiles.taskResult.unchangedCount
             << std::endl;
 
-        std::cout << "jar digest:" << std::endl << std::right
+        std::cout << "jar.taskResult." << std::endl << std::right
             << std::setw(10) << "No"
             << std::setw(10) << "New"
             << std::setw(10) << "Same"
             << std::setw(10) << "Diff"
             << std::setw(10) << "Unchanged"
             << std::endl
-            << std::setw(10) << jarfiles.digest.count
-            << std::setw(10) << jarfiles.digest.newFile
-            << std::setw(10) << jarfiles.digest.same
-            << std::setw(10) << jarfiles.digest.differentDigest
-            << std::setw(10) << jarfiles.digest.unchangedCount
+            << std::setw(10) << jarfiles.taskResult.count
+            << std::setw(10) << jarfiles.taskResult.newFile
+            << std::setw(10) << jarfiles.taskResult.same
+            << std::setw(10) << jarfiles.taskResult.differentDigest
+            << std::setw(10) << jarfiles.taskResult.unchangedCount
             << std::endl;
 
-        std::cout << "classfile inside jars digest:" << std::endl << std::right
+        std::cout << "classfile inside jars.taskResult." << std::endl << std::right
             << std::setw(10) << "No"
             << std::setw(10) << "New"
             << std::setw(10) << "Same"
             << std::setw(10) << "Diff"
             << std::setw(10) << "Unchanged"
             << std::endl
-            << std::setw(10) << jarfiles.classfiles.digest.count
-            << std::setw(10) << jarfiles.classfiles.digest.newFile
-            << std::setw(10) << jarfiles.classfiles.digest.same
-            << std::setw(10) << jarfiles.classfiles.digest.differentDigest
-            << std::setw(10) << jarfiles.classfiles.digest.unchangedCount
+            << std::setw(10) << jarfiles.classfiles.taskResult.count
+            << std::setw(10) << jarfiles.classfiles.taskResult.newFile
+            << std::setw(10) << jarfiles.classfiles.taskResult.same
+            << std::setw(10) << jarfiles.classfiles.taskResult.differentDigest
+            << std::setw(10) << jarfiles.classfiles.taskResult.unchangedCount
             << std::endl;
     }
 

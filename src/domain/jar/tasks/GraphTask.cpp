@@ -183,7 +183,7 @@ void GraphTask::end() {
     if (_isFileUnchanged) {
         // _results.jarfiles.classfiles.digest.count += _jarFileRow->classfileCount;
         // _results.jarfiles.classfiles.digest.unchangedCount += _jarFileRow->classfileCount;
-        ++_results.jarfiles.digest.unchangedCount;
+        ++_results.jarfiles.taskResult.unchangedCount;
         return;
     }
 

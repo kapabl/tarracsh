@@ -20,7 +20,7 @@ using kapa::tarracsh::server::digest::ServiceImpl;
 using kapa::tarracsh::domain::db::digest::DigestDb;
 using kapa::tarracsh::domain::stats::profiler::MillisecondDuration;
 using kapa::infrastructure::profiler::ScopedTimer;
-using kapa::tarracsh::domain::stats::report::DigestReport;
+using kapa::tarracsh::domain::stats::report::Report;
 using kapa::tarracsh::app::server::digest::DiffRequest;
 using kapa::tarracsh::app::server::digest::DiffResponse;
 using kapa::tarracsh::app::server::digest::FileDigestResult;
@@ -119,7 +119,7 @@ void ServiceImpl::init() {
 
 }
 
-void ServiceImpl::reportToResponse(const std::unique_ptr<DigestReport> &report, DiffResponse &response) {
+void ServiceImpl::reportToResponse(const std::unique_ptr<Report> &report, DiffResponse &response) {
 
     for (const auto &fileResult : report->getFileResults()) {
         const auto fileDigestResult = response.add_files();

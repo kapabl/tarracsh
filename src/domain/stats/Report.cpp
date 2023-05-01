@@ -1,4 +1,7 @@
-#include "DigestReport.h"
+#include "Report.h"
+
+#include <cassert>
+
 #include "domain/Utils.h"
 #include "domain/digest/DigestUtils.h"
 
@@ -8,22 +11,36 @@
 
 using namespace kapa::tarracsh::domain::stats::report;
 
+using kapa::tarracsh::domain::BaseOptions;
+using kapa::tarracsh::domain::stats::TaskResult;
 
-DigestReport::DigestReport(Results &results)
+
+Report::Report(Results &results)
     : _results(results),
       _jarfiles(results.jarfiles),
       _classfiles(results.standaloneClassfiles),
       _options(results.options) {
 }
 
-void DigestReport::asNewJar(const std::string &filename) {
-    ++_jarfiles.digest.newFile;
-    if (_options.digest.isDiff) {
+BaseOptions& Report::getBaseOptions() const {
+    if ( _options.isCallGraph) {
+        return _options.callGraph;
+    } else if ( _options.isPublicDigest ) {
+        return _options.digest;
+    } else {
+        return _options.parse;
+    }
+}
+
+
+void Report::asNewJar(const std::string &filename) {
+    ++_jarfiles.taskResult.newFile;
+    if (getBaseOptions().isDiff) {
         addNewFile(filename);
     }
 }
 
-void DigestReport::addNewFile(const std::string &filename) {
+void Report::addNewFile(const std::string &filename) {
     std::unique_lock lock(_mutex);
     FileResult fileResult;
     fileResult.isNew = true;
@@ -32,16 +49,16 @@ void DigestReport::addNewFile(const std::string &filename) {
     _fileResults.push_back(fileResult);
 }
 
-void DigestReport::asNewClassfile(const std::string &strongClassname) {
-    ++_classfiles.digest.newFile;
-    if (_options.digest.isDiff) {
+void Report::asNewClassfile(const std::string &strongClassname) {
+    ++_classfiles.taskResult.newFile;
+    if (getBaseOptions().isDiff) {
         const auto parts = utils::splitStrongClassname(strongClassname);
         addNewFile(parts[0]);
         addNewClass(strongClassname);
     }
 }
 
-void DigestReport::addModifiedFile(const std::string &filename, const bool isSamePublicDigest) {
+void Report::addModifiedFile(const std::string &filename, const bool isSamePublicDigest) {
     std::unique_lock lock(_mutex);
     FileResult fileResult;
     fileResult.filename = filename;
@@ -51,27 +68,27 @@ void DigestReport::addModifiedFile(const std::string &filename, const bool isSam
     _fileResults.push_back(fileResult);
 }
 
-void DigestReport::asModifiedJar(const std::string &filename, const bool isSamePublicDigest) {
+void Report::asModifiedJar(const std::string &filename, const bool isSamePublicDigest) {
     if (isSamePublicDigest) {
-        ++_jarfiles.digest.same;
+        ++_jarfiles.taskResult.same;
     } else {
-        ++_jarfiles.digest.differentDigest;
+        ++_jarfiles.taskResult.differentDigest;
     }
 
-    if (_options.digest.isDiff) {
+    if (getBaseOptions().isDiff) {
         addModifiedFile(filename, isSamePublicDigest);
     }
 }
 
-void DigestReport::asModifiedClassfile(const bool isSamePublicDigest,
+void Report::asModifiedClassfile(const bool isSamePublicDigest,
                                        const std::string &strongClassname) {
     if (isSamePublicDigest) {
-        ++_classfiles.digest.same;
+        ++_classfiles.taskResult.same;
     } else {
-        ++_classfiles.digest.differentDigest;
+        ++_classfiles.taskResult.differentDigest;
     }
 
-    if (_options.digest.isDiff) {
+    if (getBaseOptions().isDiff) {
         const auto parts = utils::splitStrongClassname(strongClassname);
         addModifiedFile(parts[0], isSamePublicDigest);
         addModifiedClass(strongClassname, isSamePublicDigest);
@@ -80,7 +97,7 @@ void DigestReport::asModifiedClassfile(const bool isSamePublicDigest,
 }
 
 
-void DigestReport::addUnchangedFile(const std::string &filename) {
+void Report::addUnchangedFile(const std::string &filename) {
     std::unique_lock lock(_mutex);
     FileResult fileResult;
     fileResult.isNew = false;
@@ -90,7 +107,7 @@ void DigestReport::addUnchangedFile(const std::string &filename) {
     _fileResults.push_back(fileResult);
 }
 
-void DigestReport::addFailedFile(const std::string &filename) {
+void Report::addFailedFile(const std::string &filename) {
     std::unique_lock lock(_mutex);
     FileResult fileResult;
     fileResult.isNew = false;
@@ -101,38 +118,38 @@ void DigestReport::addFailedFile(const std::string &filename) {
     _fileResults.push_back(fileResult);
 }
 
-void DigestReport::asUnchangedJar(const std::string &filename) {
-    ++_jarfiles.digest.unchangedCount;
+void Report::asUnchangedJar(const std::string &filename) {
+    ++_jarfiles.taskResult.unchangedCount;
 
-    if (_options.digest.isDiff) {
+    if (getBaseOptions().isDiff) {
         addUnchangedFile(filename);
     }
 
 }
 
-void DigestReport::asUnchangedClassfile(const std::string &filename) {
-    ++_classfiles.digest.unchangedCount;
+void Report::asUnchangedClassfile(const std::string &filename) {
+    ++_classfiles.taskResult.unchangedCount;
 
-    if (_options.digest.isDiff) {
+    if (getBaseOptions().isDiff) {
         addUnchangedFile(filename);
     }
 }
 
-void DigestReport::asFailedJar(const std::string &filename) {
+void Report::asFailedJar(const std::string &filename) {
     ++_jarfiles.errors;
-    if (_options.digest.isDiff) {
+    if (getBaseOptions().isDiff) {
         addFailedFile(filename);
     }
 }
 
-void DigestReport::asFailedClassfile(const std::string &filename) {
+void Report::asFailedClassfile(const std::string &filename) {
     ++_classfiles.errors;
-    if (_options.digest.isDiff) {
+    if (getBaseOptions().isDiff) {
         addFailedFile(filename);
     }
 }
 
-void DigestReport::addNewClass( const std::string &strongClassname) {
+void Report::addNewClass( const std::string &strongClassname) {
     std::unique_lock lock(_mutex);
     ClassResult classfileResult;
     classfileResult.isNew = true;
@@ -141,15 +158,15 @@ void DigestReport::addNewClass( const std::string &strongClassname) {
     _classResults.push_back(classfileResult);
 }
 
-void DigestReport::asNewJarClass(const std::string &strongClassname) {
-    ++_results.jarfiles.classfiles.digest.newFile;
+void Report::asNewJarClass(const std::string &strongClassname) {
+    ++_results.jarfiles.classfiles.taskResult.newFile;
 
-    if (_options.digest.isDiff) {
+    if (getBaseOptions().isDiff) {
         addNewClass(strongClassname);
     }
 }
 
-void DigestReport::addUnchangedClass(const std::string &strongClassname) {
+void Report::addUnchangedClass(const std::string &strongClassname) {
     std::unique_lock lock(_mutex);
     ClassResult classfileResult;
     //classfileResult.filename = filename;
@@ -160,25 +177,25 @@ void DigestReport::addUnchangedClass(const std::string &strongClassname) {
     _classResults.push_back(classfileResult);
 }
 
-void DigestReport::asUnchangedJarClass(const std::string &strongClassname) {
-    ++_results.jarfiles.classfiles.digest.unchangedCount;
+void Report::asUnchangedJarClass(const std::string &strongClassname) {
+    ++_results.jarfiles.classfiles.taskResult.unchangedCount;
 
-    if (_options.digest.isDiff) {
+    if (getBaseOptions().isDiff) {
         addUnchangedClass(strongClassname);
     }
 
 }
 
-void DigestReport::asFailedJarClass(const std::string &strongClassname) {
+void Report::asFailedJarClass(const std::string &strongClassname) {
     ++_results.jarfiles.classfiles.errors;
 
 
-    if (_options.digest.isDiff) {
+    if (getBaseOptions().isDiff) {
         addUnchangedClass(strongClassname);
     }
 }
 
-void DigestReport::addModifiedClass(const std::string &strongClassname, const bool isSamePublicDigest) {
+void Report::addModifiedClass(const std::string &strongClassname, const bool isSamePublicDigest) {
     std::unique_lock lock(_mutex);
     ClassResult classResult;
     classResult.strongClassname = strongClassname;
@@ -187,20 +204,20 @@ void DigestReport::addModifiedClass(const std::string &strongClassname, const bo
     _classResults.push_back(classResult);
 }
 
-void DigestReport::asModifiedJarClass(const std::string &strongClassname, const bool isSamePublicDigest) {
+void Report::asModifiedJarClass(const std::string &strongClassname, const bool isSamePublicDigest) {
     if (isSamePublicDigest) {
-        ++_results.jarfiles.classfiles.digest.same;
+        ++_results.jarfiles.classfiles.taskResult.same;
     } else {
-        ++_results.jarfiles.classfiles.digest.differentDigest;
+        ++_results.jarfiles.classfiles.taskResult.differentDigest;
     }
 
-    if (_options.digest.isDiff) {
+    if (getBaseOptions().isDiff) {
         addModifiedClass(strongClassname, isSamePublicDigest);
     }
 
 }
 
-void DigestReport::print() const {
+void Report::print() const {
     std::cout << std::endl;
     if (_options.verbose) {
         std::cout << R"legend(Legend:

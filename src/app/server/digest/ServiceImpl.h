@@ -43,7 +43,7 @@ private:
     void startServer();
     void waitForShutDown();
     void init();
-    static void reportToResponse(const std::unique_ptr<domain::stats::report::DigestReport>& report, app::server::digest::DiffResponse& response);
+    static void reportToResponse(const std::unique_ptr<domain::stats::report::Report>& report, app::server::digest::DiffResponse& response);
 
 };
 }

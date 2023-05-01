@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+// #include "Results.h"
 #include "../Options.h"
 #include "infrastructure/filesystem/Utils.h"
 
@@ -32,9 +33,10 @@ struct ClassResult {
     bool failed{false};
 };
 
-class DigestReport {
+class Report {
 public:
-    explicit DigestReport(Results &results);
+    explicit Report(Results &results);
+    BaseOptions &getBaseOptions() const;
 
     void asNewJar(const std::string &filename);
     void asModifiedJar(const std::string &filename, bool isSamePublicDigest);

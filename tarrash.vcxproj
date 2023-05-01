@@ -969,7 +969,7 @@
     <ClCompile Include="src\app\Main.cpp" />
     <ClCompile Include="src\domain\Options.cpp" />
     <ClCompile Include="src\domain\stats\ProfileData.cpp" />
-    <ClCompile Include="src\domain\stats\DigestReport.cpp" />
+    <ClCompile Include="src\domain\stats\Report.cpp" />
     <ClCompile Include="src\infrastructure\profiling\ScopedTimer.cpp" />
     <ClCompile Include="src\domain\stats\Results.cpp" />
     <ClCompile Include="src\app\App.cpp" />
@@ -1030,7 +1030,7 @@
     <ClInclude Include="src\infrastructure\log\Log.h" />
     <ClInclude Include="src\domain\Options.h" />
     <ClInclude Include="src\domain\stats\ProfileData.h" />
-    <ClInclude Include="src\domain\stats\DigestReport.h" />
+    <ClInclude Include="src\domain\stats\Report.h" />
     <ClInclude Include="src\infrastructure\profiling\ScopedTimer.h" />
     <ClInclude Include="src\domain\stats\Results.h" />
     <ClInclude Include="src\app\Tarracsh.h" />

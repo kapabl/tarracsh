@@ -87,7 +87,7 @@ void DigestAnalyzer::digestClassfile(const std::string& filename) const {
     const bool fileExists = fileRow != nullptr;
     const auto isFileChanged = !isFileUnchanged(fileInfo.size, fileInfo.timestamp, fileRow);
 
-    ++_results.standaloneClassfiles.digest.count;
+    ++_results.standaloneClassfiles.taskResult.count;
 
     if (isFileChanged) {
 

@@ -4,7 +4,7 @@
 #include <string>
 #include "infrastructure/log/Log.h"
 #include "../Options.h"
-#include "DigestReport.h"
+#include "Report.h"
 #include "ProfileData.h"
 
 
@@ -15,19 +15,29 @@ typedef std::atomic<unsigned long> FileTime;
 // typedef unsigned int Counter;
 // typedef unsigned long FileTime;
 
-struct PublicDigestResult {
+struct TaskResult {
     Counter unchangedCount{};
     Counter count{};
     Counter same{};
-    Counter differentDigest{};
     Counter newFile{};
+    Counter differentDigest{};
+};
+
+struct CallGraphResult: TaskResult {
+    
+};
+
+
+
+struct PublicDigestResult: TaskResult {
+
 };
 
 struct ClassfileStats {
     Counter count{};
     Counter parsedCount{};
     Counter errors{};
-    PublicDigestResult digest;
+    TaskResult taskResult;
 };
 
 struct JarfileStats {
@@ -35,7 +45,7 @@ struct JarfileStats {
     Counter parsedCount{};
     Counter errors{};
     Counter classfileCount{};
-    PublicDigestResult digest;
+    TaskResult taskResult;
     ClassfileStats classfiles;
 };
 
@@ -60,7 +70,7 @@ struct Results {
     mutable bool progressStarted{ false };
 
 
-    std::unique_ptr<report::DigestReport> report;
+    std::unique_ptr<report::Report> report;
     std::unique_ptr<profiler::ProfileData> profileData;
     std::shared_ptr<infrastructure::log::Log> log;
 
