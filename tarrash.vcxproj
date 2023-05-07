@@ -990,7 +990,10 @@
     <ClCompile Include="src\app\classfile\constantpool\printer\nav\HtmlGen.cpp" />
     <ClCompile Include="src\domain\db\CallGraphDb.cpp" />
     <ClCompile Include="src\domain\db\table\Classfiles.cpp" />
-    <ClCompile Include="src\infrastructure\app\CliApp.cpp" />
+    <ClCompile Include="src\infrastructure\app\CliApp.cpp">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Rel2|x64'">
+      </PreprocessorDefinitions>
+    </ClCompile>
     <ClCompile Include="src\infrastructure\db\Database.cpp" />
     <ClCompile Include="src\domain\db\DigestDb.cpp" />
     <ClCompile Include="src\domain\db\table\Files.cpp" />

@@ -4,14 +4,12 @@
 #include "app/App.h"
 #include "app/Analyzer.h"
 #include "app/commands/Query.h"
-#include "app/server/digest/ServerCommand.h"
 #include "infrastructure/profiling/ScopedTimer.h"
 
 
 using namespace kapa::infrastructure::app::cli::command;
 using namespace kapa::tarracsh::app::commands::callgraph;
 
-using kapa::tarracsh::app::server::digest::ServerCommand;
 using kapa::tarracsh::app::commands::Query;
 using kapa::tarracsh::domain::ServerOptions;
 using kapa::tarracsh::domain::ClientOptions;
@@ -19,16 +17,16 @@ using kapa::infrastructure::app::cli::ExitCode;
 using kapa::infrastructure::profiler::ScopedTimer;
 
 CallGraph::CallGraph(CLI::App* parent)
-    : DbBasedCommand(parent, App::getGlobalOptions().digest) {
+    : DbBasedCommand(parent, App::getGlobalOptions().callGraph) {
 }
 
 ExitCode CallGraph::processInput() {
     ExitCode result = 0;
 
     ScopedTimer::timeWithPrint(
-        "digest-input",
+        "callgraph-input",
         [this, &result]()-> void {
-            if (_options.digest.isValidInput()) {
+            if (_options.callGraph.isValidInput()) {
                 if (isClientMode()) {
                     result = runAsClient() ? 0 : 1;
                 }
@@ -36,7 +34,7 @@ ExitCode CallGraph::processInput() {
                     result = runAsStandalone() ? 0 : 1;
                 }
 
-                if (result == 0 && _options.digest.isDiff) {
+                if (result == 0 /*&& _options.digest.isDiff*/) {
                     _results.report->print();
                 }
             }
@@ -49,17 +47,21 @@ ExitCode CallGraph::processInput() {
 }
 
 bool CallGraph::runAsServer() {
-    const auto result = ServerCommand::run(App::getContext());
+    // const auto result = ServerCommand::run(App::getContext());
+    const auto result = false;
+    //TODO
     return result;
 }
 
 bool CallGraph::runAsClient() {
-    const auto result = ServerCommand::run(App::getContext());
+    // const auto result = ServerCommand::run(App::getContext());
+    const auto result = false;
+    //TODO
     return result;
 }
 
 void CallGraph::addMainSubCommand() {
-    _subCommand = _parent->add_subcommand("public-digest", "Public digest of jar files and classfiles");
+    _subCommand = _parent->add_subcommand("call-graph", "Creates call-graph");
     _subCommand->add_flag("--verbose, -v", _options.verbose, "Verbose output");
 }
 

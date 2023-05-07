@@ -1,6 +1,8 @@
 #ifndef TARRACSH_CONSTANT_POOL_PRINTER_H
 #define TARRACSH_CONSTANT_POOL_PRINTER_H
 #include <unordered_map>
+
+#include "app/Context.h"
 #include "domain/classfile/ClassFileParser.h"
 
 
@@ -55,6 +57,7 @@ protected:
     virtual void printTitle();
 
     static void initStringMaps();
+    void init(Context &context);
 
 
 };
