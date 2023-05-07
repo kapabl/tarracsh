@@ -21,8 +21,8 @@ using db::table::ClassfileRow;
 
 using namespace classfile;
 using namespace db;
-using namespace db::callgraph;
-using namespace db::digest;
+using namespace callgraph;
+// using namespace digest;
 using namespace jar::tasks;
 
 using namespace std;
@@ -264,7 +264,8 @@ auto GraphTask::getFiles() -> std::shared_ptr<table::Files> {
 
 
 auto GraphTask::findIncompleteClass(const JarEntryInfo& jarEntryInfo) -> ClassfileRow* {
+    //TODO find incomplete class with the same FQN
     const auto result = nullptr;
     //TODO
-    return result;
+    return result; 
 }

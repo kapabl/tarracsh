@@ -82,7 +82,7 @@ void Analyzer::classFileParserDone(ClassFileParser &parser) const {
         ConstantPoolPrinter constantPoolPrinter(parser);
         constantPoolPrinter.print();
     } else if (_options.parse.printCPoolHtmlNav) {
-        HtmlGen htmlGen(parser);
+        HtmlGen htmlGen(parser, _options);
         htmlGen.print();
     }
 

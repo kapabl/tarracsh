@@ -1,3 +1,4 @@
+#include <cassert>
 #ifndef TARRACSH_FS_UTILS_H
 #define TARRACSH_FS_UTILS_H
 #include <string>
@@ -5,6 +6,7 @@
 #include <filesystem>
 #include <chrono>
 #include <iostream>
+#include <cstdlib>
 #include "Utils.h"
 
 
@@ -13,7 +15,19 @@ namespace kapa::infrastructure::filesystem::utils {
 
 std::filesystem::path getUserHomeDir() {
 #ifdef _WIN32
-    auto result = std::filesystem::path(std::string(std::getenv("HOMEDRIVE")) + std::getenv("HOMEPATH"));
+
+    char *homeDrive;
+    size_t homeDriveLength;
+    _dupenv_s(&homeDrive, &homeDriveLength, "HOMEDRIVE");
+    assert(homeDrive != nullptr);
+
+    char* homePath;
+    size_t homePathLength;
+    _dupenv_s(&homePath, &homePathLength, "HOMEDRIVE");
+    assert(homePath != nullptr);
+
+    auto result = std::filesystem::path(std::string(homeDrive) + homePath);
+
 #else
         auto result = std::filesystem::path(getenv("HOME"));
 #endif

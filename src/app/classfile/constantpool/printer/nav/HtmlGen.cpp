@@ -2,7 +2,7 @@
 #include <vector>
 #include "infrastructure/string/StringUtils.h"
 #include "infrastructure/filesystem/Utils.h"
-#include "../../../../App.h"
+// #include "../../../../App.h"
 #include "HtmlGen.h"
 
 using namespace kapa::tarracsh::app::classfile::constantpool::printer::nav;
@@ -18,8 +18,9 @@ inja::Template HtmlGen::_implementationsTemplate;
 inja::Environment HtmlGen::_injaEnvironment;
 
 
-HtmlGen::HtmlGen(ClassFileParser &classFileParser)
-    : ConstantPoolPrinter(classFileParser) {
+HtmlGen::HtmlGen(ClassFileParser &classFileParser, const Options& options)
+    : ConstantPoolPrinter(classFileParser),
+      _options(options){
     _mainClassname = classFileParser.getMainClassname();
     _implementation = filesystem::path(_classFileParser.getContainingFile()).filename().string();
     _classRelDir = infrastructure::filesystem::utils::classnameToPath(_mainClassname);
@@ -32,7 +33,7 @@ void HtmlGen::printTitle() {
 }
 
 filesystem::path HtmlGen::getClassRootDir() const {
-    auto result = filesystem::path(app::App::getGlobalOptions().outputDir) /
+    auto result = filesystem::path(_options.outputDir) /
                   "nav" /
                   _classRelDir;
     return result;
@@ -74,7 +75,7 @@ std::string HtmlGen::render(const inja::Template &compiledTemplate, const inja::
 }
 
 filesystem::path HtmlGen::getClassHtmlFilename() const {
-    const auto dir = filesystem::path(app::App::getGlobalOptions().outputDir) /
+    const auto dir = filesystem::path(_options.outputDir) /
                      "nav" /
                      _classRelDir /
                      _implementation;

@@ -17,7 +17,13 @@ public:
         CLI::App(description, name)
     {
     }
-
+protected:
+#ifdef _WIN32
+    static void prepareConsoleForVT100();
+    static void prepareConsoleForUTF8();
+    // static int __stdcall ctrlHandler(unsigned long fdwCtrlType);
+    void controlCHandler();
+#endif
 
 };
 

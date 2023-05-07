@@ -11,7 +11,7 @@ namespace kapa::tarracsh::app::classfile::constantpool::printer::nav {
 
 class HtmlGen final: public classfile::constantpool::printer::ConstantPoolPrinter {
 public:
-    explicit HtmlGen(domain::classfile::ClassFileParser &classFileParser);
+    explicit HtmlGen(domain::classfile::ClassFileParser &classFileParser, const domain::Options& options);
     ~HtmlGen() override = default;
     void print() override;
     static void init();
@@ -41,6 +41,7 @@ private:
     std::string _implementation;
     std::filesystem::path _classRootDir;
     std::filesystem::path _classRelDir;
+    const domain::Options& _options;
     static inja::Template _implementationsTemplate;
     static inja::Template _classTemplate;
     static inja::Environment _injaEnvironment;

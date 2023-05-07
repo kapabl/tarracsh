@@ -6,7 +6,9 @@
 
 #include <mutex>
 
-#include "app/App.h"
+#include "app/Context.h"
+
+// #include "app/App.h"
 
 
 using namespace kapa::tarracsh::app::classfile::constantpool::printer;
@@ -266,8 +268,8 @@ void ConstantPoolPrinter::initStringMaps() {
     _refKindToString[JVM_REF_invokeInterface] = "REF_invokeInterface";
 }
 
-void ConstantPoolPrinter::init() {
+void ConstantPoolPrinter::init(Context& context) {
     initStringMaps();
     //TODO fix this dependency from the app layer
-    _cpoolStringIndex = App::getContext().getOptions().parse.descriptiveCPoolEntries ? 1 : 0;
+    _cpoolStringIndex = context.getOptions().parse.descriptiveCPoolEntries ? 1 : 0;
 }

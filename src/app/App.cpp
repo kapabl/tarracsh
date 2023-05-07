@@ -68,7 +68,7 @@ ExitCode App::start(const int argc, char *argv[]) {
 
 }
 
-void App::controlCHandler() {
+void App::controlCHandler() const {
     if (_options.digest.server.isServerMode) {
         std::cout << "Terminating..." << std::endl;
         tarracsh::server::digest::ServiceImpl::signalQuick();
@@ -139,21 +139,6 @@ int App::parseCli(int argc, char **argv) {
     return result;
 }
 
-#ifdef _WIN32
-void App::prepareConsoleForUTF8() {
-    SetConsoleOutputCP(CP_UTF8);
-    setvbuf(stdout, nullptr, _IOFBF, 1000);
-}
-
-void App::prepareConsoleForVT100() {
-    const auto stdOutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-    unsigned long ulMode;
-    GetConsoleMode(stdOutHandle, &ulMode);
-    SetConsoleMode(stdOutHandle, ulMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-    // SetConsoleMode(stdOutHandle, ENABLE_VIRTUAL_TERMINAL_PROCESSING | ENABLE_PROCESSED_OUTPUT);
-}
-#endif
-
 
 bool App::isCPoolPrinterNeeded() const {
     const auto result = _options.parse.printConstantPool || _options.parse.printCPoolHtmlNav;
@@ -205,7 +190,7 @@ void App::init() const {
     _log->init(_options.logFile);
 
     if (isCPoolPrinterNeeded()) {
-        ConstantPoolPrinter::init();
+        ConstantPoolPrinter::init(App::getContext());
         if (_options.parse.printCPoolHtmlNav) {
             HtmlGen::init();
         }
