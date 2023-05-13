@@ -47,10 +47,9 @@ void GraphTask::updateIncompleteRefs(const ClassfileRow* row ) {
 void GraphTask::processNewClassfile(const JarEntryInfo &jarEntryInfo) {
     const auto &jarEntry = jarEntryInfo.jarEntry;
 
-    Options options(_options);
     reader::MemoryReader reader(jarEntry);
 
-    ClassFileParser classFileParser(reader, options, _results);
+    ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);
     if (classFileParser.parse()) {
         recordClassMethods(classFileParser);
         recordRefs(classFileParser);
@@ -74,10 +73,9 @@ void GraphTask::processIncompleteClassfile(const JarEntryInfo &jarEntryInfo, Cla
     //TODO update file row
     row->file.id = _jarFileRow->id;
 
-    Options options(_options);
     reader::MemoryReader reader(jarEntry);
 
-    ClassFileParser classFileParser(reader, options, _results);
+    ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);
     if (classFileParser.parse()) {
         recordClassMethods(classFileParser);
         recordRefs(classFileParser);

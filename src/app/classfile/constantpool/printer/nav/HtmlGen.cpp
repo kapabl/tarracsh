@@ -22,7 +22,7 @@ HtmlGen::HtmlGen(ClassFileParser &classFileParser, const Options& options)
     : ConstantPoolPrinter(classFileParser),
       _options(options){
     _mainClassname = classFileParser.getMainClassname();
-    _implementation = filesystem::path(_classFileParser.getContainingFile()).filename().string();
+    _implementation = filesystem::path(_classFileParser.getFilename()).filename().string();
     _classRelDir = infrastructure::filesystem::utils::classnameToPath(_mainClassname);
     _classRootDir = getClassRootDir();
 }

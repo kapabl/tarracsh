@@ -1,5 +1,5 @@
-#include "../Options.h"
 #include <iostream>
+#include <utility>
 #include "ClassFileParser.h"
 #include "MethodDescriptorParser.h"
 
@@ -9,9 +9,9 @@ using namespace attribute;
 
 using namespace std;
 
-ClassFileParser::ClassFileParser(reader::ClassFileReader &reader, Options &options, Results &results)
-    : _options(options),
-      _results(results),
+ClassFileParser::ClassFileParser(reader::ClassFileReader &reader, std::string filename, std::shared_ptr<infrastructure::log::Log> log)
+    : _filename(std::move(filename)),
+      _log(std::move(log)),
       _reader(reader),
       _attributesManager(_constantPool) {
 }
@@ -29,14 +29,14 @@ bool ClassFileParser::internalParse() {
         processFile();
     } catch (const runtime_error &runtimeException) {
         result = false;
-        const auto errorMessage = format("Error parsing file: {}, msg:{}", _options.getBaseOptions().input,
+        const auto errorMessage = format("Error parsing file: {}, msg:{}", _filename,
                                          runtimeException.what());
-        _results.log->writeln(errorMessage);
+        _log->writeln(errorMessage);
     }
     catch (...) {
         result = false;
-        const auto errorMessage = format("Error parsing file: {}", _options.getBaseOptions().input);
-        _results.log->writeln(errorMessage);
+        const auto errorMessage = format("Error parsing file: {}", _filename);
+        _log->writeln(errorMessage);
     }
 
     return result;
@@ -47,10 +47,8 @@ std::string ClassFileParser::getMainClassname() const {
     return result;
 }
 
-std::string ClassFileParser::getContainingFile() {
-    std::string result = _options.getBaseOptions().input;
-
-    return result;
+std::string ClassFileParser::getFilename() {
+    return _filename;
 }
 
 void ClassFileParser::initialize() {
@@ -177,8 +175,8 @@ void ClassFileParser::readConstPoolEntry(int &index) {
 
         default: // NOLINT(clang-diagnostic-covered-switch-default)
             const auto errorMessage = format("Error - Invalid const-pool tag: {} {}", static_cast<int>(tag),
-                                             _options.getBaseOptions().input);
-            _results.log->writeln(errorMessage);
+                _filename);
+            _log->writeln(errorMessage);
             throw runtime_error(errorMessage);
     }
 }

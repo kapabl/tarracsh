@@ -123,10 +123,8 @@ optional<DigestCol> DigestTask::digestEntry(const JarEntryInfo &digestEntryInfo,
 
     optional<DigestCol> result;
 
-    Options options(_options);
     reader::MemoryReader reader(jarEntry);
-
-    ClassFileParser classFileParser(reader, options, _results);
+    ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);
     if (classFileParser.parse()) {
         const ClassFileDigest classFileDigest(classFileParser);
         result = classFileDigest.digest();
