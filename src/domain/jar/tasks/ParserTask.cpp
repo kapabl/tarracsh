@@ -30,16 +30,11 @@ bool ParserTask::start() {
     return true;
 }
 
-void ParserTask::prepareOptions(const JarEntry &jarEntry, Options &options) const {
-    options = _options;
-}
-
 void ParserTask::parseEntry(const JarEntry &jarEntry) const {
-    Options options;
-    prepareOptions(jarEntry, options);
     reader::MemoryReader reader(jarEntry);
     ++_results.jarfiles.classfiles.count;
-    ClassFileParser classFileParser(reader, options, _results);
+    //TODO instead of jarEntry.getName() this can be jarfile@jarEntry.getName()
+    ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);
     if (classFileParser.parse()) {
         ++_results.jarfiles.classfiles.parsedCount;
     } else {

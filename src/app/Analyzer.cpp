@@ -44,12 +44,10 @@ Analyzer::Analyzer(Context &config)
 }
 
 void Analyzer::parseClassfile(const std::string &filename) const {
-    Options classfileOptions(_options);
-    classfileOptions.getBaseOptions().input = filename;
 
     FileReader reader(filename);
 
-    ClassFileParser parser(reader, classfileOptions, _results);
+    ClassFileParser parser(reader, filename, _results.log);
     if (parser.parse()) {
         ++_results.standaloneClassfiles.parsedCount;
 

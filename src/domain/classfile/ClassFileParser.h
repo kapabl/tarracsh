@@ -17,7 +17,7 @@ class ClassFileParser final {
    
 
 public:
-    explicit ClassFileParser(reader::ClassFileReader &reader, Options &options, stats::Results &results);
+    explicit ClassFileParser(reader::ClassFileReader &reader, std::string filename, std::shared_ptr<infrastructure::log::Log> log);
 
     ClassFileParser(const ClassFileParser &) = delete;
     ClassFileParser(const ClassFileParser &&) = delete;
@@ -43,11 +43,13 @@ public:
 
     [[nodiscard]] std::string getMainClassname() const;
 
-    Options& getOptions() { return _options; }
-    [[nodiscard]] std::string getContainingFile();
+    // Options& getOptions() { return _options; }
+    [[nodiscard]] std::string getFilename();
 
 private:
-    Options _options;
+    std::string _filename;
+    // Options _options;
+    std::shared_ptr<infrastructure::log::Log> _log;
     Results &_results;
     reader::ClassFileReader &_reader;
     bool _parseSucceed{ false };

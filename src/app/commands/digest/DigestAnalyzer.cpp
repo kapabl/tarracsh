@@ -91,11 +91,9 @@ void DigestAnalyzer::digestClassfile(const std::string& filename) const {
 
     if (isFileChanged) {
 
-        Options classfileOptions(_options);
-        classfileOptions.digest.input = fileInfo.filename;
         FileReader reader(fileInfo.filename);
+        ClassFileParser classFileParser(reader, fileInfo.filename, _results.log);
 
-        ClassFileParser classFileParser(reader, classfileOptions, _results);
         if (classFileParser.parse()) {
 
             const auto strongClassname = domain::utils::getStrongClassname(

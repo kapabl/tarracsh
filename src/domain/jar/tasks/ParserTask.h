@@ -30,7 +30,6 @@ private:
     std::function<void(classfile::ClassFileParser&)> _onParserDone;
     void parseEntry(const JarEntry &jarEntry) const;
 
-    void prepareOptions(const jar::JarEntry& jarEntry, Options& options) const;
 
 };
 }

@@ -3,6 +3,7 @@
 
 
 #include "domain/Options.h"
+#include "domain/classfile/ClassFileParser.h"
 #include "domain/stats/Results.h"
 #include "infrastructure/app/CliApp.h"
 
@@ -14,9 +15,7 @@ public:
     static infrastructure::app::cli::ExitCode run(int argc, char **argv);
 
 private:
-    void setupCliOptions();
-    void validateFile(const std::string &file) const;
-    infrastructure::app::cli::ExitCode parseCli(int argc, char** argv);
+
     static std::unique_ptr<ClassfileDiffApp> _app;
     std::shared_ptr<infrastructure::log::Log> _log;
     tarracsh::domain::Options _options;
@@ -27,13 +26,26 @@ private:
 
     std::string _leftFile;
     std::string _rightFile;
+    std::vector<std::string> _differences;
+    std::vector<std::string> _equalities;
 
     void init() const;
 
     ClassfileDiffApp(const std::string &description, const std::string &name,
         std::shared_ptr<infrastructure::log::Log> log);
 
-    [[nodiscard]] infrastructure::app::cli::ExitCode start(int argc, char* argv[]);
+    void compareSuperClass(tarracsh::domain::classfile::ClassFileParser & leftParser, tarracsh::domain::classfile::ClassFileParser & rightParser);
+    void compareMainClassAccessFlags(tarracsh::domain::classfile::ClassFileParser & leftParser, tarracsh::domain::classfile::ClassFileParser & rightParser);
+    void compareMainClass(tarracsh::domain::classfile::ClassFileParser & leftParser, tarracsh::domain::classfile::ClassFileParser & rightParser);
+    void compareMethods(tarracsh::domain::classfile::ClassFileParser & leftParser, tarracsh::domain::classfile::ClassFileParser & rightParser);
+    void compareFields(tarracsh::domain::classfile::ClassFileParser & leftParser, tarracsh::domain::classfile::ClassFileParser & rightParser);
+    void compareMembers(tarracsh::domain::classfile::ClassFileParser & leftParser, tarracsh::domain::classfile::ClassFileParser & rightParser);
+    void compare(tarracsh::domain::classfile::ClassFileParser & leftParser, tarracsh::domain::classfile::ClassFileParser & rightParser);
+    [[nodiscard]] auto start(int argc, char* argv[]) -> infrastructure::app::cli::ExitCode;
+    void setupCliOptions();
+    void validateFile(const std::string& filename) const;
+    auto parseCli(int argc, char** argv) -> infrastructure::app::cli::ExitCode;
+    void outputResult() const;
 
 
 };
