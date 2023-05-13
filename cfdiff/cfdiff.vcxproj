@@ -169,6 +169,7 @@
     <ClInclude Include="src\app\classfile\ParserPrinter.h" />
     <ClInclude Include="src\app\Context.h" />
     <ClInclude Include="src\app\Tarracsh.h" />
+    <ClInclude Include="src\cli\CfDiff.h" />
     <ClInclude Include="src\cli\ClassfileDiffApp.h" />
     <ClInclude Include="src\domain\classfile\AccessModifiers.h" />
     <ClInclude Include="src\domain\classfile\AnnotationsParser.h" />
