@@ -36,6 +36,7 @@ void ClassfileDiffApp::setupCliOptions() {
     set_help_all_flag("--help-all");
 
     add_flag("--ignore-classname", _ignoreClassname, "Ignore classname during comparison");
+    add_flag("--ignore-code", _ignoreCode, "Ignore code attributes of methods");
     add_flag("-p,--public-only", _publicOnly, "yes/no, default yes");
 
     allow_extras();
@@ -201,22 +202,27 @@ void ClassfileDiffApp::compareSuperClass() {
 
 }
 
-auto ClassfileDiffApp::compareAccessFlags(const u2 accessFlagsLeft, const u2 accessFlagsRight) -> bool {
+auto ClassfileDiffApp::compareAccessFlags(const u2 accessFlagsLeft, const u2 accessFlagsRight,
+                                          std::string &message) -> bool {
     const auto result = accessFlagsLeft == accessFlagsRight;
-    if (result) {
+    if (!result) {
         _differenceCount++;
-        _log->writeln(std::format("Access flags differ:\nleft:{}\nright:{}\n\n",
-                                  accessmodifier::toString(accessFlagsLeft),
-                                  accessmodifier::toString(accessFlagsRight)
-            ));
+        message = std::format("Access flags differ:\nleft({:x}):{}\nright({:x}):{}\n",
+                              accessFlagsLeft,
+                              accessmodifier::toString(accessFlagsLeft),
+                              accessFlagsRight,
+                              accessmodifier::toString(accessFlagsRight));
     } else {
-        _log->writeln("Access flags are equal");
+        message = "Access flags are equal";
     }
     return result;
 }
 
 void ClassfileDiffApp::compareMainClassAccessFlags() {
-    compareAccessFlags(_leftParser->getMainClassInfo().accessFlags, _rightParser->getMainClassInfo().accessFlags);
+    std::string message;
+    compareAccessFlags(_leftParser->getMainClassInfo().accessFlags, _rightParser->getMainClassInfo().accessFlags,
+                       message);
+    _log->writeln(message);
 }
 
 void ClassfileDiffApp::compareMainClassname() {
@@ -281,7 +287,8 @@ auto ClassfileDiffApp::getString(const std::unique_ptr<ClassFileParser> &parser,
 }
 
 auto ClassfileDiffApp::compareAttributes(const std::vector<attribute::AttributeInfo> &left,
-                                         const std::vector<attribute::AttributeInfo> &right) -> bool {
+                                         const std::vector<attribute::AttributeInfo> &right,
+                                         std::string &message) -> bool {
 
     std::unordered_map<std::string, attribute::AttributeInfo> leftMap;
     for (const auto &leftAttribute : left) {
@@ -295,29 +302,39 @@ auto ClassfileDiffApp::compareAttributes(const std::vector<attribute::AttributeI
 
     auto attributeDifferences = 0u;
 
-    for (auto &[leftName, leftAttributeInfo] : leftMap) {
-        if (rightMap.contains(leftName)) {
-            const auto &rightAttributeInfo = rightMap[leftName];
-            rightMap.erase(leftName);
+    std::vector<std::string> messages;
+    for (auto &[attributeName, leftAttributeInfo] : leftMap) {
+        if (attributeName == CODE && _ignoreCode) {
+            continue;
+        }
+        if (rightMap.contains(attributeName)) {
+            const auto &rightAttributeInfo = rightMap[attributeName];
 
             const auto areEqual = leftAttributeInfo.length == rightAttributeInfo.length &&
                                   leftAttributeInfo.info == rightAttributeInfo.info;
 
             if (areEqual) {
-                _log->writeln(std::format("Attribute {} is equal", leftName));
+                messages.push_back(std::format("Attribute {} is equal", attributeName));
             } else {
                 attributeDifferences++;
-                _log->writeln(std::format("Attribute {} differs", leftName));
+                messages.push_back(std::format("Attribute {} differs", attributeName));
             }
+
+            rightMap.erase(attributeName);
         } else {
-            _log->writeln(std::format("Attribute {} is missing in right", leftName));
+            messages.push_back(std::format("Attribute {} is missing in right", attributeName));
         }
     }
 
-    for (const auto &rightName : rightMap | std::views::keys) {
+    for (const auto &attributeName : rightMap | std::views::keys) {
+        if (attributeName == CODE && _ignoreCode) {
+            continue;
+        }
         attributeDifferences++;
-        _log->writeln(std::format("Attribute {} is missing in left", rightName));
+        messages.push_back(std::format("Attribute {} is missing in left", attributeName));
     }
+
+    message = infrastructure::string::stringUtils::join(messages, std::string("\n"));
 
     _differenceCount += attributeDifferences;
     const auto result = attributeDifferences == 0;
@@ -325,7 +342,9 @@ auto ClassfileDiffApp::compareAttributes(const std::vector<attribute::AttributeI
 }
 
 void ClassfileDiffApp::compareMainClassAttributes() {
-    compareAttributes(_leftParser->getAttributes(), _rightParser->getAttributes());
+    std::string message;
+    compareAttributes(_leftParser->getAttributes(), _rightParser->getAttributes(), message);
+    _log->writeln(message);
 }
 
 void ClassfileDiffApp::compareMainClass() {
@@ -338,11 +357,18 @@ void ClassfileDiffApp::compareMainClass() {
 }
 
 auto ClassfileDiffApp::areMethodsEqual(const constantpool::MethodInfo &leftMethod,
-                                       const constantpool::MethodInfo &rightMethod) -> bool {
+                                       const constantpool::MethodInfo &rightMethod, std::string &message) -> bool {
 
-    auto result = compareAccessFlags(leftMethod.accessFlags, rightMethod.accessFlags);
-    result = compareDescriptors(leftMethod.descriptorIndex, rightMethod.descriptorIndex) && result;
-    result = compareAttributes(leftMethod.attributes, rightMethod.attributes) && result;
+    std::string accessFlagsMessage;
+    auto result = compareAccessFlags(leftMethod.accessFlags, rightMethod.accessFlags, accessFlagsMessage);
+
+    std::string descriptorMessage;
+    result = compareDescriptors(leftMethod.descriptorIndex, rightMethod.descriptorIndex, descriptorMessage) && result;
+
+    std::string attributeMessage;
+    result = compareAttributes(leftMethod.attributes, rightMethod.attributes, attributeMessage) && result;
+
+    message = std::format("{}\n{}\n{}", accessFlagsMessage, descriptorMessage, attributeMessage);
 
     return result;
 }
@@ -371,7 +397,7 @@ void ClassfileDiffApp::compareMethods() {
     for (auto &[methodName, leftMethods] : leftMap) {
         if (rightMap.contains(methodName)) {
             auto &rightMethods = rightMap[methodName];
-            _log->writeln(std::format("Comparing methods: {}", methodName));
+            _log->writeln(std::format("Method: {}", methodName));
 
             if (leftMethods.size() > 1) {
                 _log->writeln(std::format("Left method {} has {} overloads", methodName, leftMethods.size()));
@@ -381,16 +407,33 @@ void ClassfileDiffApp::compareMethods() {
                 _log->writeln(std::format("Right method {} has {} overloads", methodName, rightMethods.size()));
             }
 
+            const auto prevDifferenceCount = _differenceCount;
+            auto matchFound = false;
+            std::string allMessages;
             for (auto &leftMethod : leftMethods) {
                 for (auto &rightMethod : rightMethods) {
-                    if (areMethodsEqual(leftMethod, rightMethod)) {
+                    std::string message;
+                    _log->writeln("Comparing...");
+                    if (areMethodsEqual(leftMethod, rightMethod, message)) {
                         rightMap.erase(methodName);
                         _log->writeln(std::format("Method {} is equal", methodName));
+                        matchFound = true;
+                        break;
                     } else {
-                        _log->writeln(std::format("Method {} differs", methodName));
+                        message += std::format("\nMethod {} differs\n", methodName);
                     }
+                    allMessages += message;
+                }
+                if (matchFound) {
+                    break;
                 }
             }
+            if (matchFound) {
+                _differenceCount = prevDifferenceCount;
+            } else {
+                _log->writeln(allMessages);
+            }
+            _log->writeln("");
         } else {
             _differenceCount++;
             _log->writeln(std::format("Method {} is only in left", methodName));
@@ -398,14 +441,14 @@ void ClassfileDiffApp::compareMethods() {
     }
 }
 
-auto ClassfileDiffApp::compareDescriptors(const u2 leftDescriptorIndex,
-                                          const u2 rightDescriptorIndex) -> bool {
-    const auto leftDescriptor = getLeftString(leftDescriptorIndex);
-    const auto rightDescriptor = getRightString(rightDescriptorIndex);
+auto ClassfileDiffApp::compareDescriptors(const u2 leftIndex,
+                                          const u2 rightIndex, std::string &message) -> bool {
+    const auto leftDescriptor = getLeftString(leftIndex);
+    const auto rightDescriptor = getRightString(rightIndex);
     const auto result = leftDescriptor == rightDescriptor;
-    if (result) {
+    if (!result) {
         _differenceCount++;
-        _log->writeln(std::format("Descriptors differ: {}, {}", leftDescriptor, rightDescriptor));
+        message = std::format("Descriptors differ: {}, {}", leftDescriptor, rightDescriptor);
     }
 
     return result;
@@ -435,12 +478,22 @@ void ClassfileDiffApp::compareFields() {
     for (auto &[leftName, leftFieldInfo] : leftMap) {
         if (rightMap.contains(leftName)) {
             const auto &rightFieldInfo = rightMap[leftName];
-            rightMap.erase(leftName);
-            _log->writeln(std::format("Comparing field: {}", leftName));
 
-            compareAccessFlags(leftFieldInfo.accessFlags, rightFieldInfo.accessFlags);
-            compareDescriptors(leftFieldInfo.descriptorIndex, rightFieldInfo.descriptorIndex);
-            compareAttributes(leftFieldInfo.attributes, rightFieldInfo.attributes);
+            _log->writeln(std::format("Field: {}", leftName));
+
+            std::string accessFlagsMessage;
+            compareAccessFlags(leftFieldInfo.accessFlags, rightFieldInfo.accessFlags, accessFlagsMessage);
+            _log->writeln(accessFlagsMessage);
+
+            std::string descriptorMessage;
+            compareDescriptors(leftFieldInfo.descriptorIndex, rightFieldInfo.descriptorIndex, descriptorMessage);
+            _log->writeln(descriptorMessage);
+
+            std::string attributeMessage;
+            compareAttributes(leftFieldInfo.attributes, rightFieldInfo.attributes, attributeMessage);
+            _log->writeln(attributeMessage);
+
+            rightMap.erase(leftName);
 
         } else {
             _differenceCount++;
