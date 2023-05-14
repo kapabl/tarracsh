@@ -4,7 +4,7 @@
     <ShowAllFiles>true</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommandArguments>D:\dev\kapa\repos\tarracsh-tests\tarracsh-lib1\build\classes\java\main\tarracsh\tests\LeftClass.class D:\dev\kapa\repos\tarracsh-tests\tarracsh-lib1\build\classes\java\main\tarracsh\tests\RightClassExtraField.class --ignore-attributes=Code SourceFile --public-only=false</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>D:\dev\kapa\repos\tarracsh-tests\tarracsh-lib1\build\classes\java\main\tarracsh\tests\LeftClass.class D:\dev\kapa\repos\tarracsh-tests\tarracsh-lib1\build\classes\java\main\tarracsh\tests\RightClassExtraField.class  --ignore-classname --public-only=yes --ignore-attributes=Code SourceFile</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>
