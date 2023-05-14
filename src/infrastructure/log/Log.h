@@ -12,8 +12,11 @@ class Log {
 public:
     Log() = default;
 
-    void write(const std::string &value, bool doStdout = false);
+    void write(const std::string &value, bool doStdout = false, const std::string &prefix = "",
+               const std::string &postfix = "");
     void writeln(const std::string &value, bool doStdout = false);
+    void writelnRed(const std::string &value);
+    void writelnGreen(const std::string &value);
     void setFile(const std::string& logFile);
     void init(const std::string &logFile);
     static void emptyLogFile(const std::string &file);
