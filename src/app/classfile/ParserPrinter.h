@@ -34,10 +34,9 @@ public:
 
 private:
     domain::classfile::ClassFileParser& _classFileParser;
-    domain::classfile::accessmodifier::AccessModifiers& _accessModifiers;
     domain::classfile::constantpool::ConstantPool& _constantPool;
 
-    void outputAccessModifiers(const u2 accessFlags) const;
+    static void outputAccessModifiers(const u2 accessFlags);
     void outputMethod(MethodInfo &methodInfo);
     void outputMethods();
 

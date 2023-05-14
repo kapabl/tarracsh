@@ -13,7 +13,6 @@ using namespace std;
 
 ParserPrinter::ParserPrinter(ClassFileParser &classFileParser)
     : _classFileParser(classFileParser),
-      _accessModifiers(classFileParser.getAccessModifiers()),
       _constantPool(classFileParser.getConstantPool()) {
 
 }
@@ -25,12 +24,12 @@ void ParserPrinter::print() {
     outputInterfaces();
 }
 
-void ParserPrinter::outputAccessModifiers(const u2 accessFlags) const {
-    cout << _accessModifiers.toString(accessFlags) << " ";
+void ParserPrinter::outputAccessModifiers(const u2 accessFlags) {
+    cout << accessmodifier::toString(accessFlags) << " ";
 }
 
 void ParserPrinter::outputMethod(MethodInfo &methodInfo) {
-    const auto accessModifiers = _accessModifiers.toString(methodInfo.accessFlags);
+    const auto accessModifiers = accessmodifier::toString(methodInfo.accessFlags);
     const auto name = _constantPool.getEntry(methodInfo.nameIndex).utf8Info.getAsUtf8();
     const auto &utf8DDesc = _constantPool.getEntry(methodInfo.descriptorIndex).utf8Info;
 
@@ -69,7 +68,7 @@ void ParserPrinter::outputClass(const string &type) {
     cout << endl;
     cout << "//Class " << endl;
     cout << "//------------------------------------" << endl;
-    const auto accessModifiers = _accessModifiers.toString(mainClassInfo.accessFlags);
+    const auto accessModifiers = accessmodifier::toString(mainClassInfo.accessFlags);
 
     const auto attributesString = attributesToString(_classFileParser.getAttributes());
 
@@ -109,7 +108,7 @@ string ParserPrinter::attributesToString(vector<AttributeInfo> &attributes) {
 }
 
 void ParserPrinter::outputField(FieldInfo &fieldInfo) {
-    const auto accessModifiers = _accessModifiers.toString(fieldInfo.accessFlags);
+    const auto accessModifiers = accessmodifier::toString(fieldInfo.accessFlags);
     const auto name = _constantPool.getEntry(fieldInfo.nameIndex).utf8Info.getAsUtf8();
     const auto descriptorString = _constantPool.getEntry(fieldInfo.descriptorIndex).utf8Info.getAsUtf8();
     const auto descriptor = DescriptorParser(descriptorString).getDescriptor();

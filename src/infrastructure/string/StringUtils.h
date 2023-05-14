@@ -1,6 +1,7 @@
 #ifndef TARRACSH_STRINGUTILS_H
 #define TARRACSH_STRINGUTILS_H
 
+#include <algorithm>
 #include <cctype>
 #include <string>
 #include <numeric>

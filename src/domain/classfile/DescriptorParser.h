@@ -104,7 +104,7 @@ private:
     void getFQClassname() {
         auto character = _scanner->getNextChar();
         while (character != JVM_SIGNATURE_ENDCLASS) {
-            _descriptor.type.push_back(character != L'/' ? character : L'.');
+            _descriptor.type.push_back(character != '/' ? character : '.');
             character = _scanner->getNextChar();
         }
     }
