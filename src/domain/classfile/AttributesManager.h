@@ -81,8 +81,6 @@ private:
         return AttributeTag::InvalidTag;
     }
 
-    accessmodifier::AccessModifiers _accessModifiers;
-
     std::unordered_map<std::string, AttributeTag> _tagsMap;
     std::unordered_map<AttributeTag, AttrToStringFunc> _tags2ToStringFunc;
     const constantpool::ConstantPool &_constantPool;
@@ -169,7 +167,7 @@ private:
         // const auto name = _constantPool.getClassname(innerClass.innerNameIndex);
         const auto name = _constantPool.getClassname(innerClass.innerNameIndex);
 
-        const auto accessModifier = _accessModifiers.toString(innerClass.innerClassAccessFlags);
+        const auto accessModifier = accessmodifier::toString(innerClass.innerClassAccessFlags);
         const std::string classDecl =
             " class: " + name +
             ", outer class: " + outerClassname +

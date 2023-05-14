@@ -18,9 +18,13 @@ public:
     void init(const std::string &logFile);
     static void emptyLogFile(const std::string &file);
 
+
+    void forceStdout(const bool forceStdout ) { _forceStdout = forceStdout; }
+
 private:
-    std::string _logFile;
+    std::string _logFile{"app.log"};
     std::mutex _mutex;
+    bool _forceStdout{false};
 };
 
 }

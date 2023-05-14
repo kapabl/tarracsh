@@ -12,7 +12,7 @@ void Log::write(const std::string &value, const bool doStdout) {
     std::unique_lock<std::mutex> lock(_mutex);
     std::ofstream file(_logFile, std::ios_base::app);
     file << value;
-    if (doStdout) {
+    if (doStdout || _forceStdout) {
         std::cout << value;
     }
 
@@ -22,7 +22,7 @@ void Log::writeln(const std::string &value, const bool doStdout ) {
     auto valuePlusEndL = value;
     valuePlusEndL.push_back('\n');
     write(valuePlusEndL, doStdout);
-    if ( doStdout ) {
+    if ( doStdout || _forceStdout ) {
         std::cout.flush();
     }
 

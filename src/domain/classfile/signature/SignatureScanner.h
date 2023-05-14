@@ -47,7 +47,7 @@ public:
         return *this;
     }
 
-    wchar_t getNextChar() {
+    char getNextChar() {
         if (_position + 1 >= _size) return 0;
 
         _position++;
@@ -57,7 +57,7 @@ public:
         return result;
     }
 
-    wchar_t peekNextChar() const {
+    char peekNextChar() const {
         if (_position + 1 >= _size) return 0;
 
         const auto result = _signatureString[_position + 1 ];
@@ -75,7 +75,7 @@ public:
         _position--;
     }
 
-    [[nodiscard]] wchar_t currentChar() const {
+    [[nodiscard]] char currentChar() const {
         if (_position >= _size) return 0;
         const auto result = _signatureString[_position];
         return result;

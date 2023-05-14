@@ -60,7 +60,7 @@ DigestVector ClassFileDigest::digestPublicMethods() const {
     set<DigestVector> disgests;
 
     for (auto &method : _classFileParser.getMethods()) {
-        if (accessmodifier::AccessModifiers::isPublic(method.accessFlags)) {
+        if (accessmodifier::isPublic(method.accessFlags)) {
             disgests.insert(digestMethod(method));
         }
     }
@@ -72,7 +72,7 @@ DigestVector ClassFileDigest::digestPublicFields() const {
     set<DigestVector> disgests;
 
     for (auto &fieldInfo : _classFileParser.getFields()) {
-        if (accessmodifier::AccessModifiers::isPublic(fieldInfo.accessFlags)) {
+        if (accessmodifier::isPublic(fieldInfo.accessFlags)) {
             disgests.insert(digestField(fieldInfo));
         }
     }

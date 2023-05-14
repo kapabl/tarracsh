@@ -3,54 +3,48 @@
 #include <string>
 #include <vector>
 
-#include "constantpool/ConstantPool.h"
-#include "AttributesManager.h"
 #include "AccessModifiers.h"
-#include "../stats/Results.h"
+#include "AttributesManager.h"
+#include "constantpool/ConstantPool.h"
+#include "infrastructure/log/Log.h"
 #include "reader/ClassFileReader.h"
 
 namespace kapa::tarracsh::domain::classfile {
 
-    using kapa::tarracsh::domain::stats::Results;
 
 class ClassFileParser final {
    
 
 public:
     explicit ClassFileParser(reader::ClassFileReader &reader, std::string filename, std::shared_ptr<infrastructure::log::Log> log);
+    ~ClassFileParser() = default;
 
     ClassFileParser(const ClassFileParser &) = delete;
     ClassFileParser(const ClassFileParser &&) = delete;
     ClassFileParser &operator=(const ClassFileParser &) = delete;
     ClassFileParser &operator=(const ClassFileParser &&) = delete;
 
-    [[nodiscard]] bool isValidHeader() const { return _reader.isValidHeader(); }
-    [[nodiscard]] bool succeeded() const { return _parseSucceed; }
+    [[nodiscard]] auto isValidHeader() const -> bool { return _reader.isValidHeader(); }
+    [[nodiscard]] auto succeeded() const -> bool { return _parseSucceed; }
+    [[nodiscard]] auto parse() -> bool;
+    [[nodiscard]] auto getAttributesManager() -> attribute::AttributesManager& { return _attributesManager; }
+    [[nodiscard]] auto getConstantPool() -> constantpool::ConstantPool& { return _constantPool; }
+    [[nodiscard]] auto getConstantPool() const -> const constantpool::ConstantPool& { return _constantPool; }
+    [[nodiscard]] auto getMethods() -> std::vector<constantpool::MethodInfo>& { return _methods; }
+    [[nodiscard]] auto getInterfaces() -> std::vector<constantpool::u2>& { return _interfaces; }
+    [[nodiscard]] auto getMainClassInfo() -> constantpool::MainClassInfo& { return _mainClassInfo; }
+    [[nodiscard]] auto getSuperClassIndex() const -> constantpool::u2 { return _mainClassInfo.superClass; }
+    [[nodiscard]] auto getAttributes() -> std::vector<attribute::AttributeInfo>& { return _attributes; }
+    [[nodiscard]] auto getFields() -> std::vector<constantpool::FieldInfo>& { return _fields; }
 
-    ~ClassFileParser() = default;
-
-    [[nodiscard]] bool parse();
-    [[nodiscard]] attribute::AttributesManager &getAttributesManager() { return _attributesManager; }
-    [[nodiscard]] accessmodifier::AccessModifiers &getAccessModifiers() { return _accessModifiers; }
-    [[nodiscard]] constantpool::ConstantPool &getConstantPool() { return _constantPool; }
-    [[nodiscard]] const constantpool::ConstantPool &getConstantPool() const { return _constantPool; }
-    [[nodiscard]] std::vector<constantpool::MethodInfo> &getMethods() { return _methods; }
-    [[nodiscard]] std::vector<constantpool::u2> &getInterfaces() { return _interfaces; }
-    [[nodiscard]] constantpool::MainClassInfo &getMainClassInfo() { return _mainClassInfo; }
-    [[nodiscard]] constantpool::u2 getSuperClassIndex() const { return _mainClassInfo.superClass; }
-    [[nodiscard]] std::vector<attribute::AttributeInfo> &getAttributes() { return _attributes; }
-    [[nodiscard]] std::vector<constantpool::FieldInfo> &getFields() { return _fields; }
-
-    [[nodiscard]] std::string getMainClassname() const;
+    [[nodiscard]] auto getMainClassname() const -> std::string;
 
     // Options& getOptions() { return _options; }
     [[nodiscard]] std::string getFilename();
 
 private:
     std::string _filename;
-    // Options _options;
     std::shared_ptr<infrastructure::log::Log> _log;
-    Results &_results;
     reader::ClassFileReader &_reader;
     bool _parseSucceed{ false };
 
@@ -62,9 +56,9 @@ private:
     std::vector<attribute::AttributeInfo> _attributes;
 
     attribute::AttributesManager _attributesManager;
-    accessmodifier::AccessModifiers _accessModifiers;
 
-    bool internalParse();
+
+    auto internalParse() -> bool;
 
     void initialize();
     void readConstPoolEntry(int &index);

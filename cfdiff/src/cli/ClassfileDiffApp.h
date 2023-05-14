@@ -8,6 +8,7 @@
 #include "infrastructure/app/CliApp.h"
 
 namespace kapa::cldiff::app {
+using tarracsh::domain::classfile::ClassFileParser;
 
 class ClassfileDiffApp final : public infrastructure::app::cli::CliApp {
 
@@ -15,7 +16,6 @@ public:
     static infrastructure::app::cli::ExitCode run(int argc, char **argv);
 
 private:
-
     static std::unique_ptr<ClassfileDiffApp> _app;
     std::shared_ptr<infrastructure::log::Log> _log;
     tarracsh::domain::Options _options;
@@ -26,25 +26,52 @@ private:
 
     std::string _leftFile;
     std::string _rightFile;
-    std::vector<std::string> _differences;
-    std::vector<std::string> _equalities;
+
+    std::unique_ptr<ClassFileParser> _leftParser;
+    std::unique_ptr<ClassFileParser> _rightParser;
+    unsigned int _differenceCount{0};
+
+    typedef std::function<void(const bool, const std::string &, const std::string &)> ClassnameCompareCallback;
 
     void init() const;
 
     ClassfileDiffApp(const std::string &description, const std::string &name,
-        std::shared_ptr<infrastructure::log::Log> log);
+                     std::shared_ptr<infrastructure::log::Log> log);
+    static std::string getClassInfoName(const std::unique_ptr<ClassFileParser> &parser, const tarracsh::domain::classfile::constantpool::u2 classInfoIndex);
 
-    void compareSuperClass(tarracsh::domain::classfile::ClassFileParser & leftParser, tarracsh::domain::classfile::ClassFileParser & rightParser);
-    void compareMainClassAccessFlags(tarracsh::domain::classfile::ClassFileParser & leftParser, tarracsh::domain::classfile::ClassFileParser & rightParser);
-    void compareMainClass(tarracsh::domain::classfile::ClassFileParser & leftParser, tarracsh::domain::classfile::ClassFileParser & rightParser);
-    void compareMethods(tarracsh::domain::classfile::ClassFileParser & leftParser, tarracsh::domain::classfile::ClassFileParser & rightParser);
-    void compareFields(tarracsh::domain::classfile::ClassFileParser & leftParser, tarracsh::domain::classfile::ClassFileParser & rightParser);
-    void compareMembers(tarracsh::domain::classfile::ClassFileParser & leftParser, tarracsh::domain::classfile::ClassFileParser & rightParser);
-    void compare(tarracsh::domain::classfile::ClassFileParser & leftParser, tarracsh::domain::classfile::ClassFileParser & rightParser);
-    [[nodiscard]] auto start(int argc, char* argv[]) -> infrastructure::app::cli::ExitCode;
+    auto areClassnamesEqual(
+        tarracsh::domain::classfile::constantpool::u2 leftClassInfo,
+        tarracsh::domain::classfile::constantpool::u2 rightClassInfo,
+        const ClassnameCompareCallback &callback) const -> bool;
+    auto areClassnamesEqual(
+        tarracsh::domain::classfile::constantpool::u2 leftClassInfo,
+        tarracsh::domain::classfile::constantpool::u2 rightClassInfo) const -> bool;
+
+    void compareSuperClass();
+    bool compareAccessFlags(tarracsh::domain::classfile::constantpool::u2 accessFlagsLeft,
+                            tarracsh::domain::classfile::constantpool::u2 accessFlagsRight);
+    void compareMainClassAccessFlags();
+    void compareMainClassname();
+    void compareMainClassInterfaces();
+    auto getLeftString(tarracsh::domain::classfile::constantpool::u2 constantPoolIndex) const -> std::string;
+    auto getRightString(tarracsh::domain::classfile::constantpool::u2 constantPoolIndex) const -> std::string;
+    static auto getString(const std::unique_ptr<ClassFileParser> &parser, tarracsh::domain::classfile::constantpool::u2 constantPoolIndex) -> std::string;
+    bool compareAttributes(const std::vector<tarracsh::domain::classfile::attribute::AttributeInfo> &left,
+                           const std::vector<tarracsh::domain::classfile::attribute::AttributeInfo> &right);
+    void compareMainClassAttributes();
+    void compareMainClass();
+    auto areMethodsEqual(const tarracsh::domain::classfile::constantpool::MethodInfo &leftMethod,
+                         const tarracsh::domain::classfile::constantpool::MethodInfo &rightMethod) -> bool;
+    void compareMethods();
+    bool compareDescriptors(tarracsh::domain::classfile::constantpool::u2 leftDescriptorIndex,
+                            tarracsh::domain::classfile::constantpool::u2 rightDescriptorIndex);
+    void compareFields();
+    void compareMembers();
+    void compare();
+    [[nodiscard]] auto start(int argc, char *argv[]) -> infrastructure::app::cli::ExitCode;
     void setupCliOptions();
-    void validateFile(const std::string& filename) const;
-    auto parseCli(int argc, char** argv) -> infrastructure::app::cli::ExitCode;
+    void validateFile(const std::string &filename) const;
+    auto parseCli(int argc, char **argv) -> infrastructure::app::cli::ExitCode;
     void outputResult() const;
 
 
