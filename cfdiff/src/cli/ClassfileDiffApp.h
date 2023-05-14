@@ -30,7 +30,7 @@ private:
     std::unique_ptr<ClassFileParser> _leftParser;
     std::unique_ptr<ClassFileParser> _rightParser;
     unsigned int _differenceCount{0};
-    bool _ignoreCode{false};
+    std::unordered_set<std::string> _ignoredAttributes;
 
     typedef std::function<void(const bool, const std::string &, const std::string &)> ClassnameCompareCallback;
 
