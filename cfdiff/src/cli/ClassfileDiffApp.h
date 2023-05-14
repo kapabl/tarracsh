@@ -30,6 +30,7 @@ private:
     std::unique_ptr<ClassFileParser> _leftParser;
     std::unique_ptr<ClassFileParser> _rightParser;
     unsigned int _differenceCount{0};
+    bool _ignoreCode{false};
 
     typedef std::function<void(const bool, const std::string &, const std::string &)> ClassnameCompareCallback;
 
@@ -48,8 +49,8 @@ private:
         tarracsh::domain::classfile::constantpool::u2 rightClassInfo) const -> bool;
 
     void compareSuperClass();
-    bool compareAccessFlags(tarracsh::domain::classfile::constantpool::u2 accessFlagsLeft,
-                            tarracsh::domain::classfile::constantpool::u2 accessFlagsRight);
+    bool compareAccessFlags(const tarracsh::domain::classfile::constantpool::u2 accessFlagsLeft,
+                            const tarracsh::domain::classfile::constantpool::u2 accessFlagsRight, std::string &message);
     void compareMainClassAccessFlags();
     void compareMainClassname();
     void compareMainClassInterfaces();
@@ -57,14 +58,14 @@ private:
     auto getRightString(tarracsh::domain::classfile::constantpool::u2 constantPoolIndex) const -> std::string;
     static auto getString(const std::unique_ptr<ClassFileParser> &parser, tarracsh::domain::classfile::constantpool::u2 constantPoolIndex) -> std::string;
     bool compareAttributes(const std::vector<tarracsh::domain::classfile::attribute::AttributeInfo> &left,
-                           const std::vector<tarracsh::domain::classfile::attribute::AttributeInfo> &right);
+                           const std::vector<tarracsh::domain::classfile::attribute::AttributeInfo> &right, std::string &message);
     void compareMainClassAttributes();
     void compareMainClass();
     auto areMethodsEqual(const tarracsh::domain::classfile::constantpool::MethodInfo &leftMethod,
-                         const tarracsh::domain::classfile::constantpool::MethodInfo &rightMethod) -> bool;
+                         const tarracsh::domain::classfile::constantpool::MethodInfo &rightMethod, std::string &message) -> bool;
     void compareMethods();
-    bool compareDescriptors(tarracsh::domain::classfile::constantpool::u2 leftDescriptorIndex,
-                            tarracsh::domain::classfile::constantpool::u2 rightDescriptorIndex);
+    bool compareDescriptors(const tarracsh::domain::classfile::constantpool::u2 leftIndex,
+                            const tarracsh::domain::classfile::constantpool::u2 rightIndex, std::string &message);
     void compareFields();
     void compareMembers();
     void compare();
