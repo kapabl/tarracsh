@@ -31,13 +31,22 @@ void Log::writelnRed(const std::string &value) {
     valuePlusEndL.push_back('\n');
     write(valuePlusEndL, true, "\033[31m", "\033[0m");
     std::cout.flush();
+}
 
+void Log::writeRed(const std::string& value) {
+    write(value, true, "\033[31m", "\033[0m");
+    std::cout.flush();
 }
 
 void Log::writelnGreen(const std::string &value) {
     auto valuePlusEndL = value;
     valuePlusEndL.push_back('\n');
     write(valuePlusEndL, true, "\033[32m", "\033[0m");
+    std::cout.flush();
+}
+
+void Log::writeGreen(const std::string& value) {
+    write(value, true, "\033[32m", "\033[0m");
     std::cout.flush();
 }
 

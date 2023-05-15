@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/tarrash.iml" filepath="$PROJECT_DIR$/.idea/tarrash.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/tarracsh.iml" filepath="$PROJECT_DIR$/.idea/tarracsh.iml" />
     </modules>
   </component>
 </project>

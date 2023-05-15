@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="CMakePresetLoader"><![CDATA[{
   "useNewFormat": true
 }]]></component>
@@ -7,7 +10,9 @@
     <option name="reloaded" value="true" />
   </component>
   <component name="CMakeRunConfigurationManager">
-    <generated />
+    <generated>
+      <config projectName="tarracsh" targetName="cfdiff" />
+    </generated>
   </component>
   <component name="CMakeSettings">
     <configurations>
@@ -15,54 +20,55 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fcc1f7de-c9bd-46dd-a3b2-571107d49846" name="Changes" comment="Fixing...." />
+    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/tarrash.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/.idea/tarrash.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/cfdiff.vcxproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/cfdiff.vcxproj.filters" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/cfdiff.vcxproj.user" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/src/app" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/src/cli/CfDiff.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/src/cli/ClassfileDiffApp.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/src/cli/ClassfileDiffApp.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/src/cli/Main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/src/domain" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/src/infrastructure" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/src/resources" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/src/infrastructure/log/Log.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/src/infrastructure/log/Log.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/src/infrastructure/log/Log.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/src/infrastructure/log/Log.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/tarracsh.sln" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/tarracsh.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/tarracsh.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/tarracsh.sln.DotSettings" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/tarrash.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/tarrash.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/tarrash.vcxproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/tarrash.vcxproj.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/test/packages.config" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/test/src" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/test/test.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/test/test.vcxproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cfdiff/cfdiff.vcxproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/cfdiff.vcxproj.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.h" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/CMakeFiles/clion-Release-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/CMakeFiles/clion-Release-log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/log/Log.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/log/Log.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/log/Log.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/log/Log.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tarracsh.sln" beforeDir="false" afterPath="$PROJECT_DIR$/tarracsh.sln" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ClangdSettings">
-    <option name="formatViaClangd" value="false" />
-  </component>
-  <component name="ConanProjectSettings">
-    <option name="conanPath" value="" />
-    <option name="installArgs" value="" />
-    <option name="profileMapping">
-      <map>
-        <entry>
-          <key>
-            <CMakeProfile>
-              <option name="name" value="Debug" />
-              <option name="targetDir" value="D:\dev\kapa\repos\tarrash\cmake-build-debug" />
-            </CMakeProfile>
-          </key>
-          <value>
-            <ConanProfile>
-              <option name="name" value="conan-tarrasch" />
-            </ConanProfile>
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="CMakeLists.txt" />
-      </list>
-    </option>
-  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_HOME_DIR$/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/iostream" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/.gitignore" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/classfile/AnnotationsParser.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/classfile/ConstantPool.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/classfile/StringUtils.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/classfile/VectorReader.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -70,10 +76,9 @@
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
     <option name="majorVersion" value="2022" />
-    <option name="minorVersion" value="1.2" />
+    <option name="minorVersion" value="3.2" />
   </component>
-  <component name="ProjectId" id="2BeSpY6I7a3VISIGlYx0p7boOP8" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectId" id="2Po2nq6SjMDR6kVaSTIccKRuvaV" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -85,106 +90,40 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "WebServerToolWindowFactoryState": "false",
-    "cf.advertisement.text.overridden": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "last_opened_file_path": "/home/kapa/repos/tarracsh",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "vcs.Git"
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\dev\kapa\repos\tarracsh" />
-    </key>
-  </component>
   <component name="RunManager">
-    <configuration name="build" type="BlazeCommandRunConfigurationType" factoryName="Bazel Command">
-      <blaze-settings blaze-command="build" handler-id="BlazeCommandGenericRunConfigurationHandlerProvider">
-        <blaze-target>//tarracsh</blaze-target>
-      </blaze-settings>
-      <method v="2">
-        <option name="Blaze.BeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="cfdiff" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tarracsh" TARGET_NAME="cfdiff" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="tarracsh" RUN_TARGET_NAME="cfdiff">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="fcc1f7de-c9bd-46dd-a3b2-571107d49846" name="Changes" comment="" />
-      <created>1657265240761</created>
+      <changelist id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="" />
+      <created>1684109283437</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1657265240761</updated>
-      <workItem from="1657265244586" duration="2074000" />
-      <workItem from="1657267367929" duration="37000" />
-      <workItem from="1657267584444" duration="644000" />
-      <workItem from="1657415209241" duration="2829000" />
-      <workItem from="1657419374763" duration="67000" />
-      <workItem from="1657419534377" duration="1003000" />
-      <workItem from="1657425541736" duration="9000" />
-      <workItem from="1657425720349" duration="2839000" />
-      <workItem from="1657496582474" duration="1450000" />
-      <workItem from="1657501497928" duration="2562000" />
-      <workItem from="1657520141479" duration="104000" />
-      <workItem from="1657939717228" duration="604000" />
-      <workItem from="1658093288850" duration="53000" />
-      <workItem from="1658093502801" duration="353000" />
-      <workItem from="1667700364752" duration="1631000" />
+      <updated>1684109283437</updated>
+      <workItem from="1684109285071" duration="1097000" />
     </task>
-    <task id="LOCAL-00001" summary="Adding CMAKE build">
-      <created>1657267051727</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1657267051727</updated>
-    </task>
-    <task id="LOCAL-00002" summary="Adding CMAKE build">
-      <created>1657267318543</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1657267318543</updated>
-    </task>
-    <task id="LOCAL-00003" summary="Adding CMAKE build">
-      <created>1657520166308</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1657520166308</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Fixing....">
-      <created>1657520227516</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1657520227516</updated>
-    </task>
-    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="Adding CMAKE build" />
-    <MESSAGE value="Fixing...." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing...." />
   </component>
 </project>

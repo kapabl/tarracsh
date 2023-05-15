@@ -38,7 +38,8 @@ private:
 
     ClassfileDiffApp(const std::string &description, const std::string &name,
                      std::shared_ptr<infrastructure::log::Log> log);
-    static std::string getClassInfoName(const std::unique_ptr<ClassFileParser> &parser, const tarracsh::domain::classfile::constantpool::u2 classInfoIndex);
+    static std::string getClassInfoName(const std::unique_ptr<ClassFileParser> &parser,
+                                        const tarracsh::domain::classfile::constantpool::u2 classInfoIndex);
 
     auto areClassnamesEqual(
         tarracsh::domain::classfile::constantpool::u2 leftClassInfo,
@@ -56,13 +57,27 @@ private:
     void compareMainClassInterfaces();
     auto getLeftString(tarracsh::domain::classfile::constantpool::u2 constantPoolIndex) const -> std::string;
     auto getRightString(tarracsh::domain::classfile::constantpool::u2 constantPoolIndex) const -> std::string;
-    static auto getString(const std::unique_ptr<ClassFileParser> &parser, tarracsh::domain::classfile::constantpool::u2 constantPoolIndex) -> std::string;
+    static auto getString(const std::unique_ptr<ClassFileParser> &parser,
+                          tarracsh::domain::classfile::constantpool::u2 constantPoolIndex) -> std::string;
     bool compareAttributes(const std::vector<tarracsh::domain::classfile::attribute::AttributeInfo> &left,
-                           const std::vector<tarracsh::domain::classfile::attribute::AttributeInfo> &right, std::string &message);
+                           const std::vector<tarracsh::domain::classfile::attribute::AttributeInfo> &right,
+                           std::string &message);
     void compareMainClassAttributes();
     void compareMainClass();
     auto areMethodsEqual(const tarracsh::domain::classfile::constantpool::MethodInfo &leftMethod,
-                         const tarracsh::domain::classfile::constantpool::MethodInfo &rightMethod, std::string &message) -> bool;
+                         const tarracsh::domain::classfile::constantpool::MethodInfo &rightMethod,
+                         std::string &message) -> bool;
+    void compareToRightMethods(
+        const tarracsh::domain::classfile::constantpool::MethodInfo &leftMethod,
+        std::unordered_map<std::string, std::vector<tarracsh::domain::classfile::constantpool::MethodInfo>> &rightMap,
+        std::vector<tarracsh::domain::classfile::constantpool::MethodInfo> &rightMethods);
+    void extractMethods(const std::unique_ptr<ClassFileParser> &parser,
+                        std::unordered_map<std::string, std::vector<
+                                               tarracsh::domain::classfile::constantpool::MethodInfo>> &methodMap)
+    const;
+
+    void checkOverload(const std::string& position, const std::string &methodName,
+                        const std::vector<tarracsh::domain::classfile::constantpool::MethodInfo> &methodInfos) const;
     void compareMethods();
     bool compareDescriptors(const tarracsh::domain::classfile::constantpool::u2 leftIndex,
                             const tarracsh::domain::classfile::constantpool::u2 rightIndex, std::string &message);
