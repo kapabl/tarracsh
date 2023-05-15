@@ -21,17 +21,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/tarrash.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/tarracsh.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bazel-tarracsh/.idea/tarracsh.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmake/cfdiff/.idea/cfdiff.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarracsh/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/.idea/tarrash.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/cfdiff.vcxproj" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/cfdiff.vcxproj.filters" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/cfdiff.vcxproj.user" beforeDir="false" />
@@ -43,8 +37,7 @@
       <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/src/domain" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/src/infrastructure" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cfdiff/src/resources" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/src/infrastructure/log/Log.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/src/infrastructure/log/Log.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/src/infrastructure/log/Log.h" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/src/infrastructure/log/Log.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bazel-tarracsh/cmake-build-release/CMakeFiles/clion-Release-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/cmake-build-release/CMakeFiles/clion-Release-log.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarracsh/tarracsh.sln" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/tarracsh.sln" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarracsh/tarracsh.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/tarracsh.sln.DotSettings" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarracsh/tarrash.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/bazel-tarracsh/tarrash.vcxproj" afterDir="false" />
@@ -53,13 +46,7 @@
       <change beforePath="$PROJECT_DIR$/bazel-tarracsh/test/src" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarracsh/test/test.cpp" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bazel-tarracsh/test/test.vcxproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/cfdiff.vcxproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/cfdiff.vcxproj.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.h" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-release/CMakeFiles/clion-Release-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/CMakeFiles/clion-Release-log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/log/Log.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/log/Log.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/log/Log.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/log/Log.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tarracsh.sln" beforeDir="false" afterPath="$PROJECT_DIR$/tarracsh.sln" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,6 +76,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
@@ -119,7 +107,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1684109283437</updated>
-      <workItem from="1684109285071" duration="1097000" />
+      <workItem from="1684109285071" duration="1678000" />
     </task>
     <servers />
   </component>
