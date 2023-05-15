@@ -9,9 +9,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tarracsh-cli", "tarracsh-cl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj", "{F92FF7F2-815F-48BF-8024-8E3911F6EDDD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tarracsh-source", "tarracsh-source", "{1BABEA86-3F5D-4BFE-A081-DFF123F01B7E}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cfdiff", "cfdiff\cfdiff.vcxproj", "{F40A0023-47A1-478A-8B18-8C59F42E4F79}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3AB8C9D1-7B7C-4209-BBAA-576697E1909E}"
+	ProjectSection(SolutionItems) = preProject
+		CMakeList.txt = CMakeList.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
