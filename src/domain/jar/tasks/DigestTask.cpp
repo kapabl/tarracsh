@@ -15,6 +15,7 @@ using namespace kapa::tarracsh::domain::db::table;
 using namespace kapa::tarracsh::domain;
 
 using kapa::infrastructure::db::table::column::DigestCol;
+using kapa::tarracsh::domain::stats::Results;
 
 using namespace classfile;
 using namespace db;
@@ -30,8 +31,7 @@ DigestTask::DigestTask(
     : DbBasedTask(std::move(options), results), _db(digestDb) {
 }
 
-DigestTask::~DigestTask() {
-}
+DigestTask::~DigestTask() = default;
 
 void DigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
     const auto filename = _db.getFiles()->getFilename(&getJarFileRow());

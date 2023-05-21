@@ -17,7 +17,7 @@ public:
 
     virtual void print();
 
-    static void init();
+    static void init(Context &context);
     typedef std::unordered_map<std::string, std::string> OutputSubTemplates;
 
 
@@ -57,7 +57,6 @@ protected:
     virtual void printTitle();
 
     static void initStringMaps();
-    void init(Context &context);
 
 
 };

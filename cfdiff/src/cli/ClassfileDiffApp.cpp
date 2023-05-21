@@ -27,7 +27,7 @@ using constantpool::u1;
 using kapa::infrastructure::filesystem::utils::ensureDir;
 
 
-using namespace kapa::cldiff::app;
+using namespace kapa::cfdiff::app;
 
 using namespace std;
 
