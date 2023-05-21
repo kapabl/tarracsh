@@ -22,3 +22,9 @@
 
 /cmake/
 
+/cmake-build-debug-mingw/
+/cmake-build-debugarm64/
+/cmake-build-debugx64/
+/cmake-build-release-mingw/
+/cmake-build-releasex64/
+/cmake-build-releasexarm64/
