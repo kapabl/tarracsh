@@ -7,7 +7,7 @@
 #include "domain/stats/Results.h"
 #include "infrastructure/app/CliApp.h"
 
-namespace kapa::cldiff::app {
+namespace kapa::cfdiff::app {
 using tarracsh::domain::classfile::ClassFileParser;
 
 class ClassfileDiffApp final : public infrastructure::app::cli::CliApp {

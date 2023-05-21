@@ -1,5 +1,5 @@
-#ifndef TARRACSH_CONFIG_H
-#define TARRACSH_CONFIG_H
+#ifndef TARRACSH_CONTEXT_H
+#define TARRACSH_CONTEXT_H
 
 #include "domain/Options.h"
 #include "domain/stats/Results.h"

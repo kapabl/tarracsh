@@ -9,6 +9,8 @@
 #include "domain/classfile/ClassFileParser.h"
 #include "domain/jar/JarEntryInfo.h"
 #include "domain/digest/DigestUtils.h"
+#include "domain/stats/Results.h"
+
 
 namespace kapa::tarracsh::domain::jar::tasks {
 
