@@ -12,6 +12,7 @@
   <component name="CMakeRunConfigurationManager">
     <generated>
       <config projectName="tarracsh" targetName="cfdiff" />
+      <config projectName="tarracsh" targetName="tarracsh" />
     </generated>
   </component>
   <component name="CMakeSettings">
@@ -27,25 +28,20 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Ignoring cmake dirs">
+    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Building with CMake in windows w CLion">
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.h" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/src/cli/Main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/src/cli/Main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/Context.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Context.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/classfile/constantpool/printer/ConstantPoolPrinter.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/classfile/constantpool/printer/ConstantPoolPrinter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/DigestTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/DigestTask.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/DigestTask.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/DigestTask.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/app/CliApp.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/app/CliApp.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/Main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/test.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vcpkg.json" beforeDir="false" afterPath="$PROJECT_DIR$/vcpkg.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Release-Visual Studio" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-Visual Studio" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
@@ -83,7 +79,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="CMake Application.cfdiff">
+  <component name="RunManager" selected="CMake Application.tarracsh">
     <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="CLION.EXTERNAL.BUILD" enabled="true" />
@@ -97,8 +93,14 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="tarracsh" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tarracsh" TARGET_NAME="tarracsh" CONFIG_NAME="Debug-Visual Studio" RUN_TARGET_PROJECT_NAME="tarracsh" RUN_TARGET_NAME="tarracsh">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <list>
       <item itemvalue="CMake Application.cfdiff" />
+      <item itemvalue="CMake Application.tarracsh" />
       <item itemvalue="CMake Debug.cmake1" />
     </list>
   </component>
@@ -112,7 +114,7 @@
       <updated>1684109283437</updated>
       <workItem from="1684109285071" duration="2455000" />
       <workItem from="1684562321624" duration="3266000" />
-      <workItem from="1684565822611" duration="21742000" />
+      <workItem from="1684565822611" duration="28482000" />
     </task>
     <task id="LOCAL-00001" summary="Ignoring cmake dirs">
       <created>1684696768056</created>
@@ -128,7 +130,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684696900989</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Building with CMake in windows w CLion">
+      <created>1684699588447</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1684699588447</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -153,21 +162,12 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Ignoring cmake dirs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Ignoring cmake dirs" />
+    <MESSAGE value="Building with CMake in windows w CLion" />
+    <option name="LAST_COMMIT_MESSAGE" value="Building with CMake in windows w CLion" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
-          <url>file://$APPLICATION_HOME_DIR$/bin/cmake/win/x64/share/cmake-3.25/Modules/FindPackageHandleStandardArgs.cmake</url>
-          <line>583</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
-          <url>file://$APPLICATION_HOME_DIR$/bin/cmake/win/x64/share/cmake-3.25/Modules/FindPackageHandleStandardArgs.cmake</url>
-          <line>579</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
           <url>file://$APPLICATION_HOME_DIR$/bin/cmake/win/x64/share/cmake-3.25/Modules/FindBoost.cmake</url>
           <line>1382</line>
@@ -183,6 +183,11 @@
           <line>1474</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
+          <url>file://$PROJECT_DIR$/CMakeLists.txt</url>
+          <line>85</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/cfdiff/src/domain/jar/tasks/DbBasedTask.h</url>
           <line>10</line>
@@ -194,6 +199,8 @@
       <configuration name="CMakeListConfigurationType">
         <watch expression="Boost_FIND_COMPONENTS" language="CMake" />
         <watch expression="COMPONENT" language="CMake" />
+        <watch expression="_hdrs" language="CMake" />
+        <watch expression="EXCLUDED_FILES" language="CMake" />
         <watch expression="_hdrs" language="CMake" />
       </configuration>
     </watches-manager>

@@ -1,9 +1,6 @@
 {
   "name" : "tarracsh",
-  "dependencies" : [ "cli11", "inja", {
-    "name" : "gperftools",
-    "version>=" : "2019-09-02#4"
-  }, "bshoshany-thread-pool", "grpc", "icu", "libsodium", {
+  "dependencies" : [ "cli11", "inja", "bshoshany-thread-pool", "grpc", "icu", "libsodium", {
     "name" : "libzippp",
     "version>=" : "6.1-1.9.2",
     "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(libzippp CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE libzippp::libzippp)\n"
@@ -39,6 +36,9 @@
     "name" : "antlr4",
     "version>=" : "4.11.1#1",
     "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(antlr4-runtime CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE antlr4_shared)\n"
+  }, {
+    "name" : "gperftools",
+    "version>=" : "2019-09-02#4"
   } ],
   "builtin-baseline" : "d4d39d71b3e6dd7536592c36ab2f7e84a8a64942"
 }
