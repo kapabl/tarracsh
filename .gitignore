@@ -31,3 +31,7 @@
 /cmake-build-release-visual-studio/
 
 /vcpkg_installed/
+/cmake-build-debug-clang16/
+/cmake-build-debug-gcc/
+/cmake-build-debug-macos/
+
