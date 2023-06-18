@@ -1,23 +1,19 @@
 {
-  "name" : "tarracsh",
-  "dependencies" : [ "cli11", "inja", "bshoshany-thread-pool", "grpc", "icu", "libsodium", {
-    "name" : "libzippp",
-    "version>=" : "6.1-1.9.2",
-    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(libzippp CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE libzippp::libzippp)\n"
-  }, "catch2", {
+  "name" : "cfdiff",
+  "dependencies" : [ "cli11", "inja", "bshoshany-thread-pool", "icu", "libsodium", "catch2", {
     "name" : "inja",
     "version>=" : "3.4.0",
     "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(inja CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE pantor::inja)\n"
   }, {
     "name" : "bshoshany-thread-pool",
-    "version>=" : "3.4.0"
+    "version>=" : "3.5.0"
   }, {
     "name" : "icu",
     "version>=" : "72.1#4"
   }, {
     "name" : "libsodium",
     "version>=" : "1.0.18#8",
-    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(unofficial-sodium CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE unofficial-sodium::sodium)\n"
+    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(unofficial-sodium CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE unofficial-sodium::sodium unofficial-sodium::sodium_config_public)\n"
   }, {
     "name" : "catch2",
     "version>=" : "3.3.2",
@@ -33,12 +29,9 @@
     "name" : "boost-interprocess",
     "version>=" : "1.82.0#1"
   }, {
-    "name" : "antlr4",
-    "version>=" : "4.11.1#1",
-    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(antlr4-runtime CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE antlr4_shared)\n"
-  }, {
-    "name" : "gperftools",
-    "version>=" : "2019-09-02#4"
+    "name" : "libzippp",
+    "version>=" : "6.1-1.9.2",
+    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(libzippp CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE libzippp::libzippp)\n"
   } ],
-  "builtin-baseline" : "d4d39d71b3e6dd7536592c36ab2f7e84a8a64942"
+  "builtin-baseline" : "1c5a340f6e10985e2d92af174a68dbd15c1fa4e1"
 }

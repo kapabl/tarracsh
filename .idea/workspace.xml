@@ -11,40 +11,47 @@
   </component>
   <component name="CMakeRunConfigurationManager">
     <generated>
-      <config projectName="tarracsh" targetName="cfdiff" />
-      <config projectName="tarracsh" targetName="tarracsh" />
+      <config projectName="cfdiff" targetName="cfdiff" />
     </generated>
   </component>
   <component name="CMakeSettings">
-    <configurations>
-      <configuration PROFILE_NAME="Debug-Visual Studio" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Visual Studio" GENERATION_OPTIONS="-DCMAKE_TOOLCHAIN_FILE=C:\Users\xman\.clion-vcpkg\vcpkg\scripts\buildsystems\vcpkg.cmake">
-        <ADDITIONAL_GENERATION_ENVIRONMENT>
-          <envs>
-            <env name="VCPKG_DEFAULT_TRIPLET" value="x64-windows" />
-          </envs>
-        </ADDITIONAL_GENERATION_ENVIRONMENT>
-      </configuration>
-      <configuration PROFILE_NAME="Release-Visual Studio" ENABLED="true" CONFIG_NAME="Release" TOOLCHAIN_NAME="Visual Studio" GENERATION_OPTIONS="-DCMAKE_TOOLCHAIN_FILE=C:\Users\xman\.clion-vcpkg\vcpkg\scripts\buildsystems\vcpkg.cmake" />
-    </configurations>
+    <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Building with CMake in windows w CLion">
+    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Cleaning for macos">
+      <change afterPath="$PROJECT_DIR$/.idea/cmake.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/Main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/test.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vcpkg.json" beforeDir="false" afterPath="$PROJECT_DIR$/vcpkg.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/Options.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/Options.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/classfile/constantpool/ConstantPool.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/classfile/constantpool/ConstantPool.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/classfile/reader/MemoryReader.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/classfile/reader/MemoryReader.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/stats/Report.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/stats/Report.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/stats/Results.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/stats/Results.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/stats/Results.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/stats/Results.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/Database.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/Database.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/Engine.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/Engine.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/table/Table.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/table/Table.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/filesystem/Utils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/filesystem/Utils.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/profiling/ScopedTimer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/profiling/ScopedTimer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vcpkg.json" beforeDir="false" afterPath="$PROJECT_DIR$/vcpkg-tarracsh.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-Visual Studio" />
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-gcc" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///Output" root0="SKIP_INSPECTION" />
+    <setting file="mock:///Output" root0="SKIP_INSPECTION" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -60,26 +67,33 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;cf.advertisement.text.overridden&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;CMakeSettings&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.advertisement.text.has.clang-format": "true",
+    "cf.advertisement.text.overridden": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "last_opened_file_path": "/Users/kapa/dev/repos/tarracsh/cfdiff",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "CMakeSettings",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager" selected="CMake Application.tarracsh">
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/cfdiff" />
+    </key>
+  </component>
+  <component name="RunManager" selected="CMake Application.cfdiff">
     <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="CLION.EXTERNAL.BUILD" enabled="true" />
@@ -88,19 +102,13 @@
     <configuration name="cmake1" type="CMakeListConfigurationType" factoryName="CMakeListConfigurationFactory">
       <method v="2" />
     </configuration>
-    <configuration name="cfdiff" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tarracsh" TARGET_NAME="cfdiff" CONFIG_NAME="Debug-Visual Studio" RUN_TARGET_PROJECT_NAME="tarracsh" RUN_TARGET_NAME="cfdiff">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="tarracsh" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tarracsh" TARGET_NAME="tarracsh" CONFIG_NAME="Debug-Visual Studio" RUN_TARGET_PROJECT_NAME="tarracsh" RUN_TARGET_NAME="tarracsh">
+    <configuration name="cfdiff" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cfdiff" TARGET_NAME="cfdiff" CONFIG_NAME="Debug-gcc" RUN_TARGET_PROJECT_NAME="cfdiff" RUN_TARGET_NAME="cfdiff">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <list>
       <item itemvalue="CMake Application.cfdiff" />
-      <item itemvalue="CMake Application.tarracsh" />
       <item itemvalue="CMake Debug.cmake1" />
     </list>
   </component>
@@ -115,6 +123,8 @@
       <workItem from="1684109285071" duration="2455000" />
       <workItem from="1684562321624" duration="3266000" />
       <workItem from="1684565822611" duration="28482000" />
+      <workItem from="1685130431569" duration="2102000" />
+      <workItem from="1685135538753" duration="19702000" />
     </task>
     <task id="LOCAL-00001" summary="Ignoring cmake dirs">
       <created>1684696768056</created>
@@ -137,7 +147,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684699588447</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Cleaning for macos">
+      <created>1685233212291</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1685233212291</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -163,7 +180,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Ignoring cmake dirs" />
     <MESSAGE value="Building with CMake in windows w CLion" />
-    <option name="LAST_COMMIT_MESSAGE" value="Building with CMake in windows w CLion" />
+    <MESSAGE value="Cleaning for macos" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleaning for macos" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -185,8 +203,23 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
           <url>file://$PROJECT_DIR$/CMakeLists.txt</url>
-          <line>85</line>
+          <line>93</line>
           <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
+          <url>file://$PROJECT_DIR$/CMakeLists.txt</url>
+          <line>7</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
+          <url>file://$PROJECT_DIR$/CMakeLists.txt</url>
+          <line>6</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
+          <url>file://$PROJECT_DIR$/cfdiff/CMakeLists.txt</url>
+          <line>27</line>
+          <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/cfdiff/src/domain/jar/tasks/DbBasedTask.h</url>
@@ -197,11 +230,11 @@
     </breakpoint-manager>
     <watches-manager>
       <configuration name="CMakeListConfigurationType">
-        <watch expression="Boost_FIND_COMPONENTS" language="CMake" />
-        <watch expression="COMPONENT" language="CMake" />
-        <watch expression="_hdrs" language="CMake" />
         <watch expression="EXCLUDED_FILES" language="CMake" />
-        <watch expression="_hdrs" language="CMake" />
+        <watch expression="CMAKE_CXX_COMPILER_ID" language="CMake" />
+        <watch expression="CFDIFF_SOURCES" language="CMake" />
+        <watch expression="EXCLUDE_PATTERN" language="CMake" />
+        <watch expression="CMAKE_CURRENT_SOURCE_DIR" language="CMake" />
       </configuration>
     </watches-manager>
   </component>

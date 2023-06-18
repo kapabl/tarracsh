@@ -2,6 +2,7 @@
 #define KAPA_DB_H
 #include <filesystem>
 #include <string>
+#include <thread>
 #include "StringPool.h"
 #include "query/Engine.h"
 #include "../log/Log.h"

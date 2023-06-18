@@ -1,6 +1,7 @@
 #include "ScopedTimer.h"
 
 #include <iostream>
+#include <format>
 
 
 using namespace kapa::infrastructure::profiler;
@@ -16,13 +17,13 @@ ScopedTimer::ScopedTimer(MillisecondDuration *pStorage, const bool stdoutAtDestr
 }
 
 void ScopedTimer::start() {
-    _startTime = std::chrono::high_resolution_clock::now();
+    _startTime = std::chrono::steady_clock::now();
 }
 
 void ScopedTimer::stop() {
     if (!_stopped) {
         _stopped = true;
-        _endTime = std::chrono::high_resolution_clock::now();
+        _endTime = std::chrono::steady_clock::now();
         if (_pDurationStorage != nullptr) {
             const auto value = _endTime - _startTime;
             *_pDurationStorage = std::chrono::duration_cast<std::chrono::milliseconds>(value);
@@ -32,7 +33,7 @@ void ScopedTimer::stop() {
 
 std::chrono::duration<long long> ScopedTimer::getElapsedTime() {
     if (!_stopped) {
-        _endTime = std::chrono::high_resolution_clock::now();
+        _endTime = std::chrono::steady_clock::now();
     }
     const auto result = std::chrono::duration_cast<std::chrono::seconds>(_endTime - _startTime);
     return result;
@@ -40,14 +41,14 @@ std::chrono::duration<long long> ScopedTimer::getElapsedTime() {
 
 std::chrono::duration<long long, std::milli> ScopedTimer::getElapsedTimeMs() {
     if (!_stopped) {
-        _endTime = std::chrono::high_resolution_clock::now();
+        _endTime = std::chrono::steady_clock::now();
     }
     const auto result = std::chrono::duration_cast<std::chrono::milliseconds>(_endTime - _startTime);
     return result;
 }
 
 void ScopedTimer::printElapsedTime() {
-    std::cout << std::endl << std::format("total time: {}", getElapsedTimeMs()) << std::endl;
+    std::cout << std::endl << std::format("total time: {}", getElapsedTimeMs().count()) << std::endl;
 }
 
 ScopedTimer::~ScopedTimer() {
@@ -68,6 +69,6 @@ MillisecondDuration ScopedTimer::time(const std::function<void()> &func) {
 
 MillisecondDuration ScopedTimer::timeWithPrint(const std::string &name, const std::function<void()> &func) {
     const auto result = time(func);
-    std::cout << std::format("[time:{}({})]", name, result) << std::endl;
+    std::cout << std::format("[time:{}({})]", name, result.count()) << std::endl;
     return result;
 }

@@ -108,10 +108,10 @@ void stdoutLines(const std::vector<std::string> &lines) {
 
 
 std::filesystem::path classnameToPath(const std::string &classname) {
+    std::filesystem::path result;
 #ifdef _WIN32
     std::istringstream f(classname);
     std::string part;
-    std::filesystem::path result;
     while (getline(f, part, '/')) {
         if (result.empty()) {
             result = part;

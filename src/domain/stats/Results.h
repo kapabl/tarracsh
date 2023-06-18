@@ -64,7 +64,8 @@ struct Results {
     JarfileStats jarfiles;
     FileTime classfileTime{};
     FileTime jarfileTime{};
-    mutable std::chrono::time_point<std::chrono::steady_clock> lastPrint{std::chrono::high_resolution_clock::now()};
+    mutable std::chrono::time_point<std::chrono::steady_clock> lastPrint{std::chrono::steady_clock::now()};
+//    mutable std::chrono::time_point<std::chrono::steady_clock> lastPrint = std::chrono::steady_clock::now();
     mutable uint32_t lastJarCountPrint{ 0u };
     mutable uint32_t lastClassfileCountPrint{ 0u };
     mutable bool progressStarted{ false };
