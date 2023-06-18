@@ -1,0 +1,48 @@
+{
+  "name" : "tarracsh",
+  "dependencies" : [ "cli11", "inja", "bshoshany-thread-pool", "grpc", "icu", "libsodium", "catch2", {
+    "name" : "inja",
+    "version>=" : "3.4.0",
+    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(inja CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE pantor::inja)\n"
+  }, {
+    "name" : "bshoshany-thread-pool",
+    "version>=" : "3.5.0"
+  }, {
+    "name" : "icu",
+    "version>=" : "72.1#4"
+  }, {
+    "name" : "libsodium",
+    "version>=" : "1.0.18#8",
+    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(unofficial-sodium CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE unofficial-sodium::sodium unofficial-sodium::sodium_config_public)\n"
+  }, {
+    "name" : "catch2",
+    "version>=" : "3.3.2",
+    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(Catch2 CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)\n"
+  }, {
+    "name" : "cli11",
+    "version>=" : "2.3.1",
+    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(CLI11 CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE CLI11::CLI11)\n"
+  }, {
+    "name" : "oof",
+    "version>=" : "2021-11-23"
+  }, {
+    "name" : "boost-interprocess",
+    "version>=" : "1.82.0#1"
+  }, {
+    "name" : "antlr4",
+    "version>=" : "4.11.1#1",
+    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(antlr4-runtime CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE antlr4_static)\n"
+  }, {
+    "name" : "gperftools",
+    "version>=" : "2019-09-02#4"
+  }, {
+    "name" : "grpc",
+    "version>=" : "1.51.1",
+    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(gRPC CONFIG REQUIRED)\n\n    # note: 7 additional targets are not displayed.\n\n    target_link_libraries(main PRIVATE gRPC::gpr gRPC::grpc gRPC::grpc++ gRPC::grpc++_alts)\n"
+  }, {
+    "name" : "libzippp",
+    "version>=" : "6.1-1.9.2",
+    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(libzippp CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE libzippp::libzippp)\n"
+  } ],
+  "builtin-baseline" : "d4d39d71b3e6dd7536592c36ab2f7e84a8a64942"
+}
