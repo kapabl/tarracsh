@@ -3,6 +3,7 @@
 
 #include "ClassFileReader.h"
 #include <filesystem>
+#include <cstring>
 #include <libzippp/libzippp.h>
 #include "../../jar/JarEntry.h"
 

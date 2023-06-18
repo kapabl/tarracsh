@@ -1,6 +1,7 @@
 #include "Results.h"
 
 #include <iostream>
+#include <format>
 
 #define OOF_IMPL
 #include <oof.h>
@@ -17,11 +18,11 @@ Results::Results(Options& options): options(options) {
 void Results::print() const {
 
     const auto result = std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::high_resolution_clock::now() - lastPrint);
+        std::chrono::steady_clock::now() - lastPrint);
 
     if (result.count() < 500) return;
 
-    lastPrint = std::chrono::high_resolution_clock::now();
+    lastPrint = std::chrono::steady_clock::now();
     printProgress();
 
 }

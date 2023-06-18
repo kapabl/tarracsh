@@ -2,6 +2,14 @@ cmake_minimum_required(VERSION 3.24)
 project(tarracsh)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexperimental-library")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstd++")
+endif()
+#message( FATAL_ERROR "${CMAKE_CXX_COMPILER_ID}" )
 
 #get_cmake_property(_variableNames VARIABLES)
 #foreach(_variableName ${_variableNames})
@@ -44,7 +52,7 @@ find_path(BSHOSHANY_THREAD_POOL_INCLUDE_DIRS "BS_thread_pool.hpp")
 target_include_directories(cfdiff PRIVATE ${BSHOSHANY_THREAD_POOL_INCLUDE_DIRS})
 
 find_package(antlr4-runtime REQUIRED CONFIG)
-target_link_libraries(cfdiff PRIVATE antlr4_shared)
+#target_link_libraries(cfdiff PRIVATE antlr4_shared)
 
 find_package(Catch2 CONFIG REQUIRED)
 target_link_libraries(cfdiff PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)
@@ -117,8 +125,10 @@ target_link_libraries(tarracsh PRIVATE unofficial-sodium::sodium)
 find_package(libzippp CONFIG REQUIRED)
 target_link_libraries(tarracsh PRIVATE libzippp::libzippp)
 
-find_package(gperftools CONFIG REQUIRED)
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    find_package(gperftools CONFIG REQUIRED)
 #target_link_libraries(tarracsh PRIVATE  gperftools::libtcmalloc_minimal)
+endif()
 
 find_path(OOF_INCLUDE_DIRS "oof.h")
 target_include_directories(tarracsh PRIVATE ${OOF_INCLUDE_DIRS})

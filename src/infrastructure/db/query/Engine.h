@@ -1,7 +1,8 @@
 #ifndef KAPA_DB_QUERY_ENGINE
 #define KAPA_DB_QUERY_ENGINE
 #include <vector>
-#include <xstring>
+//#include <xstring>
+#include <string>
 
 #define TQ_SCHEMA "schema"
 #define TQ_LIST "list"
