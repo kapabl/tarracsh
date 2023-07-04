@@ -159,7 +159,7 @@ shared_ptr<SimpleClassTypeSignature> Parser::parsePackageNameAndSimpleClassTypeS
         case '<':
             return SimpleClassTypeSignature::make(id, false, parseTypeArguments());
         default:
-            throw runtime_error(format("expected '<' or ';' but got {}", current()));
+            throw runtime_error(fmt::format("expected '<' or ';' but got {}", current()));
     }
 }
 
@@ -174,7 +174,7 @@ shared_ptr<SimpleClassTypeSignature> Parser::parseSimpleClassTypeSignature(const
         case '<':
             return SimpleClassTypeSignature::make(id, dollar, parseTypeArguments());
         default:
-            throw runtime_error(format("expected '<' or ';' or '.', got '{}'.", c));
+            throw runtime_error(fmt::format("expected '<' or ';' or '.', got '{}'.", c));
     }
 }
 
@@ -235,7 +235,7 @@ std::shared_ptr<TypeVariableSignature> Parser::parseTypeVariableSignature() {
     advance();
     auto ts = TypeVariableSignature::make(parseIdentifier());
     if (current() != ';') {
-        throw runtime_error(format("; expected in signature of type variable named {}", ts->getIdentifier()));
+        throw runtime_error(fmt::format("; expected in signature of type variable named {}", ts->getIdentifier()));
     }
     advance();
     return ts;
@@ -411,7 +411,7 @@ shared_ptr<ClassTypeSignature> Parser::parseClassTypeSignature() {
 
     parseClassTypeSignatureSuffix(simpleClassTypeSignatures);
     if (current() != ';')
-        throw runtime_error(format("expected ';' got '{}'", current()));
+        throw runtime_error(fmt::format("expected ';' got '{}'", current()));
 
     advance();
     return ClassTypeSignature::make(simpleClassTypeSignatures);

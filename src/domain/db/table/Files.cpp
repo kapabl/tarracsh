@@ -50,7 +50,7 @@ void Files::defineColumns() {
         [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
            bool displayRaw) -> std::string {
             const auto entryType = static_cast<EntryType>(*reinterpret_cast<int *>(pValue));
-            if (displayRaw) return std::format("{}", static_cast<int>(entryType));
+            if (displayRaw) return fmt::format("{}", static_cast<int>(entryType));
             switch (entryType) {
                 case Classfile:
                     return "classfile";

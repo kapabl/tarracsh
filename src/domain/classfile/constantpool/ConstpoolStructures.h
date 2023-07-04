@@ -71,20 +71,6 @@ struct Utf8Info : ConstPoolBase {
     u2 length;
     u1 bytes[1];
 
-    // [[nodiscard]] std::wstring getValue(bool withEscaped = false) const {
-    //     auto result = stringUtils::utf82wstring(bytes, withEscaped);
-    //     return result;
-    // }
-    //
-    // [[nodiscard]] std::wstring getValueAsClassname(bool withEscaped = false) const {
-    //     auto result = getValue(withEscaped);
-    //     for (auto &wchar : result) {
-    //         if (wchar == L'/') {
-    //             wchar = L'.';
-    //         }
-    //     }
-    //     return result;
-    // }
     
     [[nodiscard]] std::string getAsUtf8(bool withEscaped = false) const {
         const icu::StringPiece stringPiece(reinterpret_cast<const char*>(bytes), length);

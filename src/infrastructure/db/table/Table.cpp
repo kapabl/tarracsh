@@ -1,4 +1,5 @@
 #include <ranges>
+#include <fmt/chrono.h>
 
 #include "Table.h"
 
@@ -90,7 +91,7 @@ void Table::list(const std::function<bool(AutoIncrementedRow &)> &filter, const 
         threadPool.wait_for_tasks();
     }
 
-    std::cout << std::format("table: {}", _layout.header.name) << std::endl;
+    std::cout << fmt::format("table: {}", _layout.header.name) << std::endl;
     std::cout << generateStdOutHeader() << std::endl;
 
     for (auto &outputByDbId : outputByChuck) {
@@ -103,7 +104,7 @@ void Table::list(const std::function<bool(AutoIncrementedRow &)> &filter, const 
 
     profiler::MillisecondDuration dbReadDuration{_db.getReadTime()};
     std::cout <<
-        std::format(
+        fmt::format(
             "rows found: {}, rows scanned: {}, rows processing time:{}, db read time: {}",
             rowsFound.load(),
             rowsScanned,
@@ -139,24 +140,24 @@ bool Table::isValidColumn(const std::string &columnName) const {
 
 void Table::printLayout() {
     std::cout << std::endl;
-    std::cout << std::format("table name: {}", _layout.header.name) << std::endl;
-    std::cout << std::format("column count: {}", _layout.header.columnCount) << std::endl;
-    std::cout << std::format("row count: {}", calculateRowCount()) << std::endl;
+    std::cout << fmt::format("table name: {}", _layout.header.name) << std::endl;
+    std::cout << fmt::format("column count: {}", _layout.header.columnCount) << std::endl;
+    std::cout << fmt::format("row count: {}", calculateRowCount()) << std::endl;
     std::cout << std::endl;
     std::cout << "columns:" << std::endl;
     forEachColumn([](const auto &properties, auto index) -> void {
         std::cout << std::right
-            << std::setw(7) << std::format("no: {}, ", index)
-            << std::setw(25) << std::format("name: {}, ", properties.name)
-            << std::setw(25) << std::format("type: {}, ", column::StorageTypeToString(properties.type))
-            << std::setw(25) << std::format("display as: {}", column::displayAsToString(properties.displayAs))
+            << std::setw(7) << fmt::format("no: {}, ", index)
+            << std::setw(25) << fmt::format("name: {}, ", properties.name)
+            << std::setw(25) << fmt::format("type: {}, ", column::StorageTypeToString(properties.type))
+            << std::setw(25) << fmt::format("display as: {}", column::displayAsToString(properties.displayAs))
             << std::endl;
     });
 }
 
 void Table::writeRows(FILE *file) {
     if (std::fseek(file, static_cast<long>(getHeaderSize()), SEEK_SET) != 0) {
-        _db.log().writeln(std::format("File seek error: {}", _filename), true);
+        _db.log().writeln(fmt::format("File seek error: {}", _filename), true);
     }
 
     uint64_t autoincrement = 0;
@@ -172,7 +173,7 @@ void Table::writeRows(FILE *file) {
             if (skippedRows > 0) {
                 const auto newPosition = getHeaderSize() + autoincrement * _rowSize;
                 if (std::fseek(file, static_cast<long>(newPosition), SEEK_SET) != 0) {
-                    _db.log().writeln(std::format("File seek error: {}", _filename), true);
+                    _db.log().writeln(fmt::format("File seek error: {}", _filename), true);
                     break;
                 }
                 skippedRows = 0;
@@ -180,7 +181,7 @@ void Table::writeRows(FILE *file) {
 
             const auto bytesWritten = std::fwrite(pRow, 1, _rowSize, file);
             if (bytesWritten != _rowSize) {
-                _db.log().writeln(std::format("File write error: {}", _filename), true);
+                _db.log().writeln(fmt::format("File write error: {}", _filename), true);
                 break;
             }
             rowsWritten++;
@@ -190,7 +191,7 @@ void Table::writeRows(FILE *file) {
         ++autoincrement;
     }
 
-    _db.log().writeln(std::format("Rows written: {} - {} rows", _filename, rowsWritten), true);
+    _db.log().writeln(fmt::format("Rows written: {} - {} rows", _filename, rowsWritten), true);
     _dirtyRows.clear();
 }
 
@@ -212,7 +213,7 @@ bool Table::readRows(FILE *file) {
             continue;
         }
         if (blocksRead != 1) {
-            _db.log().writeln(std::format("Error reading table: {}", _filename), true);
+            _db.log().writeln(fmt::format("Error reading table: {}", _filename), true);
             return false;
         }
         auto key = getKey(row);
@@ -223,14 +224,14 @@ bool Table::readRows(FILE *file) {
 
 bool Table::readHeader(FILE *file) {
     if (std::fread(&_layout.header, sizeof(TableLayout::Header), 1, file) != 1) {
-        _db.log().writeln(std::format("Error reading table: {}", _filename), true);
+        _db.log().writeln(fmt::format("Error reading table: {}", _filename), true);
         return false;
     }
 
     const auto result = _layout.header.signature == KAPA_TABLE_SIGNATURE;
 
     if (!result) {
-        _db.log().writeln(std::format("Invalid table format or signature:{}", _filename), true);
+        _db.log().writeln(fmt::format("Invalid table format or signature:{}", _filename), true);
     }
 
     return result;
@@ -388,7 +389,7 @@ bool Table::write() {
     FILE *file = nullptr;
     if (fopen_s(&file, _filename.c_str(), mode) == 0) {
         if (std::fseek(file, 0, SEEK_SET) != 0) {
-            _db.log().writeln(std::format("Error seeking file {}", _filename), true);
+            _db.log().writeln(fmt::format("Error seeking file {}", _filename), true);
             return false;
         }
         if (!fileExists) {
@@ -397,13 +398,13 @@ bool Table::write() {
         }
         writeRows(file);
         if (fclose(file) == -1) {
-            _db.log().writeln(std::format("Error closing file {}", _filename), true);
+            _db.log().writeln(fmt::format("Error closing file {}", _filename), true);
             return false;
         }
 
         _isDirty = false;
     } else {
-        _db.log().writeln(std::format("Error opening file {}", _filename), true);
+        _db.log().writeln(fmt::format("Error opening file {}", _filename), true);
         return false;
     }
     return true;
@@ -416,7 +417,7 @@ bool Table::clean() {
     if (std::filesystem::exists(_filename)) {
         tableFileCleaned = std::filesystem::remove(_filename);
         if (!tableFileCleaned) {
-            _db.log().writeln(std::format("Error removing table file {}", _filename), true);
+            _db.log().writeln(fmt::format("Error removing table file {}", _filename), true);
         }
     }
 
@@ -440,11 +441,11 @@ bool Table::read() {
                  readSchema(file) &&
                  readRows(file);
         if (fclose(file) == -1) {
-            _db.log().writeln(std::format("Error closing file {}", _filename), true);
+            _db.log().writeln(fmt::format("Error closing file {}", _filename), true);
             return false;
         }
     } else {
-        _db.log().writeln(std::format("Error opening file {}", _filename), true);
+        _db.log().writeln(fmt::format("Error opening file {}", _filename), true);
     }
     return result;
 }

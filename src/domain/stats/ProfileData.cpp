@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <fmt/chrono.h>
 #include "ProfileData.h"
 
 #include "infrastructure/filesystem/Utils.h"
@@ -17,11 +18,11 @@ void ProfileData::output(const Options &options) const {
     }
     std::vector<std::string> lines;
     std::ofstream file(options.outputDir + "/profiler.txt");
-    lines.push_back(std::format("Analyzer total time: {}", analyzerTime));
-    lines.push_back(std::format("Analyzer init: {}", initAnalyzer));
-    lines.push_back(std::format("Init Db: {}", initDb));
-    lines.push_back(std::format("Write Digest Db: {}", writeDigestDb));
-    lines.push_back(std::format("Write Call Graph Db: {}", writeCallGraphDb));
+    lines.push_back(fmt::format("Analyzer total time: {}", analyzerTime));
+    lines.push_back(fmt::format("Analyzer init: {}", initAnalyzer));
+    lines.push_back(fmt::format("Init Db: {}", initDb));
+    lines.push_back(fmt::format("Write Digest Db: {}", writeDigestDb));
+    lines.push_back(fmt::format("Write Call Graph Db: {}", writeCallGraphDb));
     infrastructure::filesystem::utils::writeLines(filename, lines);
     if ( options.printProfiler ) {
         std::cout << std::endl;

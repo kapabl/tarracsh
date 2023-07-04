@@ -1,7 +1,7 @@
 #include "ScopedTimer.h"
 
 #include <iostream>
-#include <format>
+#include <fmt/format.h>
 
 
 using namespace kapa::infrastructure::profiler;
@@ -48,7 +48,7 @@ std::chrono::duration<long long, std::milli> ScopedTimer::getElapsedTimeMs() {
 }
 
 void ScopedTimer::printElapsedTime() {
-    std::cout << std::endl << std::format("total time: {}", getElapsedTimeMs().count()) << std::endl;
+    std::cout << std::endl << fmt::format("total time: {}", getElapsedTimeMs().count()) << std::endl;
 }
 
 ScopedTimer::~ScopedTimer() {
@@ -69,6 +69,6 @@ MillisecondDuration ScopedTimer::time(const std::function<void()> &func) {
 
 MillisecondDuration ScopedTimer::timeWithPrint(const std::string &name, const std::function<void()> &func) {
     const auto result = time(func);
-    std::cout << std::format("[time:{}({})]", name, result.count()) << std::endl;
+    std::cout << fmt::format("[time:{}({})]", name, result.count()) << std::endl;
     return result;
 }

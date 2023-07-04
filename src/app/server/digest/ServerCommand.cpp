@@ -39,7 +39,7 @@ bool ServerCommand::stop() const {
     const auto status = _stub->Quit(&context, request, &response);
     const auto result = status.error_code() == grpc::StatusCode::OK;
     if (!result) {
-        std::cout << format("Error: {} - {} ", static_cast<int>(status.error_code()), status.error_message()) <<
+        std::cout << fmt::format("Error: {} - {} ", static_cast<int>(status.error_code()), status.error_message()) <<
             std::endl;
     }
     return result;
@@ -97,7 +97,7 @@ bool ServerCommand::diff() const {
         responseToReport(response);
         // _appConfig.getResults().report->print();
     } else {
-        _appConfig.getLog().writeln(std::format("Server Request Error: {}", status.error_message()), true);
+        _appConfig.getLog().writeln(fmt::format("Server Request Error: {}", status.error_message()), true);
     }
 
     return result;

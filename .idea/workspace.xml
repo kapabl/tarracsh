@@ -96,7 +96,7 @@
       <workItem from="1688428142241" duration="792000" />
       <workItem from="1688428980309" duration="1512000" />
       <workItem from="1688510135996" duration="828000" />
-      <workItem from="1688513342291" duration="552000" />
+      <workItem from="1688513342291" duration="734000" />
     </task>
     <task id="LOCAL-00001" summary="Ignoring cmake dirs">
       <created>1684696768056</created>
@@ -147,7 +147,14 @@
       <option name="project" value="LOCAL" />
       <updated>1688513735737</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Cleaning..">
+      <created>1688513950847</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1688513950847</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

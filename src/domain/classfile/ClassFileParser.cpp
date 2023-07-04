@@ -29,13 +29,13 @@ bool ClassFileParser::internalParse() {
         processFile();
     } catch (const runtime_error &runtimeException) {
         result = false;
-        const auto errorMessage = format("Error parsing file: {}, msg:{}", _filename,
+        const auto errorMessage = fmt::format("Error parsing file: {}, msg:{}", _filename,
                                          runtimeException.what());
         _log->writeln(errorMessage);
     }
     catch (...) {
         result = false;
-        const auto errorMessage = format("Error parsing file: {}", _filename);
+        const auto errorMessage = fmt::format("Error parsing file: {}", _filename);
         _log->writeln(errorMessage);
     }
 
@@ -174,7 +174,7 @@ void ClassFileParser::readConstPoolEntry(int &index) {
             break;
 
         default: // NOLINT(clang-diagnostic-covered-switch-default)
-            const auto errorMessage = format("Error - Invalid const-pool tag: {} {}", static_cast<int>(tag),
+            const auto errorMessage = fmt::format("Error - Invalid const-pool tag: {} {}", static_cast<int>(tag),
                 _filename);
             _log->writeln(errorMessage);
             throw runtime_error(errorMessage);

@@ -112,7 +112,7 @@ bool StringPool::clean() {
     if (std::filesystem::exists(_filename)) {
         result = std::filesystem::remove(_filename);
         if (!result) {
-            std::cout << std::format("Error removing string pool file: {}", _filename) << std::endl;
+            std::cout << fmt::format("Error removing string pool file: {}", _filename) << std::endl;
         }
     }
     return result;

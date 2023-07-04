@@ -106,7 +106,7 @@ void DigestAnalyzer::digestClassfile(const std::string& filename) const {
             if (fileExists) {
                 const auto isSamePublicDigest = digest == fileRow->digest;
                 if (isSamePublicDigest) {
-                    _results.log->writeln(std::format("Same public digest of changed file:{}",
+                    _results.log->writeln(fmt::format("Same public digest of changed file:{}",
                         fileInfo.filename));
                 }
                 _results.report->asModifiedClassfile(isSamePublicDigest, strongClassname);

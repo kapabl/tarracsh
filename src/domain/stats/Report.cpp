@@ -252,7 +252,7 @@ void Report::print() const {
             }
         }
 
-        std::cout << std::format("{} {}", fileResult.filename, flags ) << std::endl;
+        std::cout << fmt::format("{} {}", fileResult.filename, flags ) << std::endl;
     }
 
     std::cout << std::endl;
@@ -278,7 +278,7 @@ void Report::print() const {
                 flags.push_back('D');
             }
         }
-        std::cout << std::format("{} {}", classResult.strongClassname, flags) << std::endl;
+        std::cout << fmt::format("{} {}", classResult.strongClassname, flags) << std::endl;
     }
     std::cout << std::endl;
 }

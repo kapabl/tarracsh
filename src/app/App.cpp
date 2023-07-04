@@ -119,7 +119,7 @@ int App::parseCli(int argc, char **argv) {
         } else if (_parseCommand->isSelected()) {
             _options.isParse = true;
         } else {
-            std::cout << std::format("Invalid sub-command") << std::endl;
+            std::cout << fmt::format("Invalid sub-command") << std::endl;
             result = 1;
         }
 

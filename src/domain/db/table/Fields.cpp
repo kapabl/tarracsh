@@ -17,7 +17,7 @@ std::string Fields::getKey(const AutoIncrementedRow* row) {
 
 std::string Fields::getStrongMethodName(const FieldRow& row) const {
     auto strongClassname = _classfiles->getStrongClassname(row.ownerClass.id);
-    auto result = std::format("{}#{}", strongClassname, _stringPool->getCString(row.name));
+    auto result = fmt::format("{}#{}", strongClassname, _stringPool->getCString(row.name));
     return result;
 }
 
