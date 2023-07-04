@@ -37,3 +37,5 @@
 
 /cfdiff/vcpkg_installed/
 /cfdiff/cmake-build-debug-gcc/
+/cfdiff/cmake-build-debug-gcc--13/
+/cfdiff/cmake-build-debug-linux-gcc/
