@@ -1,5 +1,6 @@
 #include "Columns.h"
-#include <format>
+#include <fmt/format.h>
+#include <fmt/chrono.h>
 #include <chrono>
 #include "../Database.h"
 #include "../table/Table.h"
@@ -104,8 +105,9 @@ static bool registerColumns() {
         [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
            bool displayRaw) -> std::string {
             const auto microseconds = std::chrono::microseconds(*reinterpret_cast<uint64_t *>(pValue));
-            std::chrono::file_clock::time_point timePoint(microseconds);
-            auto result = std::format("{:%F %T}", timePoint);
+            const std::chrono::file_clock::time_point timePoint(microseconds);
+            const auto timeTType = std::chrono::duration_cast<std::chrono::seconds>(timePoint.time_since_epoch()).count();
+            auto result = fmt::format("{:%F %T}", fmt::localtime(timeTType));
             return result;
         });
     Properties::registerColumn(
@@ -120,7 +122,7 @@ static bool registerColumns() {
         DisplayAs::AsInt32,
         [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
            bool displayRaw) -> std::string {
-            auto result = std::format("{}", reinterpret_cast<int32_t &>(*pValue));
+            auto result = fmt::format("{}", reinterpret_cast<int32_t &>(*pValue));
             return result;
         });
 
@@ -128,7 +130,7 @@ static bool registerColumns() {
         DisplayAs::AsUInt32,
         [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
            bool displayRaw) -> std::string {
-            auto result = std::format("{}", reinterpret_cast<uint32_t &>(*pValue));
+            auto result = fmt::format("{}", reinterpret_cast<uint32_t &>(*pValue));
             return result;
         });
 
@@ -136,7 +138,7 @@ static bool registerColumns() {
         DisplayAs::AsUInt64,
         [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
            bool displayRaw) -> std::string {
-            auto result = std::format("{}", reinterpret_cast<uint64_t &>(*pValue));
+            auto result = fmt::format("{}", reinterpret_cast<uint64_t &>(*pValue));
             return result;
         });
 
@@ -147,7 +149,7 @@ static bool registerColumns() {
             std::string result;
             auto &stringCol = reinterpret_cast<StringCol &>(*pValue);
             if (displayRaw) {
-                result = std::format("{}", stringCol);
+                result = fmt::format("{}", stringCol);
             } else {
                 result = db.getStringPool()->getCString(stringCol);
             }
@@ -161,10 +163,10 @@ static bool registerColumns() {
             std::string result;
             const auto ref = reinterpret_cast<uint64_t &>(*pValue);
             if (displayRaw) {
-                result = std::format("{}", ref);
+                result = fmt::format("{}", ref);
             } else {
                 auto table = db.getTable(properties.refColProperties.table);
-                result = std::format("{}", table->getColumnValue(ref, properties.refColProperties.displayColumn));
+                result = fmt::format("{}", table->getColumnValue(ref, properties.refColProperties.displayColumn));
             }
             return result;
         });
@@ -175,7 +177,7 @@ static bool registerColumns() {
            bool displayRaw) -> std::string {
             std::string result;
             for (auto i = 0u; i < DIGEST_LENGTH; i++) {
-                result += std::format(" {:02x}", static_cast<unsigned char>(pValue[i]));
+                result += fmt::format(" {:02x}", static_cast<unsigned char>(pValue[i]));
             }
             return result;
         });

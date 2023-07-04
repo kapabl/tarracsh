@@ -21,7 +21,7 @@ bool RequestContext::update(const DiffRequest &request) {
     _options.digest.isDiff = true;
     const auto result = _options.digest.processInput();
     if (!result) {
-        _errorMessage = std::format("Invalid Input: {}", _options.digest.input);
+        _errorMessage = fmt::format("Invalid Input: {}", _options.digest.input);
         _results.log->writeln(_errorMessage, true);
     }
 

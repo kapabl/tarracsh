@@ -3,6 +3,7 @@
 #include <iostream>
 #include <ostream>
 #include <chrono>
+#include <fmt/chrono.h>
 
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <boost/interprocess/sync/named_mutex.hpp>
@@ -75,7 +76,7 @@ bool ServiceImpl::initDb() {
             false,
             true);
     }
-    cout << std::format("Db init duration:{}", duration) << endl;
+    cout << fmt::format("Db init duration:{}", duration) << endl;
     if (_db) {
         _db->outputStats();
         result = true;

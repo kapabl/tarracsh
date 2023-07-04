@@ -7,7 +7,7 @@
 #include <numeric>
 #include <locale>
 #include <codecvt>
-#include <format>
+#include <fmt/format.h>
 #include <vector>
 
 
@@ -67,55 +67,6 @@ inline std::wstring u162wstring(const std::u16string &str) {
     return result;
 }
 
-inline std::u16string utf82u32string(const char *source, const bool withEscape = false) {
-    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utf16conv;
-    std::u16string u16s = utf16conv.from_bytes(source);
-
-    std::u16string result;
-
-    if (withEscape) {
-        for (const auto wchar : u16s) {
-            if (wchar < 256 && std::isgraph(wchar)) {
-                result.push_back(wchar);
-            } else {
-                auto formatted = std::format(L"{:#06x}", static_cast<int>(wchar));
-                formatted.erase(0, 2);
-                auto unicodeCode = L"\\u" + formatted;
-                result.append((char16_t *)unicodeCode.c_str());
-            }
-        }
-    } else {
-        result = u16s;
-    }
-    return result;
-}
-
-inline std::wstring utf82wstring(const char *source, const bool withEscape = false) {
-
-    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>
-        convert; // NOLINT(clang-diagnostic-deprecated-declarations)
-
-    const std::u16string u16s = convert.from_bytes(source);
-    std::wstring result;
-
-    if (withEscape) {
-        // std::wstring escapedResult;
-        for (const auto wchar : u16s) {
-            if (wchar < 256 && std::isgraph(wchar)) {
-                result.push_back(wchar);
-            } else {
-                auto formatted = std::format(L"{:#06x}", static_cast<int>(wchar));
-                formatted.erase(0, 2);
-                result += L"\\u" + formatted;
-            }
-        }
-        // result = escapedResult;
-    } else {
-        result = u162wstring(u16s);
-    }
-    return result;
-}
-
 inline wchar_t char2wchar(const char source) {
 
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>
@@ -130,9 +81,6 @@ inline wchar_t char2wchar(const char source) {
 }
 
 #pragma warning( pop )
-inline std::wstring utf82wstring(const unsigned char *source, bool withEscape = false) {
-    return utf82wstring(reinterpret_cast<const char *>(source), withEscape);
-}
 
 template <typename T, typename T1>
 inline T1 join(const T &parts, T1 delim) {
@@ -164,7 +112,7 @@ inline std::string pathToClassname(std::string path) {
 inline std::string bytesToHexString(const unsigned char *bytes, int length) {
     std::string result;
     for (int i = 0; i < length; i++) {
-        result += std::format("{:02x}", bytes[i]);
+        result += fmt::format("{:02x}", bytes[i]);
     }
     return result;
 }
@@ -198,7 +146,7 @@ inline std::string sizeToHumanReadable(uint64_t bytes) {
         }
     }
 
-    std::string result = std::format("{:.2f} {}", doubleBytes, suffix[i]);
+    std::string result = fmt::format("{:.2f} {}", doubleBytes, suffix[i]);
 
     return result;
 }

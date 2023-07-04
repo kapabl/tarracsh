@@ -29,7 +29,7 @@ ConstantPoolPrinter::ConstantPoolPrinter(ClassFileParser &classFileParser)
 
 
 void ConstantPoolPrinter::printTitle() {
-    _currentLine += std::format("Constant Pool for: {}", _classFileParser.getMainClassname());
+    _currentLine += fmt::format("Constant Pool for: {}", _classFileParser.getMainClassname());
 }
 
 void ConstantPoolPrinter::print() {
@@ -57,12 +57,12 @@ string ConstantPoolPrinter::tagToString(ConstantPoolTag tag) {
     if (tag < _poolTagToString.size()) {
         return _poolTagToString[tag][_cpoolStringIndex];
     }
-    return format("Invalid pool tag:{}", static_cast<unsigned char>(tag));
+    return fmt::format("Invalid pool tag:{}", static_cast<unsigned char>(tag));
 }
 
 string ConstantPoolPrinter::refKindToString(MethodHandleSubtypes tag) {
     if (tag < _refKindToString.size()) return _refKindToString[tag];
-    return format("Invalid MethodHandleSubtypes tag:{}", static_cast<unsigned char>(tag));
+    return fmt::format("Invalid MethodHandleSubtypes tag:{}", static_cast<unsigned char>(tag));
 }
 
 void ConstantPoolPrinter::printHeader(const ConstPoolBase &entry, int index) {
@@ -76,7 +76,7 @@ void ConstantPoolPrinter::printUtf8Info(const Utf8Info &entry, int index) {
 
 inline void ConstantPoolPrinter::printStringInfo(const StringInfo &entry, int index) {
 
-    _currentLine += std::format("{} {}",
+    _currentLine += fmt::format("{} {}",
                                 entry.stringIndex,
                                 _constantPool.getString(entry.stringIndex, true));
 }
@@ -98,7 +98,7 @@ inline void ConstantPoolPrinter::printFloatInfo(const FloatInfo &entry, int inde
 }
 
 inline void ConstantPoolPrinter::printClassInfo(const ClassInfo &entry, int index) {
-    _currentLine += std::format("idx:{} {}", entry.nameIndex, _constantPool.getClassname(entry.nameIndex));
+    _currentLine += fmt::format("idx:{} {}", entry.nameIndex, _constantPool.getClassname(entry.nameIndex));
 }
 
 inline void ConstantPoolPrinter::printMethodrefInfo(const MethodrefInfo &entry, int index) {
@@ -107,7 +107,7 @@ inline void ConstantPoolPrinter::printMethodrefInfo(const MethodrefInfo &entry, 
 
 
 inline void ConstantPoolPrinter::printMethodHandleInfo(const MethodHandleInfo &entry, int index) {
-    _currentLine += std::format("ref-kind:{}, idx:{}",
+    _currentLine += fmt::format("ref-kind:{}, idx:{}",
                                 refKindToString(entry.referenceKind),
                                 entry.referenceIndex);
 }
@@ -127,7 +127,7 @@ inline void ConstantPoolPrinter::printModuleInfo(const ModuleInfo &entry, int in
 void ConstantPoolPrinter::printRefExtraInfo(const MemberInfo &entry) {
     const auto &nameAndTypeInfo = _constantPool.getEntry(entry.nameAndTypeIndex).nameAndTypeInfo;
 
-    _currentLine += std::format("{}:{} {}: {}:{}", entry.classIndex, entry.nameAndTypeIndex,
+    _currentLine += fmt::format("{}:{} {}: {}:{}", entry.classIndex, entry.nameAndTypeIndex,
                                 _constantPool.getClassInfoName(entry.classIndex),
                                 _constantPool.getString(nameAndTypeInfo.nameIndex),
                                 _constantPool.getString(nameAndTypeInfo.descriptorIndex));
@@ -140,7 +140,7 @@ inline void ConstantPoolPrinter::printInterfaceMethodrefInfo(const InterfaceMeth
 inline void ConstantPoolPrinter::printInvokeDynamicInfo(const InvokeDynamicInfo &entry, int index) {
     const auto &nameAndTypeInfo = _constantPool.getEntry(entry.nameAndTypeIndex).nameAndTypeInfo;
 
-    _currentLine += std::format("Bootstrap MT idx:{},N&T:{} {}:{}",
+    _currentLine += fmt::format("Bootstrap MT idx:{},N&T:{} {}:{}",
                                 entry.bootstrapMethodAttrIndex,
                                 entry.nameAndTypeIndex,
                                 _constantPool.getString(nameAndTypeInfo.nameIndex),
@@ -149,7 +149,7 @@ inline void ConstantPoolPrinter::printInvokeDynamicInfo(const InvokeDynamicInfo 
 }
 
 inline void ConstantPoolPrinter::printNameAndTypeInfo(const NameAndTypeInfo &entry, int index) {
-    _currentLine += std::format("{}:{} {}:{}", entry.nameIndex, entry.descriptorIndex,
+    _currentLine += fmt::format("{}:{} {}:{}", entry.nameIndex, entry.descriptorIndex,
                                 _constantPool.getString(entry.nameIndex),
                                 _constantPool.getString(entry.descriptorIndex));
 }

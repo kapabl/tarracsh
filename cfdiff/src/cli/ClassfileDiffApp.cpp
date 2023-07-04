@@ -58,7 +58,7 @@ void ClassfileDiffApp::setupCliOptions() {
 
 void ClassfileDiffApp::validateFile(const string &filename) const {
     if (!filesystem::exists(filename)) {
-        throw CLI::ValidationError(format("File does not exist: {}", filename), CLI::ExitCodes::FileError);
+        throw CLI::ValidationError(fmt::format("File does not exist: {}", filename), CLI::ExitCodes::FileError);
     }
 }
 
@@ -84,7 +84,7 @@ void ClassfileDiffApp::outputResult() const {
     if (_differenceCount == 0) {
         _log->writeln("No differences found");
     } else {
-        _log->writeln(format("{} differences found", _differenceCount));
+        _log->writeln(fmt::format("{} differences found", _differenceCount));
     }
 }
 
@@ -105,11 +105,11 @@ ExitCode ClassfileDiffApp::start(int argc, char *argv[]) {
         outputResult();
     } else {
         if (!_leftParser->succeeded()) {
-            _log->writeln(format("Failed to parse {}", _leftFile));
+            _log->writeln(fmt::format("Failed to parse {}", _leftFile));
         }
 
         if (!_rightParser->succeeded()) {
-            _log->writeln(format("Failed to parse {}", _rightFile));
+            _log->writeln(fmt::format("Failed to parse {}", _rightFile));
         }
 
         exitCode = 1;
@@ -123,12 +123,12 @@ ExitCode ClassfileDiffApp::start(int argc, char *argv[]) {
     //         this->compare();
     //         outputResult();
     //     } else {
-    //         _log->writeln(format("Failed to parse {}", _rightFile));
+    //         _log->writeln(fmt::format("Failed to parse {}", _rightFile));
     //         exitCode = 1;
     //     }
     //
     // } else {
-    //     _log->writeln(format("Failed to parse {}", _leftFile));
+    //     _log->writeln(fmt::format("Failed to parse {}", _leftFile));
     //     exitCode = 1;
     // }
 
@@ -197,10 +197,10 @@ void ClassfileDiffApp::compareSuperClass() {
         _rightParser->getMainClassInfo().superClass,
         [this](const bool result, const string &left, const string &right) {
             if (result) {
-                _log->writelnGreen(format("Superclass is equal: {}", left));
+                _log->writelnGreen(fmt::format("Superclass is equal: {}", left));
             } else {
                 _differenceCount++;
-                _log->writelnRed(format("Superclass differs: {}, {}", left, right));
+                _log->writelnRed(fmt::format("Superclass differs: {}, {}", left, right));
             }
         });
 
@@ -211,13 +211,13 @@ auto ClassfileDiffApp::compareAccessFlags(const u2 accessFlagsLeft, const u2 acc
     const auto result = accessFlagsLeft == accessFlagsRight;
     if (!result) {
         _differenceCount++;
-        message = format("\033[31mAccess flags differ:\nleft({:x}):{}\nright({:x}):{}\033[0m",
+        message = fmt::format("\033[31mAccess flags differ:\nleft({:x}):{}\nright({:x}):{}\033[0m",
                          accessFlagsLeft,
                          accessmodifier::toString(accessFlagsLeft),
                          accessFlagsRight,
                          accessmodifier::toString(accessFlagsRight));
     } else {
-        message = format("\033[32mAccess flags are equal: {}\033[0m", accessmodifier::toString(accessFlagsRight));
+        message = fmt::format("\033[32mAccess flags are equal: {}\033[0m", accessmodifier::toString(accessFlagsRight));
     }
     return result;
 }
@@ -233,12 +233,12 @@ void ClassfileDiffApp::compareMainClassname() {
     const auto leftClassname = _leftParser->getMainClassname();
     const auto rightClassname = _rightParser->getMainClassname();
     if (_ignoreClassname) {
-        _log->writeln(format("Main class name ignored: {}, {}",
+        _log->writeln(fmt::format("Main class name ignored: {}, {}",
                              leftClassname, rightClassname));
     } else {
         if (leftClassname != rightClassname) {
             _differenceCount++;
-            _log->writelnRed(format("Main class name differs: {}, {}",
+            _log->writelnRed(fmt::format("Main class name differs: {}, {}",
                                     leftClassname, rightClassname));
         } else {
             _log->writelnGreen("Main class name is equal");
@@ -263,16 +263,16 @@ void ClassfileDiffApp::compareMainClassInterfaces() {
     for (const auto &leftName : leftMap | views::keys) {
         if (rightMap.contains(leftName)) {
             rightMap.erase(leftName);
-            _log->writelnGreen(format("Interface {} is equal", leftName));
+            _log->writelnGreen(fmt::format("Interface {} is equal", leftName));
         } else {
             _differenceCount++;
-            _log->writelnRed(format("Interface {} is only in left", leftName));
+            _log->writelnRed(fmt::format("Interface {} is only in left", leftName));
         }
     }
 
     for (const auto &rightName : rightMap | views::keys) {
         _differenceCount++;
-        _log->writelnRed(format("Interface {} is only in right", rightName));
+        _log->writelnRed(fmt::format("Interface {} is only in right", rightName));
     }
 
 }
@@ -319,15 +319,15 @@ auto ClassfileDiffApp::compareAttributes(const vector<attribute::AttributeInfo> 
                                   leftAttributeInfo.info == rightAttributeInfo.info;
 
             if (areEqual) {
-                messages.push_back(format("\033[32mAttribute {} is equal\033[0m", attributeName));
+                messages.push_back(fmt::format("\033[32mAttribute {} is equal\033[0m", attributeName));
             } else {
                 attributeDifferences++;
-                messages.push_back(format("\033[31mAttribute {} differs\033[0m", attributeName));
+                messages.push_back(fmt::format("\033[31mAttribute {} differs\033[0m", attributeName));
             }
 
             rightMap.erase(attributeName);
         } else {
-            messages.push_back(format("\033[31mAttribute {} is missing in right\033[0m", attributeName));
+            messages.push_back(fmt::format("\033[31mAttribute {} is missing in right\033[0m", attributeName));
         }
     }
 
@@ -336,7 +336,7 @@ auto ClassfileDiffApp::compareAttributes(const vector<attribute::AttributeInfo> 
             continue;
         }
         attributeDifferences++;
-        messages.push_back(format("\033[31mAttribute {} is missing in left\033[0m", attributeName));
+        messages.push_back(fmt::format("\033[31mAttribute {} is missing in left\033[0m", attributeName));
     }
 
     const auto result = attributeDifferences == 0;
@@ -377,7 +377,7 @@ auto ClassfileDiffApp::areMethodsEqual(const constantpool::MethodInfo &leftMetho
     string attributeMessage;
     result = compareAttributes(leftMethod.attributes, rightMethod.attributes, attributeMessage) && result;
 
-    message = format("{}\n{}\n{}", accessFlagsMessage, descriptorMessage, attributeMessage);
+    message = fmt::format("{}\n{}\n{}", accessFlagsMessage, descriptorMessage, attributeMessage);
 
     return result;
 }
@@ -387,7 +387,7 @@ void ClassfileDiffApp::compareToRightMethods(const constantpool::MethodInfo &lef
                                              vector<constantpool::MethodInfo> &rightMethods) {
     const auto methodName = getLeftString(leftMethod.nameIndex);
     const auto leftDescriptor = getLeftString(leftMethod.descriptorIndex);
-    _log->writeln(format("Comparing {} {}", methodName, leftDescriptor));
+    _log->writeln(fmt::format("Comparing {} {}", methodName, leftDescriptor));
     auto matchFound = false;
     string allMessages;
     auto rightIndex = 0u;
@@ -396,11 +396,11 @@ void ClassfileDiffApp::compareToRightMethods(const constantpool::MethodInfo &lef
         string message;
         if (areMethodsEqual(leftMethod, rightMethod, message)) {
             _log->writelnGreen(message);
-            _log->writelnGreen(format("Method is equal {} {}", methodName, leftDescriptor));
+            _log->writelnGreen(fmt::format("Method is equal {} {}", methodName, leftDescriptor));
             matchFound = true;
             break;
         } else {
-            message += format("\n\033[31mMethod {} differs\n\033[0m", methodName);
+            message += fmt::format("\n\033[31mMethod {} differs\n\033[0m", methodName);
         }
         allMessages += message;
         rightIndex++;
@@ -430,7 +430,7 @@ void ClassfileDiffApp::extractMethods(const unique_ptr<ClassFileParser> &parser,
 void ClassfileDiffApp::checkOverload(const std::string &position, const std::string &methodName,
                                      const vector<constantpool::MethodInfo> &methodInfos) const {
     if (methodInfos.size() > 1) {
-        _log->writeln(format("{} method {} has {} overloads", position, methodName, methodInfos.size()));
+        _log->writeln(fmt::format("{} method {} has {} overloads", position, methodName, methodInfos.size()));
     }
 }
 
@@ -449,7 +449,7 @@ void ClassfileDiffApp::compareMethods() {
         if (rightMap.contains(methodName)) {
             auto &rightMethods = rightMap[methodName];
             _log->writeln("");
-            _log->writeln(format("Method: {}", methodName));
+            _log->writeln(fmt::format("Method: {}", methodName));
 
             checkOverload("Right", methodName, rightMethods);
             for (auto &leftMethod : leftMethods) {
@@ -462,7 +462,7 @@ void ClassfileDiffApp::compareMethods() {
 
             for (const auto &methodInfo : leftMethods) {
                 _differenceCount++;
-                _log->writelnRed(format("Method {} {} is only in left", methodName,
+                _log->writelnRed(fmt::format("Method {} {} is only in left", methodName,
                                         getLeftString(methodInfo.descriptorIndex)));
             }
 
@@ -472,7 +472,7 @@ void ClassfileDiffApp::compareMethods() {
     for (auto &[methodName, rightMethods] : rightMap) {
         for (const auto &rightMethod : rightMethods) {
             _differenceCount++;
-            _log->writelnRed(format("Method {} {} is only in right", methodName,
+            _log->writelnRed(fmt::format("Method {} {} is only in right", methodName,
                                     getRightString(rightMethod.descriptorIndex)));
         }
     }
@@ -484,10 +484,10 @@ auto ClassfileDiffApp::compareDescriptors(const u2 leftIndex,
     const auto rightDescriptor = getRightString(rightIndex);
     const auto result = leftDescriptor == rightDescriptor;
     if (result) {
-        message = format("\033[32mDescriptors are equal: {}\033[0m", leftDescriptor);
+        message = fmt::format("\033[32mDescriptors are equal: {}\033[0m", leftDescriptor);
     } else {
         _differenceCount++;
-        message = format("\033[31mDescriptors differ: {}, {}\033[0m", leftDescriptor, rightDescriptor);
+        message = fmt::format("\033[31mDescriptors differ: {}, {}\033[0m", leftDescriptor, rightDescriptor);
     }
 
     return result;
@@ -521,7 +521,7 @@ void ClassfileDiffApp::compareFields() {
             const auto prevDifferenceCount = _differenceCount;
 
             _log->writeln("");
-            _log->writeln(format("Field: {}", leftName));
+            _log->writeln(fmt::format("Field: {}", leftName));
 
             string accessFlagsMessage;
             compareAccessFlags(leftFieldInfo.accessFlags, rightFieldInfo.accessFlags, accessFlagsMessage);
@@ -538,18 +538,18 @@ void ClassfileDiffApp::compareFields() {
             rightMap.erase(leftName);
 
             if (_differenceCount == prevDifferenceCount) {
-                _log->writeln(format("\033[32mField {} is equal\033[0m", leftName));
+                _log->writeln(fmt::format("\033[32mField {} is equal\033[0m", leftName));
             }
 
         } else {
             _differenceCount++;
-            _log->writeln(format("\033[31mField {} is missing in right\033[0m", leftName));
+            _log->writeln(fmt::format("\033[31mField {} is missing in right\033[0m", leftName));
         }
     }
     _log->writeln("");
     for (const auto &rightName : rightMap | views::keys) {
         _differenceCount++;
-        _log->writeln(format("\033[31mField {} is missing in left\033[0m", rightName));
+        _log->writeln(fmt::format("\033[31mField {} is missing in left\033[0m", rightName));
     }
 }
 

@@ -50,7 +50,7 @@ void Database::createSaveThread() {
 
 void Database::outputStats() const {
     for (const auto& table : _tables | std::views::values) {
-        std::cout << std::format("table {}, rows: {}", table->getName(), table->size()) << std::endl;
+        std::cout << fmt::format("table {}, rows: {}", table->getName(), table->size()) << std::endl;
     }
 }
 

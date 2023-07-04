@@ -65,7 +65,7 @@ public:
         auto _this = const_cast<AttributesManager *>(this);
         std::string result = (it != _tags2ToStringFunc.end())
                                   ? (_this->*(it->second))(const_cast<AttributeInfo &>(attribute))
-                                  : (std::format("Invalid Attribute:{} ", _constantPool.getEntry(attribute.nameIndex).utf8Info.getAsUtf8()));
+                                  : (fmt::format("Invalid Attribute:{} ", _constantPool.getEntry(attribute.nameIndex).utf8Info.getAsUtf8()));
 
         return result;
     }
@@ -224,7 +224,7 @@ private:
             exceptionTable.catchType = reader.readU2();
             codeAttribute.exceptionTable.push_back(exceptionTable);
         }
-        result += " " + std::format("maxStack={}, maxLocals={}, codeLength={}, exceptionTableLength={}",
+        result += " " + fmt::format("maxStack={}, maxLocals={}, codeLength={}, exceptionTableLength={}",
                                      codeAttribute.maxStack, codeAttribute.maxLocals, codeAttribute.codeLength,
                                      codeAttribute.exceptionTableLength);
 

@@ -1,5 +1,5 @@
 #include "ListenerImpl.h"
-#include <format>
+#include <fmt/format.h>
 #include <regex>
 
 #include "../../Database.h"
@@ -43,7 +43,7 @@ void ListenerImpl::enterList(KapaQueryParser::ListContext *listContext) {
     const auto tablename = listContext->tablename()->getText();
     _mainTable = _db.getTable(tablename);
     if (_mainTable == nullptr) {
-        _semanticErrors.push_back(std::format("Invalid table name: {}", tablename));
+        _semanticErrors.push_back(fmt::format("Invalid table name: {}", tablename));
     }
 }
 
@@ -184,7 +184,7 @@ void ListenerImpl::exitTablename(KapaQueryParser::TablenameContext *tablenameCon
 void ListenerImpl::enterColumn(KapaQueryParser::ColumnContext *columnContext) {
     const auto columnName = columnContext->getText();
     if (_mainTable != nullptr && !_mainTable->isValidColumn(columnName)) {
-        _semanticErrors.push_back(std::format("Invalid column name: {}", columnName));
+        _semanticErrors.push_back(fmt::format("Invalid column name: {}", columnName));
     }
 }
 

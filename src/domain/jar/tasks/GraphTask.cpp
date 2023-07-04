@@ -232,7 +232,7 @@ void GraphTask::end() {
     // const auto isSameDigest = !_isNewJarFile && _jarFileRow->digest == digest;
     //
     // if (isSameDigest) {
-    //     _results.log->writeln(std::format("Same public digestEntry of changed jar file:{}", filename));
+    //     _results.log->writeln(fmt::format("Same public digestEntry of changed jar file:{}", filename));
     //     ++_results.jarfiles.digest.same;
     // } else {
     //     _jarFileRow->digest = digest;

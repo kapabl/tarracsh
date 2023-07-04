@@ -4,7 +4,7 @@
 #include <string>
 #include <set>
 #include <locale>
-#include <format>
+#include <fmt/format.h>
 
 #include <sodium/crypto_hash_sha256.h>
 

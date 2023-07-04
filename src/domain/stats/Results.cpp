@@ -1,7 +1,8 @@
 #include "Results.h"
 
 #include <iostream>
-#include <format>
+#include <fmt/format.h>
+#include <fmt/chrono.h>
 
 #define OOF_IMPL
 #include <oof.h>
@@ -43,7 +44,7 @@ void Results::printProgress() const {
     }
     std::cout << oof::hposition(0);
           
-    std::cout << std::format("classfiles: {}, jars : {}\n", lastClassfileCountPrint, lastJarCountPrint );
+    std::cout << fmt::format("classfiles: {}, jars : {}\n", lastClassfileCountPrint, lastJarCountPrint );
     std::cout << std::flush;
     progressStarted = true;
 }
@@ -119,15 +120,15 @@ void Results::printAll() const {
     long long totalClassfiles = standaloneClassfiles.count + jarfiles.classfileCount;
     const auto totalTime = profileData->analyzerTime.count();
     std::cout << std::endl;
-    log->writeln(std::format(".class files: {}, in jars: {}, total: {}",
+    log->writeln(fmt::format(".class files: {}, in jars: {}, total: {}",
         static_cast<uint32_t>(standaloneClassfiles.count),
         static_cast<uint32_t>(jarfiles.classfileCount),
         totalClassfiles), true);
 
-    log->writeln(std::format("speed: {:.2f} classfile/s",
+    log->writeln(fmt::format("speed: {:.2f} classfile/s",
         1000.0 * totalClassfiles / totalTime), true);
-    log->writeln(std::format("total time: {}", profileData->analyzerTime), true);
-    log->writeln(std::format("output dir: {}", options.outputDir), true);
+    log->writeln(fmt::format("total time: {}", profileData->analyzerTime), true);
+    log->writeln(fmt::format("output dir: {}", options.outputDir), true);
 
     std::cout << "\r" << std::flush;
 }
