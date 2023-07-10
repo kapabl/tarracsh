@@ -3,4 +3,10 @@
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$/cfdiff">
     <contentRoot DIR="$PROJECT_DIR$" />
   </component>
+  <component name="CidrRootsConfiguration">
+    <excludeRoots>
+      <file path="$PROJECT_DIR$/cfdiff/x64" />
+      <file path="$PROJECT_DIR$/vcpkg_installed" />
+    </excludeRoots>
+  </component>
 </project>
