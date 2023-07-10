@@ -2,6 +2,7 @@
 #define TARRACSH_STATS_H
 
 #include <string>
+#include <atomic>
 #include "infrastructure/log/Log.h"
 #include "../Options.h"
 #include "Report.h"
