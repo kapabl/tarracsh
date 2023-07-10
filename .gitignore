@@ -10,7 +10,6 @@
 /Debug/
 /cmake-build-debug/
 /cmake-build-release/
-
 /output/digest.kapamd
 /output/files.kapamd
 /output/sp.string-pool
@@ -18,9 +17,6 @@
 /test/test.vcxproj.user
 /cfdiff/x64/
 /out/
-
-
-
 /cmake/
 /cmake-build-debug-mingw/
 /cmake-build-debugarm64/
@@ -30,13 +26,14 @@
 /cmake-build-releasexarm64/
 /cmake-build-debug-visual-studio/
 /cmake-build-release-visual-studio/
-
 /vcpkg_installed/
 /cmake-build-debug-clang16/
 /cmake-build-debug-gcc/
 /cmake-build-debug-macos/
-
 /cfdiff/vcpkg_installed/
 /cfdiff/cmake-build-debug-gcc/
+/cfdiff/cmake-build-debug-gcc12/
+/cfdiff/cmake-build-debug-gcc13/
 /cfdiff/cmake-build-debug-gcc--13/
 /cfdiff/cmake-build-debug-linux-gcc/
+
