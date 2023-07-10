@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CMakeSharedSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug-gcc" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="gcc" GENERATION_OPTIONS="-DCMAKE_TOOLCHAIN_FILE=/Users/kapa/.clion-vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake">
+      <configuration PROFILE_NAME="Debug-gcc13" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="gcc13" GENERATION_OPTIONS="-DVCPKG_VERBOSE=ON -DCMAKE_TOOLCHAIN_FILE=/home/kapa/.clion-vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake" BUILD_OPTIONS="-j 1">
         <ADDITIONAL_GENERATION_ENVIRONMENT>
           <envs>
             <env name="VCPKG_DEFAULT_TRIPLET" value="x64-osx" />
@@ -11,6 +11,13 @@
       </configuration>
       <configuration PROFILE_NAME="Release-Visual Studio" ENABLED="false" CONFIG_NAME="Release" TOOLCHAIN_NAME="Visual Studio" GENERATION_OPTIONS="-DCMAKE_TOOLCHAIN_FILE=C:\Users\xman\.clion-vcpkg\vcpkg\scripts\buildsystems\vcpkg.cmake" />
       <configuration PROFILE_NAME="Debug" ENABLED="false" CONFIG_NAME="Debug" />
+      <configuration PROFILE_NAME="Debug-gcc12" ENABLED="false" CONFIG_NAME="Debug" TOOLCHAIN_NAME="gcc" GENERATION_OPTIONS="-DVCPKG_VERBOSE=ON -DCMAKE_TOOLCHAIN_FILE=/home/kapa/.clion-vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake">
+        <ADDITIONAL_GENERATION_ENVIRONMENT>
+          <envs>
+            <env name="VCPKG_DEFAULT_TRIPLET" value="x64-osx" />
+          </envs>
+        </ADDITIONAL_GENERATION_ENVIRONMENT>
+      </configuration>
     </configurations>
   </component>
 </project>

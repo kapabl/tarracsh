@@ -10,19 +10,36 @@
     <option name="reloaded" value="true" />
   </component>
   <component name="CMakeRunConfigurationManager">
-    <generated />
+    <generated>
+      <config projectName="cfdiff" targetName="cfdiff" />
+    </generated>
   </component>
   <component name="CMakeSettings">
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Cleaning.." />
+    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Cleaning..">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/cmake.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmake.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/cfdiff2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cfdiff/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cfdiff/cfdiff.vcxproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/cfdiff.vcxproj.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cfdiff/src/app" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cfdiff/src/domain" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cfdiff/src/infrastructure" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cfdiff/src/resources" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cfdiff/vcpkg.json" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/vcpkg.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/stats/Results.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/stats/Results.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/profiling/ScopedTimer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/profiling/ScopedTimer.cpp" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-gcc -13" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-gcc13" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
@@ -55,13 +72,13 @@
     &quot;cf.advertisement.text.overridden&quot;: &quot;true&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/kapa/dev/repos/tarracsh&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/kapa/dev/repos/tarracsh/cfdiff/cmake-build-debug-gcc13/vcpkg-manifest-install.log&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;CMakeSettings&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -70,12 +87,17 @@
       <recent name="$PROJECT_DIR$/cfdiff" />
     </key>
   </component>
-  <component name="RunManager" selected="CMake Debug.cmake1">
+  <component name="RunManager" selected="CMake Application.cfdiff">
     <configuration name="cmake1" type="CMakeListConfigurationType" factoryName="CMakeListConfigurationFactory">
       <method v="2" />
     </configuration>
+    <configuration name="cfdiff" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cfdiff" TARGET_NAME="cfdiff" CONFIG_NAME="Debug-gcc13" RUN_TARGET_PROJECT_NAME="cfdiff" RUN_TARGET_NAME="cfdiff">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <list>
-      <item itemvalue="CMake Application.cfdiff2" />
+      <item itemvalue="CMake Application.cfdiff" />
       <item itemvalue="CMake Debug.cmake1" />
     </list>
   </component>
@@ -97,6 +119,14 @@
       <workItem from="1688428980309" duration="1512000" />
       <workItem from="1688510135996" duration="828000" />
       <workItem from="1688513342291" duration="734000" />
+      <workItem from="1688515364069" duration="19000" />
+      <workItem from="1688515744931" duration="1070000" />
+      <workItem from="1688516874829" duration="185000" />
+      <workItem from="1688517091444" duration="103000" />
+      <workItem from="1688517219187" duration="692000" />
+      <workItem from="1688517940863" duration="1129000" />
+      <workItem from="1688950377919" duration="9479000" />
+      <workItem from="1688960207639" duration="150000" />
     </task>
     <task id="LOCAL-00001" summary="Ignoring cmake dirs">
       <created>1684696768056</created>
@@ -219,13 +249,53 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
           <url>file://$PROJECT_DIR$/cfdiff/CMakeLists.txt</url>
-          <line>35</line>
+          <line>47</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
-          <url>file://$USER_HOME$/.clion-vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake</url>
-          <line>26</line>
-          <option name="timeStamp" value="14" />
+          <url>file://$USER_HOME$/.clion-vcpkg/vcpkg/scripts/cmake/vcpkg_configure_make.cmake</url>
+          <line>343</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
+          <url>file://$USER_HOME$/.clion-vcpkg/vcpkg/scripts/cmake/vcpkg_configure_make.cmake</url>
+          <line>338</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
+          <url>file://$USER_HOME$/.clion-vcpkg/vcpkg/scripts/cmake/vcpkg_configure_make.cmake</url>
+          <line>623</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
+          <url>file://$USER_HOME$/.clion-vcpkg/vcpkg/scripts/cmake/vcpkg_configure_make.cmake</url>
+          <line>629</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
+          <url>file://$USER_HOME$/.clion-vcpkg/vcpkg/scripts/cmake/vcpkg_configure_make.cmake</url>
+          <line>640</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
+          <url>file://$USER_HOME$/.clion-vcpkg/vcpkg/scripts/cmake/vcpkg_configure_make.cmake</url>
+          <line>646</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
+          <url>file://$USER_HOME$/.clion-vcpkg/vcpkg/scripts/cmake/vcpkg_configure_make.cmake</url>
+          <line>658</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
+          <url>file://$USER_HOME$/.clion-vcpkg/vcpkg/scripts/cmake/vcpkg_configure_make.cmake</url>
+          <line>664</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
+          <url>file://$USER_HOME$/.clion-vcpkg/vcpkg/scripts/cmake/vcpkg_configure_make.cmake</url>
+          <line>832</line>
+          <option name="timeStamp" value="23" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/cfdiff/src/domain/jar/tasks/DbBasedTask.h</url>
@@ -233,6 +303,9 @@
           <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="CMakeExceptionBreakpoint" />
+      </default-breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="CMakeListConfigurationType">
@@ -242,6 +315,15 @@
         <watch expression="EXCLUDE_PATTERN" language="CMake" />
         <watch expression="CMAKE_CURRENT_SOURCE_DIR" language="CMake" />
         <watch expression="VCPKG_MANIFEST_DIR" language="CMake" />
+        <watch expression="CMAKE_TOOLCHAIN_FILE" language="CMake" />
+        <watch expression="VCPKG_VERBOSE" language="CMake" />
+        <watch expression="VCPKG_INSTALLED_DIR" language="CMake" />
+        <watch expression="VCPKG_HOST_TRIPLET" />
+        <watch expression="VCPKG_TARGET_TRIPLET" />
+        <watch expression="Z_VCPKG_ROOT_DIR" />
+        <watch expression="VCPKG_MANIFEST_DIR" />
+        <watch expression="_VCPKG_INSTALLED_DIR" />
+        <watch expression="Z_VCPKG_EXECUTABLE" />
       </configuration>
     </watches-manager>
   </component>
