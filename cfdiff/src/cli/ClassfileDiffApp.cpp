@@ -91,7 +91,7 @@ void ClassfileDiffApp::outputResult() const {
 ExitCode ClassfileDiffApp::start(int argc, char *argv[]) {
     setupCliOptions();
     auto exitCode = parseCli(argc, argv);
-    if (exitCode != 0) {
+    if (exitCode != 0 || count("--help") > 0 ) {
         return exitCode;
     }
 

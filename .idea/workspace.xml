@@ -18,26 +18,16 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Cleaning..">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/cmake.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmake.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/cfdiff2.xml" beforeDir="false" />
+    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Fixing build in linux">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/cfdiff.vcxproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/cfdiff.vcxproj.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/src/app" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/src/domain" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/src/infrastructure" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/src/resources" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/vcpkg.json" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/vcpkg.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/stats/Results.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/stats/Results.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/profiling/ScopedTimer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/profiling/ScopedTimer.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-gcc13" />
   <component name="Git.Settings">
@@ -88,10 +78,15 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.cfdiff">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="cmake1" type="CMakeListConfigurationType" factoryName="CMakeListConfigurationFactory">
       <method v="2" />
     </configuration>
-    <configuration name="cfdiff" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cfdiff" TARGET_NAME="cfdiff" CONFIG_NAME="Debug-gcc13" RUN_TARGET_PROJECT_NAME="cfdiff" RUN_TARGET_NAME="cfdiff">
+    <configuration name="cfdiff" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="--help" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cfdiff" TARGET_NAME="cfdiff" CONFIG_NAME="Debug-gcc13" RUN_TARGET_PROJECT_NAME="cfdiff" RUN_TARGET_NAME="cfdiff">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -126,7 +121,9 @@
       <workItem from="1688517219187" duration="692000" />
       <workItem from="1688517940863" duration="1129000" />
       <workItem from="1688950377919" duration="9479000" />
-      <workItem from="1688960207639" duration="150000" />
+      <workItem from="1688960207639" duration="881000" />
+      <workItem from="1688961132085" duration="508000" />
+      <workItem from="1688961885056" duration="819000" />
     </task>
     <task id="LOCAL-00001" summary="Ignoring cmake dirs">
       <created>1684696768056</created>
@@ -184,7 +181,28 @@
       <option name="project" value="LOCAL" />
       <updated>1688513950847</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Fixing build in linux">
+      <created>1688960464389</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1688960464389</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Fixing build in linux">
+      <created>1688960509522</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1688960509522</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Fixing build in linux">
+      <created>1688960537834</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1688960537834</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -212,7 +230,8 @@
     <MESSAGE value="Building with CMake in windows w CLion" />
     <MESSAGE value="Cleaning for macos" />
     <MESSAGE value="Cleaning.." />
-    <option name="LAST_COMMIT_MESSAGE" value="Cleaning.." />
+    <MESSAGE value="Fixing build in linux" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixing build in linux" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -301,6 +320,31 @@
           <url>file://$PROJECT_DIR$/cfdiff/src/domain/jar/tasks/DbBasedTask.h</url>
           <line>10</line>
           <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/cfdiff/src/cli/Main.cpp</url>
+          <line>9</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.cpp</url>
+          <line>139</line>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.cpp</url>
+          <line>147</line>
+          <option name="timeStamp" value="30" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.cpp</url>
+          <line>91</line>
+          <option name="timeStamp" value="31" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.cpp</url>
+          <line>93</line>
+          <option name="timeStamp" value="32" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
