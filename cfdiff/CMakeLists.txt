@@ -23,33 +23,45 @@ endif()
 ]]
 
 message( STATUS "source dir: ${CMAKE_CURRENT_SOURCE_DIR}" )
+get_filename_component(TARRACSH_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/.." REALPATH)
+message( STATUS "tarracsh source dir: ${TARRACSH_SOURCE_DIR}" )
+file(GLOB_RECURSE TARRACSH_SOURCES "${TARRACSH_SOURCE_DIR}/src/**/*.cpp")
+
+message(STATUS "TARRACSH_SOURCES FULL: ${TARRACSH_SOURCES}")
+
+
+list(REMOVE_ITEM TARRACSH_SOURCES "${TARRACSH_SOURCE_DIR}/src/app/Main.cpp")
+list(REMOVE_ITEM TARRACSH_SOURCES "${TARRACSH_SOURCE_DIR}/src/app/App.cpp")
+list(REMOVE_ITEM TARRACSH_SOURCES "${TARRACSH_SOURCE_DIR}/src/domain/jar/tasks/DbBasedTask.cpp")
+list(REMOVE_ITEM TARRACSH_SOURCES "${TARRACSH_SOURCE_DIR}/src/domain/jar/tasks/DigestTask.cpp")
+list(REMOVE_ITEM TARRACSH_SOURCES "${TARRACSH_SOURCE_DIR}/src/domain/jar/tasks/GraphTask.cpp")
+list(REMOVE_ITEM TARRACSH_SOURCES "${TARRACSH_SOURCE_DIR}/src/app/Analyzer.cpp")
 
 file(GLOB_RECURSE CFDIFF_SOURCES src/**/*.cpp)
-list(REMOVE_ITEM CFDIFF_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/app/Main.cpp")
-list(REMOVE_ITEM CFDIFF_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/app/App.cpp")
-list(REMOVE_ITEM CFDIFF_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/domain/jar/tasks/DbBasedTask.cpp")
-list(REMOVE_ITEM CFDIFF_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/domain/jar/tasks/DigestTask.cpp")
-list(REMOVE_ITEM CFDIFF_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/domain/jar/tasks/GraphTask.cpp")
-list(REMOVE_ITEM CFDIFF_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/app/Analyzer.cpp")
-
 
 set(CFDIFF_EXCLUDE_PATTERNS
-        "src/app/server/*"
-        "src/app/commands/*"
-        "src/domain/db/*"
-        "src/domain/digest/*"
-        "src/infrastructure/db/*"
-        )
+        "${TARRACSH_SOURCE_DIR}/src/app/server/*"
+        "${TARRACSH_SOURCE_DIR}/src/app/commands/*"
+        "${TARRACSH_SOURCE_DIR}/src/domain/db/*"
+        "${TARRACSH_SOURCE_DIR}/src/domain/digest/*"
+        "${TARRACSH_SOURCE_DIR}/src/infrastructure/db/*")
 
 foreach (EXCLUDE_PATTERN ${CFDIFF_EXCLUDE_PATTERNS})
     file(GLOB_RECURSE EXCLUDED_FILES ${EXCLUDE_PATTERN})
-    list(REMOVE_ITEM CFDIFF_SOURCES ${EXCLUDED_FILES})
+    list(REMOVE_ITEM TARRACSH_SOURCES ${EXCLUDED_FILES})
 endforeach ()
 
-message(STATUS "CFDIFF_SOURCES: ${CFDIFF_SOURCES}")
+set( ALL_SOURCES ${TARRACSH_SOURCES} ${CFDIFF_SOURCES} )
 
-add_executable(cfdiff ${CFDIFF_SOURCES})
+message(STATUS "CFDIFF_SOURCES: ${CFDIFF_SOURCES}")
+message(STATUS "TARRACSH_SOURCES: ${TARRACSH_SOURCES}")
+message(STATUS "ALL_SOURCES: ${ALL_SOURCES}")
+
+
+
+add_executable(cfdiff ${ALL_SOURCES})
 target_include_directories(cfdiff PUBLIC "src")
+target_include_directories(cfdiff PUBLIC "../src")
 
 find_package(ICU REQUIRED COMPONENTS uc io)
 target_link_libraries(cfdiff PRIVATE ICU::uc ICU::io)
@@ -68,6 +80,9 @@ target_link_libraries(cfdiff PRIVATE pantor::inja)
 
 find_package(unofficial-sodium CONFIG REQUIRED)
 target_link_libraries(cfdiff PRIVATE unofficial-sodium::sodium)
+
+find_package(fmt CONFIG REQUIRED)
+target_link_libraries(cfdiff PRIVATE fmt::fmt-header-only)
 
 find_package(libzippp CONFIG REQUIRED)
 target_link_libraries(cfdiff PRIVATE libzippp::libzippp)
