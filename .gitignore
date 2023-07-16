@@ -31,10 +31,6 @@
 /cmake-build-debug-gcc/
 /cmake-build-debug-macos/
 /cfdiff/vcpkg_installed/
-/cfdiff/cmake-build-debug-gcc/
-/cfdiff/cmake-build-debug-gcc12/
-/cfdiff/cmake-build-debug-gcc13/
-/cfdiff/cmake-build-debug-gcc--13/
-/cfdiff/cmake-build-debug-linux-gcc/
-/cfdiff/cmake-build-relwithdebinfo
+/cfdiff/cmake-build-*
+
 
