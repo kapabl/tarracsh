@@ -3,6 +3,7 @@ project(cfdiff)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++")
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexperimental-library")
@@ -41,6 +42,7 @@ file(GLOB_RECURSE CFDIFF_SOURCES src/**/*.cpp)
 
 set(CFDIFF_EXCLUDE_PATTERNS
         "${TARRACSH_SOURCE_DIR}/src/app/server/*"
+        "${TARRACSH_SOURCE_DIR}/src/app/classfile/constantpool/printer/*"
         "${TARRACSH_SOURCE_DIR}/src/app/commands/*"
         "${TARRACSH_SOURCE_DIR}/src/domain/db/*"
         "${TARRACSH_SOURCE_DIR}/src/domain/digest/*"
@@ -63,8 +65,8 @@ add_executable(cfdiff ${ALL_SOURCES})
 target_include_directories(cfdiff PUBLIC "src")
 target_include_directories(cfdiff PUBLIC "../src")
 
-find_package(ICU REQUIRED COMPONENTS uc io)
-target_link_libraries(cfdiff PRIVATE ICU::uc ICU::io)
+#find_package(ICU REQUIRED COMPONENTS uc io)
+#target_link_libraries(cfdiff PRIVATE ICU::uc ICU::io)
 
 find_path(BSHOSHANY_THREAD_POOL_INCLUDE_DIRS "BS_thread_pool.hpp")
 target_include_directories(cfdiff PRIVATE ${BSHOSHANY_THREAD_POOL_INCLUDE_DIRS})
