@@ -4,7 +4,7 @@
 
 #ifndef TARRACSH_STRUCTS_COMMON_H
 #define TARRACSH_STRUCTS_COMMON_H
-
+#include <cstdint>
 
 namespace kapa::tarracsh::domain::classfile::constantpool {
 
