@@ -4,6 +4,7 @@ project(cfdiff)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexperimental-library")
@@ -23,13 +24,12 @@ endif()
  cfdiff target
 ]]
 
-message( STATUS "source dir: ${CMAKE_CURRENT_SOURCE_DIR}" )
+#message( STATUS "source dir: ${CMAKE_CURRENT_SOURCE_DIR}" )
 get_filename_component(TARRACSH_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/.." REALPATH)
-message( STATUS "tarracsh source dir: ${TARRACSH_SOURCE_DIR}" )
+#message( STATUS "tarracsh source dir: ${TARRACSH_SOURCE_DIR}" )
 file(GLOB_RECURSE TARRACSH_SOURCES "${TARRACSH_SOURCE_DIR}/src/**/*.cpp")
 
-message(STATUS "TARRACSH_SOURCES FULL: ${TARRACSH_SOURCES}")
-
+#message(STATUS "TARRACSH_SOURCES FULL: ${TARRACSH_SOURCES}")
 
 list(REMOVE_ITEM TARRACSH_SOURCES "${TARRACSH_SOURCE_DIR}/src/app/Main.cpp")
 list(REMOVE_ITEM TARRACSH_SOURCES "${TARRACSH_SOURCE_DIR}/src/app/App.cpp")
@@ -55,9 +55,9 @@ endforeach ()
 
 set( ALL_SOURCES ${TARRACSH_SOURCES} ${CFDIFF_SOURCES} )
 
-message(STATUS "CFDIFF_SOURCES: ${CFDIFF_SOURCES}")
-message(STATUS "TARRACSH_SOURCES: ${TARRACSH_SOURCES}")
-message(STATUS "ALL_SOURCES: ${ALL_SOURCES}")
+#message(STATUS "CFDIFF_SOURCES: ${CFDIFF_SOURCES}")
+#message(STATUS "TARRACSH_SOURCES: ${TARRACSH_SOURCES}")
+#message(STATUS "ALL_SOURCES: ${ALL_SOURCES}")
 
 
 

@@ -31,6 +31,6 @@
 /cmake-build-debug-gcc/
 /cmake-build-debug-macos/
 /cfdiff/vcpkg_installed/
-/cfdiff/cmake-build-*
+/cfdiff/cmake-build*
 
 
