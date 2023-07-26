@@ -68,12 +68,14 @@ ExitCode App::start(const int argc, char *argv[]) {
 
 }
 
+#ifdef _WIN32
 void App::controlCHandler() const {
     if (_options.digest.server.isServerMode) {
         std::cout << "Terminating..." << std::endl;
         tarracsh::server::digest::ServiceImpl::signalQuick();
     }
 }
+#endif
 
 
 void App::setupCliOptions() {

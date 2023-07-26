@@ -2,6 +2,8 @@
 #define KAPA_DB_COLUMNS_H
 #include <functional>
 #include <string>
+#include <limits>
+#include <cstdint>
 #include <unordered_map>
 #include "../DbConsts.h"
 

@@ -3,6 +3,8 @@ project(tarracsh)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexperimental-library")
@@ -10,71 +12,6 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstd++")
 endif()
 #message( FATAL_ERROR "${CMAKE_CXX_COMPILER_ID}" )
-
-#get_cmake_property(_variableNames VARIABLES)
-#foreach(_variableName ${_variableNames})
-#    message(STATUS "${_variableName}=${${_variableName}}")
-#endforeach()
-#
-#message( FATAL_ERROR "exit" )
-
-#[[
- cfdiff target
-]]
-
-file(GLOB_RECURSE CFDIFF_SOURCES cfdiff/src/**/*.cpp)
-list(REMOVE_ITEM CFDIFF_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/cfdiff/src/app/Main.cpp")
-list(REMOVE_ITEM CFDIFF_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/cfdiff/src/app/App.cpp")
-list(REMOVE_ITEM CFDIFF_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/cfdiff/src/domain/jar/tasks/DbBasedTask.cpp")
-list(REMOVE_ITEM CFDIFF_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/cfdiff/src/domain/jar/tasks/DigestTask.cpp")
-list(REMOVE_ITEM CFDIFF_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/cfdiff/src/domain/jar/tasks/GraphTask.cpp")
-
-set(CFDIFF_EXCLUDE_PATTERNS
-        "*/src/app/server/*"
-        "*/src/app/commands/*"
-        "*/src/domain/db/*"
-        "*/src/domain/digest/*"
-        "*/src/infrastructure/db/*"
-        )
-
-foreach (EXCLUDE_PATTERN ${CFDIFF_EXCLUDE_PATTERNS})
-    file(GLOB_RECURSE EXCLUDED_FILES ${EXCLUDE_PATTERN})
-    list(REMOVE_ITEM CFDIFF_SOURCES ${EXCLUDED_FILES})
-endforeach ()
-
-add_executable(cfdiff ${CFDIFF_SOURCES})
-target_include_directories(cfdiff PUBLIC "cfdiff/src")
-
-find_package(ICU REQUIRED COMPONENTS uc io)
-target_link_libraries(cfdiff PRIVATE ICU::uc ICU::io)
-
-find_path(BSHOSHANY_THREAD_POOL_INCLUDE_DIRS "BS_thread_pool.hpp")
-target_include_directories(cfdiff PRIVATE ${BSHOSHANY_THREAD_POOL_INCLUDE_DIRS})
-
-find_package(antlr4-runtime REQUIRED CONFIG)
-#target_link_libraries(cfdiff PRIVATE antlr4_shared)
-
-find_package(Catch2 CONFIG REQUIRED)
-target_link_libraries(cfdiff PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)
-
-find_package(CLI11 CONFIG REQUIRED)
-target_link_libraries(cfdiff PRIVATE CLI11::CLI11)
-
-find_package(gRPC CONFIG REQUIRED)
-target_link_libraries(cfdiff PRIVATE gRPC::gpr gRPC::grpc gRPC::grpc++ gRPC::grpc++_alts)
-
-find_package(inja CONFIG REQUIRED)
-target_link_libraries(cfdiff PRIVATE pantor::inja)
-
-find_package(unofficial-sodium CONFIG REQUIRED)
-target_link_libraries(cfdiff PRIVATE unofficial-sodium::sodium)
-
-find_package(libzippp CONFIG REQUIRED)
-target_link_libraries(cfdiff PRIVATE libzippp::libzippp)
-
-find_path(OOF_INCLUDE_DIRS "oof.h")
-target_include_directories(cfdiff PRIVATE ${OOF_INCLUDE_DIRS})
-
 
 #[[
  Tarracsh target
@@ -86,14 +23,13 @@ file(GLOB_RECURSE TARRACSH_SOURCES
         "src/app/server/digest/proto/*.cc"
         )
 
+set(TARRACSH_EXCLUDE_PATTERNS "*/src/test/*" "*/test/src*")
 
-#set(TARRACSH_EXCLUDE_PATTERNS "*/src/test/*" "*/test/src*")
-#
-#foreach (EXCLUDE_PATTERN ${TARRACSH_EXCLUDE_PATTERNS})
-#    file(GLOB_RECURSE EXCLUDED_FILES ${EXCLUDE_PATTERN})
-#    list(REMOVE_ITEM TARRACSH_SOURCES ${EXCLUDED_FILES})
-#endforeach ()
-message(STATUS "TARRACSH_SOURCES: ${TARRACSH_SOURCES}")
+foreach (EXCLUDE_PATTERN ${TARRACSH_EXCLUDE_PATTERNS})
+   file(GLOB_RECURSE EXCLUDED_FILES ${EXCLUDE_PATTERN})
+   list(REMOVE_ITEM TARRACSH_SOURCES ${EXCLUDED_FILES})
+endforeach ()
+# message(STATUS "TARRACSH_SOURCES: ${TARRACSH_SOURCES}")
 
 add_executable(tarracsh ${TARRACSH_SOURCES})
 target_include_directories(tarracsh PUBLIC "src")
@@ -102,10 +38,15 @@ find_package(ICU REQUIRED COMPONENTS uc io)
 target_link_libraries(tarracsh PRIVATE ICU::uc ICU::io)
 
 find_path(BSHOSHANY_THREAD_POOL_INCLUDE_DIRS "BS_thread_pool.hpp")
-target_include_directories(tarracsh PRIVATE ${BSHOSHANY_THREAD_POOL_INCLUDE_DIRS})
+
 
 find_package(antlr4-runtime REQUIRED CONFIG)
-target_link_libraries(tarracsh PRIVATE antlr4_shared)
+#target_link_libraries(tarracsh PRIVATE antlr4_shared)
+target_link_libraries(tarracsh PRIVATE antlr4_static)
+# message( FATAL_ERROR "antlr4 dir: ${antlr4-runtime_DIR}" )
+target_include_directories(tarracsh PRIVATE ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/antlr4-runtime)
+#target_link_libraries(tarracsh PRIVATE ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/antlr4-runtime.lib)
+#
 
 find_package(Catch2 CONFIG REQUIRED)
 target_link_libraries(tarracsh PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)
@@ -132,6 +73,16 @@ endif()
 
 find_path(OOF_INCLUDE_DIRS "oof.h")
 target_include_directories(tarracsh PRIVATE ${OOF_INCLUDE_DIRS})
+
+find_package(fmt CONFIG REQUIRED)
+target_link_libraries(tarracsh PRIVATE fmt::fmt-header-only)
+
+# get_cmake_property(_variableNames VARIABLES)
+# foreach(_variableName ${_variableNames})
+#    message(STATUS "${_variableName}=${${_variableName}}")
+# endforeach()
+
+# message( FATAL_ERROR "exit" )
 
 
 

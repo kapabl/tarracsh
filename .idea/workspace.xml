@@ -10,23 +10,27 @@
     <option name="reloaded" value="true" />
   </component>
   <component name="CMakeRunConfigurationManager">
-    <generated>
-      <config projectName="cfdiff" targetName="cfdiff" />
-    </generated>
+    <generated />
   </component>
   <component name="CMakeSettings">
-    <configurations />
+    <configurations>
+      <configuration PROFILE_NAME="Release-remote" ENABLED="true" CONFIG_NAME="Release" TOOLCHAIN_NAME="Default" />
+    </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Fixing build in linux">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/cmake.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmake.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/cfdiff.vcxproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/cfdiff.vcxproj.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfdiff/vcpkg.json" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/vcpkg.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/classfile/constantpool/ConstpoolStructures.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/classfile/constantpool/ConstpoolStructures.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/classfile/constantpool/StructsCommon.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/classfile/constantpool/StructsCommon.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/App.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/App.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/server/digest/ServiceImpl.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/server/digest/ServiceImpl.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/Methods.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/Methods.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/Database.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/Database.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/columns/Columns.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/columns/Columns.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/columns/Columns.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/columns/Columns.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vcpkg-tarracsh.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,6 +56,10 @@
     <option name="majorVersion" value="2022" />
     <option name="minorVersion" value="3.2" />
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": -1
+}]]></component>
   <component name="ProjectId" id="2Po2nq6SjMDR6kVaSTIccKRuvaV" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -69,6 +77,7 @@
     "cf.advertisement.text.overridden": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
     "last_opened_file_path": "/home/kapa/.clion-vcpkg/vcpkg/buildtrees/icu/build-x64-linux-dbg-err.log",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -76,24 +85,54 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "CMakeSettings",
+    "structure.view.defaults.are.configured": "true",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RdControllerToolWindowsLayoutState" isNewUi="true">
+    <layout>
+      <window_info id="Space Code Reviews" />
+      <window_info id="Bookmarks" side_tool="true" />
+      <window_info id="Merge Requests" />
+      <window_info id="Commit_Guest" />
+      <window_info id="Pull Requests" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.9080882" weight="0.26618034" />
+      <window_info id="Commit" order="1" weight="0.25" />
+      <window_info active="true" id="Cody" order="2" visible="true" weight="0.26618034" />
+      <window_info active="true" id="Structure" order="2" side_tool="true" visible="true" weight="0.26618034" />
+      <window_info anchor="bottom" id="CMake" weight="0.25821105" />
+      <window_info anchor="bottom" id="Database Changes" />
+      <window_info anchor="bottom" id="TypeScript" />
+      <window_info anchor="bottom" id="Python Packages" />
+      <window_info anchor="bottom" id="TODO" />
+      <window_info anchor="bottom" id="File Transfer" />
+      <window_info anchor="bottom" id="Vcpkg" weight="0.4433962" />
+      <window_info anchor="bottom" id="clangd" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="0" visible="true" weight="0.2540182" />
+      <window_info anchor="bottom" id="Problems View" order="2" />
+      <window_info anchor="bottom" id="Terminal" order="3" weight="0.2540182" />
+      <window_info anchor="bottom" id="Services" order="4" />
+      <window_info anchor="right" id="make" side_tool="true" />
+      <window_info active="true" anchor="right" id="Meet New UI" side_tool="true" weight="0.21163653" />
+      <window_info anchor="right" content_ui="combo" id="Notifications" order="0" weight="0.25" />
+      <window_info anchor="right" id="Database" order="2" weight="0.25" />
+    </layout>
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/cfdiff" />
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.cfdiff">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="cmake1" type="CMakeListConfigurationType" factoryName="CMakeListConfigurationFactory">
       <method v="2" />
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="cfdiff" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="--help" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cfdiff" TARGET_NAME="cfdiff" CONFIG_NAME="Debug-gcc13-linux" RUN_TARGET_PROJECT_NAME="cfdiff" RUN_TARGET_NAME="cfdiff">
+    <configuration name="cfdiff" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="--help" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Project" TARGET_NAME="cfdiff" CONFIG_NAME="Debug-gcc13-linux" RUN_TARGET_PROJECT_NAME="Project" RUN_TARGET_NAME="cfdiff">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -137,6 +176,8 @@
       <workItem from="1689317704380" duration="1632000" />
       <workItem from="1689486682189" duration="2137000" />
       <workItem from="1689491295167" duration="3210000" />
+      <workItem from="1690272145937" duration="31000" />
+      <workItem from="1690272242307" duration="3210000" />
     </task>
     <task id="LOCAL-00001" summary="Ignoring cmake dirs">
       <created>1684696768056</created>
@@ -271,21 +312,6 @@
           <url>file://$APPLICATION_HOME_DIR$/bin/cmake/win/x64/share/cmake-3.25/Modules/FindBoost.cmake</url>
           <line>1474</line>
           <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
-          <url>file://$PROJECT_DIR$/CMakeLists.txt</url>
-          <line>93</line>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
-          <url>file://$PROJECT_DIR$/CMakeLists.txt</url>
-          <line>7</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
-          <url>file://$PROJECT_DIR$/CMakeLists.txt</url>
-          <line>6</line>
-          <option name="timeStamp" value="10" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="CMakeLineBreakpoint">
           <url>file://$PROJECT_DIR$/cfdiff/CMakeLists.txt</url>
