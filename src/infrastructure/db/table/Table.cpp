@@ -270,7 +270,8 @@ void Table::internalUpdate(AutoIncrementedRow *row, const std::string &key) {
     }
 
     row->id = destRow->id;
-    memcpy_s(destRow, _rowSize, row, _rowSize);
+    //memcpy_s(destRow, _rowSize, row, _rowSize);
+    memcpy(destRow, row, _rowSize);
     freeRow(row);
 }
 
@@ -280,12 +281,13 @@ Table::Table(db::Database &db, const std::string &name, uint64_t rowSize)
       _name(name),
       _stringPool(db.getStringPool()) {
     _layout.header.signature = KAPA_TABLE_SIGNATURE;
-    strcpy_s(_layout.header.name, name.c_str());
+    //strcpy_s(_layout.header.name, name.c_str());
+    strcpy(_layout.header.name, name.c_str());    
     _filename = db.generateTableFilename(name);
 
 }
 
-inline Table::~Table() {
+Table::~Table() {
     for (const auto row : _rows | std::views::values) {
         freeRow(row);
     }
@@ -386,8 +388,10 @@ bool Table::write() {
     const auto fileExists = std::filesystem::exists(_filename);
     const auto mode = fileExists ? "rb+" : "wb+";
 
-    FILE *file = nullptr;
-    if (fopen_s(&file, _filename.c_str(), mode) == 0) {
+    //FILE *file = nullptr;
+    //if (fopen_s(&file, _filename.c_str(), mode) == 0) {
+    FILE *file = fopen(_filename.c_str(), mode);
+    if (file != nullptr ) {        
         if (std::fseek(file, 0, SEEK_SET) != 0) {
             _db.log().writeln(fmt::format("Error seeking file {}", _filename), true);
             return false;
@@ -434,8 +438,10 @@ bool Table::read() {
     std::lock_guard lock(_mutex);
 
     if (!std::filesystem::exists(_filename)) return true;
-    FILE *file = nullptr;
-    auto result = fopen_s(&file, _filename.c_str(), "rb") == 0;
+    // FILE *file = nullptr;
+    // auto result = fopen_s(&file, _filename.c_str(), "rb") == 0;
+    auto *file = fopen(_filename.c_str(), "rb");
+    auto result = file != nullptr;
     if (result) {
         result = readHeader(file) &&
                  readSchema(file) &&

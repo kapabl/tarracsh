@@ -2,6 +2,7 @@
 #include <fmt/format.h>
 #include <fmt/chrono.h>
 #include <chrono>
+#include <string.h>
 #include "../Database.h"
 #include "../table/Table.h"
 
@@ -47,7 +48,8 @@ Properties::Properties()
 Properties::Properties(const char *name, const StorageType type,
                        const DisplayAs displayAs, uint64_t offsetInRow) {
     memset(this->name, 0, MAX_COLUMN_NAME);
-    strcpy_s(this->name, name);
+    //strcpy_s(this->name, name);
+    strcpy(this->name, name);    
     this->type = type;
     this->displayAs = displayAs;
     this->offsetInRow = offsetInRow;
@@ -57,13 +59,17 @@ Properties::Properties(const char *name, const StorageType type,
                        const DisplayAs displayAs, uint64_t offsetInRow,
                        const char *refTable, const char *displayColumn) {
     memset(this->name, 0, MAX_COLUMN_NAME);
-    strcpy_s(this->name, name);
+    strcpy(this->name, name);
+    //strcpy_s(this->name, name);
 
     memset(this->refColProperties.table, 0, MAX_COLUMN_NAME);
-    strcpy_s(this->refColProperties.table, refTable);
+    //strcpy_s(this->refColProperties.table, refTable);
+    strcpy(this->refColProperties.table, refTable);
 
     memset(this->refColProperties.displayColumn, 0, MAX_COLUMN_NAME);
-    strcpy_s(this->refColProperties.displayColumn, displayColumn);
+    //strcpy_s(this->refColProperties.displayColumn, displayColumn);
+    strcpy(this->refColProperties.displayColumn, displayColumn);
+
     this->type = type;
     this->displayAs = displayAs;
     this->offsetInRow = offsetInRow;

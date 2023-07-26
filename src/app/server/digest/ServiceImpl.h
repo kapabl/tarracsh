@@ -1,5 +1,7 @@
 #ifndef TARRACSH_SERVER_H
 #define TARRACSH_SERVER_H
+
+#include <condition_variable>
 #include "../../Context.h"
 #include <grpcpp/security/server_credentials.h>
 #include <grpcpp/server.h>

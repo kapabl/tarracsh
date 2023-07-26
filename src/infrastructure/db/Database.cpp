@@ -7,6 +7,7 @@
 #include <memory>
 #include <ranges>
 #include <memory>
+#include <condition_variable>
 #include "StringPool.h"
 
 using namespace kapa::infrastructure::db;
