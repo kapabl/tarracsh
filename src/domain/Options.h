@@ -51,6 +51,7 @@ struct ParseOptions : BaseOptions {
     bool printConstantPool{false};
     bool printCPoolHtmlNav{false};
     bool descriptiveCPoolEntries{true};
+    std::vector<std::string> cpoolFilter;
 };
 
 struct Options {

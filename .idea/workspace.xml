@@ -10,27 +10,34 @@
     <option name="reloaded" value="true" />
   </component>
   <component name="CMakeRunConfigurationManager">
-    <generated />
+    <generated>
+      <config projectName="tarracsh" targetName="tarracsh" />
+    </generated>
   </component>
   <component name="CMakeSettings">
-    <configurations>
-      <configuration PROFILE_NAME="Release-remote" ENABLED="true" CONFIG_NAME="Release" TOOLCHAIN_NAME="Default" />
-    </configurations>
+    <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Fixing build in linux">
+    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Fixing tarracsh for linux build w gcc13">
+      <change afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/cmake.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmake.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/build.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cfdiff/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/cfdiff/build.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/App.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/App.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/server/digest/ServiceImpl.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/server/digest/ServiceImpl.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/Methods.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/Methods.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/Database.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/Database.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/columns/Columns.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/columns/Columns.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/columns/Columns.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/columns/Columns.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vcpkg-tarracsh.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/App.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/App.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/classfile/constantpool/printer/ConstantPoolPrinter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/classfile/constantpool/printer/ConstantPoolPrinter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/classfile/constantpool/printer/ConstantPoolPrinter.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/classfile/constantpool/printer/ConstantPoolPrinter.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/commands/Parse.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/Parse.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/Options.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/Options.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/classfile/ClassFileParser.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/classfile/ClassFileParser.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/classfile/constantpool/ConstpoolStructures.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/classfile/constantpool/ConstpoolStructures.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/string/StringUtils.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/string/StringUtils.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +47,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Release-gcc13-linux" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-remote" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
@@ -51,44 +58,47 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
     <option name="majorVersion" value="2022" />
     <option name="minorVersion" value="3.2" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": -1
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2Po2nq6SjMDR6kVaSTIccKRuvaV" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "cf.advertisement.text.has.clang-format": "true",
-    "cf.advertisement.text.overridden": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/kapa/.clion-vcpkg/vcpkg/buildtrees/icu/build-x64-linux-dbg-err.log",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "CMakeSettings",
-    "structure.view.defaults.are.configured": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.advertisement.text.has.clang-format&quot;: &quot;true&quot;,
+    &quot;cf.advertisement.text.overridden&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/kapa/repos/vcpkg&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;CPPToolchains&quot;,
+    &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RdControllerToolWindowsLayoutState" isNewUi="true">
     <layout>
       <window_info id="Space Code Reviews" />
@@ -99,7 +109,7 @@
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.9080882" weight="0.26618034" />
       <window_info id="Commit" order="1" weight="0.25" />
       <window_info active="true" id="Cody" order="2" visible="true" weight="0.26618034" />
-      <window_info active="true" id="Structure" order="2" side_tool="true" visible="true" weight="0.26618034" />
+      <window_info active="true" id="Structure" order="3" side_tool="true" visible="true" weight="0.26618034" />
       <window_info anchor="bottom" id="CMake" weight="0.25821105" />
       <window_info anchor="bottom" id="Database Changes" />
       <window_info anchor="bottom" id="TypeScript" />
@@ -109,13 +119,13 @@
       <window_info anchor="bottom" id="Vcpkg" weight="0.4433962" />
       <window_info anchor="bottom" id="clangd" />
       <window_info active="true" anchor="bottom" id="Version Control" order="0" visible="true" weight="0.2540182" />
-      <window_info anchor="bottom" id="Problems View" order="2" />
-      <window_info anchor="bottom" id="Terminal" order="3" weight="0.2540182" />
-      <window_info anchor="bottom" id="Services" order="4" />
+      <window_info anchor="bottom" id="Problems View" order="1" />
+      <window_info anchor="bottom" id="Terminal" order="2" weight="0.2540182" />
+      <window_info anchor="bottom" id="Services" order="3" />
       <window_info anchor="right" id="make" side_tool="true" />
       <window_info active="true" anchor="right" id="Meet New UI" side_tool="true" weight="0.21163653" />
       <window_info anchor="right" content_ui="combo" id="Notifications" order="0" weight="0.25" />
-      <window_info anchor="right" id="Database" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="1" weight="0.25" />
     </layout>
   </component>
   <component name="RecentsManager">
@@ -124,21 +134,22 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.cfdiff">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="cmake1" type="CMakeListConfigurationType" factoryName="CMakeListConfigurationFactory">
       <method v="2" />
     </configuration>
-    <configuration name="cfdiff" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="--help" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Project" TARGET_NAME="cfdiff" CONFIG_NAME="Debug-gcc13-linux" RUN_TARGET_PROJECT_NAME="Project" RUN_TARGET_NAME="cfdiff">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="cfdiff" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="--help" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tarracsh" TARGET_NAME="cfdiff" RUN_TARGET_PROJECT_NAME="tarracsh" RUN_TARGET_NAME="cfdiff">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <list>
       <item itemvalue="CMake Application.cfdiff" />
+      <item itemvalue="CMake Application.tarracsh" />
       <item itemvalue="CMake Debug.cmake1" />
     </list>
   </component>
@@ -177,7 +188,10 @@
       <workItem from="1689486682189" duration="2137000" />
       <workItem from="1689491295167" duration="3210000" />
       <workItem from="1690272145937" duration="31000" />
-      <workItem from="1690272242307" duration="3210000" />
+      <workItem from="1690272242307" duration="3669000" />
+      <workItem from="1690334914196" duration="12798000" />
+      <workItem from="1690679384528" duration="12296000" />
+      <workItem from="1691033894239" duration="9308000" />
     </task>
     <task id="LOCAL-00001" summary="Ignoring cmake dirs">
       <created>1684696768056</created>
@@ -264,7 +278,15 @@
       <option name="project" value="LOCAL" />
       <updated>1689494513566</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Fixing tarracsh for linux build w gcc13">
+      <option name="closed" value="true" />
+      <created>1690334704425</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1690334704425</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -293,7 +315,8 @@
     <MESSAGE value="Cleaning for macos" />
     <MESSAGE value="Cleaning.." />
     <MESSAGE value="Fixing build in linux" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing build in linux" />
+    <MESSAGE value="Fixing tarracsh for linux build w gcc13" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixing tarracsh for linux build w gcc13" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -388,9 +411,30 @@
           <line>92</line>
           <option name="timeStamp" value="34" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/domain/classfile/ClassFileParser.cpp</url>
+          <line>27</line>
+          <option name="timeStamp" value="37" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/domain/classfile/ClassFileParser.h</url>
+          <line>19</line>
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp</url>
+          <line>85</line>
+          <option name="timeStamp" value="41" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/cmake-build-debug-remote/vcpkg_installed/x64-linux/include/CLI/Error.hpp</url>
+          <line>171</line>
+          <option name="timeStamp" value="46" />
+        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint type="CMakeExceptionBreakpoint" />
+        <breakpoint enabled="true" type="CidrExceptionBreakpoint" />
       </default-breakpoints>
     </breakpoint-manager>
     <watches-manager>

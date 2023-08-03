@@ -36,6 +36,7 @@ protected:
 
 private:
     domain::Options _options;
+    bool _isHelp{false};
     void setupCliOptions();
 
     std::unique_ptr<commands::Parse> _parseCommand{};

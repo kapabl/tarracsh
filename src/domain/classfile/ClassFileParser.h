@@ -1,5 +1,5 @@
-#ifndef TARRACSH_CLASSFILE_ANALYZER_H
-#define TARRACSH_CLASSFILE_ANALYZER_H
+#ifndef TARRACSH_CLASSFILE_PARSER_H
+#define TARRACSH_CLASSFILE_PARSER_H
 #include <string>
 #include <vector>
 
@@ -13,7 +13,7 @@ namespace kapa::tarracsh::domain::classfile {
 
 
 class ClassFileParser final {
-   
+
 
 public:
     explicit ClassFileParser(reader::ClassFileReader &reader, std::string filename, std::shared_ptr<infrastructure::log::Log> log);
@@ -54,7 +54,6 @@ private:
     std::vector<constantpool::FieldInfo> _fields;
     std::vector<constantpool::MethodInfo> _methods;
     std::vector<attribute::AttributeInfo> _attributes;
-
     attribute::AttributesManager _attributesManager;
 
 
@@ -66,8 +65,8 @@ private:
     void readMainClassInfo();
     void readInterfaces();
     void readFields();
-    void readAttributesSection(std::vector<attribute::AttributeInfo> &attributes, const int count,
-                               const attribute::AttributeOwner owner);
+    void readAttributesSection(std::vector<attribute::AttributeInfo> &attributes, int count,
+                               attribute::AttributeOwner owner);
     void readMethods();
     void readAttributes();
     void processFile();
