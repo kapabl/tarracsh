@@ -42,6 +42,9 @@ void Parse::addCommand() {
                                                        "Verbose print of classfile parse result to stdout");
     const auto printCPool = _subCommand->add_flag("--print-cpool", _options.parse.printConstantPool,
                                                   "Printing const-pool to stdout. Similar to javap");
+    const auto cpoolFilter = _subCommand->add_option("--cpool-filter", _options.parse.cpoolFilter,
+                                                     "Filter constant pool entries by type. e.g: utf8, class, methodref, etc");
+    cpoolFilter->needs(printCPool);
 
     _subCommand->add_flag("--descriptive-cpool", _options.parse.descriptiveCPoolEntries,
                           "Descriptive CPool Entries. e.g: 'UTF8 String' in place of 'utf8'")->default_val(true);

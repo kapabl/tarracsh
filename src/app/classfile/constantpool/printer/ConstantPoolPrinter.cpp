@@ -17,14 +17,16 @@ using namespace std;
 
 
 vector<vector<string>> ConstantPoolPrinter::_poolTagToString;
+std::unordered_set<ConstantPoolTag> ConstantPoolPrinter::_filter;
+std::unordered_map<std::string, ConstantPoolTag> ConstantPoolPrinter::_stringToPoolTag;
 vector<string> ConstantPoolPrinter::_refKindToString;
 int ConstantPoolPrinter::_cpoolStringIndex = 1;
 mutex ConstantPoolPrinter::_cpoolStdoutMutex;
 
 
 ConstantPoolPrinter::ConstantPoolPrinter(ClassFileParser &classFileParser)
-    : _classFileParser(classFileParser),
-      _constantPool(classFileParser.getConstantPool()) {
+        : _classFileParser(classFileParser),
+          _constantPool(classFileParser.getConstantPool()) {
 }
 
 
@@ -39,14 +41,17 @@ void ConstantPoolPrinter::print() {
             printTitle();
             cout << _currentLine << endl;
             for (u2 index = 1u; index < _constantPool.getPoolSize(); index = _constantPool.getNextIndex(index)) {
-                const auto& entry = _constantPool.getEntry(index);
+
+                const auto &entry = _constantPool.getEntry(index);
+                if (!applyFilter(entry.base.tag)) continue;
+
                 _currentLine.clear();
                 printHeader(entry.base, index);
                 printEntry(entry, index);
                 cout << _currentLine << endl;
             }
         }
-        catch(...) {
+        catch (...) {
             cout << "Exception printing constant pool" << endl;
         }
     }
@@ -148,14 +153,14 @@ inline void ConstantPoolPrinter::printInvokeDynamicInfo(const InvokeDynamicInfo 
 
 }
 
-inline void ConstantPoolPrinter::printNameAndTypeInfo(const NameAndTypeInfo &entry, int index) {
+void ConstantPoolPrinter::printNameAndTypeInfo(const NameAndTypeInfo &entry, int index) {
     _currentLine += fmt::format("{}:{} {}:{}", entry.nameIndex, entry.descriptorIndex,
                                 _constantPool.getString(entry.nameIndex),
                                 _constantPool.getString(entry.descriptorIndex));
 }
 
 
-inline void ConstantPoolPrinter::printEntry(const ConstantPoolRecord &entry, int index) {
+void ConstantPoolPrinter::printEntry(const ConstantPoolRecord &entry, int index) {
     switch (entry.base.tag) {
         case JVM_CONSTANT_Utf8:
             printUtf8Info(entry.utf8Info, index);
@@ -222,7 +227,7 @@ inline void ConstantPoolPrinter::printEntry(const ConstantPoolRecord &entry, int
             printHeader(entry.base, index);
             break;
 
-        // case JVM_CONSTANT_ExternalMax:
+            // case JVM_CONSTANT_ExternalMax:
         case JVM_CONSTANT_Unicode:
             _currentLine = "Unused Cool Entry type found: JVM_CONSTANT_Unicode";
             break;
@@ -233,28 +238,43 @@ inline void ConstantPoolPrinter::printEntry(const ConstantPoolRecord &entry, int
     }
 }
 
-void ConstantPoolPrinter::initStringMaps() {
+void ConstantPoolPrinter::initStringMaps(Context &context) {
     _poolTagToString.resize(JVM_CONSTANT_ExternalMax + 1);
 
-    _poolTagToString[JVM_CONSTANT_Empty] = {"empty", "Empty" };
-    _poolTagToString[JVM_CONSTANT_Utf8] = { "utf8", "UTF8 String" };
-    _poolTagToString[JVM_CONSTANT_Unicode] = { "unicode", "Unicode" };
-    _poolTagToString[JVM_CONSTANT_Integer] = { "int", "Int" };
-    _poolTagToString[JVM_CONSTANT_Float] = { "float", "Float" };
-    _poolTagToString[JVM_CONSTANT_Long] = { "long", "Long" };
-    _poolTagToString[JVM_CONSTANT_Double] = { "double", "Double" };
-    _poolTagToString[JVM_CONSTANT_Class] = { "class", "Class Ref" };
-    _poolTagToString[JVM_CONSTANT_String] = { "string", "String" };
-    _poolTagToString[JVM_CONSTANT_Fieldref] = { "fieldref", "Field Ref" };
-    _poolTagToString[JVM_CONSTANT_Methodref] = { "methodref", "Method Ref" };
-    _poolTagToString[JVM_CONSTANT_InterfaceMethodref] = { "iface-methodref", "IFACE Method Ref" };
-    _poolTagToString[JVM_CONSTANT_NameAndType] = { "name-type", "Name & Type" };
-    _poolTagToString[JVM_CONSTANT_MethodHandle] = { "method-handle", "Method Handle" };
-    _poolTagToString[JVM_CONSTANT_MethodType] = { "method-type", "Method Type" };
-    _poolTagToString[JVM_CONSTANT_Dynamic] = { "dynamic", "Dynamic" };
-    _poolTagToString[JVM_CONSTANT_InvokeDynamic] = { "invk-dynamic", "Invoke Dynamic" };
-    _poolTagToString[JVM_CONSTANT_Module] = { "module", "Module" };
-    _poolTagToString[JVM_CONSTANT_Package] = { "package", "Package"};
+    _poolTagToString[JVM_CONSTANT_Empty] = {"empty", "Empty"};
+    _poolTagToString[JVM_CONSTANT_Utf8] = {"utf8", "UTF8 String"};
+    _poolTagToString[JVM_CONSTANT_Unicode] = {"unicode", "Unicode"};
+    _poolTagToString[JVM_CONSTANT_Integer] = {"int", "Int"};
+    _poolTagToString[JVM_CONSTANT_Float] = {"float", "Float"};
+    _poolTagToString[JVM_CONSTANT_Long] = {"long", "Long"};
+    _poolTagToString[JVM_CONSTANT_Double] = {"double", "Double"};
+    _poolTagToString[JVM_CONSTANT_Class] = {"class", "Class Ref"};
+    _poolTagToString[JVM_CONSTANT_String] = {"string", "String"};
+    _poolTagToString[JVM_CONSTANT_Fieldref] = {"fieldref", "Field Ref"};
+    _poolTagToString[JVM_CONSTANT_Methodref] = {"methodref", "Method Ref"};
+    _poolTagToString[JVM_CONSTANT_InterfaceMethodref] = {"iface-methodref", "IFACE Method Ref"};
+    _poolTagToString[JVM_CONSTANT_NameAndType] = {"name-type", "Name & Type"};
+    _poolTagToString[JVM_CONSTANT_MethodHandle] = {"method-handle", "Method Handle"};
+    _poolTagToString[JVM_CONSTANT_MethodType] = {"method-type", "Method Type"};
+    _poolTagToString[JVM_CONSTANT_Dynamic] = {"dynamic", "Dynamic"};
+    _poolTagToString[JVM_CONSTANT_InvokeDynamic] = {"invk-dynamic", "Invoke Dynamic"};
+    _poolTagToString[JVM_CONSTANT_Module] = {"module", "Module"};
+    _poolTagToString[JVM_CONSTANT_Package] = {"package", "Package"};
+
+    auto index = -1;
+    for( auto &poolTagStrings: _poolTagToString) {
+        ++index;
+        if (poolTagStrings.empty()) continue;
+        _stringToPoolTag[ poolTagStrings[0] ] = static_cast<ConstantPoolTag>(index);
+    }
+
+    auto &cpoolFilter = context.getOptions().parse.cpoolFilter;
+    std::unordered_set filterSet(cpoolFilter.begin(), cpoolFilter.end() );
+    for( auto&[tagString, tag]: _stringToPoolTag) {
+        if ( filterSet.contains(tagString) ) {
+            _filter.insert(static_cast<ConstantPoolTag>(tag));
+        }
+    }
 
     _refKindToString.resize(JVM_REF_LIMIT);
     _refKindToString[JVM_REF_getField] = "REF_getField";
@@ -268,8 +288,19 @@ void ConstantPoolPrinter::initStringMaps() {
     _refKindToString[JVM_REF_invokeInterface] = "REF_invokeInterface";
 }
 
-void ConstantPoolPrinter::init(Context& context) {
-    initStringMaps();
+void ConstantPoolPrinter::init(Context &context) {
+    initStringMaps(context);
+    initFilter();
+
     //TODO fix this dependency from the app layer
     _cpoolStringIndex = context.getOptions().parse.descriptiveCPoolEntries ? 1 : 0;
+}
+
+auto ConstantPoolPrinter::applyFilter(ConstantPoolTag tag) const -> bool {
+    const auto result = _filter.empty() || _filter.contains(tag);
+    return result;
+}
+
+void ConstantPoolPrinter::initFilter() {
+
 }

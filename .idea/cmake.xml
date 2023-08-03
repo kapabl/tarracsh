@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CMakeSharedSettings">
     <configurations>
+      <configuration PROFILE_NAME="Release-remote" ENABLED="true" CONFIG_NAME="Release" TOOLCHAIN_NAME="Remote Host" GENERATION_OPTIONS="-DCMAKE_TOOLCHAIN_FILE=/home/kapa/repos/vcpkg/scripts/buildsystems/vcpkg.cmake" BUILD_OPTIONS="-j 2" />
       <configuration PROFILE_NAME="Debug-gcc13-linux" ENABLED="false" CONFIG_NAME="Debug" TOOLCHAIN_NAME="gcc13" GENERATION_OPTIONS="-DVCPKG_VERBOSE=ON -DCMAKE_TOOLCHAIN_FILE=/home/kapa/.clion-vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake" BUILD_OPTIONS="-j 1" />
       <configuration PROFILE_NAME="Release-Visual Studio" ENABLED="false" CONFIG_NAME="Release" TOOLCHAIN_NAME="Visual Studio" GENERATION_OPTIONS="-DCMAKE_TOOLCHAIN_FILE=C:\Users\xman\.clion-vcpkg\vcpkg\scripts\buildsystems\vcpkg.cmake" />
       <configuration PROFILE_NAME="Debug" ENABLED="false" CONFIG_NAME="Debug" />
@@ -13,6 +14,7 @@
         </ADDITIONAL_GENERATION_ENVIRONMENT>
       </configuration>
       <configuration PROFILE_NAME="Release-gcc13-linux" ENABLED="false" CONFIG_NAME="Release" TOOLCHAIN_NAME="gcc13" GENERATION_OPTIONS="-DVCPKG_VERBOSE=ON -DCMAKE_TOOLCHAIN_FILE=/home/kapa/.clion-vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake" BUILD_OPTIONS="-j 1" />
+      <configuration PROFILE_NAME="Debug-remote" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Remote Host" GENERATION_OPTIONS="-DCMAKE_TOOLCHAIN_FILE=/home/kapa/repos/vcpkg/scripts/buildsystems/vcpkg.cmake" BUILD_OPTIONS="-j 2" />
     </configurations>
   </component>
 </project>

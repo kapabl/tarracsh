@@ -1,6 +1,7 @@
 #ifndef TARRACSH_CONSTANT_POOL_PRINTER_H
 #define TARRACSH_CONSTANT_POOL_PRINTER_H
 #include <unordered_map>
+#include <unordered_set>
 
 #include "app/Context.h"
 #include "domain/classfile/ClassFileParser.h"
@@ -28,10 +29,12 @@ protected:
     static std::mutex _cpoolStdoutMutex;
 
     static std::vector<std::vector<std::string>> _poolTagToString;
+    static std::unordered_map<std::string, ConstantPoolTag> _stringToPoolTag;
     static std::vector<std::string> _refKindToString;
     static int _cpoolStringIndex;
 
     std::vector<std::string> _outputLines{};
+    static std::unordered_set<ConstantPoolTag> _filter;
 
 
     static std::string tagToString(ConstantPoolTag tag);
@@ -56,9 +59,12 @@ protected:
     virtual void printEntry(const domain::classfile::constantpool::ConstantPoolRecord &entry, int index);
     virtual void printTitle();
 
-    static void initStringMaps();
+    static void initStringMaps(Context &context);
 
 
+    auto applyFilter(ConstantPoolTag tag) const -> bool;
+
+    static void initFilter();
 };
 
 

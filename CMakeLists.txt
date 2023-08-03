@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 project(tarracsh)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_DEFAULT 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
@@ -12,6 +13,14 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstd++")
 endif()
 #message( FATAL_ERROR "${CMAKE_CXX_COMPILER_ID}" )
+
+#get_cmake_property(_variableNames VARIABLES)
+#foreach(_variableName ${_variableNames})
+#    message(STATUS "${_variableName}=${${_variableName}}")
+#endforeach()
+#
+#message( FATAL_ERROR "exit" )
+
 
 #[[
  Tarracsh target

@@ -2,6 +2,8 @@
 #define TARRACSH_STRINGUTILS_H
 
 #include <algorithm>
+#include <sstream>
+#include <iomanip>
 #include <cctype>
 #include <string>
 #include <numeric>
@@ -12,6 +14,19 @@
 
 
 namespace kapa::infrastructure::string::stringUtils {
+
+inline std::string escapeUtf8(const std::string& input) {
+    std::stringstream stream;
+    for (unsigned char c : input) {
+        if (c <= 0x7f && c >= 0x20 && c != '\\' && c != '"' && c != '\'')
+            stream << c;
+        else
+            stream << "\\x" << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(c);
+    }
+    auto result = stream.str();
+    return result;
+}
+
 
 inline std::string replaceAll(const std::string &value, const std::string &oldSubstring,
                               const std::string &newSubstring) {

@@ -1,7 +1,6 @@
 #ifndef TARRACSH_CLASSFILESTRUCTURE_H
 #define TARRACSH_CLASSFILESTRUCTURE_H
 
-//#include <unicode/unistr.h>
 #include "StructsCommon.h"
 #include "StackFrame.h"
 #include "../AttributeStructures.h"
@@ -77,6 +76,9 @@ namespace kapa::tarracsh::domain::classfile::constantpool {
 //        std::string result;
 //        icu::UnicodeString::fromUTF8(stringPiece).toUTF8String(result);
             std::string result(reinterpret_cast<const char *>(bytes), length);
+            if ( withEscaped ) {
+                result = infrastructure::string::stringUtils::escapeUtf8(result);
+            }
             return result;
         }
     };

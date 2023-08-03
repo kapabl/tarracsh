@@ -26,7 +26,7 @@ using namespace kapa::tarracsh::app;
 std::unique_ptr<App> App::_app;
 
 App::App(const std::string &description, const std::string &name, const std::shared_ptr<Log> log)
-    : CliApp(description, name), _log(log), _results(_options) {
+        : CliApp(description, name), _log(log), _results(_options) {
 
     _results.log = log;
 }
@@ -48,7 +48,7 @@ ExitCode App::run(const int argc, char *argv[]) {
 ExitCode App::start(const int argc, char *argv[]) {
 
     auto exitCode = parseCli(argc, argv);
-    if (exitCode != 0) {
+    if (exitCode != 0  || _isHelp) {
         return exitCode;
     }
 
@@ -134,6 +134,12 @@ int App::parseCli(int argc, char **argv) {
             _options.logFile = logFile.string();
         }
 
+    } catch (const CLI::CallForHelp &e) {
+        _isHelp = true;
+        result = exit(e);
+    } catch (const CLI::CallForAllHelp &e) {
+        _isHelp = true;
+        result = exit(e);
     } catch (const CLI::ParseError &e) {
         result = exit(e);
     }

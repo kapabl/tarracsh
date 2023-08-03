@@ -19,7 +19,7 @@ using stats::Results;
 class GraphTask final : public DbBasedTask {
 public:
     explicit GraphTask(
-        Options options, Results &results,
+        const Options& options, Results &results,
         db::callgraph::CallGraphDb &callGraphDb
         );
 
@@ -30,7 +30,7 @@ public:
 
 private:
     db::callgraph::CallGraphDb &_db;
-;
+
     infrastructure::db::Database& getDb() override;
 
     auto getClassfiles() -> std::shared_ptr<db::table::Classfiles> override;
@@ -43,6 +43,8 @@ private:
     void recordInterfaceMethodRef(const classfile::constantpool::ConstantPoolRecord& entry);
     void recordFieldRef(const classfile::constantpool::ConstantPoolRecord & entry);
     void recordRefs(classfile::ClassFileParser& classFileParser);
+
+    void recordClassFields(classfile::ClassFileParser &parser);
 
 
     void updateIncompleteRefs(const db::table::ClassfileRow* row);
