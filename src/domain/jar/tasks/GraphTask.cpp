@@ -52,7 +52,7 @@ void GraphTask::processNewClassfile(const JarEntryInfo &jarEntryInfo) {
 
     ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);
     if (classFileParser.parse()) {
-        const auto row = getClassfileRow(addOrUpdateClassfile(jarEntry, classFileParser));
+        auto row = getClassfileRow(addOrUpdateClassfile(jarEntry, classFileParser));
         auto classFileProcessor = ClassFileProcessor(row, classFileParser, _db );
         classFileProcessor.extractNodes();
 //        updateIncompleteRefs(row);
