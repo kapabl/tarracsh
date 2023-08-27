@@ -14,7 +14,8 @@ struct MethodRow : infrastructure::db::table::AutoIncrementedRow {
     infrastructure::db::table::column::RefCol ownerClass{};
     infrastructure::db::table::column::StringCol name{};
     infrastructure::db::table::column::StringCol descriptor{};
-    infrastructure::db::table::column::StringCol signature{};
+//    infrastructure::db::table::column::StringCol signature{};
+    infrastructure::db::table::column::UInt64Col callCount{};
 
     MethodRow() = default;
     explicit MethodRow(const ClassfileRow& classFileRow) {

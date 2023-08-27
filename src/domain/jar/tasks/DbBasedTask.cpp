@@ -86,7 +86,7 @@ std::string DbBasedTask::getUniqueClassname(
 
 }
 
-void DbBasedTask::updateFileTableInMemory(const digestUtils::DigestVector& digest) {
+void DbBasedTask::updateFile(const digestUtils::DigestVector& digest) {
     _jarFileRow->digest = digest;
     _jarFileRow->lastWriteTime = _jarTimestamp;
     _jarFileRow->fileSize = _jarSize;
@@ -94,14 +94,14 @@ void DbBasedTask::updateFileTableInMemory(const digestUtils::DigestVector& diges
 }
 
 
-uint64_t DbBasedTask::updateClassfileTableInMemory(const JarEntry& jarEntry, const ClassFileParser& classFileParser) {
+uint64_t DbBasedTask::addOrUpdateClassfile(const JarEntry& jarEntry, const ClassFileParser &classFileParser) {
     const DigestCol emptyDigestCol;
-    return updateClassfileTableInMemory(jarEntry, emptyDigestCol, classFileParser);
+    return addOrUpdateClassfile(jarEntry, emptyDigestCol, classFileParser);
 }
 
 
-uint64_t  DbBasedTask::updateClassfileTableInMemory(const JarEntry& jarEntry, const DigestCol& digestCol,
-    const ClassFileParser& classFileParser) {
+uint64_t  DbBasedTask::addOrUpdateClassfile(const JarEntry& jarEntry, const DigestCol &digestCol,
+                                            const ClassFileParser &classFileParser) {
 
     const auto classfileTable = getClassfiles();
     const auto classname = getUniqueClassname(jarEntry, classFileParser);

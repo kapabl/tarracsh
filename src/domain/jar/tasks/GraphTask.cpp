@@ -1,33 +1,42 @@
 #include "GraphTask.h"
 
 #include <ranges>
-#include <utility>
+//#include <utility>
 
-// #include "domain/digest/ClassFileDigest.h"
-#include "domain/jar/JarEntryInfo.h"
-#include "domain/db/table/Classfiles.h"
-#include "domain/classfile/constantpool/StructsCommon.h"
-#include "domain/classfile/ClassFileParser.h"
+#include "domain/db/table/ClassRefs.h"
+#include "domain/db/table/Methods.h"
+#include "domain/db/table/MethodRefs.h"
+#include "domain/db/table/Fields.h"
+#include "domain/db/table/FieldRefs.h"
 #include "infrastructure/filesystem/Utils.h"
 #include "domain/classfile/reader/MemoryReader.h"
+#include "domain/graph/ClassFileProcessor.h"
 
 using namespace kapa::infrastructure::filesystem;
-using namespace kapa::tarracsh::domain;
-
-using namespace classfile;
-using namespace db;
-using namespace callgraph;
-using namespace jar::tasks;
 using namespace std;
 
-using db::table::ClassfileRow;
-using constantpool::u2;
-using constantpool::u1;
-using constantpool::u4;
+using kapa::tarracsh::domain::classfile::reader::MemoryReader;
+using kapa::tarracsh::domain::classfile::ClassFileParser;
+using kapa::tarracsh::domain::db::table::MethodRow;
+using kapa::tarracsh::domain::db::table::MethodRefRow;
+using kapa::tarracsh::domain::db::table::Files;
+using kapa::tarracsh::domain::db::table::FieldRow;
+using kapa::tarracsh::domain::db::table::FieldRefRow;
+using kapa::tarracsh::domain::db::table::ClassRefRow;
+using kapa::tarracsh::domain::db::table::ClassfileRow;
+using kapa::tarracsh::domain::db::callgraph::CallGraphDb;
+using kapa::tarracsh::domain::graph::ClassFileProcessor;
+
+using kapa::tarracsh::domain::classfile::constantpool::u2;
+using kapa::tarracsh::domain::classfile::constantpool::u1;
+using kapa::tarracsh::domain::classfile::constantpool::u4;
+using kapa::tarracsh::domain::classfile::constantpool::ConstantPoolRecord;
+
+using namespace kapa::tarracsh::domain::jar::tasks;
 
 GraphTask::GraphTask(const Options &options, Results &results,
                      CallGraphDb &callGraphDb)
-                     : DbBasedTask(options, results), _db(callGraphDb) {
+        : DbBasedTask(options, results), _db(callGraphDb) {
 }
 
 
@@ -39,19 +48,20 @@ void GraphTask::updateIncompleteRefs(const ClassfileRow *row) {
 void GraphTask::processNewClassfile(const JarEntryInfo &jarEntryInfo) {
     const auto &jarEntry = jarEntryInfo.jarEntry;
 
-    reader::MemoryReader reader(jarEntry);
+    MemoryReader reader(jarEntry);
 
     ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);
     if (classFileParser.parse()) {
-        recordClassMethods(classFileParser);
-        recordRefs(classFileParser);
+        const auto row = getClassfileRow(addOrUpdateClassfile(jarEntry, classFileParser));
+        auto classFileProcessor = ClassFileProcessor(row, classFileParser, _db );
+        classFileProcessor.extractNodes();
+//        updateIncompleteRefs(row);
+
     } else {
         _results.report->asFailedJarClass(jarEntryInfo.strongClassname);
         ++_results.jarfiles.classfiles.errors;
     }
 
-    const auto row = getClassfileRow(updateClassfileTableInMemory(jarEntry, classFileParser));
-    updateIncompleteRefs(row);
 }
 
 const ClassfileRow *GraphTask::getClassfileRow(uint64_t id) {
@@ -65,22 +75,17 @@ void GraphTask::processIncompleteClassfile(const JarEntryInfo &jarEntryInfo, Cla
     //TODO update file row
     row->file.id = _jarFileRow->id;
 
-    reader::MemoryReader reader(jarEntry);
+    MemoryReader reader(jarEntry);
 
     ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);
     if (classFileParser.parse()) {
-        recordClassMethods(classFileParser);
-        recordClassFields(classFileParser);
-        recordRefs(classFileParser);
+        auto classFileProcessor = ClassFileProcessor(row, classFileParser, _db );
+        classFileProcessor.extractNodes();
     } else {
         _results.report->asFailedJarClass(jarEntryInfo.strongClassname);
         ++_results.jarfiles.classfiles.errors;
     }
     updateIncompleteRefs(row);
-}
-
-void GraphTask::recordClassFields(ClassFileParser &parser) {
-
 }
 
 void GraphTask::markMemberRefsAsIncomplete(ClassfileRow *row) {
@@ -106,50 +111,6 @@ void GraphTask::reProcessClassfile(const JarEntryInfo &jarEntryInfo, db::table::
 
 }
 
-void GraphTask::recordMethod(const classfile::constantpool::MethodInfo &value) {
-    //TODO write to method table
-}
-
-void GraphTask::recordClassMethods(ClassFileParser &classFileParser) {
-
-    for (auto &method: classFileParser.getMethods()) {
-        recordMethod(method);
-    }
-}
-
-void GraphTask::recordMethodRef(const classfile::constantpool::ConstantPoolRecord &entry) {
-    //TODO write to method-ref table
-}
-
-void GraphTask::recordClassRef(const classfile::constantpool::ConstantPoolRecord &entry) {
-    //TODO write to class-ref table
-}
-
-void GraphTask::recordInterfaceMethodRef(const classfile::constantpool::ConstantPoolRecord &entry) {
-    //TODO write to table
-}
-
-void GraphTask::recordFieldRef(const classfile::constantpool::ConstantPoolRecord &entry) {
-    //TODO write to table
-}
-
-void GraphTask::recordRefs(ClassFileParser &classFileParser) {
-    const auto &constantPool = classFileParser.getConstantPool();
-
-    for (u2 index = 1u; index < constantPool.getPoolSize(); index = constantPool.getNextIndex(index)) {
-        const auto &entry = constantPool.getEntry(index);
-        if (entry.base.tag == ConstantPoolTag::JVM_CONSTANT_Methodref) {
-            recordMethodRef(entry);
-        } else if (entry.base.tag == ConstantPoolTag::JVM_CONSTANT_Class) {
-            recordClassRef(entry);
-        } else if (entry.base.tag == ConstantPoolTag::JVM_CONSTANT_InterfaceMethodref) {
-            recordInterfaceMethodRef(entry);
-        } else if (entry.base.tag == ConstantPoolTag::JVM_CONSTANT_Fieldref) {
-            recordFieldRef(entry);
-        }
-
-    }
-}
 
 void GraphTask::processClassfile(const JarEntryInfo &jarEntryInfo, ClassfileRow *row) {
 
@@ -251,7 +212,7 @@ auto GraphTask::getClassfiles() -> std::shared_ptr<db::table::Classfiles> {
     return result;
 }
 
-auto GraphTask::getFiles() -> std::shared_ptr<table::Files> {
+auto GraphTask::getFiles() -> std::shared_ptr<Files> {
     const auto result = _db.getFiles();
     return result;
 }

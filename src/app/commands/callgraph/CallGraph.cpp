@@ -4,6 +4,7 @@
 #include "app/App.h"
 #include "app/Analyzer.h"
 #include "app/commands/Query.h"
+#include "domain/db/CallGraphDb.h"
 #include "infrastructure/profiling/ScopedTimer.h"
 
 
@@ -16,32 +17,30 @@ using kapa::tarracsh::domain::ClientOptions;
 using kapa::infrastructure::app::cli::ExitCode;
 using kapa::infrastructure::profiler::ScopedTimer;
 
-CallGraph::CallGraph(CLI::App* parent)
-    : DbBasedCommand(parent, App::getGlobalOptions().callGraph) {
+CallGraph::CallGraph(CLI::App *parent)
+        : DbBasedCommand(parent, App::getGlobalOptions().callGraph) {
 }
 
 ExitCode CallGraph::processInput() {
     ExitCode result = 0;
 
     ScopedTimer::timeWithPrint(
-        "callgraph-input",
-        [this, &result]()-> void {
-            if (_options.callGraph.isValidInput()) {
-                if (isClientMode()) {
-                    result = runAsClient() ? 0 : 1;
-                }
-                else {
-                    result = runAsStandalone() ? 0 : 1;
-                }
+            "callgraph-input",
+            [this, &result]() -> void {
+                if (_options.callGraph.isValidInput()) {
+                    if (isClientMode()) {
+                        result = runAsClient() ? 0 : 1;
+                    } else {
+                        result = runAsStandalone() ? 0 : 1;
+                    }
 
-                if (result == 0 /*&& _options.digest.isDiff*/) {
-                    _results.report->print();
+                    if (result == 0 /*&& _options.digest.isDiff*/) {
+                        _results.report->print();
+                    }
+                } else {
+                    result = 1;
                 }
-            }
-            else {
-                result = 1;
-            }
-        });
+            });
 
     return result;
 }
@@ -68,7 +67,8 @@ void CallGraph::addMainSubCommand() {
 bool CallGraph::initDb() {
 
     ScopedTimer timer(&_results.profileData->initDb);
-    _db = domain::db::callgraph::CallGraphDb::create({ _options.outputDir, _results.log.get()}, _options.callGraph.rebuild, false );
+    _db = domain::db::callgraph::CallGraphDb::create({_options.outputDir, _results.log.get()},
+                                                     _options.callGraph.rebuild, false);
     const auto result = _db != nullptr;
     return result;
 
@@ -91,8 +91,7 @@ bool CallGraph::runAsStandalone() {
     if (result) {
         CallGraphAnalyzer analyzer(App::getContext(), _db);
         analyzer.runWithPrint();
-    }
-    else {
+    } else {
         _results.log->writeln("Error initializing Db", true);
     }
     return result;

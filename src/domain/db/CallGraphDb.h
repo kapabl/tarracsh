@@ -4,8 +4,11 @@
 #include "infrastructure/db/Database.h"
 #include "table/Files.h"
 #include "table/Classfiles.h"
+#include "table/ClassRefs.h"
 #include "table/Methods.h"
+#include "table/MethodRefs.h"
 #include "table/Fields.h"
+#include "table/FieldRefs.h"
 
 
 namespace kapa::tarracsh::domain::db::callgraph {
@@ -23,14 +26,20 @@ public:
 
     auto getFiles() { return _files; }
     auto getClassfiles() { return _classfiles; }
+    auto getClassRefs() { return _classRefs; }
     auto getMethods() { return _methods; }
+    auto getMethodRefs() { return _methodRefs; }
     auto getFields() { return _fields; }
+    auto getFieldRefs() { return _fieldRefs; }
 
 private:
     std::shared_ptr<table::Files> _files;
     std::shared_ptr<table::Classfiles> _classfiles;
+    std::shared_ptr<table::ClassRefs> _classRefs;
     std::shared_ptr<table::Methods> _methods;
+    std::shared_ptr<table::MethodRefs> _methodRefs;
     std::shared_ptr<table::Fields> _fields;
+    std::shared_ptr<table::FieldRefs> _fieldRefs;
 
 };
 

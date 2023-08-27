@@ -24,9 +24,8 @@ public:
     ~DigestAnalyzer() override = default;
 private:
     void endAnalysis() override;
-    void analyzeStandaloneClassfile(const std::string& filename) override;
+    void doClassfile(const std::string& filename) override;
     void processJar(const std::string &filename) override;
-    void digestClassfile(const std::string &filename) const;
     bool isFileUnchanged(const uintmax_t size, const long long timestamp, const domain::db::table::FileRow *row) const;
     domain::db::digest::DigestDb &getDigestDb() const;
     void updateDbInMemory(const StandaloneClassFileInfo &classFileInfo, const ClassFileParser &parser,

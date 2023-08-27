@@ -56,7 +56,7 @@ protected:
     virtual void processDirInput();
     virtual void processJar(const std::string& filename);
     virtual void endAnalysis();
-    virtual void analyzeStandaloneClassfile(const std::string& filename);
+    virtual void doClassfile(const std::string& filename);
 
     void analyzeInput();
     void parseClassfile(const std::string& filename) const;

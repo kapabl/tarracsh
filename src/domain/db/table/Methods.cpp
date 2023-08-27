@@ -27,4 +27,5 @@ void Methods::defineColumns() {
     DECLARE_COLUMN_PROP(MethodRow, name, StorageType::String, DisplayAs::AsString);
     DECLARE_COLUMN_PROP(MethodRow, descriptor, StorageType::String, DisplayAs::AsString);
     DECLARE_COLUMN_PROP(MethodRow, signature, StorageType::String, DisplayAs::AsString);
+    DECLARE_COLUMN_PROP(MethodRow, callCount, StorageType::UInt64, DisplayAs::AsUInt64);
 }
