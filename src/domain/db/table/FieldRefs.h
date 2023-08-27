@@ -5,7 +5,6 @@
 #include "Classfiles.h"
 #include "Fields.h"
 #include "infrastructure/db/table/Table.h"
-#include "Files.h"
 
 #pragma pack( push, 1 )
 namespace kapa::tarracsh::domain::db::table {
@@ -53,7 +52,7 @@ public:
 
 private:
     const std::shared_ptr<Classfiles> _classfiles;
-    const std::shared_ptr<Classfiles> _fields;
+    const std::shared_ptr<Fields> _fields;
 };
 
 }

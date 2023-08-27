@@ -15,6 +15,7 @@ struct FieldRow : infrastructure::db::table::AutoIncrementedRow {
     infrastructure::db::table::column::StringCol name{};
     infrastructure::db::table::column::StringCol descriptor{};
     infrastructure::db::table::column::StringCol signature{};
+    infrastructure::db::table::column::UInt64Col refCount{};
 
     FieldRow() = default;
     explicit FieldRow(const ClassfileRow& classFileRow) {

@@ -19,7 +19,7 @@ void CallGraphDb::init() {
     _methods = std::make_shared<table::Methods>(*this, "methods", _classfiles);
     _tables[_methods->getName()] = _methods.get();
 
-    _methodRefs = std::make_shared<table::MethodRefs>(*this, "methodRefs", _classfiles);
+    _methodRefs = std::make_shared<table::MethodRefs>(*this, "methodRefs", _classfiles, _methods);
     _tables[_methodRefs->getName()] = _methods.get();
 
     _fields = std::make_shared<table::Fields>(*this, "fields", _classfiles);

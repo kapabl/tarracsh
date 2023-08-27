@@ -26,6 +26,5 @@ void Methods::defineColumns() {
     DECLARE_FOREIGN_COLUMN_PROP(MethodRow, ownerClass, StorageType::Ref, DisplayAs::AsRef, _classfiles->getName().c_str(), "classname");
     DECLARE_COLUMN_PROP(MethodRow, name, StorageType::String, DisplayAs::AsString);
     DECLARE_COLUMN_PROP(MethodRow, descriptor, StorageType::String, DisplayAs::AsString);
-    DECLARE_COLUMN_PROP(MethodRow, signature, StorageType::String, DisplayAs::AsString);
-    DECLARE_COLUMN_PROP(MethodRow, callCount, StorageType::UInt64, DisplayAs::AsUInt64);
+    DECLARE_COLUMN_PROP(MethodRow, refCount, StorageType::UInt64, DisplayAs::AsUInt64);
 }

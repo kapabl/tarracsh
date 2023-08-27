@@ -19,37 +19,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="WIP: recording graph nodes">
-      <change afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/domain/graph/ClassFileProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/domain/graph/ClassfileProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/cmake.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmake.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/tarracsh.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/tarracsh.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/Analyzer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Analyzer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/Analyzer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Analyzer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/commands/DbBasedCommand.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/DbBasedCommand.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraph.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraph.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/commands/digest/DigestAnalyzer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/digest/DigestAnalyzer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/commands/digest/DigestAnalyzer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/digest/DigestAnalyzer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/commands/digest/PublicDigest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/digest/PublicDigest.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/CallGraphDb.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/CallGraphDb.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/CallGraphDb.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/CallGraphDb.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/Methods.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/Methods.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/Methods.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/Methods.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/DigestTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/DigestTask.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/columns/Columns.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/columns/Columns.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -208,7 +182,7 @@
       <workItem from="1692059529577" duration="482000" />
       <workItem from="1692060035182" duration="2503000" />
       <workItem from="1692488816569" duration="17401000" />
-      <workItem from="1693110970741" duration="6231000" />
+      <workItem from="1693110970741" duration="7489000" />
     </task>
     <task id="LOCAL-00001" summary="Ignoring cmake dirs">
       <created>1684696768056</created>
@@ -311,7 +285,15 @@
       <option name="project" value="LOCAL" />
       <updated>1691044138479</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="WIP: recording graph nodes">
+      <option name="closed" value="true" />
+      <created>1693117272480</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1693117272480</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
