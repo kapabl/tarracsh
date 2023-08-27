@@ -21,7 +21,7 @@ public:
     void updateFile(const digestUtils::DigestVector &digest);
     uint64_t addOrUpdateClassfile(const JarEntry &jarEntry, const ClassFileParser &classFileParser);
     uint64_t addOrUpdateClassfile(const JarEntry &jarEntry,
-                                  const DigestCol &digestCol,
+                                  const infrastructure::db::table::column::DigestCol &digestCol,
                                   const ClassFileParser &classFileParser);
 
 protected:
