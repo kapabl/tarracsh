@@ -100,7 +100,7 @@ void DigestTask::end() {
         _results.report->asModifiedJar(filename, isSameDigest);
     }
     if (!_options.digest.dryRun) {
-        updateFileTableInMemory(digest);
+        updateFile(digest);
     }
 }
 
@@ -141,7 +141,7 @@ optional<DigestCol> DigestTask::digestEntry(const JarEntryInfo &digestEntryInfo,
         ++_results.jarfiles.classfiles.parsedCount;
 
         if (!_options.digest.dryRun) {
-            updateClassfileTableInMemory(jarEntry, result.value(), classFileParser);
+            addOrUpdateClassfile(jarEntry, result.value(), classFileParser);
         }
 
     } else {

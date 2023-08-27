@@ -22,17 +22,6 @@ DbBasedCommand::DbBasedCommand(CLI::App *parent, domain::BaseOptions &dbBasedOpt
       _dbBasedOptions(dbBasedOptions) {
 }
 
-bool DbBasedCommand::runAsStandalone() {
-    const auto result = initDb();
-    if (result) {
-        Analyzer analyzer(App::getContext(), _db);
-        analyzer.runWithPrint();
-    } else {
-        _results.log->writeln("Error initializing Db", true);
-    }
-    return result;
-}
-
 bool DbBasedCommand::isServerMode() const {
     const auto result = _dbBasedOptions.server.isServerMode;
     return result;

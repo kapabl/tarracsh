@@ -17,7 +17,7 @@ using namespace kapa::tarracsh::app::commands::digest;
 
 
 PublicDigest::PublicDigest(CLI::App *parent)
-    : DbBasedCommand(parent, App::getGlobalOptions().digest) {
+        : DbBasedCommand(parent, App::getGlobalOptions().digest) {
 }
 
 bool PublicDigest::initDb() {
@@ -25,7 +25,8 @@ bool PublicDigest::initDb() {
     ScopedTimer timer(&_results.profileData->initDb);
 
 
-    _db = domain::db::digest::DigestDb::create({ _options.outputDir, _results.log.get()}, _options.digest.rebuild, false);
+    _db = domain::db::digest::DigestDb::create({_options.outputDir, _results.log.get()}, _options.digest.rebuild,
+                                               false);
     const auto result = _db.get() != nullptr;
     return result;
 
@@ -36,8 +37,7 @@ bool PublicDigest::runAsStandalone() {
     if (result) {
         DigestAnalyzer analyzer(App::getContext(), _db);
         analyzer.runWithPrint();
-    }
-    else {
+    } else {
         _results.log->writeln("Error initializing Db", true);
     }
     return result;
@@ -47,22 +47,22 @@ ExitCode PublicDigest::digestInput() {
     ExitCode result = 0;
 
     ScopedTimer::timeWithPrint(
-        "digest-input",
-        [this, &result]()-> void {
-            if (_options.digest.isValidInput()) {
-                if (isClientMode()) {
-                    result = runAsClient() ? 0 : 1;
-                } else {
-                    result = runAsStandalone() ? 0 : 1;
-                }
+            "digest-input",
+            [this, &result]() -> void {
+                if (_options.digest.isValidInput()) {
+                    if (isClientMode()) {
+                        result = runAsClient() ? 0 : 1;
+                    } else {
+                        result = runAsStandalone() ? 0 : 1;
+                    }
 
-                if (result == 0 && _options.digest.isDiff) {
-                    _results.report->print();
+                    if (result == 0 && _options.digest.isDiff) {
+                        _results.report->print();
+                    }
+                } else {
+                    result = 1;
                 }
-            } else {
-                result = 1;
-            }
-        });
+            });
 
     return result;
 }

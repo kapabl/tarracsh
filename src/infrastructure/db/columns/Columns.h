@@ -64,9 +64,9 @@ std::string displayAsToString(const DisplayAs displayAs);
 
 struct RefCol {
     const uint64_t InvalidRef = std::numeric_limits<uint64_t>::max();
-    uint64_t id;
+    uint64_t id{};
 
-    auto isInvalid() const {
+    [[nodiscard]] auto isInvalid() const {
         const bool result = id == InvalidRef;
         return result;
     }

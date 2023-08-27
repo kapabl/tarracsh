@@ -16,7 +16,7 @@ public:
 
     explicit CallGraphAnalyzer(Context& config);
 
-    explicit CallGraphAnalyzer(Context& config, std::shared_ptr<infrastructure::db::Database> db);
+    explicit CallGraphAnalyzer(Context& config, const std::shared_ptr<infrastructure::db::Database>& db);
     
     CallGraphAnalyzer(const CallGraphAnalyzer &) = delete;
     CallGraphAnalyzer(const CallGraphAnalyzer &&) = delete;
@@ -27,7 +27,7 @@ public:
 
 private:
     void endAnalysis() override;
-    void analyzeStandaloneClassfile(const std::string &filename) override;
+    void doClassfile(const std::string &filename) override;
     void processJar(const std::string &filename) override;
     domain::db::callgraph::CallGraphDb &getCallGraphDb() const;
 

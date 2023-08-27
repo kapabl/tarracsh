@@ -59,10 +59,6 @@ void DigestAnalyzer::endAnalysis() {
     }
 }
 
-void DigestAnalyzer::analyzeStandaloneClassfile(const std::string &filename) {
-    digestClassfile(filename);
-}
-
 void DigestAnalyzer::processJar(const std::string &filename) {
     _fileThreadPool.push_task([this, filename] {
         Options jarOptions(_options);
@@ -78,7 +74,7 @@ void DigestAnalyzer::processJar(const std::string &filename) {
 }
 
 
-void DigestAnalyzer::digestClassfile(const std::string& filename) const {
+void DigestAnalyzer::doClassfile(const std::string& filename) {
     auto& digestDb = getDigestDb();
 
     StandaloneClassFileInfo fileInfo(filename);

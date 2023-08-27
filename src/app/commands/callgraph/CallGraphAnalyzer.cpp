@@ -1,13 +1,9 @@
 #include <filesystem>
 #include <string>
 #include "CallGraphAnalyzer.h"
-#include "infrastructure/filesystem/Utils.h"
 #include "infrastructure/db/Database.h"
-
-#include "app/classfile/constantpool/printer/nav/HtmlGen.h"
-#include "domain/jar/tasks/ParserTask.h"
-#include "domain/jar/tasks/DigestTask.h"
-#include "domain/stats/Results.h"
+#include "domain/jar/tasks/GraphTask.h"
+#include "domain/jar/Processor.h"
 #include "domain/db/CallGraphDb.h"
 #include "infrastructure/profiling/ScopedTimer.h"
 
@@ -16,11 +12,12 @@ using namespace std;
 
 using kapa::infrastructure::profiler::ScopedTimer;
 using kapa::tarracsh::domain::db::callgraph::CallGraphDb;
-
-
 using namespace kapa::tarracsh::app::commands::callgraph;
 
-CallGraphAnalyzer::CallGraphAnalyzer(Context &config, const std::shared_ptr<infrastructure::db::Database> db)
+using kapa::tarracsh::domain::jar::tasks::GraphTask;
+using kapa::tarracsh::domain::jar::Processor;
+
+CallGraphAnalyzer::CallGraphAnalyzer(Context &config, const std::shared_ptr<infrastructure::db::Database>& db)
     : Analyzer(config, db) {
 }
 
@@ -29,6 +26,8 @@ CallGraphAnalyzer::CallGraphAnalyzer(Context &config)
 }
 
 void CallGraphAnalyzer::endAnalysis() {
+    //TODO link nodes? and create report of linking errors (missing symbols) ?
+    //
     if (!_options.callGraph.dryRun) {
         if (!_options.callGraph.server.isServerMode) {
             ScopedTimer timer(&_results.profileData->writeCallGraphDb);
@@ -39,7 +38,7 @@ void CallGraphAnalyzer::endAnalysis() {
     }
 }
 
-void CallGraphAnalyzer::analyzeStandaloneClassfile(const std::string &filename) {
+void CallGraphAnalyzer::doClassfile(const std::string &filename) {
 
     //TODO
     //callGraph(filename);
@@ -53,10 +52,9 @@ void CallGraphAnalyzer::processJar(const std::string &filename) {
 
         ++_results.jarfiles.count;
         {
-            //TODO
-            // GraphTask jarGraphTask(jarOptions, _results, _callGraphDb);
-            // Processor jarProcessor(jarOptions, _results, jarGraphTask);
-            // jarProcessor.run();
+             GraphTask jarGraphTask(jarOptions, _results, reinterpret_cast<CallGraphDb &>(*_db));
+             Processor jarProcessor(jarOptions, _results, jarGraphTask);
+             jarProcessor.run();
         }
 
     });

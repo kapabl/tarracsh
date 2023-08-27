@@ -58,14 +58,14 @@ void Analyzer::parseClassfile(const std::string &filename) const {
     classFileParserDone(parser);
 }
 
-void Analyzer::analyzeStandaloneClassfile(const std::string &filename) {
+void Analyzer::doClassfile(const std::string &filename) {
     parseClassfile(filename);
 }
 
 void Analyzer::processStandaloneClassfile(const std::string &filename) {
     _fileThreadPool.push_task([this, filename] {
         ++_results.standaloneClassfiles.count;
-        analyzeStandaloneClassfile(filename);
+        doClassfile(filename);
         if (_options.canPrintProgress()) {
             _results.print();
         }
