@@ -25,7 +25,7 @@ using kapa::tarracsh::domain::db::table::ClassfileRow;
 using kapa::tarracsh::domain::db::callgraph::CallGraphDb;
 
 ClassFileProcessor::ClassFileProcessor(
-        ClassfileRow *row, ClassFileParser &parser, CallGraphDb &db) :
+        const ClassfileRow *row, ClassFileParser &parser, CallGraphDb &db) :
         _row(row),
         _parser(parser),
         _db(db),
@@ -46,7 +46,7 @@ void ClassFileProcessor::recordFields() {
         new(&fieldRow) FieldRow(*_row);
         fieldRow.name = _db.getPoolString(_constantPool.getString(fieldInfo.nameIndex));
         fieldRow.descriptor = _db.getPoolString(_constantPool.getString(fieldInfo.descriptorIndex));
-        fieldTable->addOrUpdate(_row);
+        fieldTable->addOrUpdate(&fieldRow);
     }
 }
 
@@ -57,7 +57,7 @@ void ClassFileProcessor::recordMethods() {
         new(&methodRow) MethodRow(*_row);
         methodRow.name = _db.getPoolString(_constantPool.getString(methodInfo.nameIndex));
         methodRow.descriptor = _db.getPoolString(_constantPool.getString(methodInfo.descriptorIndex));
-        methodTable->addOrUpdate(_row);
+        methodTable->addOrUpdate(&methodRow);
     }
 }
 
@@ -66,7 +66,7 @@ void ClassFileProcessor::recordClassRef(const ConstantPoolRecord &entry) {
     auto &classRefRow = *static_cast<db::table::ClassRefRow *>(classRefs->allocateRow());
     new(&classRefRow) ClassRefRow(*_row);
     classRefRow.name = _db.getPoolString(_constantPool.getString(entry.classInfo.nameIndex));
-    classRefs->addOrUpdate(_row);
+    classRefs->addOrUpdate(&classRefRow);
 }
 
 void ClassFileProcessor::commonRecordMethodRef(const u2 nameAndTypeIndex) {
@@ -77,7 +77,7 @@ void ClassFileProcessor::commonRecordMethodRef(const u2 nameAndTypeIndex) {
 
     methodRefRow.name = _db.getPoolString(_constantPool.getString(nameAndTypeInfo.nameIndex));
     methodRefRow.descriptor = _db.getPoolString(_constantPool.getString(nameAndTypeInfo.descriptorIndex));
-    methodRefs->addOrUpdate(_row);
+    methodRefs->addOrUpdate(&methodRefRow);
 }
 
 
@@ -98,7 +98,7 @@ void ClassFileProcessor::recordFieldRef(const ConstantPoolRecord &entry) {
     fieldRefRow.name = _db.getPoolString(_constantPool.getString(nameAndTypeInfo.nameIndex));
     fieldRefRow.descriptor = _db.getPoolString(_constantPool.getString(nameAndTypeInfo.descriptorIndex));
 
-    fieldRefs->addOrUpdate(_row);
+    fieldRefs->addOrUpdate(&fieldRefRow);
 }
 
 void ClassFileProcessor::recordRefs() {

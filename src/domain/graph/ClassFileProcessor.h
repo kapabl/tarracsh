@@ -13,14 +13,14 @@ namespace kapa::tarracsh::domain::graph {
 class ClassFileProcessor {
 
 public:
-    explicit ClassFileProcessor(db::table::ClassfileRow *row,
+    explicit ClassFileProcessor(const db::table::ClassfileRow *row,
                                 classfile::ClassFileParser &parser,
                                 db::callgraph::CallGraphDb &db);
 
     void extractNodes();
 
 private:
-    db::table::ClassfileRow *_row;
+    const db::table::ClassfileRow *_row;
     db::callgraph::CallGraphDb &_db;
     classfile::ClassFileParser &_parser;
     classfile::constantpool::ConstantPool& _constantPool;

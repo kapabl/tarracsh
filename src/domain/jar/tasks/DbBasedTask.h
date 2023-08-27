@@ -19,10 +19,10 @@ public:
     [[nodiscard]] db::table::FileRow &getJarFileRow() const;
     std::string getUniqueClassname(const JarEntry &jarEntry, const classfile::ClassFileParser &classFileParser);
     void updateFile(const digestUtils::DigestVector &digest);
-    uint64_t addOrUpdateClassfile(const JarEntry &jarEntry, const ClassFileParser &classFileParser);
+    uint64_t addOrUpdateClassfile(const JarEntry &jarEntry, const classfile::ClassFileParser &classFileParser);
     uint64_t addOrUpdateClassfile(const JarEntry &jarEntry,
                                   const infrastructure::db::table::column::DigestCol &digestCol,
-                                  const ClassFileParser &classFileParser);
+                                  const classfile::ClassFileParser &classFileParser);
 
 protected:
     db::table::FileRow *_tempFileRow{nullptr};

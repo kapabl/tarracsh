@@ -18,12 +18,12 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="WIP: recording graph nodes">
+    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="WIP #2: recording graph nodes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/CallGraphDb.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/CallGraphDb.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/graph/ClassFileProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/graph/ClassFileProcessor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/graph/ClassfileProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/graph/ClassfileProcessor.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,13 +121,13 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.cfdiff">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="cmake1" type="CMakeListConfigurationType" factoryName="CMakeListConfigurationFactory">
       <method v="2" />
-    </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
     </configuration>
     <configuration name="cfdiff" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="--help" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tarracsh" TARGET_NAME="cfdiff" RUN_TARGET_PROJECT_NAME="tarracsh" RUN_TARGET_NAME="cfdiff">
       <method v="2">
@@ -182,7 +182,8 @@
       <workItem from="1692059529577" duration="482000" />
       <workItem from="1692060035182" duration="2503000" />
       <workItem from="1692488816569" duration="17401000" />
-      <workItem from="1693110970741" duration="7489000" />
+      <workItem from="1693110970741" duration="8318000" />
+      <workItem from="1693119439865" duration="569000" />
     </task>
     <task id="LOCAL-00001" summary="Ignoring cmake dirs">
       <created>1684696768056</created>
@@ -293,7 +294,15 @@
       <option name="project" value="LOCAL" />
       <updated>1693117272480</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="WIP #2: recording graph nodes">
+      <option name="closed" value="true" />
+      <created>1693118917931</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1693118917945</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -325,7 +334,8 @@
     <MESSAGE value="Fixing tarracsh for linux build w gcc13" />
     <MESSAGE value="Adding filter(s) for cpool print and preparing for call-graph" />
     <MESSAGE value="WIP: recording graph nodes" />
-    <option name="LAST_COMMIT_MESSAGE" value="WIP: recording graph nodes" />
+    <MESSAGE value="WIP #2: recording graph nodes" />
+    <option name="LAST_COMMIT_MESSAGE" value="WIP #2: recording graph nodes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
