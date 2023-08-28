@@ -8,9 +8,8 @@ using kapa::infrastructure::db::table::AutoIncrementedRow;
 
 MethodRefs::MethodRefs(infrastructure::db::Database &db, const std::string &tablename,
                        std::shared_ptr<Classfiles> classfiles, std::shared_ptr<Methods> methods ):
-    Table(db, tablename, sizeof(MethodRefRow)),
-    _methods(std::move(methods)),
-    _classfiles(std::move(classfiles))
+        ClassOwnedTable(db, tablename, sizeof(MethodRefRow)),
+       _methods(std::move(methods))
     {
 }
 

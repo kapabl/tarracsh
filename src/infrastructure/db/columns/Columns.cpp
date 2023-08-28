@@ -3,6 +3,7 @@
 #include <fmt/chrono.h>
 #include <chrono>
 #include <string.h>
+
 #include "../Database.h"
 #include "../table/Table.h"
 
@@ -30,6 +31,10 @@ std::string kapa::infrastructure::db::table::column::displayAsToString(const Dis
             return "Size";
         case AsEntryType:
             return "EntryType(Classfile, Jar, Directory)";
+        case AsAccessFlags:
+            //TODO since the treatment of this flag is in the domain, probably
+            //the whole file should be part of the domain
+            return "Access Flags/Modifiers";
         case AsBool:
             return "bool true/false";
 
@@ -116,6 +121,7 @@ static bool registerColumns() {
             auto result = fmt::format("{:%F %T}", fmt::localtime(timeTType));
             return result;
         });
+
     Properties::registerColumn(
         DisplayAs::AsSize,
         [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
@@ -124,6 +130,7 @@ static bool registerColumns() {
             auto result = kapa::infrastructure::string::stringUtils::sizeToHumanReadable(value);
             return result;
         });
+
     Properties::registerColumn(
         DisplayAs::AsInt32,
         [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,

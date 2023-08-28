@@ -1,8 +1,11 @@
 #ifndef TARRACSH_METHODS_TABLE_H
 #define TARRACSH_METHODS_TABLE_H
 #include <string>
+#include <map>
+#include <set>
 
 #include "Classfiles.h"
+#include "ClassOwnedTable.h"
 #include "infrastructure/db/table/Table.h"
 #include "Files.h"
 
@@ -12,9 +15,9 @@ namespace kapa::tarracsh::domain::db::table {
 
 struct MethodRow : infrastructure::db::table::AutoIncrementedRow {
     infrastructure::db::table::column::RefCol ownerClass{};
+    infrastructure::db::table::column::UInt64Col accessFlags{};
     infrastructure::db::table::column::StringCol name{};
     infrastructure::db::table::column::StringCol descriptor{};
-//    infrastructure::db::table::column::StringCol signature{};
     infrastructure::db::table::column::UInt64Col refCount{};
 
     MethodRow() = default;
@@ -28,7 +31,7 @@ struct MethodRow : infrastructure::db::table::AutoIncrementedRow {
 
 };
 
-class Methods : public  infrastructure::db::table::Table {
+class Methods : public ClassOwnedTable {
 
 public:
     explicit Methods(infrastructure::db::Database &db,
@@ -39,12 +42,6 @@ public:
     [[nodiscard]] std::string getStrongMethodName(const MethodRow &row) const;
 
     void defineColumns() override;
-
-private:
-    const std::shared_ptr<Classfiles> _classfiles;
-    //std::unordered_map<StringCol, std::set<const MethodRow *>> _jarIndex;
-    // std::unordered_map<StringCol, std::set<const MethodRow *>> _classnameIndex;
-    //std::unordered_map<std::string, std::set<const MethodRow *>> _digestIndex;
 
 };
 

@@ -40,10 +40,20 @@ void CallGraphDb::init() {
     _fieldRefs->init();
 }
 
+auto CallGraphDb::deleteClass(ClassfilerRow *row) -> uint64_t {
+    auto result = getClassRefs()->deleteClass(row) +
+                  getClassfiles()->deleteClass(row) +
+                  getMethods()->deleteClass(row) +
+                  getMethodRefs()->deleteClass(row) +
+                  getFields()->deleteClass(row) +
+                  getFieldRefs()->deleteClass(row);
+    return result;
+}
+
 std::shared_ptr<CallGraphDb> CallGraphDb::create(
-    const Config& config,
-    const bool doClean,
-    const bool hasSaveThread) {
+        const Config &config,
+        const bool doClean,
+        const bool hasSaveThread) {
 
     std::shared_ptr<CallGraphDb> result;
 

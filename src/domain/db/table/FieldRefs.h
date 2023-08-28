@@ -3,6 +3,7 @@
 #include <string>
 
 #include "Classfiles.h"
+#include "ClassOwnedTable.h"
 #include "Fields.h"
 #include "infrastructure/db/table/Table.h"
 
@@ -37,7 +38,7 @@ struct FieldRefRow : infrastructure::db::table::AutoIncrementedRow {
 
 };
 
-class FieldRefs : public  infrastructure::db::table::Table {
+class FieldRefs : public ClassOwnedTable {
 
 public:
     explicit FieldRefs(infrastructure::db::Database &db,
@@ -51,7 +52,6 @@ public:
     void defineColumns() override;
 
 private:
-    const std::shared_ptr<Classfiles> _classfiles;
     const std::shared_ptr<Fields> _fields;
 };
 

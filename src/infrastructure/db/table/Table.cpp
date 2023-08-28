@@ -137,6 +137,17 @@ bool Table::isValidColumn(const std::string &columnName) const {
     return result;
 }
 
+auto Table::deleteRow(uint64_t id) -> bool {
+    std::lock_guard lock(_mutex);
+    auto row = _autoIncrementIndex[id];
+    row->flags |= RowFlags::Deleted;
+    _isDirty = true;
+    if (!_dirtyRows.contains(row->id)) {
+        _dirtyRows[row->id] = DirtyType::isUpdate;
+    }
+    return true;
+}
+
 
 void Table::printLayout() {
     std::cout << std::endl;

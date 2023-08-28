@@ -6,6 +6,7 @@
 
 #include "Methods.h"
 #include "Classfiles.h"
+#include "ClassOwnedTable.h"
 #include "infrastructure/db/table/Table.h"
 #include "Files.h"
 
@@ -43,7 +44,7 @@ namespace kapa::tarracsh::domain::db::table {
 
     };
 
-    class MethodRefs : public infrastructure::db::table::Table {
+    class MethodRefs : public ClassOwnedTable {
 
     public:
         explicit MethodRefs(infrastructure::db::Database &db,
@@ -58,12 +59,7 @@ namespace kapa::tarracsh::domain::db::table {
         void defineColumns() override;
 
     private:
-        const std::shared_ptr<Classfiles> _classfiles;
         const std::shared_ptr<Methods> _methods;
-        //std::unordered_map<StringCol, std::set<const MethodRefRow *>> _jarIndex;
-        // std::unordered_map<StringCol, std::set<const MethodRefRow *>> _classnameIndex;
-        //std::unordered_map<std::string, std::set<const MethodRefRow *>> _digestIndex;
-
     };
 
 }
