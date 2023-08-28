@@ -39,11 +39,12 @@ void CallGraphAnalyzer::endAnalysis() {
 }
 
 void CallGraphAnalyzer::doClassfile(const std::string &filename) {
-
     //TODO
-    //callGraph(filename);
 }
 
+void CallGraphAnalyzer::processStandaloneClassfile(const std::string &filename) {
+    _results.log->writeln(fmt::format("Standalone class file not supported yet: {}", filename));
+}
 
 void CallGraphAnalyzer::processJar(const std::string &filename) {
     _fileThreadPool.push_task([this, filename] {

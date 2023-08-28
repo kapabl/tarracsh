@@ -3,6 +3,7 @@
 #include <string>
 
 #include "Classfiles.h"
+#include "ClassOwnedTable.h"
 #include "infrastructure/db/table/Table.h"
 #include "Files.h"
 
@@ -28,7 +29,7 @@ struct ClassRefRow : infrastructure::db::table::AutoIncrementedRow {
 
 };
 
-class ClassRefs : public  infrastructure::db::table::Table {
+class ClassRefs : public ClassOwnedTable {
 
 public:
     explicit ClassRefs(infrastructure::db::Database &db,
@@ -39,12 +40,6 @@ public:
     [[nodiscard]] std::string getStrongMethodName(const ClassRefRow &row) const;
 
     void defineColumns() override;
-
-private:
-    const std::shared_ptr<Classfiles> _classfiles;
-    //std::unordered_map<StringCol, std::set<const ClassRefRow *>> _jarIndex;
-    // std::unordered_map<StringCol, std::set<const ClassRefRow *>> _classnameIndex;
-    //std::unordered_map<std::string, std::set<const ClassRefRow *>> _digestIndex;
 
 };
 

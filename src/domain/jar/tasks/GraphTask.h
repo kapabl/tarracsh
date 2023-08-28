@@ -35,21 +35,10 @@ private:
 
     auto getClassfiles() -> std::shared_ptr<db::table::Classfiles> override;
     auto getFiles() -> std::shared_ptr<db::table::Files> override;
-
-
-
-    void updateIncompleteRefs(const db::table::ClassfileRow* row);
     void processNewClassfile(const JarEntryInfo& jarEntryInfo);
     auto getClassfileRow(uint64_t id) -> const db::table::ClassfileRow*;
-    void processIncompleteClassfile(const JarEntryInfo& jarEntryInfo, db::table::ClassfileRow* row);
-    void markMemberRefsAsIncomplete(db::table::ClassfileRow * row);
-    void deleteMembers(db::table::ClassfileRow * row);
-    void reProcessClassfile(const JarEntryInfo& jarEntryInfo, db::table::ClassfileRow* row);
-
     void processClassfile(const JarEntryInfo& jarEntryInfo, db::table::ClassfileRow* row);
-    static auto isIncompleteClassfileRow(const db::table::ClassfileRow *classfileRow) -> bool;
-    auto findIncompleteClass(const JarEntryInfo& jarEntryInfo) -> db::table::ClassfileRow*;
-    
+
 };
 
 

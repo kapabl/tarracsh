@@ -25,10 +25,12 @@ public:
 
     ~CallGraphAnalyzer() override = default;
 
+
 private:
     void endAnalysis() override;
     void doClassfile(const std::string &filename) override;
     void processJar(const std::string &filename) override;
+    void processStandaloneClassfile(const std::string &filename) override;
     domain::db::callgraph::CallGraphDb &getCallGraphDb() const;
 
 

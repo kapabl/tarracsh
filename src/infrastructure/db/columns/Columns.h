@@ -55,7 +55,8 @@ enum DisplayAs {
     AsDatetime,
     AsSize,
     AsEntryType,
-    AsBool
+    AsBool,
+    AsAccessFlags
 };
 
 std::string displayAsToString(const DisplayAs displayAs);
@@ -86,8 +87,8 @@ struct Properties {
 
     Properties();
 
-    explicit Properties(const char *name, const StorageType type, const DisplayAs displayAs, uint64_t offsetInRow);
-    explicit Properties(const char *name, const StorageType type, const DisplayAs displayAs, uint64_t offsetInRow,
+    explicit Properties(const char *name, StorageType type, const DisplayAs displayAs, uint64_t offsetInRow);
+    explicit Properties(const char *name, StorageType type, const DisplayAs displayAs, uint64_t offsetInRow,
         const char* refTable, const char* displayColumn );
 
     std::string valueToString(char *pValue, Database& db, bool displayRaw) const;

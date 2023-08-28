@@ -18,12 +18,28 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="WIP #2: recording graph nodes">
+    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="WIP #3: recording graph nodes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/graph/ClassFileProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/graph/ClassFileProcessor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/graph/ClassfileProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/graph/ClassfileProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/notes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraph.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraph.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/CallGraphDb.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/CallGraphDb.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/CallGraphDb.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/CallGraphDb.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/Fields.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/Fields.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/Fields.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/Fields.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/Methods.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/Methods.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/Methods.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/Methods.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/columns/Columns.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/columns/Columns.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/columns/Columns.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/columns/Columns.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/table/Table.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/table/Table.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,13 +137,13 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.cfdiff">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="cmake1" type="CMakeListConfigurationType" factoryName="CMakeListConfigurationFactory">
       <method v="2" />
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
     </configuration>
     <configuration name="cfdiff" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="--help" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tarracsh" TARGET_NAME="cfdiff" RUN_TARGET_PROJECT_NAME="tarracsh" RUN_TARGET_NAME="cfdiff">
       <method v="2">
@@ -183,7 +199,8 @@
       <workItem from="1692060035182" duration="2503000" />
       <workItem from="1692488816569" duration="17401000" />
       <workItem from="1693110970741" duration="8318000" />
-      <workItem from="1693119439865" duration="569000" />
+      <workItem from="1693119439865" duration="7469000" />
+      <workItem from="1693191384618" duration="1251000" />
     </task>
     <task id="LOCAL-00001" summary="Ignoring cmake dirs">
       <created>1684696768056</created>
@@ -302,7 +319,15 @@
       <option name="project" value="LOCAL" />
       <updated>1693118917945</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="WIP #3: recording graph nodes">
+      <option name="closed" value="true" />
+      <created>1693120051814</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1693120051814</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -335,7 +360,8 @@
     <MESSAGE value="Adding filter(s) for cpool print and preparing for call-graph" />
     <MESSAGE value="WIP: recording graph nodes" />
     <MESSAGE value="WIP #2: recording graph nodes" />
-    <option name="LAST_COMMIT_MESSAGE" value="WIP #2: recording graph nodes" />
+    <MESSAGE value="WIP #3: recording graph nodes" />
+    <option name="LAST_COMMIT_MESSAGE" value="WIP #3: recording graph nodes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -441,11 +467,6 @@
           <option name="timeStamp" value="38" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp</url>
-          <line>90</line>
-          <option name="timeStamp" value="41" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/cmake-build-debug-remote/vcpkg_installed/x64-linux/include/CLI/Error.hpp</url>
           <line>171</line>
           <option name="timeStamp" value="46" />
@@ -461,7 +482,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/domain/db/table/FieldRefs.cpp</url>
-          <line>31</line>
+          <line>30</line>
           <option name="timeStamp" value="49" />
         </line-breakpoint>
       </breakpoints>

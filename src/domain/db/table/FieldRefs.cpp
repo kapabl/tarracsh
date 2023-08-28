@@ -9,8 +9,7 @@ using kapa::infrastructure::db::table::AutoIncrementedRow;
 
 FieldRefs::FieldRefs(infrastructure::db::Database &db, const std::string &tablename,
     std::shared_ptr<Classfiles> classfiles, std::shared_ptr<Fields> fields ):
-    Table(db, tablename, sizeof(FieldRefRow)),
-    _classfiles(std::move(classfiles)),
+        ClassOwnedTable(db, tablename, sizeof(FieldRefRow)),
     _fields(std::move(fields))
     {
 }

@@ -32,6 +32,8 @@ public:
     auto getFields() { return _fields; }
     auto getFieldRefs() { return _fieldRefs; }
 
+    auto deleteClass(ClassfilerRow* row) -> uint64_t;
+
 private:
     std::shared_ptr<table::Files> _files;
     std::shared_ptr<table::Classfiles> _classfiles;

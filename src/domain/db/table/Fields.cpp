@@ -8,7 +8,7 @@ using kapa::infrastructure::db::table::AutoIncrementedRow;
 
 
 Fields::Fields(infrastructure::db::Database &db, const std::string &tablename,
-    std::shared_ptr<Classfiles> classfiles): Table(db, tablename, sizeof(FieldRow)), _classfiles(std::move(classfiles)) {
+    std::shared_ptr<Classfiles> classfiles): ClassOwnedTable(db, tablename, sizeof(FieldRow)), _classfiles(std::move(classfiles)) {
 }
 
 std::string Fields::getKey(const AutoIncrementedRow* row) {

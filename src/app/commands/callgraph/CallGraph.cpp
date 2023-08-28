@@ -6,6 +6,8 @@
 #include "app/commands/Query.h"
 #include "domain/db/CallGraphDb.h"
 #include "infrastructure/profiling/ScopedTimer.h"
+#include "infrastructure/db/columns/Columns.h"
+#include "domain/classfile/AccessModifiers.h"
 
 
 using namespace kapa::infrastructure::app::cli::command;
@@ -16,6 +18,8 @@ using kapa::tarracsh::domain::ServerOptions;
 using kapa::tarracsh::domain::ClientOptions;
 using kapa::infrastructure::app::cli::ExitCode;
 using kapa::infrastructure::profiler::ScopedTimer;
+
+
 
 CallGraph::CallGraph(CLI::App *parent)
         : DbBasedCommand(parent, App::getGlobalOptions().callGraph) {
@@ -96,4 +100,23 @@ bool CallGraph::runAsStandalone() {
     }
     return result;
 }
+
+using kapa::infrastructure::db::table::column::DisplayAs;
+using kapa::infrastructure::db::table::column::Properties;
+using kapa::tarracsh::domain::classfile::constantpool::u2;
+
+bool registerColumns() {
+    Properties::registerColumn(
+            DisplayAs::AsAccessFlags,
+            [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
+               bool displayRaw) -> std::string {
+                auto value = static_cast<u2>(*pValue);
+                auto result = kapa::tarracsh::domain::classfile::accessmodifier::toString(value);
+                return result;
+            });
+    return true;
+}
+
+static bool registerColumnsResult = registerColumns();
+
 

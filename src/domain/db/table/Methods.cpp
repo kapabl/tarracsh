@@ -8,7 +8,8 @@ using kapa::infrastructure::db::table::AutoIncrementedRow;
 
 
 Methods::Methods(infrastructure::db::Database &db, const std::string &tablename,
-    std::shared_ptr<Classfiles> classfiles): Table(db, tablename, sizeof(MethodRow)), _classfiles(std::move(classfiles)) {
+    std::shared_ptr<Classfiles> classfiles):
+    ClassOwnedTable(db, tablename, sizeof(MethodRow)), _classfiles(std::move(classfiles)) {
 }
 
 std::string Methods::getKey(const AutoIncrementedRow* row) {
@@ -26,5 +27,6 @@ void Methods::defineColumns() {
     DECLARE_FOREIGN_COLUMN_PROP(MethodRow, ownerClass, StorageType::Ref, DisplayAs::AsRef, _classfiles->getName().c_str(), "classname");
     DECLARE_COLUMN_PROP(MethodRow, name, StorageType::String, DisplayAs::AsString);
     DECLARE_COLUMN_PROP(MethodRow, descriptor, StorageType::String, DisplayAs::AsString);
+    DECLARE_COLUMN_PROP(MethodRow, accessFlags, StorageType::UInt64, DisplayAs::AsUInt64);
     DECLARE_COLUMN_PROP(MethodRow, refCount, StorageType::UInt64, DisplayAs::AsUInt64);
 }
