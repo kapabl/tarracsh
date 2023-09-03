@@ -16,6 +16,7 @@ class ClassOwnedTable : public  infrastructure::db::table::Table {
 public:
     explicit ClassOwnedTable(infrastructure::db::Database &db,
                              const std::string &tablename,
+                             size_t rowSize,
                              std::shared_ptr<Classfiles> classfiles);
     auto deleteClass(ClassfileRow *classfileRow) -> uint64_t;
 

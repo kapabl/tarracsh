@@ -19,6 +19,8 @@ private:
     [[nodiscard]] bool initDb() override;
     bool runAsStandalone() override;
 
+    auto registerColumns() -> bool;
+
 
 };
 
