@@ -9,7 +9,7 @@ using kapa::infrastructure::db::table::AutoIncrementedRow;
 
 Methods::Methods(infrastructure::db::Database &db, const std::string &tablename,
     std::shared_ptr<Classfiles> classfiles):
-    ClassOwnedTable(db, tablename, sizeof(MethodRow)), _classfiles(std::move(classfiles)) {
+    ClassOwnedTable(db, tablename, sizeof(MethodRow), std::move(classfiles)) {
 }
 
 std::string Methods::getKey(const AutoIncrementedRow* row) {

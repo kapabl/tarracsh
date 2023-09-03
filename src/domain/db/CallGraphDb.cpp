@@ -3,6 +3,7 @@
 
 using namespace std;
 using namespace kapa::tarracsh::domain::db::callgraph;
+using kapa::tarracsh::domain::db::table::ClassfileRow;
 
 
 void CallGraphDb::init() {
@@ -40,9 +41,8 @@ void CallGraphDb::init() {
     _fieldRefs->init();
 }
 
-auto CallGraphDb::deleteClass(ClassfilerRow *row) -> uint64_t {
+auto CallGraphDb::deleteClass(ClassfileRow *row) -> uint64_t {
     auto result = getClassRefs()->deleteClass(row) +
-                  getClassfiles()->deleteClass(row) +
                   getMethods()->deleteClass(row) +
                   getMethodRefs()->deleteClass(row) +
                   getFields()->deleteClass(row) +

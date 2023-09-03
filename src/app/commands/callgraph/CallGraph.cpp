@@ -18,7 +18,9 @@ using kapa::tarracsh::domain::ServerOptions;
 using kapa::tarracsh::domain::ClientOptions;
 using kapa::infrastructure::app::cli::ExitCode;
 using kapa::infrastructure::profiler::ScopedTimer;
-
+using kapa::infrastructure::db::table::column::DisplayAs;
+using kapa::infrastructure::db::table::column::Properties;
+using kapa::tarracsh::domain::classfile::constantpool::u2;
 
 
 CallGraph::CallGraph(CLI::App *parent)
@@ -70,6 +72,8 @@ void CallGraph::addMainSubCommand() {
 
 bool CallGraph::initDb() {
 
+    registerColumns();
+
     ScopedTimer timer(&_results.profileData->initDb);
     _db = domain::db::callgraph::CallGraphDb::create({_options.outputDir, _results.log.get()},
                                                      _options.callGraph.rebuild, false);
@@ -101,11 +105,7 @@ bool CallGraph::runAsStandalone() {
     return result;
 }
 
-using kapa::infrastructure::db::table::column::DisplayAs;
-using kapa::infrastructure::db::table::column::Properties;
-using kapa::tarracsh::domain::classfile::constantpool::u2;
-
-bool registerColumns() {
+auto CallGraph::registerColumns() -> bool {
     Properties::registerColumn(
             DisplayAs::AsAccessFlags,
             [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
@@ -117,6 +117,6 @@ bool registerColumns() {
     return true;
 }
 
-static bool registerColumnsResult = registerColumns();
+//static bool registerColumnsResult = registerColumns();
 
 

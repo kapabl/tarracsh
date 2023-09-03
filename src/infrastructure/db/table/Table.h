@@ -108,7 +108,7 @@ namespace kapa::infrastructure::db::table {
 
         [[nodiscard]] auto size() const -> uint64_t;
 
-        void getColumnValue(uint64_t id, const char *columnName) -> std::string;
+        auto getColumnValue(uint64_t id, const char *columnName) -> std::string;
 
         [[nodiscard]] auto allocateRow() const -> AutoIncrementedRow *;
 

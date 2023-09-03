@@ -1,5 +1,7 @@
 #include "ClassRefs.h"
 
+#include <utility>
+
 #include "Classfiles.h"
 
 using namespace kapa::tarracsh::domain::db::table;
@@ -8,7 +10,7 @@ using kapa::infrastructure::db::table::AutoIncrementedRow;
 
 
 ClassRefs::ClassRefs(infrastructure::db::Database &db, const std::string &tablename,
-    std::shared_ptr<Classfiles> classfiles): ClassOwnedTable(db, tablename, sizeof(ClassRefRow)), _classfiles(std::move(classfiles)) {
+    std::shared_ptr<Classfiles> classfiles): ClassOwnedTable(db, tablename, sizeof(ClassRefRow), std::move(classfiles)) {
 }
 
 std::string ClassRefs::getKey(const AutoIncrementedRow* row) {

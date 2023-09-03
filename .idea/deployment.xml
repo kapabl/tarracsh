@@ -2,22 +2,22 @@
 <project version="4">
   <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="Remote Host (622ac785-2e9d-493a-a527-3add0cdba040)">
+      <paths name="Remote Host (194ae6d7-21ea-43b5-bc12-3cd109f63381)">
         <serverdata>
           <mappings>
-            <mapping deploy="/tmp/tmp.nsL2JFqY4y" local="$PROJECT_DIR$" />
+            <mapping deploy="/tmp/tmp.tLPj91yD8B" local="$PROJECT_DIR$" />
           </mappings>
           <excludedPaths>
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-remote" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-visual-studio" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-gcc12" />
-            <excludedPath local="true" path="$PROJECT_DIR$/vcpkg_installed" />
-            <excludedPath local="true" path="$PROJECT_DIR$/test" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cfdiff/x64" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-gcc13-linux" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-remote" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cfdiff/x64" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-gcc12" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-gcc13-linux" />
+            <excludedPath local="true" path="$PROJECT_DIR$/test" />
+            <excludedPath local="true" path="$PROJECT_DIR$/vcpkg_installed" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-remote" />
           </excludedPaths>
         </serverdata>
       </paths>

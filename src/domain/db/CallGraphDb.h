@@ -22,7 +22,7 @@ public:
 
     void init() override;
     static std::shared_ptr<CallGraphDb> create(const Config &config, bool doClean,
-        const bool hasSaveThread);
+        bool hasSaveThread);
 
     auto getFiles() { return _files; }
     auto getClassfiles() { return _classfiles; }
@@ -32,7 +32,7 @@ public:
     auto getFields() { return _fields; }
     auto getFieldRefs() { return _fieldRefs; }
 
-    auto deleteClass(ClassfilerRow* row) -> uint64_t;
+    auto deleteClass(table::ClassfileRow* row) -> uint64_t;
 
 private:
     std::shared_ptr<table::Files> _files;
