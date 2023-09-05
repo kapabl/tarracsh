@@ -65,7 +65,19 @@ void GraphTask::processClassfile(const JarEntryInfo &jarEntryInfo, ClassfileRow 
     if (row != nullptr) {
         _db.deleteClass(row);
     }
-    processNewClassfile(jarEntryInfo);
+    const auto &jarEntry = jarEntryInfo.jarEntry;
+
+    MemoryReader reader(jarEntry);
+    ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);
+
+    if (classFileParser.parse()) {
+        auto upDatedRow = getClassfileRow(addOrUpdateClassfile(jarEntry, classFileParser));
+        auto classFileProcessor = ClassFileProcessor(upDatedRow, classFileParser, _db );
+        classFileProcessor.extractNodes();
+    } else {
+        _results.report->asFailedJarClass(jarEntryInfo.strongClassname);
+        ++_results.jarfiles.classfiles.errors;
+    }
 }
 
 bool GraphTask::start() {

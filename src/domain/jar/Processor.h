@@ -3,23 +3,18 @@
 #include <BS_thread_pool.hpp>
 #include <unordered_set>
 
-#include "../stats/Results.h"
-
+#include "domain/stats/Results.h"
+#include "domain/db/table/Classfiles.h"
 #include "JarEntry.h"
 #include "tasks/Task.h"
 
-#include "../db/table/Classfiles.h"
-
-
 namespace kapa::tarracsh::domain::jar {
-
-using kapa::tarracsh::domain::stats::Results;
 
 class Processor {
 public:
     explicit Processor(
         Options options,
-        Results &results,
+        stats::Results &results,
         Task &task
        );
 
@@ -33,23 +28,19 @@ public:
     ~Processor() = default;
     void run();
 
-    unsigned int getClassfileCount() const;
+//    unsigned int getClassfileCount() const;
 
 
 private:
     Task& _task;
-    Results &_results;
+    stats::Results &_results;
     Options _jarOptions;
     bool _isValid{true};
-    std::atomic<unsigned int> _classfileCount{0};
-
-    [[nodiscard]] db::table::ClassfileRow* getRow(const JarEntry& jarEntry) const;
     void waitForAvailableBuffer();
 
 
     // BS::thread_pool _threadPool{ std::max<unsigned int>( 1u, std::thread::hardware_concurrency()*1/4) };
     BS::thread_pool _threadPool{ std::max<unsigned int>( 1u, std::thread::hardware_concurrency()*2/5) };
-    // BS::thread_pool _threadPool{ 2 };
     std::mutex _taskMutex;
     std::mutex _jarMutex;
     std::condition_variable _jarCv;

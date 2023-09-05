@@ -83,14 +83,8 @@ bool CallGraph::initDb() {
 }
 
 ExitCode CallGraph::run() {
-    ExitCode result = 0;
-    if (initDb()) {
-        CallGraphAnalyzer analyzer(App::getApp(), _db);
-        analyzer.runWithPrint();
-    } else {
-        _results.log->writeln("Error initializing call-graph Db", true);
-        result = 1;
-    }
+    ExitCode result = processInput();
+    //TODO implement server-mode and client-mode
     return result;
 }
 
