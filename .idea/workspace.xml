@@ -18,24 +18,16 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="WIP #3: recording graph nodes">
-      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations/tarracsh2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/cmake.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmake.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/other.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
+    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="WIP: fixing, preparing remote for WSL2 that is much faster that VMWare">
+      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations/tarracsh_graph.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/tarracsh.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/App.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/App.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraph.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraph.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraph.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraph.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/CallGraphDb.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/CallGraphDb.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/CallGraphDb.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/CallGraphDb.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassOwnedTable.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassOwnedTable.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassOwnedTable.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassOwnedTable.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/Fields.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/Fields.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/Methods.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/Methods.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/table/Table.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/table/Table.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/jar/Processor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/Processor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/jar/Processor.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/Processor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +84,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "CPPToolchains",
+    "settings.editor.selected.configurable": "settings.sync",
     "structure.view.defaults.are.configured": "true",
     "vue.rearranger.settings.migration": "true"
   }
@@ -132,7 +124,7 @@
       <recent name="$PROJECT_DIR$/cfdiff" />
     </key>
   </component>
-  <component name="RunManager" selected="CMake Application.tarracsh">
+  <component name="RunManager" selected="CMake Application.cfdiff">
     <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="CLION.EXTERNAL.BUILD" enabled="true" />
@@ -148,7 +140,7 @@
     </configuration>
     <list>
       <item itemvalue="CMake Application.cfdiff" />
-      <item itemvalue="CMake Application.tarracsh" />
+      <item itemvalue="CMake Application.tarracsh-graph" />
       <item itemvalue="CMake Debug.cmake1" />
     </list>
   </component>
@@ -197,7 +189,7 @@
       <workItem from="1693110970741" duration="8318000" />
       <workItem from="1693119439865" duration="7469000" />
       <workItem from="1693191384618" duration="1251000" />
-      <workItem from="1693704871321" duration="6121000" />
+      <workItem from="1693704871321" duration="14832000" />
     </task>
     <task id="LOCAL-00001" summary="Ignoring cmake dirs">
       <created>1684696768056</created>
@@ -324,7 +316,15 @@
       <option name="project" value="LOCAL" />
       <updated>1693120051814</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="WIP: fixing, preparing remote for WSL2 that is much faster that VMWare">
+      <option name="closed" value="true" />
+      <created>1693711430072</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1693711430072</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -358,7 +358,8 @@
     <MESSAGE value="WIP: recording graph nodes" />
     <MESSAGE value="WIP #2: recording graph nodes" />
     <MESSAGE value="WIP #3: recording graph nodes" />
-    <option name="LAST_COMMIT_MESSAGE" value="WIP #3: recording graph nodes" />
+    <MESSAGE value="WIP: fixing, preparing remote for WSL2 that is much faster that VMWare" />
+    <option name="LAST_COMMIT_MESSAGE" value="WIP: fixing, preparing remote for WSL2 that is much faster that VMWare" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -478,19 +479,44 @@
           <option name="timeStamp" value="48" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/domain/db/table/FieldRefs.cpp</url>
-          <line>33</line>
-          <option name="timeStamp" value="49" />
+          <url>file://$PROJECT_DIR$/src/app/Analyzer.cpp</url>
+          <line>169</line>
+          <option name="timeStamp" value="59" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/app/Main.cpp</url>
-          <line>33</line>
-          <option name="timeStamp" value="50" />
+          <url>file://$PROJECT_DIR$/src/app/Analyzer.cpp</url>
+          <line>161</line>
+          <option name="timeStamp" value="61" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/app/commands/callgraph/CallGraph.cpp</url>
-          <line>108</line>
-          <option name="timeStamp" value="51" />
+          <line>37</line>
+          <option name="timeStamp" value="65" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/app/commands/callgraph/CallGraph.cpp</url>
+          <line>94</line>
+          <option name="timeStamp" value="67" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/app/Analyzer.cpp</url>
+          <line>168</line>
+          <option name="timeStamp" value="68" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/app/Analyzer.cpp</url>
+          <line>146</line>
+          <option name="timeStamp" value="70" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/app/Analyzer.cpp</url>
+          <line>143</line>
+          <option name="timeStamp" value="71" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/domain/graph/ClassfileProcessor.cpp</url>
+          <line>36</line>
+          <option name="timeStamp" value="72" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

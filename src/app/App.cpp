@@ -83,7 +83,6 @@ void App::setupCliOptions() {
     set_help_all_flag("--help-all");
 
     _digestCommand = std::make_unique<commands::digest::PublicDigest>(this);
-    _digestCommand = std::make_unique<commands::digest::PublicDigest>(this);
     _digestCommand->addCommand();
 
     _parseCommand = std::make_unique<commands::Parse>(this);

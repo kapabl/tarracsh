@@ -5,12 +5,11 @@
 #include <libzippp/libzippp.h>
 
 #include "JarEntry.h"
-#include "../classfile/ClassFileParser.h"
 using namespace libzippp;
-
 
 using namespace kapa::tarracsh::domain::jar;
 using namespace std;
+using kapa::tarracsh::domain::stats::Results;
 
 
 Processor::Processor(Options options, Results &results,
@@ -68,7 +67,6 @@ void Processor::run() {
                 {
                 const JarEntry jarEntry(entry, buffer);
                 if (jarEntry.isClassfile()) {
-                    ++_classfileCount;
                     ++index;
                     _task.processEntry(jarEntry, _taskMutex);
                 }
@@ -90,7 +88,3 @@ void Processor::run() {
     }
 }
 
-
-unsigned int Processor::getClassfileCount() const {
-    return _classfileCount;
-}
