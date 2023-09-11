@@ -8,17 +8,17 @@
 namespace kapa::tarracsh::domain::db::table {
 
 
-struct ClassfileRow : infrastructure::db::table::AutoIncrementedRow {
+struct ClassFileRow : infrastructure::db::table::AutoIncrementedRow {
     infrastructure::db::table::column::RefCol file{};
     infrastructure::db::table::column::StringCol classname{};
-    infrastructure::db::table::column::StringCol package{};
+//    infrastructure::db::table::column::StringCol package{};
     infrastructure::db::table::column::UInt64Col lastWriteTime{};
     infrastructure::db::table::column::UInt64Col size{};
     infrastructure::db::table::column::Int32Col crc{};
     infrastructure::db::table::column::DigestCol digest{};
 
-    ClassfileRow() = default;
-    explicit ClassfileRow(const FileRow& fileRow) {
+    ClassFileRow() = default;
+    explicit ClassFileRow(const FileRow& fileRow) {
         setFile(fileRow);
     }
 
@@ -26,32 +26,32 @@ struct ClassfileRow : infrastructure::db::table::AutoIncrementedRow {
         file.id = fileRow.id;
     }
 
-    auto hasValidFile() const {
+    [[nodiscard]] auto hasValidFile() const {
         const bool result = !file.isInvalid();
         return result;
     }
 
 };
 
-class Classfiles : public  infrastructure::db::table::Table {
+class ClassFiles : public  infrastructure::db::table::Table {
 
 public:
-    explicit Classfiles(infrastructure::db::Database &db,
-                             const std::string &tablename,
-                             std::shared_ptr<Files> filesTable);
+    explicit ClassFiles(infrastructure::db::Database &db,
+                        const std::string &tablename,
+                        std::shared_ptr<Files> filesTable);
 
     [[nodiscard]] std::string getStrongClassname(const FileRow &fileRow, const char *classname) const;
     [[nodiscard]] std::string getKey(const infrastructure::db::table::AutoIncrementedRow* row) override;
     [[nodiscard]] std::string getStrongClassname(uint64_t id);
-    [[nodiscard]] std::string getStrongClassname(const ClassfileRow &row) const;
+    [[nodiscard]] std::string getStrongClassname(const ClassFileRow &row) const;
 
     void defineColumns() override;
 
 private:
     const std::shared_ptr<Files> _filesTable;
-    //std::unordered_map<StringCol, std::set<const ClassfileRow *>> _jarIndex;
-    // std::unordered_map<StringCol, std::set<const ClassfileRow *>> _classnameIndex;
-    //std::unordered_map<std::string, std::set<const ClassfileRow *>> _digestIndex;
+    //std::unordered_map<StringCol, std::set<const ClassFileRow *>> _jarIndex;
+    // std::unordered_map<StringCol, std::set<const ClassFileRow *>> _classnameIndex;
+    //std::unordered_map<std::string, std::set<const ClassFileRow *>> _digestIndex;
 
 };
 

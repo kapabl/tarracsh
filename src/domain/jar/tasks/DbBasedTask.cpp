@@ -4,7 +4,7 @@
 
 using namespace kapa::tarracsh::domain::jar;
 using kapa::tarracsh::domain::db::table::FileRow;
-using kapa::tarracsh::domain::db::table::ClassfileRow;
+using kapa::tarracsh::domain::db::table::ClassFileRow;
 
 // TODO move EntryType to outside digest namespace
 using kapa::tarracsh::domain::db::digest::column::EntryType;
@@ -30,7 +30,7 @@ FileRow *DbBasedTask::getOrCreateFileRow(const std::string &filename) {
 
     if (_isNewJarFile) {
         result = createJarFileRow(filename);
-        if (!_options.digest.dryRun) {
+        if (!_options.getSubCommandOptions().dryRun) {
             getFiles()->add(result);
         } else {
             _tempFileRow = result;
@@ -58,7 +58,7 @@ FileRow *DbBasedTask::getFileRow(const std::string &filename) {
 }
 
 bool DbBasedTask::isClassfileUnchanged(const JarEntry &jarEntry,
-                                       const db::table::ClassfileRow *classRow) {
+                                       const db::table::ClassFileRow *classRow) {
     return classRow->size == jarEntry.getSize() &&
            classRow->crc == jarEntry.getCRC() &&
            classRow->hasValidFile() &&
@@ -105,8 +105,8 @@ uint64_t  DbBasedTask::addOrUpdateClassfile(const JarEntry& jarEntry, const Dige
 
     const auto classfileTable = getClassfiles();
     const auto classname = getUniqueClassname(jarEntry, classFileParser);
-    auto& classfileRow = *static_cast<ClassfileRow*>(classfileTable->allocateRow());
-    new(&classfileRow) ClassfileRow(*_jarFileRow);
+    auto& classfileRow = *static_cast<ClassFileRow*>(classfileTable->allocateRow());
+    new(&classfileRow) ClassFileRow(*_jarFileRow);
     classfileRow.lastWriteTime = jarEntry.getLastWriteTime();
     classfileRow.size = jarEntry.getSize();
     classfileRow.classname = getDb().getPoolString(classname);

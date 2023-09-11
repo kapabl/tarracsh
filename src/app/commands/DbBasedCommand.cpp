@@ -15,7 +15,7 @@ using kapa::infrastructure::profiler::ScopedTimer;
 using namespace kapa::tarracsh::app::commands;
 
 
-DbBasedCommand::DbBasedCommand(CLI::App *parent, domain::BaseOptions &dbBasedOptions)
+DbBasedCommand::DbBasedCommand(CLI::App *parent, domain::SubCommandOptions &dbBasedOptions)
     : Command(parent),
       _results(App::getGlobalResults()),
       _options(App::getGlobalOptions()),
@@ -28,6 +28,8 @@ bool DbBasedCommand::isServerMode() const {
 }
 
 bool DbBasedCommand::runAsServer() {
+
+    //TODO fix when server mode is implemented for call-graph
     const auto result = ServerCommand::run(App::getContext());
     return result;
 }
@@ -88,11 +90,11 @@ void DbBasedCommand::addCommand() {
     const auto input = _subCommand->add_option("--input,-i",_dbBasedOptions.input,
                                                "Input: directory, jar file or class file");
 
-    const auto rebuild = _subCommand->add_flag("--rebuild",_dbBasedOptions.rebuild, "Rebuild Digest Db")
+    const auto rebuild = _subCommand->add_flag("--rebuild",_dbBasedOptions.rebuild, "Rebuild Db")
                                     ->needs(input);
 
     const auto dryRun = _subCommand->add_flag("--dry-run",_dbBasedOptions.dryRun,
-                                              "Check Against Digest Db, default behavior is check and add/update")
+                                              "Check Against Db, default behavior is check and add/update")
                                    ->needs(input);
 
     rebuild->excludes(dryRun);

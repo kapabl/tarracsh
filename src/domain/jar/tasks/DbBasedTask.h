@@ -36,11 +36,11 @@ protected:
     [[nodiscard]] db::table::FileRow *createJarFileRow(const std::string &filename);
     virtual db::table::FileRow *getFileRow(const std::string &filename);
 
-    [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const db::table::ClassfileRow *classRow);
+    [[nodiscard]] static bool isClassfileUnchanged(const JarEntry &jarEntry, const db::table::ClassFileRow *classRow);
     [[nodiscard]] bool isFileUnchanged() const;
 
 
-    virtual auto  getClassfiles() -> std::shared_ptr<db::table::Classfiles> = 0;
+    virtual auto  getClassfiles() -> std::shared_ptr<db::table::ClassFiles> = 0;
     virtual auto  getFiles() -> std::shared_ptr<db::table::Files> = 0;
 };
 

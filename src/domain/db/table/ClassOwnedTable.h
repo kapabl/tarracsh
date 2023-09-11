@@ -4,7 +4,7 @@
 #include <map>
 #include <set>
 
-#include "Classfiles.h"
+#include "ClassFiles.h"
 #include "infrastructure/db/table/Table.h"
 #include "Files.h"
 
@@ -17,11 +17,11 @@ public:
     explicit ClassOwnedTable(infrastructure::db::Database &db,
                              const std::string &tablename,
                              size_t rowSize,
-                             std::shared_ptr<Classfiles> classfiles);
-    auto deleteClass(ClassfileRow *classfileRow) -> uint64_t;
+                             std::shared_ptr<ClassFiles> classfiles);
+    auto deleteClass(ClassFileRow *classfileRow) -> uint64_t;
 
 protected:
-    const std::shared_ptr<Classfiles> _classfiles;
+    const std::shared_ptr<ClassFiles> _classfiles;
     std::map<uint64_t, std::set<uint64_t>> _ownerClassIndex;
 };
 

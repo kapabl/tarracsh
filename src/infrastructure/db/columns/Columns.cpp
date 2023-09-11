@@ -175,7 +175,7 @@ static bool registerColumns() {
            bool displayRaw) -> std::string {
             std::string result;
             const auto ref = reinterpret_cast<uint64_t &>(*pValue);
-            if (displayRaw) {
+            if (displayRaw || ref == RefCol::InvalidRef) {
                 result = fmt::format("{}", ref);
             } else {
                 auto table = db.getTable(properties.refColProperties.table);

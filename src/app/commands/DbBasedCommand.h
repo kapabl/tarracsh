@@ -12,7 +12,7 @@ namespace kapa::tarracsh::app::commands {
 
 class DbBasedCommand : public infrastructure::app::cli::command::Command {
 public:
-    explicit DbBasedCommand(CLI::App *parent, domain::BaseOptions& dbBasedOptions);
+    explicit DbBasedCommand(CLI::App *parent, domain::SubCommandOptions& dbBasedOptions);
     void addCommand() override;
 
 
@@ -20,7 +20,7 @@ protected:
     domain::stats::Results &_results;
     domain::Options &_options;
     CLI::App *_serverSubCommand{nullptr};
-    domain::BaseOptions& _dbBasedOptions;
+    domain::SubCommandOptions& _dbBasedOptions;
     [[nodiscard]] CLI::App *addServerSubCommand() const;
     [[nodiscard]] CLI::Option* addClientOptions() const;
     [[nodiscard]] bool isClientMode() const;

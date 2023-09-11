@@ -30,7 +30,7 @@ using kapa::tarracsh::domain::jar::Processor;
 using kapa::tarracsh::domain::db::digest::DigestDb;
 using kapa::tarracsh::domain::db::callgraph::CallGraphDb;
 using kapa::tarracsh::domain::db::table::FileRow;
-using kapa::tarracsh::domain::db::table::ClassfileRow;
+using kapa::tarracsh::domain::db::table::ClassFileRow;
 using kapa::tarracsh::domain::db::digest::column::EntryType;
 using kapa::tarracsh::domain::digest::ClassFileDigest;
 using kapa::tarracsh::domain::Options;
@@ -62,7 +62,7 @@ void DigestAnalyzer::endAnalysis() {
 void DigestAnalyzer::processJar(const std::string &filename) {
     _fileThreadPool.push_task([this, filename] {
         Options jarOptions(_options);
-        jarOptions.getBaseOptions().input = filename;
+        jarOptions.getSubCommandOptions().input = filename;
 
         ++_results.jarfiles.count;
 
@@ -158,8 +158,8 @@ void DigestAnalyzer::updateDbInMemory(const StandaloneClassFileInfo& classFileIn
     fileRow.digest = digest;
     files->addOrUpdate(&fileRow);
 
-    auto& classfileRow = static_cast<ClassfileRow&>(*digestDb.getClassfiles()->allocateRow());
-    new(&classfileRow) ClassfileRow(fileRow);
+    auto& classfileRow = static_cast<ClassFileRow&>(*digestDb.getClassfiles()->allocateRow());
+    new(&classfileRow) ClassFileRow(fileRow);
 
     classfileRow.size = classFileInfo.size;
     classfileRow.lastWriteTime = classFileInfo.timestamp;

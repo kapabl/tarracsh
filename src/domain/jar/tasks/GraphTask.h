@@ -7,7 +7,7 @@
 #include "DbBasedTask.h"
 #include "domain/db/CallGraphDb.h"
 #include "domain/db/table/Files.h"
-#include "domain/db/table/Classfiles.h"
+#include "domain/db/table/ClassFiles.h"
 #include "domain/classfile/ClassFileParser.h"
 #include "domain/jar/JarEntryInfo.h"
 
@@ -33,11 +33,11 @@ private:
 
     infrastructure::db::Database& getDb() override;
 
-    auto getClassfiles() -> std::shared_ptr<db::table::Classfiles> override;
+    auto getClassfiles() -> std::shared_ptr<db::table::ClassFiles> override;
     auto getFiles() -> std::shared_ptr<db::table::Files> override;
-    void processNewClassfile(const JarEntryInfo& jarEntryInfo);
-    auto getClassfileRow(uint64_t id) -> const db::table::ClassfileRow*;
-    void processClassfile(const JarEntryInfo& jarEntryInfo, db::table::ClassfileRow* row);
+   // void processNewClassfile(const JarEntryInfo& jarEntryInfo);
+    auto getClassfileRow(uint64_t id) -> const db::table::ClassFileRow*;
+    void processClassfile(const JarEntryInfo& jarEntryInfo, db::table::ClassFileRow* row);
 
 };
 

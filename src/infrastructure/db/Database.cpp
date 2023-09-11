@@ -50,7 +50,7 @@ void Database::createSaveThread() {
 
 
 void Database::outputStats() const {
-    for (const auto& table : _tables | std::views::values) {
+    for (const auto& table : _tablesByName | std::views::values) {
         std::cout << fmt::format("table {}, rows: {}", table->getName(), table->size()) << std::endl;
     }
 }
@@ -64,7 +64,7 @@ void Database::stop() {
 }
 
 Table *Database::getTable(const std::string &tablename) {
-    const auto result = _tables.contains(tablename) ? _tables[tablename] : nullptr;
+    const auto result = _tablesByName.contains(tablename) ? _tablesByName[tablename] : nullptr;
     return result;
 }
 
@@ -74,14 +74,14 @@ void Database::init() {
 
 void Database::clean() {
     _stringPool->clean();
-    for (const auto &table : _tables | std::views::values) {
+    for (const auto &table : _tablesByName | std::views::values) {
         table->clean();
     }
 }
 
 void Database::backup() {
     _stringPool->backup();
-    for (const auto &table : _tables | std::views::values) {
+    for (const auto &table : _tablesByName | std::views::values) {
         table->backup();
     }
 }
@@ -91,7 +91,10 @@ bool Database::read() {
     profiler::ScopedTimer timer(&_readTime);
     if (!_stringPool->read()) return false;
 
-    for (const auto &table : _tables | std::views::values) {
+//    for (const auto &table : _tablesByName | std::views::values) {
+//        if (!table->read()) return false;
+//    }
+    for (const auto &table : _tablesReadOrder) {
         if (!table->read()) return false;
     }
     _read = true;
@@ -100,7 +103,7 @@ bool Database::read() {
 
 bool Database::write() {
     if (!_stringPool->write()) return false;
-    for (const auto &table : _tables | std::views::values) {
+    for (const auto &table : _tablesByName | std::views::values) {
         if (!table->write()) return false;
     }
     return true;
@@ -108,7 +111,7 @@ bool Database::write() {
 }
 
 void Database::printSchema() {
-    for (const auto &table : _tables | std::views::values) {
+    for (const auto &table : _tablesByName | std::views::values) {
         table->printSchema();
     }
 }

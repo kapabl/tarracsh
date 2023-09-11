@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include "Classfiles.h"
+#include "ClassFiles.h"
 
 using namespace kapa::tarracsh::domain::db::table;
 using namespace kapa::infrastructure::db::table::column;
@@ -10,14 +10,14 @@ using kapa::infrastructure::db::table::AutoIncrementedRow;
 
 
 ClassRefs::ClassRefs(infrastructure::db::Database &db, const std::string &tablename,
-    std::shared_ptr<Classfiles> classfiles): ClassOwnedTable(db, tablename, sizeof(ClassRefRow), std::move(classfiles)) {
+    std::shared_ptr<ClassFiles> classfiles): ClassOwnedTable(db, tablename, sizeof(ClassRefRow), std::move(classfiles)) {
 }
 
 std::string ClassRefs::getKey(const AutoIncrementedRow* row) {
-    return getStrongMethodName(reinterpret_cast<const ClassRefRow&>(*row));
+    return getStrongRefName(reinterpret_cast<const ClassRefRow &>(*row));
 }
 
-std::string ClassRefs::getStrongMethodName(const ClassRefRow& row) const {
+std::string ClassRefs::getStrongRefName(const ClassRefRow& row) const {
     auto strongClassname = _classfiles->getStrongClassname(row.ownerClass.id);
     auto result = fmt::format("{}#{}", strongClassname, _stringPool->getCString(row.name));
     return result;

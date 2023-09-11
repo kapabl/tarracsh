@@ -21,11 +21,11 @@ using kapa::tarracsh::domain::db::table::Files;
 using kapa::tarracsh::domain::db::table::FieldRow;
 using kapa::tarracsh::domain::db::table::FieldRefRow;
 using kapa::tarracsh::domain::db::table::ClassRefRow;
-using kapa::tarracsh::domain::db::table::ClassfileRow;
+using kapa::tarracsh::domain::db::table::ClassFileRow;
 using kapa::tarracsh::domain::db::callgraph::CallGraphDb;
 
 ClassFileProcessor::ClassFileProcessor(
-        const ClassfileRow *row, ClassFileParser &parser, CallGraphDb &db) :
+        const ClassFileRow *row, ClassFileParser &parser, CallGraphDb &db) :
         _row(row),
         _parser(parser),
         _db(db),

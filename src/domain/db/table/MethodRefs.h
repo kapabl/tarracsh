@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "Methods.h"
-#include "Classfiles.h"
+#include "ClassFiles.h"
 #include "ClassOwnedTable.h"
 #include "infrastructure/db/table/Table.h"
 #include "Files.h"
@@ -26,15 +26,15 @@ namespace kapa::tarracsh::domain::db::table {
 
         MethodRefRow() = default;
 
-        explicit MethodRefRow(const ClassfileRow &classFileRow) {
+        explicit MethodRefRow(const ClassFileRow &classFileRow) {
             setClass(classFileRow);
         }
 
-        void setClass(const ClassfileRow &classFileRow) {
+        void setClass(const ClassFileRow &classFileRow) {
             ownerClass.id = classFileRow.id;
         }
 
-        void setTargetClass(const ClassfileRow &classFileRow) {
+        void setTargetClass(const ClassFileRow &classFileRow) {
             targetClass.id = classFileRow.id;
         }
 
@@ -49,12 +49,12 @@ namespace kapa::tarracsh::domain::db::table {
     public:
         explicit MethodRefs(infrastructure::db::Database &db,
                             const std::string &tablename,
-                            std::shared_ptr<Classfiles> classfiles,
+                            std::shared_ptr<ClassFiles> classfiles,
                             std::shared_ptr<Methods> methods);
 
         [[nodiscard]] std::string getKey(const infrastructure::db::table::AutoIncrementedRow *row) override;
 
-        [[nodiscard]] std::string getStrongMethodName(const MethodRefRow &row) const;
+        [[nodiscard]] std::string getStrongRefName(const MethodRefRow &row) const;
 
         void defineColumns() override;
 

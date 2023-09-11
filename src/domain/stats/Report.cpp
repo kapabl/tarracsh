@@ -11,7 +11,7 @@
 
 using namespace kapa::tarracsh::domain::stats::report;
 
-using kapa::tarracsh::domain::BaseOptions;
+using kapa::tarracsh::domain::SubCommandOptions;
 using kapa::tarracsh::domain::stats::TaskResult;
 
 
@@ -22,7 +22,7 @@ Report::Report(Results &results)
       _options(results.options) {
 }
 
-BaseOptions& Report::getBaseOptions() const {
+SubCommandOptions& Report::getBaseOptions() const {
     if ( _options.isCallGraph) {
         return _options.callGraph;
     } else if ( _options.isPublicDigest ) {

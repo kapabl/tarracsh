@@ -4,7 +4,7 @@
 #include "../JarEntry.h"
 #include "domain/Options.h"
 #include "infrastructure/db/Database.h"
-#include "domain/db/table/Classfiles.h"
+#include "domain/db/table/ClassFiles.h"
 #include "domain/db/table/Files.h"
 #include "domain/stats/Results.h"
 

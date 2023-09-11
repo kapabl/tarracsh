@@ -24,7 +24,7 @@ struct ClientOptions {
     [[nodiscard]] std::string getServerAddress() const;
 };
 
-struct BaseOptions {
+struct SubCommandOptions {
     std::string input;
     bool isDir{ false };
     bool isJar{ false };
@@ -40,13 +40,13 @@ struct BaseOptions {
     bool displayRaw{ false };
 };
 
-struct DigestOptions : BaseOptions {
+struct DigestOptions : SubCommandOptions {
 };
 
-struct CallGraphOptions : BaseOptions {
+struct CallGraphOptions : SubCommandOptions {
 };
 
-struct ParseOptions : BaseOptions {
+struct ParseOptions : SubCommandOptions {
     bool print{false};
     bool printConstantPool{false};
     bool printCPoolHtmlNav{false};
@@ -72,7 +72,7 @@ struct Options {
     bool verbose{false};
     
     [[nodiscard]] bool canPrintProgress() const;
-    BaseOptions& getBaseOptions();
+    SubCommandOptions& getSubCommandOptions();
 
 
 };

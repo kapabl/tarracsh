@@ -2,7 +2,7 @@
 #define TARRACSH_DIGEST_DB_H
 #include <filesystem>
 
-#include "table/Classfiles.h"
+#include "table/ClassFiles.h"
 #include "infrastructure/db/Database.h"
 #include "infrastructure/db/table/Table.h"
 #include "table/Files.h"
@@ -27,7 +27,7 @@ public:
     auto getClassfiles() { return _classfiles; }
 private:
     std::shared_ptr<table::Files> _files;
-    std::shared_ptr<table::Classfiles> _classfiles;
+    std::shared_ptr<table::ClassFiles> _classfiles;
 
 };
 

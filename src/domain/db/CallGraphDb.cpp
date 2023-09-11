@@ -3,31 +3,38 @@
 
 using namespace std;
 using namespace kapa::tarracsh::domain::db::callgraph;
-using kapa::tarracsh::domain::db::table::ClassfileRow;
+using kapa::tarracsh::domain::db::table::ClassFileRow;
 
 
 void CallGraphDb::init() {
     Database::init();
     _files = std::make_shared<table::Files>(*this, "files");
-    _tables[_files->getName()] = _files.get();
+    _tablesByName[_files->getName()] = _files.get();
+    _tablesReadOrder.push_back(_files.get());
 
-    _classfiles = std::make_shared<table::Classfiles>(*this, "classfiles", _files);
-    _tables[_classfiles->getName()] = _classfiles.get();
+    _classfiles = std::make_shared<table::ClassFiles>(*this, "classfiles", _files);
+    _tablesByName[_classfiles->getName()] = _classfiles.get();
+    _tablesReadOrder.push_back(_classfiles.get());
 
     _classRefs = std::make_shared<table::ClassRefs>(*this, "classRefs", _classfiles);
-    _tables[_classRefs->getName()] = _classRefs.get();
+    _tablesByName[_classRefs->getName()] = _classRefs.get();
+    _tablesReadOrder.push_back(_classRefs.get());
 
     _methods = std::make_shared<table::Methods>(*this, "methods", _classfiles);
-    _tables[_methods->getName()] = _methods.get();
+    _tablesByName[_methods->getName()] = _methods.get();
+    _tablesReadOrder.push_back(_methods.get());
 
     _methodRefs = std::make_shared<table::MethodRefs>(*this, "methodRefs", _classfiles, _methods);
-    _tables[_methodRefs->getName()] = _methodRefs.get();
+    _tablesByName[_methodRefs->getName()] = _methodRefs.get();
+    _tablesReadOrder.push_back(_methodRefs.get());
 
     _fields = std::make_shared<table::Fields>(*this, "fields", _classfiles);
-    _tables[_fields->getName()] = _fields.get();
+    _tablesByName[_fields->getName()] = _fields.get();
+    _tablesReadOrder.push_back(_fields.get());
 
     _fieldRefs = std::make_shared<table::FieldRefs>(*this, "fieldRefs", _classfiles, _fields);
-    _tables[_methods->getName()] = _methods.get();
+    _tablesByName[_methods->getName()] = _methods.get();
+    _tablesReadOrder.push_back(_fieldRefs.get());
 
     _files->init();
 
@@ -41,7 +48,7 @@ void CallGraphDb::init() {
     _fieldRefs->init();
 }
 
-auto CallGraphDb::deleteClass(ClassfileRow *row) -> uint64_t {
+auto CallGraphDb::deleteClass(ClassFileRow *row) -> uint64_t {
     auto result = getClassRefs()->deleteClass(row) +
                   getMethods()->deleteClass(row) +
                   getMethodRefs()->deleteClass(row) +

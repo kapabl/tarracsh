@@ -2,7 +2,7 @@
 #define TARRACSH_FIELD_REFS_TABLE_H
 #include <string>
 
-#include "Classfiles.h"
+#include "ClassFiles.h"
 #include "ClassOwnedTable.h"
 #include "Fields.h"
 #include "infrastructure/db/table/Table.h"
@@ -20,15 +20,15 @@ struct FieldRefRow : infrastructure::db::table::AutoIncrementedRow {
     infrastructure::db::table::column::RefCol targetField{};
 
     FieldRefRow() = default;
-    explicit FieldRefRow(const ClassfileRow& classFileRow) {
+    explicit FieldRefRow(const ClassFileRow& classFileRow) {
         setClass(classFileRow);
     }
 
-    void setClass(const ClassfileRow &classFileRow) {
+    void setClass(const ClassFileRow &classFileRow) {
         ownerClass.id = classFileRow.id;
     }
 
-    void setTargetClass(const ClassfileRow &classFileRow) {
+    void setTargetClass(const ClassFileRow &classFileRow) {
         targetClass.id = classFileRow.id;
     }
 
@@ -43,11 +43,11 @@ class FieldRefs : public ClassOwnedTable {
 public:
     explicit FieldRefs(infrastructure::db::Database &db,
                              const std::string &tablename,
-                             std::shared_ptr<Classfiles> classfile,
+                             std::shared_ptr<ClassFiles> classfile,
                              std::shared_ptr<Fields> fields);
 
     [[nodiscard]] std::string getKey(const infrastructure::db::table::AutoIncrementedRow* row) override;
-    [[nodiscard]] std::string getStrongMethodName(const FieldRefRow &row) const;
+    [[nodiscard]] std::string getStrongRefName(const FieldRefRow &row) const;
 
     void defineColumns() override;
 

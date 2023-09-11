@@ -49,7 +49,7 @@ void CallGraphAnalyzer::processStandaloneClassfile(const std::string &filename) 
 void CallGraphAnalyzer::processJar(const std::string &filename) {
     _fileThreadPool.push_task([this, filename] {
         domain::Options jarOptions(_options);
-        jarOptions.getBaseOptions().input = filename;
+        jarOptions.getSubCommandOptions().input = filename;
 
         ++_results.jarfiles.count;
         {

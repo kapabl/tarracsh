@@ -65,7 +65,7 @@ bool StringPool::write() const {
 
 const char * StringPool::getCString(const table::column::StringCol &item) {
     std::shared_lock readersLock(_sharedMutex);
-    const auto result = &_pool[item];
+    auto result = &_pool[item];
     return result;
 }
 
