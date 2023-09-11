@@ -2,7 +2,7 @@
 #define TARRACSH_CLASS_REFS_TABLE_H
 #include <string>
 
-#include "Classfiles.h"
+#include "ClassFiles.h"
 #include "ClassOwnedTable.h"
 #include "infrastructure/db/table/Table.h"
 #include "Files.h"
@@ -19,11 +19,11 @@ struct ClassRefRow : infrastructure::db::table::AutoIncrementedRow {
     infrastructure::db::table::column::RefCol targetClass{};
 
     ClassRefRow() = default;
-    explicit ClassRefRow(const ClassfileRow& classFileRow) {
+    explicit ClassRefRow(const ClassFileRow& classFileRow) {
         setClass(classFileRow);
     }
 
-    void setClass(const ClassfileRow &classFileRow) {
+    void setClass(const ClassFileRow &classFileRow) {
         ownerClass.id = classFileRow.id;
     }
 
@@ -34,10 +34,10 @@ class ClassRefs : public ClassOwnedTable {
 public:
     explicit ClassRefs(infrastructure::db::Database &db,
                              const std::string &tablename,
-                             std::shared_ptr<Classfiles> classfiles);
+                             std::shared_ptr<ClassFiles> classfiles);
 
     [[nodiscard]] std::string getKey(const infrastructure::db::table::AutoIncrementedRow* row) override;
-    [[nodiscard]] std::string getStrongMethodName(const ClassRefRow &row) const;
+    [[nodiscard]] std::string getStrongRefName(const ClassRefRow &row) const;
 
     void defineColumns() override;
 

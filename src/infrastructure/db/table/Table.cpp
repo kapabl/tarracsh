@@ -32,7 +32,7 @@ std::string Table::generateStdOutHeader() const {
 std::string Table::generateStdOutRow(AutoIncrementedRow *row, bool displayRaw) const {
     std::string result;
 
-    forEachColumn([&result,&row,&displayRaw,this](const auto &properties, auto index) -> void {
+    forEachColumn([&result, &row, &displayRaw, this](const auto &properties, auto index) -> void {
         char *pValue = reinterpret_cast<char *>(row) + properties.offsetInRow;
         if (!result.empty()) {
             result += ",";
@@ -52,7 +52,10 @@ void Table::list(const std::function<bool(AutoIncrementedRow &)> &filter, const 
     {
         ScopedTimer timer(&duration);
 
-        const auto threadCount = std::thread::hardware_concurrency() * 4 / 5;
+        //const auto threadCount = std::thread::hardware_concurrency() * 4 / 5;
+        //TODO - fix thread pool
+        //set to 1 when debugging
+        const auto threadCount = 1;
         outputByChuck.resize(threadCount);
 
         //const auto threadCount = 1;
@@ -66,24 +69,25 @@ void Table::list(const std::function<bool(AutoIncrementedRow &)> &filter, const 
         do {
             end = std::min<unsigned long long>(start + chunkSize, _autoIncrementIndex.size());
             threadPool.push_task([this,
-                    start,
-                    end,
-                    chunkIndex,
-                    &filter,
-                    &rowsFound,
-                    &outputByChuck]() -> void {
+                                         start,
+                                         end,
+                                         chunkIndex,
+                                         &filter,
+                                         &rowsFound,
+                                         &outputByChuck]() -> void {
 
-                    auto index = start;
-                    auto &outputById = outputByChuck[chunkIndex];
-                    while (index < end) {
-                        const auto pRow = _autoIncrementIndex[index];
-                        if (filter(*pRow)) {
-                            outputById.push_back(pRow);
-                            ++rowsFound;
-                        }
-                        index++;
+                auto index = start;
+                auto &outputById = outputByChuck[chunkIndex];
+                outputById.reserve(end - index);
+                while (index < end) {
+                    const auto pRow = _autoIncrementIndex[index];
+                    if (filter(*pRow)) {
+                        outputById.push_back(pRow);
+                        ++rowsFound;
                     }
-                });
+                    index++;
+                }
+            });
             start += chunkSize;
             chunkIndex++;
         } while (end < rowsScanned);
@@ -94,8 +98,8 @@ void Table::list(const std::function<bool(AutoIncrementedRow &)> &filter, const 
     std::cout << fmt::format("table: {}", _layout.header.name) << std::endl;
     std::cout << generateStdOutHeader() << std::endl;
 
-    for (auto &outputByDbId : outputByChuck) {
-        for (const auto pRow : outputByDbId) {
+    for (auto &outputByDbId: outputByChuck) {
+        for (const auto pRow: outputByDbId) {
             std::cout << generateStdOutRow(pRow, displayRaw) << "\n";
         }
     }
@@ -104,12 +108,12 @@ void Table::list(const std::function<bool(AutoIncrementedRow &)> &filter, const 
 
     profiler::MillisecondDuration dbReadDuration{_db.getReadTime()};
     std::cout <<
-        fmt::format(
-            "rows found: {}, rows scanned: {}, rows processing time:{}, db read time: {}",
-            rowsFound.load(),
-            rowsScanned,
-            duration,
-            dbReadDuration) << std::endl;
+              fmt::format(
+                      "rows found: {}, rows scanned: {}, rows processing time:{}, db read time: {}",
+                      rowsFound.load(),
+                      rowsScanned,
+                      duration,
+                      dbReadDuration) << std::endl;
 }
 
 uint64_t Table::size() const { return _rows.size(); }
@@ -124,7 +128,7 @@ std::string Table::getColumnValue(const uint64_t id, const char *columnName) {
 }
 
 AutoIncrementedRow *Table::allocateRow() const {
-    const auto result = (AutoIncrementedRow *)malloc(_rowSize);
+    const auto result = (AutoIncrementedRow *) malloc(_rowSize);
     return result;
 }
 
@@ -158,11 +162,11 @@ void Table::printLayout() {
     std::cout << "columns:" << std::endl;
     forEachColumn([](const auto &properties, auto index) -> void {
         std::cout << std::right
-            << std::setw(7) << fmt::format("no: {}, ", index)
-            << std::setw(25) << fmt::format("name: {}, ", properties.name)
-            << std::setw(25) << fmt::format("type: {}, ", column::StorageTypeToString(properties.type))
-            << std::setw(25) << fmt::format("display as: {}", column::displayAsToString(properties.displayAs))
-            << std::endl;
+                  << std::setw(7) << fmt::format("no: {}, ", index)
+                  << std::setw(25) << fmt::format("name: {}, ", properties.name)
+                  << std::setw(25) << fmt::format("type: {}, ", column::StorageTypeToString(properties.type))
+                  << std::setw(25) << fmt::format("display as: {}", column::displayAsToString(properties.displayAs))
+                  << std::endl;
     });
 }
 
@@ -287,19 +291,19 @@ void Table::internalUpdate(AutoIncrementedRow *row, const std::string &key) {
 }
 
 Table::Table(db::Database &db, const std::string &name, uint64_t rowSize)
-    : _db(db),
-      _rowSize(rowSize),
-      _name(name),
-      _stringPool(db.getStringPool()) {
+        : _db(db),
+          _rowSize(rowSize),
+          _name(name),
+          _stringPool(db.getStringPool()) {
     _layout.header.signature = KAPA_TABLE_SIGNATURE;
     //strcpy_s(_layout.header.name, name.c_str());
-    strcpy(_layout.header.name, name.c_str());    
+    strcpy(_layout.header.name, name.c_str());
     _filename = db.generateTableFilename(name);
 
 }
 
 Table::~Table() {
-    for (const auto row : _rows | std::views::values) {
+    for (const auto row: _rows | std::views::values) {
         freeRow(row);
     }
 }
@@ -402,7 +406,7 @@ bool Table::write() {
     //FILE *file = nullptr;
     //if (fopen_s(&file, _filename.c_str(), mode) == 0) {
     FILE *file = fopen(_filename.c_str(), mode);
-    if (file != nullptr ) {        
+    if (file != nullptr) {
         if (std::fseek(file, 0, SEEK_SET) != 0) {
             _db.log().writeln(fmt::format("Error seeking file {}", _filename), true);
             return false;

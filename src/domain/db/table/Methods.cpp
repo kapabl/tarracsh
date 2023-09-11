@@ -1,6 +1,6 @@
 #include "Methods.h"
 
-#include "Classfiles.h"
+#include "ClassFiles.h"
 
 using namespace kapa::tarracsh::domain::db::table;
 using namespace kapa::infrastructure::db::table::column;
@@ -8,15 +8,15 @@ using kapa::infrastructure::db::table::AutoIncrementedRow;
 
 
 Methods::Methods(infrastructure::db::Database &db, const std::string &tablename,
-    std::shared_ptr<Classfiles> classfiles):
+    std::shared_ptr<ClassFiles> classfiles):
     ClassOwnedTable(db, tablename, sizeof(MethodRow), std::move(classfiles)) {
 }
 
 std::string Methods::getKey(const AutoIncrementedRow* row) {
-    return getStrongMethodName(reinterpret_cast<const MethodRow&>(*row));
+    return getStrongMemberName(reinterpret_cast<const MethodRow &>(*row));
 }
 
-std::string Methods::getStrongMethodName(const MethodRow& row) const {
+std::string Methods::getStrongMemberName(const MethodRow& row) const {
     auto strongClassname = _classfiles->getStrongClassname(row.ownerClass.id);
     auto result = fmt::format("{}#{}", strongClassname, _stringPool->getCString(row.name));
     return result;

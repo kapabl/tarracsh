@@ -37,7 +37,7 @@ struct ClassResult {
 class Report {
 public:
     explicit Report(Results &results);
-    BaseOptions &getBaseOptions() const;
+    SubCommandOptions &getBaseOptions() const;
 
     void asNewJar(const std::string &filename);
     void asModifiedJar(const std::string &filename, bool isSamePublicDigest);

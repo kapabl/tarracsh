@@ -5,7 +5,7 @@
 #include "../JarEntry.h"
 #include "DbBasedTask.h"
 #include "domain/db/DigestDb.h"
-#include "domain/db/table/Classfiles.h"
+#include "domain/db/table/ClassFiles.h"
 #include "domain/classfile/ClassFileParser.h"
 #include "domain/jar/JarEntryInfo.h"
 #include "domain/digest/DigestUtils.h"
@@ -36,12 +36,12 @@ private:
 
     [[nodiscard]] std::optional<infrastructure::db::table::column::DigestCol> digestEntry(
         const JarEntryInfo &digestEntryInfo,
-        const db::table::ClassfileRow *row);
+        const db::table::ClassFileRow *row);
 
     infrastructure::db::Database& getDb() override;
 
 protected:
-    auto getClassfiles() -> std::shared_ptr<db::table::Classfiles> override;
+    auto getClassfiles() -> std::shared_ptr<db::table::ClassFiles> override;
     auto getFiles() -> std::shared_ptr<db::table::Files> override;
 
 };

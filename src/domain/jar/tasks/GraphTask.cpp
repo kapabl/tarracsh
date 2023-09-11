@@ -23,7 +23,7 @@ using kapa::tarracsh::domain::db::table::Files;
 using kapa::tarracsh::domain::db::table::FieldRow;
 using kapa::tarracsh::domain::db::table::FieldRefRow;
 using kapa::tarracsh::domain::db::table::ClassRefRow;
-using kapa::tarracsh::domain::db::table::ClassfileRow;
+using kapa::tarracsh::domain::db::table::ClassFileRow;
 using kapa::tarracsh::domain::db::callgraph::CallGraphDb;
 using kapa::tarracsh::domain::graph::ClassFileProcessor;
 
@@ -39,29 +39,29 @@ GraphTask::GraphTask(const Options &options, Results &results,
         : DbBasedTask(options, results), _db(callGraphDb) {
 }
 
-void GraphTask::processNewClassfile(const JarEntryInfo &jarEntryInfo) {
-    const auto &jarEntry = jarEntryInfo.jarEntry;
+//void GraphTask::processNewClassfile(const JarEntryInfo &jarEntryInfo) {
+//    const auto &jarEntry = jarEntryInfo.jarEntry;
+//
+//    MemoryReader reader(jarEntry);
+//
+//    ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);
+//    if (classFileParser.parse()) {
+//        auto row = getClassfileRow(addOrUpdateClassfile(jarEntry, classFileParser));
+//        auto classFileProcessor = ClassFileProcessor(row, classFileParser, _db );
+//        classFileProcessor.extractNodes();
+//    } else {
+//        _results.report->asFailedJarClass(jarEntryInfo.strongClassname);
+//        ++_results.jarfiles.classfiles.errors;
+//    }
+//
+//}
 
-    MemoryReader reader(jarEntry);
-
-    ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);
-    if (classFileParser.parse()) {
-        auto row = getClassfileRow(addOrUpdateClassfile(jarEntry, classFileParser));
-        auto classFileProcessor = ClassFileProcessor(row, classFileParser, _db );
-        classFileProcessor.extractNodes();
-    } else {
-        _results.report->asFailedJarClass(jarEntryInfo.strongClassname);
-        ++_results.jarfiles.classfiles.errors;
-    }
-
-}
-
-const ClassfileRow *GraphTask::getClassfileRow(uint64_t id) {
-    const auto result = reinterpret_cast<const ClassfileRow *>(getClassfiles()->getRow(id));
+const ClassFileRow *GraphTask::getClassfileRow(uint64_t id) {
+    const auto result = reinterpret_cast<const ClassFileRow *>(getClassfiles()->getRow(id));
     return result;
 }
 
-void GraphTask::processClassfile(const JarEntryInfo &jarEntryInfo, ClassfileRow *row) {
+void GraphTask::processClassfile(const JarEntryInfo &jarEntryInfo, ClassFileRow *row) {
     if (row != nullptr) {
         _db.deleteClass(row);
     }
@@ -81,7 +81,7 @@ void GraphTask::processClassfile(const JarEntryInfo &jarEntryInfo, ClassfileRow 
 }
 
 bool GraphTask::start() {
-    const auto &filename = _options.digest.input;
+    const auto &filename = _options.callGraph.input;
     _jarSize = filesystem::file_size(filename);
     _jarTimestamp = kapa::infrastructure::filesystem::utils::getLastWriteTimestamp(filename);
     _jarFileRow = getOrCreateFileRow(filename);
@@ -95,7 +95,7 @@ void GraphTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
     const auto filename = _db.getFiles()->getFilename(&getJarFileRow());
     const JarEntryInfo jarEntryInfo(filename, jarEntry);
 
-    auto classfileRow = static_cast<ClassfileRow *>(_db.getClassfiles()->findByKey(
+    auto classfileRow = static_cast<ClassFileRow *>(_db.getClassfiles()->findByKey(
             jarEntryInfo.strongClassname));
 
     const auto classExists = nullptr != classfileRow;
@@ -131,7 +131,7 @@ kapa::infrastructure::db::Database &GraphTask::getDb() {
     return _db;
 }
 
-auto GraphTask::getClassfiles() -> std::shared_ptr<db::table::Classfiles> {
+auto GraphTask::getClassfiles() -> std::shared_ptr<db::table::ClassFiles> {
     const auto result = _db.getClassfiles();
     return result;
 }

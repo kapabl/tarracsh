@@ -48,8 +48,8 @@ inline Query::Query(Context &context)
 }
 
 inline bool Query::execute() const {
-    _db->init();
-    const auto result = _db->executeQuery(_options.digest.queryValue, _options.digest.displayRaw);
+    //_db->init();
+    const auto result = _db->executeQuery(_options.getSubCommandOptions().queryValue, _options.getSubCommandOptions().displayRaw);
     return result;
 }
 }

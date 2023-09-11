@@ -13,13 +13,13 @@ bool Options::canPrintProgress() const {
     return result;
 }
 
-BaseOptions& Options::getBaseOptions() {
+SubCommandOptions& Options::getSubCommandOptions() {
     if (isPublicDigest) return digest;
     if (isCallGraph) return callGraph;
     return parse;
 }
 
-bool BaseOptions::processInput() {
+bool SubCommandOptions::processInput() {
     isDir = std::filesystem::is_directory(input);
     if (isDir) return true;
 
@@ -34,7 +34,7 @@ bool BaseOptions::processInput() {
     return false;
 }
 
-bool BaseOptions::isValidInput() {
+bool SubCommandOptions::isValidInput() {
     const auto result = processInput();
     if (!result) {
         std::cout << fmt::format("Input should be a directory, jar or class file. Invalid input:{}", input) << std::endl;

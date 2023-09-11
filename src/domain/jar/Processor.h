@@ -4,7 +4,7 @@
 #include <unordered_set>
 
 #include "domain/stats/Results.h"
-#include "domain/db/table/Classfiles.h"
+#include "domain/db/table/ClassFiles.h"
 #include "JarEntry.h"
 #include "tasks/Task.h"
 
@@ -40,7 +40,9 @@ private:
 
 
     // BS::thread_pool _threadPool{ std::max<unsigned int>( 1u, std::thread::hardware_concurrency()*1/4) };
-    BS::thread_pool _threadPool{ std::max<unsigned int>( 1u, std::thread::hardware_concurrency()*2/5) };
+    // BS::thread_pool _threadPool{ std::max<unsigned int>( 1u, std::thread::hardware_concurrency()*2/5) };
+    //Note: use a single thread pool for easier debugging
+    BS::thread_pool _threadPool{ std::max<unsigned int>( 1u, 1u) };
     std::mutex _taskMutex;
     std::mutex _jarMutex;
     std::condition_variable _jarCv;

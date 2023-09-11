@@ -9,10 +9,12 @@ using namespace kapa::tarracsh::domain::db::digest;
 void DigestDb::init() {
     Database::init();
     _files = std::make_shared<table::Files>(*this, "files");
-    _tables[_files->getName()] = _files.get();
+    _tablesByName[_files->getName()] = _files.get();
+    _tablesReadOrder.push_back(_files.get());
 
-    _classfiles = std::make_shared<table::Classfiles>(*this, "classfiles", _files);
-    _tables[_classfiles->getName()] = _classfiles.get();
+    _classfiles = std::make_shared<table::ClassFiles>(*this, "classfiles", _files);
+    _tablesByName[_classfiles->getName()] = _classfiles.get();
+    _tablesReadOrder.push_back(_classfiles.get());
 
     _files->init();
     _classfiles->init();

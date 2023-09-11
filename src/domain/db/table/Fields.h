@@ -2,7 +2,7 @@
 #define TARRACSH_FIELDS_TABLE_H
 #include <string>
 
-#include "Classfiles.h"
+#include "ClassFiles.h"
 #include "ClassOwnedTable.h"
 #include "infrastructure/db/table/Table.h"
 #include "Files.h"
@@ -19,11 +19,11 @@ struct FieldRow : infrastructure::db::table::AutoIncrementedRow {
     infrastructure::db::table::column::UInt64Col refCount{};
 
     FieldRow() = default;
-    explicit FieldRow(const ClassfileRow& classFileRow) {
+    explicit FieldRow(const ClassFileRow& classFileRow) {
         setClass(classFileRow);
     }
 
-    void setClass(const ClassfileRow &classFileRow) {
+    void setClass(const ClassFileRow &classFileRow) {
         ownerClass.id = classFileRow.id;
     }
 
@@ -34,10 +34,10 @@ class Fields : public  ClassOwnedTable {
 public:
     explicit Fields(infrastructure::db::Database &db,
                              const std::string &tablename,
-                             std::shared_ptr<Classfiles> classfiles);
+                             std::shared_ptr<ClassFiles> classfiles);
 
     [[nodiscard]] std::string getKey(const infrastructure::db::table::AutoIncrementedRow* row) override;
-    [[nodiscard]] std::string getStrongMethodName(const FieldRow &row) const;
+    [[nodiscard]] std::string getStrongMemberName(const FieldRow &row) const;
 
     void defineColumns() override;
 

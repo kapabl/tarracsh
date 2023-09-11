@@ -55,6 +55,7 @@ bool CallGraph::runAsServer() {
     // const auto result = ServerCommand::run(App::getContext());
     const auto result = false;
     //TODO
+    std::cout << "runAsServer mode not implemented yet" << std::endl;
     return result;
 }
 
@@ -62,6 +63,7 @@ bool CallGraph::runAsClient() {
     // const auto result = ServerCommand::run(App::getContext());
     const auto result = false;
     //TODO
+    std::cout << "runAsClient mode not implemented yet" << std::endl;
     return result;
 }
 
@@ -83,8 +85,16 @@ bool CallGraph::initDb() {
 }
 
 ExitCode CallGraph::run() {
-    ExitCode result = processInput();
-    //TODO implement server-mode and client-mode
+
+    ExitCode result = 0;
+    _options.digest.server.isServerMode = _subCommand->got_subcommand(_serverSubCommand);
+    if (isServerMode()) {
+        result = runAsServer();
+    } else if (!_options.callGraph.queryValue.empty()) {
+        result = Query::run(App::getContext());
+    } else {
+        result = processInput();
+    }
     return result;
 }
 

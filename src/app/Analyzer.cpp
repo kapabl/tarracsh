@@ -32,14 +32,14 @@ using namespace kapa::tarracsh::app;
 
 Analyzer::Analyzer(Context &config, const std::shared_ptr<infrastructure::db::Database> db)
     : _options(config.getOptions()),
-      _inputOptions(_options.getBaseOptions()),
+      _inputOptions(_options.getSubCommandOptions()),
       _results(config.getResults()),
       _db(db) {
 }
 
 Analyzer::Analyzer(Context &config)
     : _options(config.getOptions()),
-      _inputOptions(_options.getBaseOptions()),
+      _inputOptions(_options.getSubCommandOptions()),
       _results(config.getResults()) {
 }
 
@@ -93,7 +93,7 @@ void Analyzer::classFileParserDone(ClassFileParser &parser) const {
 void Analyzer::processJar(const std::string &filename) {
     _fileThreadPool.push_task([this,filename] {
         Options jarOptions(_options);
-        jarOptions.getBaseOptions().input = filename;
+        jarOptions.getSubCommandOptions().input = filename;
 
         ++_results.jarfiles.count;
         ParserTask jarParserTask(jarOptions, _results, [this](ClassFileParser &parser) -> void {
@@ -124,7 +124,7 @@ bool Analyzer::initAnalyzer() const {
 }
 
 void Analyzer::serverLog(const std::string &string, const bool doStdout) {
-    if (!_options.getBaseOptions().server.isServerMode) return;
+    if (!_options.getSubCommandOptions().server.isServerMode) return;
     _results.log->writeln(string, doStdout);
 
 }

@@ -36,7 +36,7 @@ public:
 
 protected:
     domain::Options _options;
-    domain::BaseOptions _inputOptions;
+    domain::SubCommandOptions _inputOptions;
     domain::stats::Results& _results;
 
 

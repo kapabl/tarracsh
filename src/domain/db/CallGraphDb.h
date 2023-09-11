@@ -3,7 +3,7 @@
 #include <filesystem>
 #include "infrastructure/db/Database.h"
 #include "table/Files.h"
-#include "table/Classfiles.h"
+#include "table/ClassFiles.h"
 #include "table/ClassRefs.h"
 #include "table/Methods.h"
 #include "table/MethodRefs.h"
@@ -32,11 +32,11 @@ public:
     auto getFields() { return _fields; }
     auto getFieldRefs() { return _fieldRefs; }
 
-    auto deleteClass(table::ClassfileRow* row) -> uint64_t;
+    auto deleteClass(table::ClassFileRow* row) -> uint64_t;
 
 private:
     std::shared_ptr<table::Files> _files;
-    std::shared_ptr<table::Classfiles> _classfiles;
+    std::shared_ptr<table::ClassFiles> _classfiles;
     std::shared_ptr<table::ClassRefs> _classRefs;
     std::shared_ptr<table::Methods> _methods;
     std::shared_ptr<table::MethodRefs> _methodRefs;

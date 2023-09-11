@@ -4,7 +4,7 @@
 #include <map>
 #include <set>
 
-#include "Classfiles.h"
+#include "ClassFiles.h"
 #include "ClassOwnedTable.h"
 #include "infrastructure/db/table/Table.h"
 #include "Files.h"
@@ -21,11 +21,11 @@ struct MethodRow : infrastructure::db::table::AutoIncrementedRow {
     infrastructure::db::table::column::UInt64Col refCount{};
 
     MethodRow() = default;
-    explicit MethodRow(const ClassfileRow& classFileRow) {
+    explicit MethodRow(const ClassFileRow& classFileRow) {
         setClass(classFileRow);
     }
 
-    void setClass(const ClassfileRow &classFileRow) {
+    void setClass(const ClassFileRow &classFileRow) {
         ownerClass.id = classFileRow.id;
     }
 
@@ -36,10 +36,10 @@ class Methods : public ClassOwnedTable {
 public:
     explicit Methods(infrastructure::db::Database &db,
                              const std::string &tablename,
-                             std::shared_ptr<Classfiles> classfiles);
+                             std::shared_ptr<ClassFiles> classfiles);
 
     [[nodiscard]] std::string getKey(const infrastructure::db::table::AutoIncrementedRow* row) override;
-    [[nodiscard]] std::string getStrongMethodName(const MethodRow &row) const;
+    [[nodiscard]] std::string getStrongMemberName(const MethodRow &row) const;
 
     void defineColumns() override;
 

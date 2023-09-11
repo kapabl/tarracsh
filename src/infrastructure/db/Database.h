@@ -57,7 +57,8 @@ protected:
     std::shared_ptr<StringPool> _stringPool;
     std::unique_ptr<query::Engine> _queryEngine;
     log::Log& _log;
-    std::unordered_map<std::string, table::Table*> _tables;
+    std::unordered_map<std::string, table::Table*> _tablesByName;
+    std::vector<table::Table*> _tablesReadOrder;
     bool _read{false};
     profiler::MillisecondDuration _readTime{ 0 };
 
