@@ -52,45 +52,32 @@ void Table::list(const std::function<bool(AutoIncrementedRow &)> &filter, const 
     {
         ScopedTimer timer(&duration);
 
-        //const auto threadCount = std::thread::hardware_concurrency() * 4 / 5;
-        //TODO - fix thread pool
-        //set to 1 when debugging
-        const auto threadCount = 1;
+        const auto threadCount = std::thread::hardware_concurrency() * 4 / 5;
+        BS::thread_pool threadPool{std::max<unsigned int>(1u, threadCount)};
         outputByChuck.resize(threadCount);
 
-        //const auto threadCount = 1;
-        BS::thread_pool threadPool{std::max<unsigned int>(1u, threadCount)};
-
-        const auto chunkSize = rowsScanned / threadCount;
-        auto start = 0ull;
-        uint64_t end;
+        const auto chunkSize = (rowsScanned + threadCount - 1) / threadCount;
         int chunkIndex = 0;
 
         do {
-            end = std::min<unsigned long long>(start + chunkSize, _autoIncrementIndex.size());
-            threadPool.push_task([this,
-                                         start,
-                                         end,
-                                         chunkIndex,
-                                         &filter,
-                                         &rowsFound,
-                                         &outputByChuck]() -> void {
 
-                auto index = start;
-                auto &outputById = outputByChuck[chunkIndex];
-                outputById.reserve(end - index);
-                while (index < end) {
-                    const auto pRow = _autoIncrementIndex[index];
-                    if (filter(*pRow)) {
-                        outputById.push_back(pRow);
-                        ++rowsFound;
-                    }
-                    index++;
-                }
-            });
-            start += chunkSize;
+            threadPool.push_task(
+                    [this, chunkSize, chunkIndex, &filter, &rowsFound, &outputByChuck]() -> void {
+                        auto index = chunkIndex * chunkSize;
+                        auto end = std::min<unsigned long long>(index + chunkSize, _autoIncrementIndex.size());
+                        auto &outputById = outputByChuck[chunkIndex];
+                        outputById.reserve(end - index);
+                        while (index < end) {
+                            const auto pRow = _autoIncrementIndex[index];
+                            if (filter(*pRow)) {
+                                outputById.push_back(pRow);
+                                ++rowsFound;
+                            }
+                            index++;
+                        }
+                    });
             chunkIndex++;
-        } while (end < rowsScanned);
+        } while (chunkIndex < threadCount);
 
         threadPool.wait_for_tasks();
     }
