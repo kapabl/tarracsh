@@ -31,7 +31,7 @@ void MethodRefEdges::defineColumns() {
                                 _methodRefs->getName().c_str(), "methodRef");
 
     DECLARE_FOREIGN_COLUMN_PROP(MethodRefEdgeRow, to, StorageType::Ref, DisplayAs::AsRef,
-                                _methodRefs->getName().c_str(), "method");
+                                _methodRefs->getName().c_str(), "member");
 
     DECLARE_FOREIGN_COLUMN_PROP(MethodRefEdgeRow, ownerClass, StorageType::Ref, DisplayAs::AsRef,
                                 _classfiles->getName().c_str(), "ownerClass");

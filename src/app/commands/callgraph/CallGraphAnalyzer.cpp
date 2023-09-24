@@ -1,5 +1,6 @@
 #include <filesystem>
 #include <string>
+#include <vector>
 #include "CallGraphAnalyzer.h"
 #include "domain/jar/tasks/GraphTask.h"
 #include "domain/jar/Processor.h"
@@ -19,12 +20,18 @@ using kapa::tarracsh::domain::db::table::ClassRefRow;
 using kapa::tarracsh::domain::db::table::ClassRefEdgeRow;
 using kapa::tarracsh::domain::db::table::ClassRefEdges;
 
+using kapa::tarracsh::domain::db::table::Methods;
+using kapa::tarracsh::domain::db::table::MethodRefs;
 using kapa::tarracsh::domain::db::table::MethodRefRow;
 using kapa::tarracsh::domain::db::table::MethodRefEdges;
+using kapa::tarracsh::domain::db::table::MethodRefEdgeRow;
 
+using kapa::tarracsh::domain::db::table::Fields;
+using kapa::tarracsh::domain::db::table::FieldRefs;
 using kapa::tarracsh::domain::db::table::FieldRow;
 using kapa::tarracsh::domain::db::table::FieldRefRow;
 using kapa::tarracsh::domain::db::table::FieldRefEdges;
+using kapa::tarracsh::domain::db::table::FieldRefEdgeRow;
 
 CallGraphAnalyzer::CallGraphAnalyzer(Context &config, const std::shared_ptr<CallGraphDb> &db)
         : Analyzer(config, db) {
@@ -35,8 +42,6 @@ CallGraphAnalyzer::CallGraphAnalyzer(Context &config)
 }
 
 void CallGraphAnalyzer::linkClassRefs() {
-    //TODO
-
     auto classRefs = _callGraphDb->getClassRefs();
     auto classRefEdges = _callGraphDb->getClassRefEdges();
     classRefs->forEach([this, classRefEdges, classRefs](AutoIncrementedRow *pRow) -> void {
@@ -48,7 +53,7 @@ void CallGraphAnalyzer::linkClassRefs() {
             classRefs->update(&classRefRow);
         }
 
-        for( auto* pClassFileRow: it->second) {
+        for (auto *pClassFileRow: it->second) {
             auto classRefEdgeRow = reinterpret_cast<ClassRefEdgeRow &>(*classRefEdges->allocateRow());
             classRefEdgeRow.from.id = classRefRow.id;
             classRefEdgeRow.to.id = pClassFileRow->id;
@@ -59,18 +64,34 @@ void CallGraphAnalyzer::linkClassRefs() {
 
 
 void CallGraphAnalyzer::linkMethodRefs() {
-    auto methodRefs = _callGraphDb->getMethodRefs();
-//TODO
+    linkMemberRefs<std::shared_ptr<MethodRefs>,
+            std::shared_ptr<MethodRefEdges>,
+            MethodRefRow,
+            MethodRefEdgeRow>(
+            _callGraphDb->getMethodRefs(),
+            _callGraphDb->getMethodRefEdges(),
+            _methodsIndex
+    );
 }
 
 void CallGraphAnalyzer::linkFieldRefs() {
-//TODO
+    linkMemberRefs<std::shared_ptr<FieldRefs>,
+            std::shared_ptr<FieldRefEdges>,
+            FieldRefRow,
+            FieldRefEdgeRow>(
+            _callGraphDb->getFieldRefs(),
+            _callGraphDb->getFieldRefEdges(),
+            _fieldsIndex
+    );
 }
 
 void CallGraphAnalyzer::createNamedIndexes() {
     createClassnameIndex();
-    createMemberNameIndex(_methodsIndex);
-    createMemberNameIndex(_fieldsIndex);
+    createMemberIndex<std::shared_ptr<Methods>, MethodRow>(
+            _methodsIndex, _callGraphDb->getMethods());
+    createMemberIndex<std::shared_ptr<Fields>, FieldRow>(
+            _fieldsIndex, _callGraphDb->getFields());
+
 }
 
 void CallGraphAnalyzer::createClassnameIndex() {
@@ -82,28 +103,6 @@ void CallGraphAnalyzer::createClassnameIndex() {
             _classesByName[classFileRow->classname].insert(classFileRow);
         } else {
             _classesByName[classFileRow->classname] = {classFileRow};
-        }
-    });
-}
-
-void CallGraphAnalyzer::createMemberNameIndex(MembersIndex &membersIndex) {
-    auto fields = _callGraphDb->getFields();
-    fields->forEach([this, &membersIndex](AutoIncrementedRow *pRow) -> void {
-        auto fieldRow = reinterpret_cast<FieldRow *>(pRow);
-        MemberInfo methodInfo;
-        methodInfo.method.id = fieldRow->id;
-
-        auto name = fieldRow->name;
-
-        if (!membersIndex.contains(name)) {
-            membersIndex[name] = MemberIndexEntry();
-        }
-        auto &entry = _methodsIndex[name];
-
-        if (!entry.contains(fieldRow->ownerClass.id)) {
-            entry[fieldRow->ownerClass.id] = {methodInfo};
-        } else {
-            entry[fieldRow->ownerClass.id].insert(methodInfo);
         }
     });
 }
@@ -150,4 +149,5 @@ void CallGraphAnalyzer::processJar(const std::string &filename) {
 
     });
 }
+
 

@@ -254,8 +254,8 @@ void ConstantPoolPrinter::initStringMaps(Context &context) {
     _poolTagToString[JVM_CONSTANT_Methodref] = {"methodref", "Method Ref"};
     _poolTagToString[JVM_CONSTANT_InterfaceMethodref] = {"iface-methodref", "IFACE Method Ref"};
     _poolTagToString[JVM_CONSTANT_NameAndType] = {"name-type", "Name & Type"};
-    _poolTagToString[JVM_CONSTANT_MethodHandle] = {"method-handle", "Method Handle"};
-    _poolTagToString[JVM_CONSTANT_MethodType] = {"method-type", "Method Type"};
+    _poolTagToString[JVM_CONSTANT_MethodHandle] = {"member-handle", "Method Handle"};
+    _poolTagToString[JVM_CONSTANT_MethodType] = {"member-type", "Method Type"};
     _poolTagToString[JVM_CONSTANT_Dynamic] = {"dynamic", "Dynamic"};
     _poolTagToString[JVM_CONSTANT_InvokeDynamic] = {"invk-dynamic", "Invoke Dynamic"};
     _poolTagToString[JVM_CONSTANT_Module] = {"module", "Module"};

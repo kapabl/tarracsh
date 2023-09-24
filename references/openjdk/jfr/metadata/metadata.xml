@@ -154,9 +154,9 @@
   </Event>
 
   <Event name="ReservedStackActivation" category="Java Virtual Machine, Runtime" label="Reserved Stack Activation"
-    description="Activation of Reserved Stack Area caused by stack overflow with ReservedStackAccess annotated method in call stack" thread="true" stackTrace="true"
+    description="Activation of Reserved Stack Area caused by stack overflow with ReservedStackAccess annotated member in call stack" thread="true" stackTrace="true"
     startTime="false">
-    <Field type="Method" name="method" label="Java Method" />
+    <Field type="Method" name="member" label="Java Method" />
   </Event>
 
   <Event name="ClassLoad" category="Java Virtual Machine, Class Loading" label="Class Load" thread="true" stackTrace="true">
@@ -561,7 +561,7 @@
   <Event name="Compilation" category="Java Virtual Machine, Compiler" label="Compilation" thread="true">
     <Field type="uint" name="compileId" label="Compilation Identifier" relation="CompileId" />
     <Field type="CompilerType" name="compiler" label="Compiler" />
-    <Field type="Method" name="method" label="Method" />
+    <Field type="Method" name="member" label="Method" />
     <Field type="ushort" name="compileLevel" label="Compilation Level" />
     <Field type="boolean" name="succeded" label="Succeeded" />
     <Field type="boolean" name="isOsr" label="On Stack Replacement" />
@@ -617,7 +617,7 @@
   <Event name="Deoptimization" category="Java Virtual Machine, Compiler" label="Deoptimization" thread="true" stackTrace="true" startTime="false">
     <Field type="uint" name="compileId" label="Compilation Identifier" relation="CompileId" />
     <Field type="CompilerType" name="compiler" label="Compiler" />
-    <Field type="Method" name="method" label="Method" />
+    <Field type="Method" name="member" label="Method" />
     <Field type="int" name="lineNumber" label="Line Number" />
     <Field type="int" name="bci" label="Bytecode Index" />
     <Field type="Bytecode" name="instruction" label="Instruction" />
@@ -1367,7 +1367,7 @@
   </Type>
 
   <Type name="StackFrame">
-    <Field type="Method" name="method" label="Java Method" />
+    <Field type="Method" name="member" label="Java Method" />
     <Field type="int" name="lineNumber" label="Line Number" />
     <Field type="int" name="bytecodeIndex" label="Bytecode Index" />
     <Field type="FrameType" name="type" label="Frame Type" />

@@ -37,7 +37,7 @@ void DigestTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
     const auto filename = _db.getFiles()->getFilename(&getJarFileRow());
     const JarEntryInfo jarEntryInfo(filename, jarEntry);
 
-    const auto *classfileRow = static_cast<ClassFileRow *>(getClassfiles()->findByKey(
+    const auto *classfileRow = reinterpret_cast<ClassFileRow *>(getClassFiles()->findByKey(
         jarEntryInfo.strongClassname));
 
     const auto classExists = nullptr != classfileRow;
@@ -113,7 +113,7 @@ kapa::infrastructure::db::Database &DigestTask::getDb() {
     return _db;
 }
 
-auto DigestTask::getClassfiles() -> std::shared_ptr<db::table::ClassFiles> {
+auto DigestTask::getClassFiles() -> std::shared_ptr<db::table::ClassFiles> {
     return _db.getClassFiles();
 }
 
