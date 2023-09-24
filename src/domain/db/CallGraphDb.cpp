@@ -9,32 +9,28 @@ using kapa::tarracsh::domain::db::table::ClassFileRow;
 void CallGraphDb::init() {
     Database::init();
     _files = std::make_shared<table::Files>(*this, "files");
-    _tablesByName[_files->getName()] = _files.get();
-    _tablesReadOrder.push_back(_files.get());
+    addTable(*_files);
 
     _classfiles = std::make_shared<table::ClassFiles>(*this, "classfiles", _files);
-    _tablesByName[_classfiles->getName()] = _classfiles.get();
-    _tablesReadOrder.push_back(_classfiles.get());
+    addTable(*_classfiles);
 
     _classRefs = std::make_shared<table::ClassRefs>(*this, "classRefs", _classfiles);
-    _tablesByName[_classRefs->getName()] = _classRefs.get();
-    _tablesReadOrder.push_back(_classRefs.get());
+    addTable(*_classRefs);
 
     _methods = std::make_shared<table::Methods>(*this, "methods", _classfiles);
-    _tablesByName[_methods->getName()] = _methods.get();
-    _tablesReadOrder.push_back(_methods.get());
+    addTable(*_methods);
 
     _methodRefs = std::make_shared<table::MethodRefs>(*this, "methodRefs", _classfiles, _methods);
-    _tablesByName[_methodRefs->getName()] = _methodRefs.get();
-    _tablesReadOrder.push_back(_methodRefs.get());
+    addTable(*_methodRefs);
 
     _fields = std::make_shared<table::Fields>(*this, "fields", _classfiles);
-    _tablesByName[_fields->getName()] = _fields.get();
-    _tablesReadOrder.push_back(_fields.get());
+    addTable(*_fields);
 
     _fieldRefs = std::make_shared<table::FieldRefs>(*this, "fieldRefs", _classfiles, _fields);
-    _tablesByName[_methods->getName()] = _methods.get();
-    _tablesReadOrder.push_back(_fieldRefs.get());
+    addTable(*_fieldRefs);
+
+    _classRefEdges = std::make_shared<table::ClassRefEdges>(*this, "classRefEdges", _classRefs, _classfiles);
+    addTable(*_classRefEdges);
 
     _files->init();
 
@@ -47,6 +43,8 @@ void CallGraphDb::init() {
     _fields->init();
     _fieldRefs->init();
 }
+
+
 
 auto CallGraphDb::deleteClass(ClassFileRow *row) -> uint64_t {
     auto result = getClassRefs()->deleteClass(row) +

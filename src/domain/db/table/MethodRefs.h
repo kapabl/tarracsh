@@ -20,8 +20,8 @@ namespace kapa::tarracsh::domain::db::table {
         infrastructure::db::table::column::StringCol name{};
         infrastructure::db::table::column::StringCol descriptor{};
 
-        infrastructure::db::table::column::RefCol targetClass{};
-        infrastructure::db::table::column::RefCol targetMethod{};
+//        infrastructure::db::table::column::RefCol targetClass{};
+//        infrastructure::db::table::column::RefCol targetMethod{};
 
 
         MethodRefRow() = default;
@@ -32,14 +32,6 @@ namespace kapa::tarracsh::domain::db::table {
 
         void setClass(const ClassFileRow &classFileRow) {
             ownerClass.id = classFileRow.id;
-        }
-
-        void setTargetClass(const ClassFileRow &classFileRow) {
-            targetClass.id = classFileRow.id;
-        }
-
-        void setTargetMethod(const MethodRow &methodRow) {
-            targetMethod.id = methodRow.id;
         }
 
     };

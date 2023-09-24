@@ -40,7 +40,7 @@ protected:
     [[nodiscard]] bool isFileUnchanged() const;
 
 
-    virtual auto  getClassfiles() -> std::shared_ptr<db::table::ClassFiles> = 0;
+    virtual auto  getClassFiles() -> std::shared_ptr<db::table::ClassFiles> = 0;
     virtual auto  getFiles() -> std::shared_ptr<db::table::Files> = 0;
 };
 

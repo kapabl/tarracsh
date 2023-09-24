@@ -24,7 +24,7 @@ public:
 
     void init() override;
     auto getFiles() { return _files; }
-    auto getClassfiles() { return _classfiles; }
+    auto getClassFiles() { return _classfiles; }
 private:
     std::shared_ptr<table::Files> _files;
     std::shared_ptr<table::ClassFiles> _classfiles;

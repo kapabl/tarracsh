@@ -24,7 +24,7 @@ public:
     ~DigestAnalyzer() override = default;
 private:
     void endAnalysis() override;
-    void doClassfile(const std::string& filename) override;
+    void doClassFile(const std::string& filename) override;
     void processJar(const std::string &filename) override;
     bool isFileUnchanged(const uintmax_t size, const long long timestamp, const domain::db::table::FileRow *row) const;
     domain::db::digest::DigestDb &getDigestDb() const;

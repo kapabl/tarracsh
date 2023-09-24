@@ -43,7 +43,7 @@ Analyzer::Analyzer(Context &config)
       _results(config.getResults()) {
 }
 
-void Analyzer::parseClassfile(const std::string &filename) const {
+void Analyzer::parseClassFile(const std::string &filename) const {
 
     FileReader reader(filename);
 
@@ -58,14 +58,14 @@ void Analyzer::parseClassfile(const std::string &filename) const {
     classFileParserDone(parser);
 }
 
-void Analyzer::doClassfile(const std::string &filename) {
-    parseClassfile(filename);
+void Analyzer::doClassFile(const std::string &filename) {
+    parseClassFile(filename);
 }
 
-void Analyzer::processStandaloneClassfile(const std::string &filename) {
+void Analyzer::processStandaloneClassFile(const std::string &filename) {
     _fileThreadPool.push_task([this, filename] {
         ++_results.standaloneClassfiles.count;
-        doClassfile(filename);
+        doClassFile(filename);
         if (_options.canPrintProgress()) {
             _results.print();
         }
@@ -113,7 +113,7 @@ void Analyzer::processFile(const std::filesystem::directory_entry &dirEntry) {
     if (infrastructure::filesystem::utils::isJar(dirEntry)) {
         processJar(dirEntry.path().string());
     } else if (infrastructure::filesystem::utils::isClassfile(dirEntry)) {
-        processStandaloneClassfile(dirEntry.path().string());
+        processStandaloneClassFile(dirEntry.path().string());
     }
 }
 
@@ -145,9 +145,9 @@ void Analyzer::analyzeInput() {
     } else if (_inputOptions.isJar) {
         serverLog(fmt::format("processing jar: {}", _inputOptions.input), true);
         processJar(_inputOptions.input);
-    } else if (_inputOptions.isClassfile) {
+    } else if (_inputOptions.isClassFile) {
         serverLog(fmt::format("processing classfile: {}", _inputOptions.input), true);
-        processStandaloneClassfile(_inputOptions.input);
+        processStandaloneClassFile(_inputOptions.input);
     }
 
     _fileThreadPool.wait_for_tasks();

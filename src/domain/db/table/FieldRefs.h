@@ -16,9 +16,6 @@ struct FieldRefRow : infrastructure::db::table::AutoIncrementedRow {
     infrastructure::db::table::column::StringCol name{};
     infrastructure::db::table::column::StringCol descriptor{};
 
-    infrastructure::db::table::column::RefCol targetClass{};
-    infrastructure::db::table::column::RefCol targetField{};
-
     FieldRefRow() = default;
     explicit FieldRefRow(const ClassFileRow& classFileRow) {
         setClass(classFileRow);
@@ -28,13 +25,6 @@ struct FieldRefRow : infrastructure::db::table::AutoIncrementedRow {
         ownerClass.id = classFileRow.id;
     }
 
-    void setTargetClass(const ClassFileRow &classFileRow) {
-        targetClass.id = classFileRow.id;
-    }
-
-    void setTargetField(const FieldRow &fieldRow) {
-        targetField.id = fieldRow.id;
-    }
 
 };
 

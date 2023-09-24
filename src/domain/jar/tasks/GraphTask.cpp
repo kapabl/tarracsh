@@ -46,7 +46,7 @@ GraphTask::GraphTask(const Options &options, Results &results,
 //
 //    ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);
 //    if (classFileParser.parse()) {
-//        auto row = getClassfileRow(addOrUpdateClassfile(jarEntry, classFileParser));
+//        auto row = getClassFileRow(addOrUpdateClassfile(jarEntry, classFileParser));
 //        auto classFileProcessor = ClassFileProcessor(row, classFileParser, _db );
 //        classFileProcessor.extractNodes();
 //    } else {
@@ -56,12 +56,12 @@ GraphTask::GraphTask(const Options &options, Results &results,
 //
 //}
 
-const ClassFileRow *GraphTask::getClassfileRow(uint64_t id) {
-    const auto result = reinterpret_cast<const ClassFileRow *>(getClassfiles()->getRow(id));
+const ClassFileRow *GraphTask::getClassFileRow(uint64_t id) {
+    const auto result = reinterpret_cast<const ClassFileRow *>(getClassFiles()->getRow(id));
     return result;
 }
 
-void GraphTask::processClassfile(const JarEntryInfo &jarEntryInfo, ClassFileRow *row) {
+void GraphTask::processClassFile(const JarEntryInfo &jarEntryInfo, db::table::ClassFileRow *row) {
     if (row != nullptr) {
         _db.deleteClass(row);
     }
@@ -71,7 +71,7 @@ void GraphTask::processClassfile(const JarEntryInfo &jarEntryInfo, ClassFileRow 
     ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);
 
     if (classFileParser.parse()) {
-        auto upDatedRow = getClassfileRow(addOrUpdateClassfile(jarEntry, classFileParser));
+        auto upDatedRow = getClassFileRow(addOrUpdateClassfile(jarEntry, classFileParser));
         auto classFileProcessor = ClassFileProcessor(upDatedRow, classFileParser, _db );
         classFileProcessor.extractNodes();
     } else {
@@ -95,7 +95,7 @@ void GraphTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
     const auto filename = _db.getFiles()->getFilename(&getJarFileRow());
     const JarEntryInfo jarEntryInfo(filename, jarEntry);
 
-    auto classfileRow = static_cast<ClassFileRow *>(_db.getClassfiles()->findByKey(
+    auto classfileRow = static_cast<ClassFileRow *>(_db.getClassFiles()->findByKey(
             jarEntryInfo.strongClassname));
 
     const auto classExists = nullptr != classfileRow;
@@ -108,7 +108,7 @@ void GraphTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
     if (isUnchanged) {
         _results.report->asUnchangedJarClass(jarEntryInfo.strongClassname);
     } else {
-        processClassfile(jarEntryInfo, classfileRow);
+        processClassFile(jarEntryInfo, classfileRow);
     }
 
     ++_results.jarfiles.classfiles.count;
@@ -131,8 +131,8 @@ kapa::infrastructure::db::Database &GraphTask::getDb() {
     return _db;
 }
 
-auto GraphTask::getClassfiles() -> std::shared_ptr<db::table::ClassFiles> {
-    const auto result = _db.getClassfiles();
+auto GraphTask::getClassFiles() -> std::shared_ptr<db::table::ClassFiles> {
+    const auto result = _db.getClassFiles();
     return result;
 }
 

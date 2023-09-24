@@ -46,7 +46,8 @@ public:
     [[nodiscard]] std::string getStrongClassname(const ClassFileRow &row) const;
 
     void defineColumns() override;
-
+    auto getClassFileRow( int64_t rowId );
+    auto getClassname(const ClassFileRow &row) const -> std::string;
 private:
     const std::shared_ptr<Files> _filesTable;
     //std::unordered_map<StringCol, std::set<const ClassFileRow *>> _jarIndex;

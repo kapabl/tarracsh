@@ -28,7 +28,7 @@ struct SubCommandOptions {
     std::string input;
     bool isDir{ false };
     bool isJar{ false };
-    bool isClassfile{ false };
+    bool isClassFile{false };
     [[nodiscard]] bool processInput();
     [[nodiscard]] bool isValidInput();
     bool dryRun{ false };

@@ -114,7 +114,7 @@ kapa::infrastructure::db::Database &DigestTask::getDb() {
 }
 
 auto DigestTask::getClassfiles() -> std::shared_ptr<db::table::ClassFiles> {
-    return _db.getClassfiles();
+    return _db.getClassFiles();
 }
 
 optional<DigestCol> DigestTask::digestEntry(const JarEntryInfo &digestEntryInfo,
