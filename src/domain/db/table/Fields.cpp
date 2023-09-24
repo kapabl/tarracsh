@@ -32,5 +32,6 @@ void Fields::defineColumns() {
     DECLARE_COLUMN_PROP(FieldRow, name, StorageType::String, DisplayAs::AsString);
     DECLARE_COLUMN_PROP(FieldRow, descriptor, StorageType::String, DisplayAs::AsString);
     DECLARE_COLUMN_PROP(FieldRow, signature, StorageType::String, DisplayAs::AsString);
+    DECLARE_COLUMN_PROP(FieldRow, accessFlags, StorageType::UInt64, DisplayAs::AsUInt64);
     DECLARE_COLUMN_PROP(FieldRow, refCount, StorageType::UInt64, DisplayAs::AsUInt64);
 }

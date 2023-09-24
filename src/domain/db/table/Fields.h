@@ -13,6 +13,7 @@ namespace kapa::tarracsh::domain::db::table {
 
 struct FieldRow : infrastructure::db::table::AutoIncrementedRow {
     infrastructure::db::table::column::RefCol ownerClass{};
+    infrastructure::db::table::column::UInt64Col accessFlags{};
     infrastructure::db::table::column::StringCol name{};
     infrastructure::db::table::column::StringCol descriptor{};
     infrastructure::db::table::column::StringCol signature{};

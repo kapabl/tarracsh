@@ -30,7 +30,6 @@ void FieldRefs::defineColumns() {
     DECLARE_COLUMN_PROP(FieldRefRow, id, StorageType::UInt64, DisplayAs::AsUInt64);
     DECLARE_FOREIGN_COLUMN_PROP(FieldRefRow, ownerClass, StorageType::Ref, DisplayAs::AsRef,
                                 _classfiles->getName().c_str(), "ownerClass");
-
     DECLARE_COLUMN_PROP(FieldRefRow, classname, StorageType::String, DisplayAs::AsString);
     DECLARE_COLUMN_PROP(FieldRefRow, name, StorageType::String, DisplayAs::AsString);
     DECLARE_COLUMN_PROP(FieldRefRow, descriptor, StorageType::String, DisplayAs::AsString);
