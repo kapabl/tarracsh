@@ -9,7 +9,6 @@
 
 namespace kapa::tarracsh::domain::graph {
 
-
 class ClassFileProcessor {
 
 public:
@@ -23,19 +22,25 @@ private:
     const db::table::ClassFileRow *_row;
     db::callgraph::CallGraphDb &_db;
     classfile::ClassFileParser &_parser;
-    classfile::constantpool::ConstantPool& _constantPool;
+    classfile::constantpool::ConstantPool &_constantPool;
 
     void recordMethods();
+
     void recordFields();
-    void recordMethodRef(const classfile::constantpool::ConstantPoolRecord& entry);
-    void recordClassRef(const classfile::constantpool::ConstantPoolRecord& entry);
-    void recordInterfaceMethodRef(const classfile::constantpool::ConstantPoolRecord& entry);
-    void recordFieldRef(const classfile::constantpool::ConstantPoolRecord & entry);
+
+    void recordMethodRef(const classfile::constantpool::ConstantPoolRecord &entry);
+
+    void recordClassRef(const classfile::constantpool::ConstantPoolRecord &entry);
+
+    void recordInterfaceMethodRef(const classfile::constantpool::ConstantPoolRecord &entry);
+
+    void recordFieldRef(const classfile::constantpool::ConstantPoolRecord &entry);
+
     void recordRefs();
 
-    void commonRecordMethodRef(classfile::constantpool::u2 nameAndTypeIndex);
-};
+    void commonRecordMethodRef(const classfile::constantpool::MemberInfo &memberInfo);
 
+};
 }
 
 #endif

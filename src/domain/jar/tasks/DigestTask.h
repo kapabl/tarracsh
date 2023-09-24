@@ -41,7 +41,7 @@ private:
     infrastructure::db::Database& getDb() override;
 
 protected:
-    auto getClassfiles() -> std::shared_ptr<db::table::ClassFiles> override;
+    auto getClassFiles() -> std::shared_ptr<db::table::ClassFiles> override;
     auto getFiles() -> std::shared_ptr<db::table::Files> override;
 
 };

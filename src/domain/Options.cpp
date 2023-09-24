@@ -28,8 +28,8 @@ bool SubCommandOptions::processInput() {
         isJar = infrastructure::filesystem::utils::isJar(path);
         if (isJar) return true;
 
-        isClassfile = infrastructure::filesystem::utils::isClassfile(path);
-        if(isClassfile) return true;        
+        isClassFile = infrastructure::filesystem::utils::isClassfile(path);
+        if(isClassFile) return true;
     }
     return false;
 }

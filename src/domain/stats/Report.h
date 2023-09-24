@@ -44,10 +44,10 @@ public:
     void asUnchangedJar(const std::string &filename);
     void asFailedJar(const std::string& filename);
 
-    void asNewClassfile(const std::string &strongClassname);
-    void asModifiedClassfile(bool isSamePublicDigest, const std::string &strongClassname);
-    void asUnchangedClassfile(const std::string &filename);
-    void asFailedClassfile(const std::string &filename);
+    void asNewClassFile(const std::string &strongClassname);
+    void asModifiedClassFile(bool isSamePublicDigest, const std::string &strongClassname);
+    void asUnchangedClassFile(const std::string &filename);
+    void asFailedClassFile(const std::string &filename);
 
     void asNewJarClass(const std::string &strongClassname);
     void asModifiedJarClass(const std::string &strongClassname, bool isSamePublicDigest);

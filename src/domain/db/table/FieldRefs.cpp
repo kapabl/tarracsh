@@ -33,9 +33,5 @@ void FieldRefs::defineColumns() {
     DECLARE_COLUMN_PROP(FieldRefRow, name, StorageType::String, DisplayAs::AsString);
     DECLARE_COLUMN_PROP(FieldRefRow, descriptor, StorageType::String, DisplayAs::AsString);
 
-    DECLARE_FOREIGN_COLUMN_PROP(FieldRefRow, targetClass, StorageType::Ref, DisplayAs::AsRef,
-                                _classfiles->getName().c_str(), "classname");
-    DECLARE_FOREIGN_COLUMN_PROP(FieldRefRow, targetField, StorageType::Ref, DisplayAs::AsRef,
-                                _fields->getName().c_str(), "name");
 
 }

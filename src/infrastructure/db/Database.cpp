@@ -29,6 +29,11 @@ Database::Database(const Config &config, const bool hasSaveThread)
     }
 }
 
+void Database::addTable(table::Table& table) {
+    _tablesByName[table.getName()] = &table;
+    _tablesReadOrder.push_back( &table);
+}
+
 void Database::createSaveThread() {
 
     _saveThread = std::jthread([this](const std::stop_token &stopToken) -> void {

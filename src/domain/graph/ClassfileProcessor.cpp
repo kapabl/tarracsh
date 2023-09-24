@@ -14,6 +14,7 @@ using namespace kapa::tarracsh::domain::graph;
 using kapa::tarracsh::domain::classfile::ClassFileParser;
 using kapa::tarracsh::domain::classfile::constantpool::ConstantPoolRecord;
 using kapa::tarracsh::domain::classfile::constantpool::NameAndTypeInfo;
+using kapa::tarracsh::domain::classfile::constantpool::MemberInfo;
 using kapa::tarracsh::domain::classfile::constantpool::u2;
 using kapa::tarracsh::domain::db::table::MethodRow;
 using kapa::tarracsh::domain::db::table::MethodRefRow;
@@ -69,12 +70,14 @@ void ClassFileProcessor::recordClassRef(const ConstantPoolRecord &entry) {
     classRefs->addOrUpdate(&classRefRow);
 }
 
-void ClassFileProcessor::commonRecordMethodRef(const u2 nameAndTypeIndex) {
+void ClassFileProcessor::commonRecordMethodRef(const MemberInfo& memberInfo) {
+    auto nameAndTypeIndex = memberInfo.nameAndTypeIndex;
     auto nameAndTypeInfo = _constantPool.getEntry(nameAndTypeIndex).nameAndTypeInfo;
     const auto methodRefs = _db.getMethodRefs();
     auto &methodRefRow = *static_cast<db::table::MethodRefRow *>(methodRefs->allocateRow());
     new(&methodRefRow) MethodRefRow(*_row);
 
+    methodRefRow.classname = _db.getPoolString(_constantPool.getString(memberInfo.classIndex));
     methodRefRow.name = _db.getPoolString(_constantPool.getString(nameAndTypeInfo.nameIndex));
     methodRefRow.descriptor = _db.getPoolString(_constantPool.getString(nameAndTypeInfo.descriptorIndex));
     methodRefs->addOrUpdate(&methodRefRow);
@@ -82,11 +85,11 @@ void ClassFileProcessor::commonRecordMethodRef(const u2 nameAndTypeIndex) {
 
 
 void ClassFileProcessor::recordMethodRef(const ConstantPoolRecord &entry) {
-    commonRecordMethodRef(entry.methodrefInfo.nameAndTypeIndex);
+    commonRecordMethodRef(entry.methodrefInfo);
 }
 
 void ClassFileProcessor::recordInterfaceMethodRef(const ConstantPoolRecord &entry) {
-    commonRecordMethodRef(entry.interfaceMethodrefInfo.nameAndTypeIndex);
+    commonRecordMethodRef(entry.interfaceMethodrefInfo);
 }
 
 void ClassFileProcessor::recordFieldRef(const ConstantPoolRecord &entry) {

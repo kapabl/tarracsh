@@ -40,9 +40,10 @@ foreach (EXCLUDE_PATTERN ${TARRACSH_EXCLUDE_PATTERNS})
 endforeach ()
 # message(STATUS "TARRACSH_SOURCES: ${TARRACSH_SOURCES}")
 
-add_executable(tarracsh ${TARRACSH_SOURCES}
-        src/domain/graph/ClassfileProcessor.cpp
-        src/domain/graph/ClassFileProcessor.h)
+add_executable(tarracsh ${TARRACSH_SOURCES} )
+#        src/domain/graph/ClassfileProcessor.cpp
+#        src/domain/db/table/ClassRefEdges.cpp)
+
 target_include_directories(tarracsh PUBLIC "src")
 
 find_package(ICU REQUIRED COMPONENTS uc io)

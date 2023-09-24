@@ -52,14 +52,14 @@ protected:
     [[nodiscard]] bool initAnalyzer() const;
     void serverLog(const std::string & string, bool doStdout = false);
 
-    virtual void processStandaloneClassfile(const std::string& filename);
+    virtual void processStandaloneClassFile(const std::string& filename);
     virtual void processDirInput();
     virtual void processJar(const std::string& filename);
     virtual void endAnalysis();
-    virtual void doClassfile(const std::string& filename);
+    virtual void doClassFile(const std::string& filename);
 
     void analyzeInput();
-    void parseClassfile(const std::string& filename) const;
+    void parseClassFile(const std::string& filename) const;
     void classFileParserDone(ClassFileParser &parser) const;
 
 };

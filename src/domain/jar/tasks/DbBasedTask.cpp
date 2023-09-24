@@ -103,7 +103,7 @@ uint64_t DbBasedTask::addOrUpdateClassfile(const JarEntry& jarEntry, const Class
 uint64_t  DbBasedTask::addOrUpdateClassfile(const JarEntry& jarEntry, const DigestCol &digestCol,
                                             const ClassFileParser &classFileParser) {
 
-    const auto classfileTable = getClassfiles();
+    const auto classfileTable = getClassFiles();
     const auto classname = getUniqueClassname(jarEntry, classFileParser);
     auto& classfileRow = *static_cast<ClassFileRow*>(classfileTable->allocateRow());
     new(&classfileRow) ClassFileRow(*_jarFileRow);

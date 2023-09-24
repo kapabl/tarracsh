@@ -74,7 +74,7 @@ void DigestAnalyzer::processJar(const std::string &filename) {
 }
 
 
-void DigestAnalyzer::doClassfile(const std::string& filename) {
+void DigestAnalyzer::doClassFile(const std::string& filename) {
     auto& digestDb = getDigestDb();
 
     StandaloneClassFileInfo fileInfo(filename);
@@ -105,10 +105,10 @@ void DigestAnalyzer::doClassfile(const std::string& filename) {
                     _results.log->writeln(fmt::format("Same public digest of changed file:{}",
                         fileInfo.filename));
                 }
-                _results.report->asModifiedClassfile(isSamePublicDigest, strongClassname);
+                _results.report->asModifiedClassFile(isSamePublicDigest, strongClassname);
             }
             else {
-                _results.report->asNewClassfile(strongClassname);
+                _results.report->asNewClassFile(strongClassname);
             }
 
             ++_results.standaloneClassfiles.parsedCount;
@@ -118,12 +118,12 @@ void DigestAnalyzer::doClassfile(const std::string& filename) {
 
         }
         else {
-            _results.report->asFailedClassfile(filename);
+            _results.report->asFailedClassFile(filename);
         }
 
     }
     else {
-        _results.report->asUnchangedClassfile(filename);
+        _results.report->asUnchangedClassFile(filename);
     }
 
 }
@@ -158,12 +158,12 @@ void DigestAnalyzer::updateDbInMemory(const StandaloneClassFileInfo& classFileIn
     fileRow.digest = digest;
     files->addOrUpdate(&fileRow);
 
-    auto& classfileRow = static_cast<ClassFileRow&>(*digestDb.getClassfiles()->allocateRow());
+    auto& classfileRow = static_cast<ClassFileRow&>(*digestDb.getClassFiles()->allocateRow());
     new(&classfileRow) ClassFileRow(fileRow);
 
     classfileRow.size = classFileInfo.size;
     classfileRow.lastWriteTime = classFileInfo.timestamp;
     classfileRow.digest = digest;
     classfileRow.classname = digestDb.getPoolString(parser.getMainClassname());
-    digestDb.getClassfiles()->addOrUpdate(&classfileRow);
+    digestDb.getClassFiles()->addOrUpdate(&classfileRow);
 }

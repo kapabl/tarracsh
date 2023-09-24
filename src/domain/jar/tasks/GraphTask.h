@@ -33,11 +33,11 @@ private:
 
     infrastructure::db::Database& getDb() override;
 
-    auto getClassfiles() -> std::shared_ptr<db::table::ClassFiles> override;
+    auto getClassFiles() -> std::shared_ptr<db::table::ClassFiles> override;
     auto getFiles() -> std::shared_ptr<db::table::Files> override;
    // void processNewClassfile(const JarEntryInfo& jarEntryInfo);
-    auto getClassfileRow(uint64_t id) -> const db::table::ClassFileRow*;
-    void processClassfile(const JarEntryInfo& jarEntryInfo, db::table::ClassFileRow* row);
+    auto getClassFileRow(uint64_t id) -> const db::table::ClassFileRow*;
+    void processClassFile(const JarEntryInfo& jarEntryInfo, db::table::ClassFileRow* row);
 
 };
 

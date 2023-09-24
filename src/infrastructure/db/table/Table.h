@@ -23,14 +23,22 @@ namespace kapa::infrastructure::db::table {
     struct Row {
     };
 
-    struct AutoIncrementedRow : Row {
-        column::UInt64Col flags{0};
-        column::UInt64Col id{std::numeric_limits<uint64_t>::max()};
-    };
 
     enum RowFlags {
         Deleted = 1
     };
+
+    struct AutoIncrementedRow : Row {
+        column::UInt64Col flags{0};
+        column::UInt64Col id{std::numeric_limits<uint64_t>::max()};
+
+        auto isDeleted() const -> bool {
+            const auto result = (flags & RowFlags::Deleted) != 0;
+            return result;
+        }
+
+    };
+
 
     struct TableLayout {
 
@@ -117,6 +125,9 @@ namespace kapa::infrastructure::db::table {
         auto isValidColumn(const std::string &columnName) const -> bool;
 
         auto deleteRow(uint64_t id) -> bool;
+
+        void forEach(std::function<void(AutoIncrementedRow *)> func);
+        void forEach(std::function<bool(AutoIncrementedRow *)> func);
 
     protected:
         db::Database &_db;

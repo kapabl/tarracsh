@@ -7,6 +7,7 @@
 #include "domain/db/CallGraphDb.h"
 #include "infrastructure/profiling/ScopedTimer.h"
 #include "infrastructure/db/columns/Columns.h"
+#include "domain/db/CallGraphDb.h"
 #include "domain/classfile/AccessModifiers.h"
 
 
@@ -16,6 +17,7 @@ using namespace kapa::tarracsh::app::commands::callgraph;
 using kapa::tarracsh::app::commands::Query;
 using kapa::tarracsh::domain::ServerOptions;
 using kapa::tarracsh::domain::ClientOptions;
+using kapa::tarracsh::domain::db::callgraph::CallGraphDb;
 using kapa::infrastructure::app::cli::ExitCode;
 using kapa::infrastructure::profiler::ScopedTimer;
 using kapa::infrastructure::db::table::column::DisplayAs;
@@ -101,7 +103,8 @@ ExitCode CallGraph::run() {
 bool CallGraph::runAsStandalone() {
     const auto result = initDb();
     if (result) {
-        CallGraphAnalyzer analyzer(App::getContext(), _db);
+        auto db = std::dynamic_pointer_cast<CallGraphDb>(_db);
+        CallGraphAnalyzer analyzer(App::getContext(), db);
         analyzer.runWithPrint();
     } else {
         _results.log->writeln("Error initializing Db", true);

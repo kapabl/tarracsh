@@ -10,7 +10,9 @@ ClassFiles::ClassFiles(infrastructure::db::Database &db, const std::string &tabl
                        std::shared_ptr<Files> filesTable): Table(db, tablename, sizeof(ClassFileRow)), _filesTable(std::move(filesTable)) {
 }
 
-
+auto ClassFiles::getClassFileRow( int64_t rowId ) {
+    return static_cast<const ClassFileRow*>(getRow(rowId));
+}
 
 std::string ClassFiles::getKey(const AutoIncrementedRow* row) {
     return getStrongClassname(reinterpret_cast<const ClassFileRow&>(*row));
@@ -26,6 +28,12 @@ std::string ClassFiles::getStrongClassname(const ClassFileRow &row) const {
     const auto fileRow = reinterpret_cast<const FileRow&>(*_filesTable->getRow(row.file.id));
 
     auto result = getStrongClassname(fileRow, _stringPool->getCString(row.classname));
+    return result;
+}
+
+std::string ClassFiles::getClassname(const ClassFileRow &row) const {
+    //TODO maybe we should use a string_view for performance
+    auto result = _stringPool->getCString(row.classname);
     return result;
 }
 

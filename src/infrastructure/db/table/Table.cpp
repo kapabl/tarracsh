@@ -28,6 +28,29 @@ std::string Table::generateStdOutHeader() const {
     return result;
 }
 
+void Table::forEach(std::function<bool(AutoIncrementedRow *)> func) {
+    auto rowId = 0u;
+    while( rowId < _autoIncrementIndex.size()) {
+        const auto pRow = _autoIncrementIndex[rowId];
+        if (!pRow->isDeleted()) {
+            if (!func(pRow)) {
+                break;
+            }
+        }
+        rowId++;
+    }
+}
+
+void Table::forEach(std::function<void(AutoIncrementedRow *)> func) {
+    auto rowId = 0u;
+    while( rowId < _autoIncrementIndex.size()) {
+        const auto pRow = _autoIncrementIndex[rowId];
+        if (!pRow->isDeleted()) {
+            func(pRow);
+        }
+        rowId++;
+    }
+}
 
 std::string Table::generateStdOutRow(AutoIncrementedRow *row, bool displayRaw) const {
     std::string result;
@@ -69,7 +92,7 @@ void Table::list(const std::function<bool(AutoIncrementedRow &)> &filter, const 
                         outputById.reserve(end - index);
                         while (index < end) {
                             const auto pRow = _autoIncrementIndex[index];
-                            if (filter(*pRow)) {
+                            if (!pRow->isDeleted() && filter(*pRow)) {
                                 outputById.push_back(pRow);
                                 ++rowsFound;
                             }

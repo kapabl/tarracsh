@@ -49,7 +49,7 @@ void Report::addNewFile(const std::string &filename) {
     _fileResults.push_back(fileResult);
 }
 
-void Report::asNewClassfile(const std::string &strongClassname) {
+void Report::asNewClassFile(const std::string &strongClassname) {
     ++_classfiles.taskResult.newFile;
     if (getBaseOptions().isDiff) {
         const auto parts = utils::splitStrongClassname(strongClassname);
@@ -80,8 +80,8 @@ void Report::asModifiedJar(const std::string &filename, const bool isSamePublicD
     }
 }
 
-void Report::asModifiedClassfile(const bool isSamePublicDigest,
-                                       const std::string &strongClassname) {
+void Report::asModifiedClassFile(bool isSamePublicDigest,
+                                 const std::string &strongClassname) {
     if (isSamePublicDigest) {
         ++_classfiles.taskResult.same;
     } else {
@@ -127,7 +127,7 @@ void Report::asUnchangedJar(const std::string &filename) {
 
 }
 
-void Report::asUnchangedClassfile(const std::string &filename) {
+void Report::asUnchangedClassFile(const std::string &filename) {
     ++_classfiles.taskResult.unchangedCount;
 
     if (getBaseOptions().isDiff) {
@@ -142,7 +142,7 @@ void Report::asFailedJar(const std::string &filename) {
     }
 }
 
-void Report::asFailedClassfile(const std::string &filename) {
+void Report::asFailedClassFile(const std::string &filename) {
     ++_classfiles.errors;
     if (getBaseOptions().isDiff) {
         addFailedFile(filename);

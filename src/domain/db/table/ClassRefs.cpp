@@ -25,7 +25,8 @@ std::string ClassRefs::getStrongRefName(const ClassRefRow& row) const {
 
 void ClassRefs::defineColumns() {
     DECLARE_COLUMN_PROP(ClassRefRow, id, StorageType::UInt64, DisplayAs::AsUInt64);
+    DECLARE_COLUMN_PROP(ClassRefRow, refCount, StorageType::UInt64, DisplayAs::AsUInt64);
     DECLARE_FOREIGN_COLUMN_PROP(ClassRefRow, ownerClass, StorageType::Ref, DisplayAs::AsRef, _classfiles->getName().c_str(), "classname");
-    DECLARE_FOREIGN_COLUMN_PROP(ClassRefRow, targetClass, StorageType::Ref, DisplayAs::AsRef, _classfiles->getName().c_str(), "classname");
+   // DECLARE_FOREIGN_COLUMN_PROP(ClassRefRow, targetClass, StorageType::Ref, DisplayAs::AsRef, _classfiles->getName().c_str(), "classname");
     DECLARE_COLUMN_PROP(ClassRefRow, name, StorageType::String, DisplayAs::AsString);
 }

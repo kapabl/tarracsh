@@ -69,6 +69,7 @@ protected:
     std::jthread _saveThread;
 
     void createSaveThread();
+    void addTable(table::Table &table);
 
 };
 
