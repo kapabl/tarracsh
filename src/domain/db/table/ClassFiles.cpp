@@ -10,8 +10,8 @@ ClassFiles::ClassFiles(infrastructure::db::Database &db, const std::string &tabl
                        std::shared_ptr<Files> filesTable): Table(db, tablename, sizeof(ClassFileRow)), _filesTable(std::move(filesTable)) {
 }
 
-auto ClassFiles::getClassFileRow( int64_t rowId ) {
-    return static_cast<const ClassFileRow*>(getRow(rowId));
+auto ClassFiles::getClassFileRow( uint64_t rowId ) const -> ClassFileRow* {
+    return reinterpret_cast<ClassFileRow*>(getRow(rowId));
 }
 
 std::string ClassFiles::getKey(const AutoIncrementedRow* row) {

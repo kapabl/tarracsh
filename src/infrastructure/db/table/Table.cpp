@@ -388,8 +388,8 @@ uint64_t Table::addOrUpdate(AutoIncrementedRow *row) {
     return result;
 }
 
-const AutoIncrementedRow *Table::getRow(uint64_t id) {
-    const auto result = _autoIncrementIndex[id];
+AutoIncrementedRow* Table::getRow(uint64_t id) const {
+    auto result = _autoIncrementIndex[id];
     return result;
 }
 

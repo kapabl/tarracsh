@@ -18,42 +18,23 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Fixing Table List">
+    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Indexing classes and members - Declaring Edges - Calculating Edges for ClassRef">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/Analyzer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Analyzer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/Analyzer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Analyzer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraph.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraph.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/references/openjdk/jfr/metadata/metadata.xml" beforeDir="false" afterPath="$PROJECT_DIR$/references/openjdk/jfr/metadata/metadata.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/classfile/constantpool/printer/ConstantPoolPrinter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/classfile/constantpool/printer/ConstantPoolPrinter.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/commands/digest/DigestAnalyzer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/digest/DigestAnalyzer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/commands/digest/DigestAnalyzer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/digest/DigestAnalyzer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/Options.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/Options.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/Options.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/Options.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/CallGraphDb.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/CallGraphDb.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/CallGraphDb.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/CallGraphDb.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/DigestDb.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/DigestDb.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/server/digest/proto/Server.grpc.pb.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/server/digest/proto/Server.grpc.pb.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/classfile/AnnotationsParser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/classfile/AnnotationsParser.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassFiles.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassFiles.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassFiles.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassFiles.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefEdges.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefEdges.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/graph/ClassFileProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/graph/ClassFileProcessor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/graph/ClassfileProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/graph/ClassfileProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/JarEntry.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/JarEntry.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/DigestTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/DigestTask.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/DigestTask.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/DigestTask.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/stats/Report.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/stats/Report.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/stats/Report.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/stats/Report.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/Database.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/Database.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/Database.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/Database.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/infrastructure/db/table/Table.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/table/Table.h" afterDir="false" />
     </list>
@@ -231,7 +212,7 @@
       <workItem from="1694402168217" duration="3985000" />
       <workItem from="1694912725845" duration="10813000" />
       <workItem from="1694988984768" duration="13956000" />
-      <workItem from="1695506268110" duration="5562000" />
+      <workItem from="1695506268110" duration="14291000" />
     </task>
     <task id="LOCAL-00001" summary="Ignoring cmake dirs">
       <created>1684696768056</created>
@@ -382,7 +363,15 @@
       <option name="project" value="LOCAL" />
       <updated>1694915557361</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Indexing classes and members - Declaring Edges - Calculating Edges for ClassRef">
+      <option name="closed" value="true" />
+      <created>1695521113876</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1695521113876</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -419,7 +408,8 @@
     <MESSAGE value="WIP: fixing, preparing remote for WSL2 that is much faster that VMWare" />
     <MESSAGE value="WIP: fixing DB, fixing bugs" />
     <MESSAGE value="Fixing Table List" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing Table List" />
+    <MESSAGE value="Indexing classes and members - Declaring Edges - Calculating Edges for ClassRef" />
+    <option name="LAST_COMMIT_MESSAGE" value="Indexing classes and members - Declaring Edges - Calculating Edges for ClassRef" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -560,7 +550,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.cpp</url>
-          <line>120</line>
+          <line>119</line>
           <option name="timeStamp" value="101" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">

@@ -46,7 +46,7 @@ public:
     [[nodiscard]] std::string getStrongClassname(const ClassFileRow &row) const;
 
     void defineColumns() override;
-    auto getClassFileRow( int64_t rowId );
+    auto getClassFileRow( uint64_t rowId ) const -> ClassFileRow*;
     auto getClassname(const ClassFileRow &row) const -> std::string;
 private:
     const std::shared_ptr<Files> _filesTable;

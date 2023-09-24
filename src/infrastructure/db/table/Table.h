@@ -94,7 +94,7 @@ namespace kapa::infrastructure::db::table {
 
         auto addOrUpdate(AutoIncrementedRow *row) -> uint64_t;
 
-        [[nodiscard]] auto getRow(uint64_t id) -> const AutoIncrementedRow *;
+        [[nodiscard]] AutoIncrementedRow* getRow(uint64_t id) const;
 
         auto add(AutoIncrementedRow *row) -> uint64_t;
 

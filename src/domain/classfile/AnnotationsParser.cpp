@@ -57,7 +57,7 @@ string AnnotationsParser::annotationToString(
             break;
 
         case 0x01:
-            result = fmt::format("index: {} method/constructor",
+            result = fmt::format("index: {} member/constructor",
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
 
@@ -72,7 +72,7 @@ string AnnotationsParser::annotationToString(
             break;
 
         case 0x12:
-            result = fmt::format("index, bound: {},{} method/constructor",
+            result = fmt::format("index, bound: {},{} member/constructor",
                             typeAnnotation.targetInfo.type_parameter_bound_target.type_parameter_index,
                             typeAnnotation.targetInfo.type_parameter_bound_target.bound_index);
             break;
@@ -136,7 +136,7 @@ string AnnotationsParser::annotationToString(
             break;
 
         case 0x49:
-            result = fmt::format("arg. gen method call bytecode offset: {}, index: {}",
+            result = fmt::format("arg. gen member call bytecode offset: {}, index: {}",
                             typeAnnotation.targetInfo.type_argument_target.offset,
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
