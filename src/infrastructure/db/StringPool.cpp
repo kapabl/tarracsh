@@ -82,13 +82,25 @@ table::column::StringCol StringPool::internalAdd(const std::string &stringValue)
         }
         result = _position;
         if (stringValue.length() > 0) {
-            const char* begin = &*stringValue.begin();
+            const char *begin = &*stringValue.begin();
+#ifndef DEBUG_STRING_POOL
+            auto index = 0;
+            while (index < stringValue.length()) {
+                if( begin[index] == 0) {
+                    std::cout << "Adding bad utf-8 string to string-pool: " << stringValue << std::endl;
+                    assert(false);
+                }
+                assert(begin[index] != 0);
+                ++index;
+            }
+#endif
             std::memcpy(&_pool[result], begin, stringValue.length());
         }
 
+
         _position += stringValue.length();
         _pool[_position] = 0;
-        _position++;
+        ++_position;
 
         const std::string_view key(&_pool[result]);        
         _hash[key] = result;

@@ -20,9 +20,21 @@ struct MethodRefEdgeRow : infrastructure::db::table::AutoIncrementedRow {
     infrastructure::db::table::column::RefCol to{};
 };
 
+
 class MethodRefEdges : public ClassOwnedTable {
 
 public:
+    struct Types {
+        typedef Methods TargetTable;
+        typedef MethodRow TargetRow;
+
+        typedef MethodRefs RefTable;
+        typedef MethodRefRow RefRow;
+
+        typedef MethodRefEdges EdgeTable;
+        typedef MethodRefEdgeRow EdgeRow;
+    };
+
     explicit MethodRefEdges(
             infrastructure::db::Database &db,
             const std::string &tablename,

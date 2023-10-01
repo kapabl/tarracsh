@@ -16,6 +16,7 @@ struct ClassFileRow : infrastructure::db::table::AutoIncrementedRow {
     infrastructure::db::table::column::UInt64Col size{};
     infrastructure::db::table::column::Int32Col crc{};
     infrastructure::db::table::column::DigestCol digest{};
+    infrastructure::db::table::column::UInt64Col refCount{};
 
     ClassFileRow() = default;
     explicit ClassFileRow(const FileRow& fileRow) {
@@ -33,7 +34,7 @@ struct ClassFileRow : infrastructure::db::table::AutoIncrementedRow {
 
 };
 
-class ClassFiles : public  infrastructure::db::table::Table {
+class ClassFiles : public  infrastructure::db::table::Table{
 
 public:
     explicit ClassFiles(infrastructure::db::Database &db,

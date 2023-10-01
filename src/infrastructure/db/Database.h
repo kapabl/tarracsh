@@ -11,7 +11,7 @@
 
 namespace kapa::infrastructure::db {
 namespace table {
-class Table;
+    class Table;
 }
 
 class Database {
@@ -27,6 +27,7 @@ public:
     explicit Database(const Config& config, const bool hasSaveThread);
     virtual ~Database() = default;
     virtual void stop();
+
     table::Table *getTable(const std::string &tablename);
 
     Database(const Database& other) = delete;

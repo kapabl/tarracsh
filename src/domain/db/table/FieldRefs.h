@@ -16,7 +16,7 @@ struct FieldRefRow : infrastructure::db::table::AutoIncrementedRow {
     infrastructure::db::table::column::StringCol classname{};
     infrastructure::db::table::column::StringCol name{};
     infrastructure::db::table::column::StringCol descriptor{};
-    infrastructure::db::table::column::UInt64Col refCount{};
+    infrastructure::db::table::column::UInt64Col edgeCount{};
 
     FieldRefRow() = default;
     explicit FieldRefRow(const ClassFileRow& classFileRow) {
@@ -33,6 +33,7 @@ struct FieldRefRow : infrastructure::db::table::AutoIncrementedRow {
 class FieldRefs : public ClassOwnedTable {
 
 public:
+
     explicit FieldRefs(infrastructure::db::Database &db,
                              const std::string &tablename,
                              std::shared_ptr<ClassFiles> classfile,

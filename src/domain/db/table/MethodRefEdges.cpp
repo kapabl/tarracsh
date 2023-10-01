@@ -20,7 +20,8 @@ MethodRefEdges::MethodRefEdges(
 
 
 std::string MethodRefEdges::getKey(const AutoIncrementedRow* row) {
-    std::string result("TODO class-ref-id->target-class-id");
+    auto& edgeRow = *static_cast<const MethodRefEdgeRow*>(row);
+    std::string result(fmt::format("{}-{}", edgeRow.from.id, edgeRow.to.id));
     return result;
 }
 

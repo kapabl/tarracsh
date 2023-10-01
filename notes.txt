@@ -9,11 +9,11 @@ Call graph
 
 - linkage step
     - fill foreign columns
-    - update refCount
+    - update edgeCount
     - create reports for:
         -symbol not found
         -duplicate symbol
-        -private symbol with zero refCount
+        -private symbol with zero edgeCount
 
 - query graph
     - use similar query language I developed to query the digest table

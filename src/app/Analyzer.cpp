@@ -66,9 +66,6 @@ void Analyzer::processStandaloneClassFile(const std::string &filename) {
     _fileThreadPool.push_task([this, filename] {
         ++_results.standaloneClassfiles.count;
         doClassFile(filename);
-        if (_options.canPrintProgress()) {
-            _results.print();
-        }
     });
 
 }
@@ -166,9 +163,10 @@ void Analyzer::run() {
 }
 
 void Analyzer::runWithPrint() {
+    //TODO create a "print progress" thread
     run();
     if (_options.canPrintProgress()) {
-        _results.printProgress();
+        //_results.printProgress();
         _results.printAll();
     }
 

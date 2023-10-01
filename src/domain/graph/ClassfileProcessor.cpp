@@ -43,7 +43,7 @@ void ClassFileProcessor::extractNodes() {
 void ClassFileProcessor::recordFields() {
     const auto fieldTable = _db.getFields();
     for (auto &fieldInfo: _parser.getFields()) {
-        auto &fieldRow = *static_cast<db::table::FieldRow *>(fieldTable->allocateRow());
+        auto &fieldRow = *reinterpret_cast<db::table::FieldRow *>(fieldTable->allocateRow());
         new(&fieldRow) FieldRow(*_row);
         fieldRow.name = _db.getPoolString(_constantPool.getString(fieldInfo.nameIndex));
         fieldRow.descriptor = _db.getPoolString(_constantPool.getString(fieldInfo.descriptorIndex));
@@ -54,7 +54,7 @@ void ClassFileProcessor::recordFields() {
 void ClassFileProcessor::recordMethods() {
     const auto methodTable = _db.getMethods();
     for (auto &methodInfo: _parser.getMethods()) {
-        auto &methodRow = *static_cast<db::table::MethodRow *>(methodTable->allocateRow());
+        auto &methodRow = *reinterpret_cast<db::table::MethodRow *>(methodTable->allocateRow());
         new(&methodRow) MethodRow(*_row);
         methodRow.name = _db.getPoolString(_constantPool.getString(methodInfo.nameIndex));
         methodRow.descriptor = _db.getPoolString(_constantPool.getString(methodInfo.descriptorIndex));
@@ -64,7 +64,7 @@ void ClassFileProcessor::recordMethods() {
 
 void ClassFileProcessor::recordClassRef(const ConstantPoolRecord &entry) {
     const auto classRefs = _db.getClassRefs();
-    auto &classRefRow = *static_cast<db::table::ClassRefRow *>(classRefs->allocateRow());
+    auto &classRefRow = *reinterpret_cast<db::table::ClassRefRow *>(classRefs->allocateRow());
     new(&classRefRow) ClassRefRow(*_row);
     classRefRow.name = _db.getPoolString(_constantPool.getString(entry.classInfo.nameIndex));
     classRefs->addOrUpdate(&classRefRow);
@@ -74,10 +74,10 @@ void ClassFileProcessor::commonRecordMethodRef(const MemberInfo& memberInfo) {
     auto nameAndTypeIndex = memberInfo.nameAndTypeIndex;
     auto nameAndTypeInfo = _constantPool.getEntry(nameAndTypeIndex).nameAndTypeInfo;
     const auto methodRefs = _db.getMethodRefs();
-    auto &methodRefRow = *static_cast<db::table::MethodRefRow *>(methodRefs->allocateRow());
+    auto &methodRefRow = *reinterpret_cast<db::table::MethodRefRow *>(methodRefs->allocateRow());
     new(&methodRefRow) MethodRefRow(*_row);
 
-    methodRefRow.classname = _db.getPoolString(_constantPool.getString(memberInfo.classIndex));
+    methodRefRow.classname = _db.getPoolString(_constantPool.getClassInfoName(memberInfo.classIndex));
     methodRefRow.name = _db.getPoolString(_constantPool.getString(nameAndTypeInfo.nameIndex));
     methodRefRow.descriptor = _db.getPoolString(_constantPool.getString(nameAndTypeInfo.descriptorIndex));
     methodRefs->addOrUpdate(&methodRefRow);
@@ -94,7 +94,7 @@ void ClassFileProcessor::recordInterfaceMethodRef(const ConstantPoolRecord &entr
 
 void ClassFileProcessor::recordFieldRef(const ConstantPoolRecord &entry) {
     const auto fieldRefs = _db.getFieldRefs();
-    auto &fieldRefRow = *static_cast<db::table::FieldRefRow *>(fieldRefs->allocateRow());
+    auto &fieldRefRow = *reinterpret_cast<db::table::FieldRefRow *>(fieldRefs->allocateRow());
     new(&fieldRefRow) FieldRefRow(*_row);
 
     auto nameAndTypeInfo = _constantPool.getEntry(entry.fieldrefInfo.nameAndTypeIndex).nameAndTypeInfo;

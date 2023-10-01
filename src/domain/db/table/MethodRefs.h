@@ -19,11 +19,7 @@ namespace kapa::tarracsh::domain::db::table {
         infrastructure::db::table::column::StringCol classname{};
         infrastructure::db::table::column::StringCol name{};
         infrastructure::db::table::column::StringCol descriptor{};
-        infrastructure::db::table::column::UInt64Col refCount{};
-
-//        infrastructure::db::table::column::RefCol targetClass{};
-//        infrastructure::db::table::column::RefCol targetMethod{};
-
+        infrastructure::db::table::column::UInt64Col edgeCount{};
 
         MethodRefRow() = default;
 

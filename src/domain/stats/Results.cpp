@@ -44,7 +44,7 @@ void Results::printProgress() const {
     }
     std::cout << oof::hposition(0);
           
-    std::cout << fmt::format("classfiles: {}, jars : {}\n", lastClassfileCountPrint, lastJarCountPrint );
+    std::cout << fmt::format("classfiles: {}, jars: {}\n", lastClassfileCountPrint, lastJarCountPrint );
     std::cout << std::flush;
     progressStarted = true;
 }

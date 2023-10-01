@@ -14,7 +14,7 @@ namespace kapa::tarracsh::domain::db::table {
 struct ClassRefRow : infrastructure::db::table::AutoIncrementedRow {
     infrastructure::db::table::column::RefCol ownerClass{};
     infrastructure::db::table::column::StringCol name{};
-    infrastructure::db::table::column::UInt64Col refCount{};
+    infrastructure::db::table::column::UInt64Col edgeCount{};
 
     ClassRefRow() = default;
     explicit ClassRefRow(const ClassFileRow& classFileRow) {

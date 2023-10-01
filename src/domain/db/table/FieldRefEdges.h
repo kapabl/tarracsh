@@ -23,6 +23,17 @@ struct FieldRefEdgeRow : infrastructure::db::table::AutoIncrementedRow {
 class FieldRefEdges : public ClassOwnedTable {
 
 public:
+    struct Types {
+        typedef Fields TargetTable;
+        typedef FieldRow TargetRow;
+
+        typedef FieldRefs RefTable;
+        typedef FieldRefRow RefRow;
+
+        typedef FieldRefEdges EdgeTable;
+        typedef FieldRefEdgeRow EdgeRow;
+    };
+
     explicit FieldRefEdges(
             infrastructure::db::Database &db,
             const std::string &tablename,

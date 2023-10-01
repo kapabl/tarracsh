@@ -18,23 +18,35 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Indexing classes and members - Declaring Edges - Calculating Edges for ClassRef">
+    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Minor">
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/tarracsh_graph_query.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/tarracsh_graph_query.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/references/openjdk/jfr/metadata/metadata.xml" beforeDir="false" afterPath="$PROJECT_DIR$/references/openjdk/jfr/metadata/metadata.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/classfile/constantpool/printer/ConstantPoolPrinter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/classfile/constantpool/printer/ConstantPoolPrinter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/notes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/Analyzer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Analyzer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/server/digest/proto/Server.grpc.pb.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/server/digest/proto/Server.grpc.pb.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/classfile/AnnotationsParser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/classfile/AnnotationsParser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassFiles.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassFiles.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/CallGraphDb.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/CallGraphDb.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassFiles.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassFiles.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassOwnedTable.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassOwnedTable.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassRefEdges.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefEdges.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassRefEdges.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefEdges.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/FieldRefEdges.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefEdges.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/FieldRefEdges.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefEdges.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefEdges.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefEdges.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefEdges.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefEdges.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/DigestTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/DigestTask.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/graph/ClassfileProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/graph/ClassfileProcessor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/jar/Processor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/Processor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/stats/Results.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/stats/Results.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/Database.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/Database.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/StringPool.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/StringPool.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/infrastructure/db/table/Table.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/table/Table.h" afterDir="false" />
     </list>
@@ -106,25 +118,28 @@
       <window_info id="Commit_Guest" />
       <window_info id="Pull Requests" />
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.9080882" weight="0.26618034" />
-      <window_info id="Commit" order="1" weight="0.25" />
+      <window_info active="true" id="Commit" order="1" sideWeight="0.55050826" visible="true" weight="0.14921722" />
       <window_info active="true" id="Cody" order="2" visible="true" weight="0.26618034" />
-      <window_info active="true" id="Structure" order="3" side_tool="true" visible="true" weight="0.26618034" />
+      <window_info active="true" id="Structure" order="3" sideWeight="0.44949174" side_tool="true" visible="true" weight="0.14921722" />
       <window_info anchor="bottom" id="CMake" weight="0.25821105" />
       <window_info anchor="bottom" id="Database Changes" />
       <window_info anchor="bottom" id="TypeScript" />
       <window_info anchor="bottom" id="Python Packages" />
       <window_info anchor="bottom" id="TODO" />
+      <window_info anchor="bottom" id="Messages" weight="0.3489229" />
       <window_info anchor="bottom" id="File Transfer" />
       <window_info anchor="bottom" id="Vcpkg" weight="0.4433962" />
       <window_info anchor="bottom" id="clangd" />
-      <window_info active="true" anchor="bottom" id="Version Control" order="0" visible="true" weight="0.2540182" />
+      <window_info anchor="bottom" id="Version Control" order="0" weight="0.36479592" />
       <window_info anchor="bottom" id="Problems View" order="1" />
       <window_info anchor="bottom" id="Terminal" order="2" weight="0.2540182" />
-      <window_info anchor="bottom" id="Services" order="3" />
+      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.38860545" />
+      <window_info anchor="bottom" id="Services" order="4" />
       <window_info anchor="right" id="make" side_tool="true" />
       <window_info active="true" anchor="right" id="Meet New UI" side_tool="true" weight="0.21163653" />
       <window_info anchor="right" content_ui="combo" id="Notifications" order="0" weight="0.25" />
       <window_info anchor="right" id="Database" order="1" weight="0.25" />
+      <window_info anchor="right" id="github.copilotToolWindow" order="2" />
     </layout>
   </component>
   <component name="RecentsManager">
@@ -136,11 +151,6 @@
   <component name="RunManager" selected="CMake Application.tarracsh-graph-query">
     <configuration name="cmake1" type="CMakeListConfigurationType" factoryName="CMakeListConfigurationFactory">
       <method v="2" />
-    </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
     </configuration>
     <configuration name="cfdiff" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="--help" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tarracsh" TARGET_NAME="cfdiff" RUN_TARGET_PROJECT_NAME="tarracsh" RUN_TARGET_NAME="cfdiff">
       <method v="2">
@@ -212,7 +222,12 @@
       <workItem from="1694402168217" duration="3985000" />
       <workItem from="1694912725845" duration="10813000" />
       <workItem from="1694988984768" duration="13956000" />
-      <workItem from="1695506268110" duration="14291000" />
+      <workItem from="1695506268110" duration="25960000" />
+      <workItem from="1695611325843" duration="3727000" />
+      <workItem from="1695615191758" duration="1730000" />
+      <workItem from="1695617212286" duration="82000" />
+      <workItem from="1695617304988" duration="4234000" />
+      <workItem from="1696116344768" duration="596000" />
     </task>
     <task id="LOCAL-00001" summary="Ignoring cmake dirs">
       <created>1684696768056</created>
@@ -371,7 +386,23 @@
       <option name="project" value="LOCAL" />
       <updated>1695521113876</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Calculating edges for members">
+      <option name="closed" value="true" />
+      <created>1695529665906</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1695529665906</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Minor">
+      <option name="closed" value="true" />
+      <created>1695530007208</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1695530007208</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -409,7 +440,9 @@
     <MESSAGE value="WIP: fixing DB, fixing bugs" />
     <MESSAGE value="Fixing Table List" />
     <MESSAGE value="Indexing classes and members - Declaring Edges - Calculating Edges for ClassRef" />
-    <option name="LAST_COMMIT_MESSAGE" value="Indexing classes and members - Declaring Edges - Calculating Edges for ClassRef" />
+    <MESSAGE value="Calculating edges for members" />
+    <MESSAGE value="Minor" />
+    <option name="LAST_COMMIT_MESSAGE" value="Minor" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -480,123 +513,35 @@
           <option name="timeStamp" value="23" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/cfdiff/src/domain/jar/tasks/DbBasedTask.h</url>
-          <line>10</line>
-          <option name="timeStamp" value="7" />
+          <url>file://$PROJECT_DIR$/src/infrastructure/db/StringPool.cpp</url>
+          <line>80</line>
+          <option name="timeStamp" value="168" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.cpp</url>
-          <line>147</line>
-          <option name="timeStamp" value="30" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.cpp</url>
-          <line>93</line>
-          <option name="timeStamp" value="32" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.cpp</url>
-          <line>73</line>
-          <option name="timeStamp" value="33" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/cfdiff/src/cli/ClassfileDiffApp.cpp</url>
-          <line>92</line>
-          <option name="timeStamp" value="34" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/cmake-build-debug-remote/vcpkg_installed/x64-linux/include/CLI/Error.hpp</url>
-          <line>171</line>
-          <option name="timeStamp" value="46" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.h</url>
-          <line>13</line>
-          <option name="timeStamp" value="47" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/domain/jar/tasks/DigestTask.cpp</url>
-          <option name="timeStamp" value="48" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/app/Analyzer.cpp</url>
-          <line>169</line>
-          <option name="timeStamp" value="59" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/app/commands/callgraph/CallGraph.cpp</url>
-          <line>39</line>
-          <option name="timeStamp" value="65" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/app/Analyzer.cpp</url>
-          <line>143</line>
-          <option name="timeStamp" value="71" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp</url>
-          <line>65</line>
-          <option name="timeStamp" value="84" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/domain/classfile/ClassFileParser.cpp</url>
-          <line>30</line>
-          <option name="timeStamp" value="88" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/domain/classfile/ClassFileParser.cpp</url>
-          <line>36</line>
-          <option name="timeStamp" value="89" />
+          <url>file://$PROJECT_DIR$/src/infrastructure/db/StringPool.cpp</url>
+          <line>89</line>
+          <option name="timeStamp" value="169" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.cpp</url>
-          <line>119</line>
-          <option name="timeStamp" value="101" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/infrastructure/db/Database.cpp</url>
-          <line>67</line>
-          <option name="timeStamp" value="103" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/app/commands/callgraph/CallGraph.cpp</url>
-          <line>52</line>
-          <option name="timeStamp" value="106" />
+          <line>135</line>
+          <option name="timeStamp" value="170" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp</url>
-          <line>107</line>
-          <option name="timeStamp" value="138" />
+          <line>284</line>
+          <option name="timeStamp" value="171" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp</url>
-          <line>116</line>
-          <option name="timeStamp" value="139" />
+          <url>file://$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.cpp</url>
+          <line>129</line>
+          <option name="timeStamp" value="174" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.cpp</url>
-          <line>27</line>
-          <option name="timeStamp" value="141" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp</url>
-          <line>110</line>
-          <option name="timeStamp" value="147" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp</url>
-          <line>78</line>
-          <option name="timeStamp" value="148" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/domain/db/table/ClassRefEdges.h</url>
-          <line>24</line>
-          <option name="timeStamp" value="150" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/domain/db/CallGraphDb.h</url>
-          <line>2</line>
-          <option name="timeStamp" value="151" />
+          <condition expression="matchCount &gt; 1" language="ObjectiveC" />
+          <url>file://$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.h</url>
+          <line>160</line>
+          <option name="timeStamp" value="177" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

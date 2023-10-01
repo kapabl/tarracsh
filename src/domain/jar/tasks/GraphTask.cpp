@@ -1,8 +1,4 @@
 #include "GraphTask.h"
-
-#include <ranges>
-//#include <utility>
-
 #include "domain/db/table/ClassRefs.h"
 #include "domain/db/table/Methods.h"
 #include "domain/db/table/MethodRefs.h"
@@ -71,8 +67,8 @@ void GraphTask::processClassFile(const JarEntryInfo &jarEntryInfo, db::table::Cl
     ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);
 
     if (classFileParser.parse()) {
-        auto upDatedRow = getClassFileRow(addOrUpdateClassfile(jarEntry, classFileParser));
-        auto classFileProcessor = ClassFileProcessor(upDatedRow, classFileParser, _db );
+        auto updatedRow = getClassFileRow(addOrUpdateClassfile(jarEntry, classFileParser));
+        auto classFileProcessor = ClassFileProcessor(updatedRow, classFileParser, _db );
         classFileProcessor.extractNodes();
     } else {
         _results.report->asFailedJarClass(jarEntryInfo.strongClassname);
@@ -95,7 +91,7 @@ void GraphTask::processEntry(const JarEntry &jarEntry, std::mutex &taskMutex) {
     const auto filename = _db.getFiles()->getFilename(&getJarFileRow());
     const JarEntryInfo jarEntryInfo(filename, jarEntry);
 
-    auto classfileRow = static_cast<ClassFileRow *>(_db.getClassFiles()->findByKey(
+    auto classfileRow = reinterpret_cast<ClassFileRow *>(_db.getClassFiles()->findByKey(
             jarEntryInfo.strongClassname));
 
     const auto classExists = nullptr != classfileRow;
