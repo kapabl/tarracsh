@@ -33,5 +33,5 @@ void FieldRefs::defineColumns() {
     DECLARE_COLUMN_PROP(FieldRefRow, classname, StorageType::String, DisplayAs::AsString);
     DECLARE_COLUMN_PROP(FieldRefRow, name, StorageType::String, DisplayAs::AsString);
     DECLARE_COLUMN_PROP(FieldRefRow, descriptor, StorageType::String, DisplayAs::AsString);
-    DECLARE_COLUMN_PROP(FieldRefRow, refCount, StorageType::UInt64, DisplayAs::AsUInt64);
+    DECLARE_COLUMN_PROP(FieldRefRow, edgeCount, StorageType::UInt64, DisplayAs::AsUInt64);
 }

@@ -41,7 +41,7 @@ FileRow *DbBasedTask::getOrCreateFileRow(const std::string &filename) {
 }
 
 FileRow *DbBasedTask::createJarFileRow(const std::string &filename) {
-    auto result = static_cast<FileRow *>(getFiles()->allocateRow());
+    auto* result = static_cast<FileRow *>(getFiles()->allocateRow());
     new(result) FileRow();
     result->filename = getDb().getPoolString(filename);
     result->type = EntryType::Jar;

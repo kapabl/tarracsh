@@ -9,7 +9,10 @@
 #include "Files.h"
 
 #pragma pack( push, 1 )
+
+
 namespace kapa::tarracsh::domain::db::table {
+
 
 class ClassOwnedTable : public  infrastructure::db::table::Table {
 

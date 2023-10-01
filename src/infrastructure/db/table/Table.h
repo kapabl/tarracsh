@@ -74,119 +74,118 @@ namespace kapa::infrastructure::db::table {
     _columns.push_back( name##Prop ); \
     _layout.header.columnCount = _columns.size()
 
+class Table {
 
-    class Table {
+public:
+    typedef unsigned char byte;
+    explicit Table(db::Database &db, const std::string &name, uint64_t rowSize);
 
-    public:
-        typedef unsigned char byte;
+    virtual ~Table();
 
-        explicit Table(db::Database &db, const std::string &name, uint64_t rowSize);
+    [[nodiscard]] auto getName() const -> std::string;
 
-        virtual ~Table();
+    void init();
 
-        [[nodiscard]] auto getName() const -> std::string;
+    [[nodiscard]] auto get(std::string key) const -> AutoIncrementedRow *;
 
-        void init();
+    auto update(AutoIncrementedRow *row) -> void;
+    auto updateInPlace(const std::function<AutoIncrementedRow*()>& updateFunc) -> void;
 
-        [[nodiscard]] auto get(std::string key) const -> AutoIncrementedRow *;
+    auto addOrUpdate(AutoIncrementedRow *row) -> uint64_t;
 
-        auto update(AutoIncrementedRow *row) -> void;
+    [[nodiscard]] AutoIncrementedRow* getRow(uint64_t id) const;
 
-        auto addOrUpdate(AutoIncrementedRow *row) -> uint64_t;
+    auto add(AutoIncrementedRow *row) -> uint64_t;
 
-        [[nodiscard]] AutoIncrementedRow* getRow(uint64_t id) const;
+    [[nodiscard]] bool write();
 
-        auto add(AutoIncrementedRow *row) -> uint64_t;
+    auto clean() -> bool;
 
-        [[nodiscard]] bool write();
+    virtual void backup();
 
-        auto clean() -> bool;
+    auto read() -> bool;
 
-        virtual void backup();
+    [[nodiscard]] std::shared_ptr<StringPool> getStringPool() const;
 
-        auto read() -> bool;
+    [[nodiscard]] AutoIncrementedRow *findByKey(const std::string &key);
 
-        [[nodiscard]] std::shared_ptr<StringPool> getStringPool() const;
+    void printSchema();
 
-        [[nodiscard]] AutoIncrementedRow *findByKey(const std::string &key);
+    void list(const std::function<bool(AutoIncrementedRow &)> &filter, bool displayRaw);
 
-        void printSchema();
+    [[nodiscard]] auto size() const -> uint64_t;
 
-        void list(const std::function<bool(AutoIncrementedRow &)> &filter, bool displayRaw);
+    auto getColumnValue(uint64_t id, const char *columnName) -> std::string;
 
-        [[nodiscard]] auto size() const -> uint64_t;
+    [[nodiscard]] auto allocateRow() const -> AutoIncrementedRow *;
 
-        auto getColumnValue(uint64_t id, const char *columnName) -> std::string;
+    static void freeRow(AutoIncrementedRow *row);
 
-        [[nodiscard]] auto allocateRow() const -> AutoIncrementedRow *;
+    auto isValidColumn(const std::string &columnName) const -> bool;
 
-        static void freeRow(AutoIncrementedRow *row);
+    auto deleteRow(uint64_t id) -> bool;
 
-        auto isValidColumn(const std::string &columnName) const -> bool;
+    void forEach(std::function<void(AutoIncrementedRow *)> func);
+    void forEach(std::function<bool(AutoIncrementedRow *)> func);
 
-        auto deleteRow(uint64_t id) -> bool;
+protected:
+    db::Database &_db;
+    std::unordered_map<std::string, AutoIncrementedRow *> _rows;
+    std::vector<AutoIncrementedRow *> _autoIncrementIndex;
+    std::string _filename;
+    bool _isDirty{false};
+    uint64_t _rowSize;
+    std::string _name;
 
-        void forEach(std::function<void(AutoIncrementedRow *)> func);
-        void forEach(std::function<bool(AutoIncrementedRow *)> func);
-
-    protected:
-        db::Database &_db;
-        std::unordered_map<std::string, AutoIncrementedRow *> _rows;
-        std::vector<AutoIncrementedRow *> _autoIncrementIndex;
-        std::string _filename;
-        bool _isDirty{false};
-        uint64_t _rowSize;
-        std::string _name;
-
-        enum DirtyType {
-            isUpdate,
-            isNew,
-            isDeleted
-        };
-
-        std::unordered_map<uint64_t, DirtyType> _dirtyRows;
-
-        std::shared_mutex _mutex;
-        const std::shared_ptr<StringPool> _stringPool;
-        std::vector<column::Properties> _columns;
-        std::unordered_map<std::string, int> _columnByName;
-        TableLayout _layout;
-
-        virtual void defineColumns() {
-        }
-
-        void forEachColumn(const std::function<void(const column::Properties &, const int index)> &func) const;
-
-        virtual auto getKey(const AutoIncrementedRow *row) -> std::string = 0;
-
-        [[nodiscard]] uint64_t getFileSize() const;
-
-        [[nodiscard]] uint64_t getHeaderSize() const;
-
-        [[nodiscard]] uint64_t calculateRowCount() const;
-
-        void printLayout();
-
-        void writeRows(FILE *file);
-
-        void writeHeader(FILE *file);
-
-        void writeSchema(FILE *file) const;
-
-        bool readRows(FILE *file);
-
-        bool readHeader(FILE *file);
-
-        bool readSchema(FILE *file);
-
-        void internalAdd(AutoIncrementedRow *row, const std::string &key);
-
-        void internalUpdate(AutoIncrementedRow *row, const std::string &key);
-
-        [[nodiscard]] std::string generateStdOutHeader() const;
-
-        [[nodiscard]] std::string generateStdOutRow(AutoIncrementedRow *row, bool displayRaw) const;
+    enum DirtyType {
+        isUpdate,
+        isNew,
+        isDeleted
     };
+
+    std::unordered_map<uint64_t, DirtyType> _dirtyRows;
+
+    std::shared_mutex _mutex;
+    const std::shared_ptr<StringPool> _stringPool;
+    std::vector<column::Properties> _columns;
+    std::unordered_map<std::string, int> _columnByName;
+    TableLayout _layout;
+
+    virtual void defineColumns() {
+    }
+
+    void forEachColumn(const std::function<void(const column::Properties &, const int index)> &func) const;
+
+    virtual auto getKey(const AutoIncrementedRow *row) -> std::string = 0;
+
+    [[nodiscard]] uint64_t getFileSize() const;
+
+    [[nodiscard]] uint64_t getHeaderSize() const;
+
+    [[nodiscard]] uint64_t calculateRowCount() const;
+
+    void printLayout();
+
+    void writeRows(FILE *file);
+
+    void writeHeader(FILE *file);
+
+    void writeSchema(FILE *file) const;
+
+    bool readRows(FILE *file);
+
+    bool readHeader(FILE *file);
+
+    bool readSchema(FILE *file);
+
+    void internalAdd(AutoIncrementedRow *row, const std::string &key);
+
+    void internalUpdate(AutoIncrementedRow *row, const std::string &key);
+
+    [[nodiscard]] std::string generateStdOutHeader() const;
+
+    [[nodiscard]] std::string generateStdOutRow(AutoIncrementedRow *row, bool displayRaw) const;
+};
 
 
 }

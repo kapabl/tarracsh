@@ -48,12 +48,6 @@ void Processor::run() {
 
         for (auto &entry : entries) {
 
-            if (index % 100 == 0) {
-                if (_jarOptions.canPrintProgress()) {
-                    _results.print();
-                }
-            }
-
             waitForAvailableBuffer();
 
             auto buffer = static_cast<char *>(entry.readAsBinary());
@@ -83,8 +77,5 @@ void Processor::run() {
     }
     _task.end();
     ++_results.jarfiles.parsedCount;
-    if (_jarOptions.canPrintProgress()) {
-        _results.print();
-    }
 }
 

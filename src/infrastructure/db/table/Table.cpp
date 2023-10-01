@@ -367,6 +367,18 @@ void Table::update(AutoIncrementedRow *row) {
     }
 }
 
+void Table::updateInPlace(const std::function<AutoIncrementedRow*()>& updateFunc) {
+    std::lock_guard lock(_mutex);
+    auto* row = updateFunc();
+//#ifndef DEBUG_TABLE_UPDATE_INPLACE
+//    assert(_autoIncrementIndex[row->id] == row);
+//#endif
+    _isDirty = true;
+    if (!_dirtyRows.contains(row->id)) {
+        _dirtyRows[row->id] = DirtyType::isUpdate;
+    }
+}
+
 uint64_t Table::addOrUpdate(AutoIncrementedRow *row) {
 
     std::lock_guard lock(_mutex);

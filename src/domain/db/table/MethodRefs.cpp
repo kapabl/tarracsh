@@ -32,6 +32,6 @@ void MethodRefs::defineColumns() {
     DECLARE_COLUMN_PROP(MethodRefRow, classname, StorageType::String, DisplayAs::AsString);
     DECLARE_COLUMN_PROP(MethodRefRow, name, StorageType::String, DisplayAs::AsString);
     DECLARE_COLUMN_PROP(MethodRefRow, descriptor, StorageType::String, DisplayAs::AsString);
-    DECLARE_COLUMN_PROP(MethodRefRow, refCount, StorageType::UInt64, DisplayAs::AsUInt64);
+    DECLARE_COLUMN_PROP(MethodRefRow, edgeCount, StorageType::UInt64, DisplayAs::AsUInt64);
 
 }

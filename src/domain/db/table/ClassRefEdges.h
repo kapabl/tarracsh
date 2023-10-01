@@ -22,6 +22,7 @@ struct ClassRefEdgeRow : infrastructure::db::table::AutoIncrementedRow {
 class ClassRefEdges : public ClassOwnedTable {
 
 public:
+    typedef ClassRefs TRefTable;
     explicit ClassRefEdges(
             infrastructure::db::Database &db,
             const std::string &tablename,
