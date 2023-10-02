@@ -51,5 +51,6 @@ void ClassFiles::defineColumns() {
     DECLARE_COLUMN_PROP(ClassFileRow, size, StorageType::UInt64, DisplayAs::AsSize);
     DECLARE_COLUMN_PROP(ClassFileRow, crc, StorageType::Int32, DisplayAs::AsInt32);
     DECLARE_COLUMN_PROP(ClassFileRow, digest, StorageType::Digest, DisplayAs::AsDigest);
+    DECLARE_COLUMN_PROP(ClassFileRow, refCount, StorageType::UInt64, DisplayAs::AsUInt64);
 
 }

@@ -33,10 +33,10 @@ void CallGraphDb::init() {
     addTable(*_classRefEdges);
 
     _methodRefEdges = std::make_shared<table::MethodRefEdges>(*this, "methodRefEdges", _methodRefs, _methods, _classfiles);
-    addTable(*_classRefEdges);
+    addTable(*_methodRefEdges);
 
     _fieldRefEdges = std::make_shared<table::FieldRefEdges>(*this, "fieldRefEdges", _fieldRefs, _fields, _classfiles);
-    addTable(*_classRefEdges);
+    addTable(*_fieldRefEdges);
 
     _files->init();
 

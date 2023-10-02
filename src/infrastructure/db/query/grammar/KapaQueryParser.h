@@ -1,5 +1,5 @@
 
-// Generated from KapaQuery.g4 by ANTLR 4.12.0
+// Generated from KapaQuery.g4 by ANTLR 4.13.1
 
 #pragma once
 
@@ -13,9 +13,9 @@ namespace kapa::infrastructure::db::query {
 class  KapaQueryParser : public antlr4::Parser {
 public:
   enum {
-    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, NOT_EQUAL = 7, 
-    EQUAL = 8, REGEX = 9, STARS_WITH = 10, END_WITH = 11, AND = 12, OR = 13, 
-    Identifier = 14, WS = 15, EscapedString = 16
+    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, NOT = 7, 
+    NOT_EQUAL = 8, EQUAL = 9, REGEX = 10, STARTS_WITH = 11, ENDS_WITH = 12, 
+    AND = 13, OR = 14, Identifier = 15, WS = 16, EscapedString = 17
   };
 
   enum {
@@ -183,8 +183,9 @@ public:
     antlr4::tree::TerminalNode *REGEX();
     antlr4::tree::TerminalNode *EQUAL();
     antlr4::tree::TerminalNode *NOT_EQUAL();
-    antlr4::tree::TerminalNode *STARS_WITH();
-    antlr4::tree::TerminalNode *END_WITH();
+    antlr4::tree::TerminalNode *STARTS_WITH();
+    antlr4::tree::TerminalNode *NOT();
+    antlr4::tree::TerminalNode *ENDS_WITH();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

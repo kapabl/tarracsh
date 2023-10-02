@@ -18,37 +18,32 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="Minor">
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/tarracsh_graph_query.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/tarracsh_graph_query.xml" afterDir="false" />
+    <list default="true" id="250843bd-f55d-4535-adc7-88808ad484a7" name="Changes" comment="WIP">
+      <change beforePath="$PROJECT_DIR$/.idea/cmake.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmake.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/notes.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/Analyzer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Analyzer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/Analyzer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Analyzer.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/db/CallGraphDb.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/CallGraphDb.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassFiles.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassFiles.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassOwnedTable.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassOwnedTable.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassRefEdges.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefEdges.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassRefEdges.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefEdges.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassRefs.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/FieldRefEdges.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefEdges.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/FieldRefEdges.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefEdges.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/FieldRefs.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefEdges.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefEdges.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefEdges.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefEdges.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/MethodRefs.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/graph/ClassfileProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/graph/ClassfileProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/Processor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/Processor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/DbBasedTask.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/jar/tasks/GraphTask.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/db/table/ClassFiles.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/db/table/ClassFiles.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/stats/Results.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/stats/Results.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/Database.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/Database.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/StringPool.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/StringPool.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQuery.g4" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQuery.g4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQuery.interp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQuery.interp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQuery.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQuery.tokens" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryBaseListener.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryBaseListener.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryBaseListener.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryBaseListener.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryLexer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryLexer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryLexer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryLexer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryLexer.interp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryLexer.interp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryLexer.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryLexer.tokens" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryListener.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryListener.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryListener.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryListener.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryParser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryParser.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryParser.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/KapaQueryParser.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/ListenerImpl.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/ListenerImpl.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/query/grammar/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/db/table/Table.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/db/table/Table.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,23 +112,24 @@
       <window_info id="Merge Requests" />
       <window_info id="Commit_Guest" />
       <window_info id="Pull Requests" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.9080882" weight="0.26618034" />
-      <window_info active="true" id="Commit" order="1" sideWeight="0.55050826" visible="true" weight="0.14921722" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.8145917" weight="0.21000558" />
+      <window_info active="true" id="Commit" order="1" sideWeight="0.55149615" visible="true" weight="0.21000558" />
       <window_info active="true" id="Cody" order="2" visible="true" weight="0.26618034" />
-      <window_info active="true" id="Structure" order="3" sideWeight="0.44949174" side_tool="true" visible="true" weight="0.14921722" />
-      <window_info anchor="bottom" id="CMake" weight="0.25821105" />
+      <window_info active="true" id="Structure" order="3" sideWeight="0.44850382" side_tool="true" visible="true" weight="0.21000558" />
+      <window_info anchor="bottom" id="CMake" weight="0.47989357" />
       <window_info anchor="bottom" id="Database Changes" />
       <window_info anchor="bottom" id="TypeScript" />
       <window_info anchor="bottom" id="Python Packages" />
       <window_info anchor="bottom" id="TODO" />
-      <window_info anchor="bottom" id="Messages" weight="0.3489229" />
+      <window_info anchor="bottom" id="Messages" weight="0.3592549" />
       <window_info anchor="bottom" id="File Transfer" />
       <window_info anchor="bottom" id="Vcpkg" weight="0.4433962" />
+      <window_info anchor="bottom" id="Find" weight="0.12803075" />
       <window_info anchor="bottom" id="clangd" />
       <window_info anchor="bottom" id="Version Control" order="0" weight="0.36479592" />
       <window_info anchor="bottom" id="Problems View" order="1" />
       <window_info anchor="bottom" id="Terminal" order="2" weight="0.2540182" />
-      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.38860545" />
+      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.081312835" />
       <window_info anchor="bottom" id="Services" order="4" />
       <window_info anchor="right" id="make" side_tool="true" />
       <window_info active="true" anchor="right" id="Meet New UI" side_tool="true" weight="0.21163653" />
@@ -149,24 +145,35 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.tarracsh-graph-query">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="cmake1" type="CMakeListConfigurationType" factoryName="CMakeListConfigurationFactory">
       <method v="2" />
+    </configuration>
+    <configuration name="build-all" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug-remote" RUN_TARGET_PROJECT_NAME="tarracsh" RUN_TARGET_NAME="tarracsh" EXPLICIT_BUILD_TARGET_NAME="all">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
     </configuration>
     <configuration name="cfdiff" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="--help" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tarracsh" TARGET_NAME="cfdiff" RUN_TARGET_PROJECT_NAME="tarracsh" RUN_TARGET_NAME="cfdiff">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="tarracsh-graph-query (1)" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="call-graph --query &quot;list classfiles&quot;" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tarracsh" TARGET_NAME="tarracsh" CONFIG_NAME="Debug-remote" RUN_TARGET_PROJECT_NAME="tarracsh" RUN_TARGET_NAME="tarracsh">
+    <configuration name="tarracsh-graph-query-list" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="call-graph --query  &quot;list classfiles where (classname not ^* 'META-INF' and refCount = '1')" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tarracsh" TARGET_NAME="tarracsh" CONFIG_NAME="Debug-remote" RUN_TARGET_PROJECT_NAME="tarracsh" RUN_TARGET_NAME="tarracsh">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <list>
+      <item itemvalue="CMake Application.tarracsh-graph-query" />
+      <item itemvalue="CMake Application.build-all" />
       <item itemvalue="CMake Application.cfdiff" />
       <item itemvalue="CMake Application.tarracsh-graph" />
-      <item itemvalue="CMake Application.tarracsh-graph-query" />
-      <item itemvalue="CMake Application.tarracsh-graph-query (1)" />
+      <item itemvalue="CMake Application.tarracsh-graph-query-list" />
       <item itemvalue="CMake Debug.cmake1" />
     </list>
   </component>
@@ -227,7 +234,7 @@
       <workItem from="1695615191758" duration="1730000" />
       <workItem from="1695617212286" duration="82000" />
       <workItem from="1695617304988" duration="4234000" />
-      <workItem from="1696116344768" duration="596000" />
+      <workItem from="1696116344768" duration="15777000" />
     </task>
     <task id="LOCAL-00001" summary="Ignoring cmake dirs">
       <created>1684696768056</created>
@@ -402,7 +409,15 @@
       <option name="project" value="LOCAL" />
       <updated>1695530007208</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="WIP">
+      <option name="closed" value="true" />
+      <created>1696128383641</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1696128383641</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -442,7 +457,8 @@
     <MESSAGE value="Indexing classes and members - Declaring Edges - Calculating Edges for ClassRef" />
     <MESSAGE value="Calculating edges for members" />
     <MESSAGE value="Minor" />
-    <option name="LAST_COMMIT_MESSAGE" value="Minor" />
+    <MESSAGE value="WIP" />
+    <option name="LAST_COMMIT_MESSAGE" value="WIP" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -523,25 +539,9 @@
           <option name="timeStamp" value="169" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.cpp</url>
-          <line>135</line>
-          <option name="timeStamp" value="170" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/infrastructure/db/table/Table.cpp</url>
           <line>284</line>
           <option name="timeStamp" value="171" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.cpp</url>
-          <line>129</line>
-          <option name="timeStamp" value="174" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <condition expression="matchCount &gt; 1" language="ObjectiveC" />
-          <url>file://$PROJECT_DIR$/src/app/commands/callgraph/CallGraphAnalyzer.h</url>
-          <line>160</line>
-          <option name="timeStamp" value="177" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

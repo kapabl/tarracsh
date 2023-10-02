@@ -418,11 +418,12 @@ uint64_t Table::add(AutoIncrementedRow *row) {
 }
 
 bool Table::write() {
-    if (!_isDirty) return true;
+    const auto fileExists = std::filesystem::exists(_filename);
+    if (!_isDirty && fileExists) return true;
 
     std::lock_guard lock(_mutex);
 
-    const auto fileExists = std::filesystem::exists(_filename);
+
     const auto mode = fileExists ? "rb+" : "wb+";
 
     //FILE *file = nullptr;

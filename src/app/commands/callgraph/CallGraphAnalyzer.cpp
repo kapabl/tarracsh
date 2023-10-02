@@ -45,7 +45,7 @@ CallGraphAnalyzer::CallGraphAnalyzer(Context &config)
 
 void CallGraphAnalyzer::linkClassRefs() {
     auto classRefs = _callGraphDb->getClassRefs();
-    _results.log->writeln(fmt::format("Calculating {} class-ref edges...", classRefs->size()), true);
+    _results.log->writeln(fmt::format("{} class-refs, calculating edges...", classRefs->size()), true);
 
     auto classRefEdges = _callGraphDb->getClassRefEdges();
     classRefs->forEach([this, classRefEdges, classRefs](AutoIncrementedRow *pRow) -> void {
@@ -73,33 +73,41 @@ void CallGraphAnalyzer::linkClassRefs() {
             }
         }
     });
+    _results.log->writeln(fmt::format("Class-ref edges: {}", classRefEdges->size()), true);
 }
 
 
 void CallGraphAnalyzer::linkMethodRefs() {
+    _results.log->writeln(fmt::format("{} method-refs, calculating edges...",
+                                      _callGraphDb->getMethodRefs()->size()), true);
     linkMemberRefs<MethodRefEdges::Types>(
             *_callGraphDb->getMethodRefs(),
             *_callGraphDb->getMethodRefEdges(),
             *_callGraphDb->getMethods(),
             _methodsIndex
     );
+    _results.log->writeln(fmt::format("Method-ref edges: {}", _callGraphDb->getMethodRefEdges()->size()), true);
 }
 
 void CallGraphAnalyzer::linkFieldRefs() {
+    _results.log->writeln(fmt::format("{} field-refs, calculating edges...",
+                                      _callGraphDb->getFieldRefs()->size()), true);
     linkMemberRefs<FieldRefEdges::Types>(
             *_callGraphDb->getFieldRefs(),
             *_callGraphDb->getFieldRefEdges(),
             *_callGraphDb->getFields(),
             _fieldsIndex
     );
+    _results.log->writeln(fmt::format("Field-ref edges: {}", _callGraphDb->getFieldRefEdges()->size()), true);
+
 }
 
 void CallGraphAnalyzer::createNamedIndexes() {
     createClassnameIndex();
-    createMemberIndex<std::shared_ptr<Methods>, MethodRow>(
-            _methodsIndex, _callGraphDb->getMethods(), "methods");
-    createMemberIndex<std::shared_ptr<Fields>, FieldRow>(
-            _fieldsIndex, _callGraphDb->getFields(), "fields");
+    createMemberIndex<MethodRefEdges::Types>(
+            _methodsIndex, *_callGraphDb->getMethods(), "methods");
+    createMemberIndex<FieldRefEdges::Types>(
+            _fieldsIndex, *_callGraphDb->getFields(), "fields");
 
 }
 
@@ -120,13 +128,7 @@ void CallGraphAnalyzer::createClassnameIndex() {
 void CallGraphAnalyzer::linkRefNodes() {
     createNamedIndexes();
     linkClassRefs();
-
-    _results.log->writeln(fmt::format("Calculating {} method-ref edges...",
-                                        _callGraphDb->getMethodRefs()->size()), true);
     linkMethodRefs();
-
-    _results.log->writeln(fmt::format("Calculating {} field-ref edges...",
-                                      _callGraphDb->getFieldRefs()->size()), true);
     linkFieldRefs();
 }
 

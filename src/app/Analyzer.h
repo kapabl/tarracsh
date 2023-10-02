@@ -62,6 +62,9 @@ protected:
     void parseClassFile(const std::string& filename) const;
     void classFileParserDone(ClassFileParser &parser) const;
 
+    std::thread _printProgressThread;
+    std::atomic<bool> _isAnalazingInputs{false};
+
 };
 }
 #endif

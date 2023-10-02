@@ -156,18 +156,30 @@ void Analyzer::run() {
         ScopedTimer timer(&_results.profileData->analyzerTime);
 
         if (initAnalyzer()) {
+
+            _isAnalazingInputs = true;
+            if (_options.canPrintProgress()) {
+                _printProgressThread = std::thread([&]() {
+                    while( _isAnalazingInputs) {
+                        _results.printProgress();
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                    }
+                });
+            }
             analyzeInput();
+            _isAnalazingInputs = false;
+            if (_options.canPrintProgress()) {
+                _printProgressThread.join();
+                _results.printProgress();
+            }
             endAnalysis();
         }
     }
 }
 
 void Analyzer::runWithPrint() {
-    //TODO create a "print progress" thread
     run();
     if (_options.canPrintProgress()) {
-        //_results.printProgress();
         _results.printAll();
     }
-
 }
