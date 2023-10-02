@@ -1,5 +1,5 @@
 
-// Generated from KapaQuery.g4 by ANTLR 4.12.0
+// Generated from KapaQuery.g4 by ANTLR 4.13.1
 
 #pragma once
 
@@ -13,9 +13,9 @@ namespace kapa::infrastructure::db::query {
 class  KapaQueryLexer : public antlr4::Lexer {
 public:
   enum {
-    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, NOT_EQUAL = 7, 
-    EQUAL = 8, REGEX = 9, STARS_WITH = 10, END_WITH = 11, AND = 12, OR = 13, 
-    Identifier = 14, WS = 15, EscapedString = 16
+    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, NOT = 7, 
+    NOT_EQUAL = 8, EQUAL = 9, REGEX = 10, STARTS_WITH = 11, ENDS_WITH = 12, 
+    AND = 13, OR = 14, Identifier = 15, WS = 16, EscapedString = 17
   };
 
   explicit KapaQueryLexer(antlr4::CharStream *input);

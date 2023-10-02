@@ -30,8 +30,8 @@ void Results::print() const {
 
 void Results::printProgress() const {
 
-    if (standaloneClassfiles.count + jarfiles.classfiles.count == lastClassfileCountPrint ||
-        jarfiles.count == lastJarCountPrint) return;
+//    if (standaloneClassfiles.count + jarfiles.classfiles.count == lastClassfileCountPrint ||
+//        jarfiles.count == lastJarCountPrint) return;
 
     lastClassfileCountPrint = standaloneClassfiles.count + jarfiles.classfiles.count;
     lastJarCountPrint = jarfiles.count;

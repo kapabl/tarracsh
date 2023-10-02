@@ -88,7 +88,7 @@ void ListenerImpl::enterExpr(KapaQueryParser::ExprContext *exprContext) {
             }
 
             if (exprContext->logical_oper()->OR() != nullptr) {
-                if (left) return false;
+                if (left) return true;
                 return _rulePredicates[exprContext->expr()[1]](row);
             }
 
@@ -162,12 +162,15 @@ void ListenerImpl::exitFilter(KapaQueryParser::FilterContext *filterContext) {
                 result = regex_search(left, *filterRegex);
             } else if (oper->NOT_EQUAL() != nullptr) {
                 result = left != sanitizedRight;
-            } else if (oper->STARS_WITH() != nullptr) {
-                result = left.starts_with(sanitizedRight) == 0;
-            } else if (oper->END_WITH() != nullptr) {
+            } else if (oper->STARTS_WITH() != nullptr) {
+                result = left.starts_with(sanitizedRight);
+            } else if (oper->ENDS_WITH() != nullptr) {
                 result = left.ends_with(sanitizedRight);
             } else {
                 result = left == sanitizedRight;
+            }
+            if ( oper->NOT() != nullptr ) {
+                result = !result;
             }
             return result;
         };

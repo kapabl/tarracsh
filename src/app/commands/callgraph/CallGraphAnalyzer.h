@@ -87,14 +87,16 @@ namespace kapa::tarracsh::app::commands::callgraph {
 
         void createClassnameIndex();
 
-        template<class TTable, class TRow>
-        void createMemberIndex(MembersIndex &membersIndex, TTable memberTable, const std::string &memberType) {
+        template<typename Types>
+        void createMemberIndex(MembersIndex &membersIndex,
+                                Types::TargetTable &memberTable,
+                                const std::string &memberType) {
             auto classes = _callGraphDb->getClassFiles();
 
-            _results.log->writeln(fmt::format("Indexing {} {}", memberType, memberTable->size()), true);
+            _results.log->writeln(fmt::format("Indexing {} {}", memberType, memberTable.size()), true);
 
-            memberTable->forEach([classes, &membersIndex](AutoIncrementedRow *pRow) -> void {
-                auto *memberRow = reinterpret_cast<TRow *>(pRow);
+            memberTable.forEach([classes, &membersIndex](AutoIncrementedRow *pRow) -> void {
+                auto *memberRow = reinterpret_cast<Types::TargetRow *>(pRow);
                 auto *pOwnerClassRow = classes->getClassFileRow(memberRow->ownerClass.id);
                 auto classname = pOwnerClassRow->classname;
 

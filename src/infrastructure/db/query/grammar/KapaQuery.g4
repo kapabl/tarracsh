@@ -14,14 +14,22 @@ filter: column oper EscapedString;
 tablename: Identifier;
 column: Identifier;
 
-oper: REGEX | EQUAL | NOT_EQUAL | STARS_WITH | END_WITH;
+oper: REGEX
+    | EQUAL
+    | NOT_EQUAL
+    | NOT? STARTS_WITH
+    | NOT? ENDS_WITH
+    ;
+
 logical_oper: AND | OR;
 
+
+NOT: 'not';
 NOT_EQUAL: '!=';
 EQUAL: '=';
 REGEX: '*^*';
-STARS_WITH: '^*';
-END_WITH: '*^';
+STARTS_WITH: '^*';
+ENDS_WITH: '*^';
 
 AND: 'and';
 OR: 'or';
