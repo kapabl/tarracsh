@@ -4,7 +4,7 @@
 
 When changing compiler versions of kotlin and java, it is useful to see how many things have change from binary to binary. Scala not so useful as the binaries from one version to another are not compatible.
 
-## Build
+### Build
 
 1. **Dependencies**
    - GCC 13 (or any C++20‑capable compiler)
