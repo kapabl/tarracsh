@@ -6,18 +6,13 @@ When changing compiler versions of kotlin and java, it is useful to see how many
 
 ### Build
 
-1. **Dependencies**
+**Dependencies**
    - GCC 13 (or any C++20‑capable compiler)
    - CMake
    - Ninja
-2. **Repository layout**
-
-repos/
-tarracsh/
-vcpkg/
 
 
-3. **Clone**
+**Clone**
 ```bash
 git clone git@github.com:kapabl/tarracsh.git
 git clone https://github.com/microsoft/vcpkg.git
