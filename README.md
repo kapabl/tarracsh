@@ -1,6 +1,5 @@
 ## Tarracsh
 
-Tarracsh
 Tarracsh is a C++20 command‑line tool for analyzing Java bytecode. It parses .class files or JARs, computes digests, builds call graphs, and can generate HTML navigation for constant‑pool entries
 
 Features
