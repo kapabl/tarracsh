@@ -33,6 +33,28 @@ Builds a call‑graph database. Server and client modes are placeholders and cur
 
 Global flags like --output-dir, --output-log-file, --print-profiler, and --use-file-timestamp apply to all commands. Use --version or --help-all for version info and comprehensive help.
 
+### Query language
+
+Commands that support the `--query` option accept a compact SQL-like language defined in
+[`KapaQuery.g4`](src/infrastructure/db/query/grammar/KapaQuery.g4).
+
+* Statements:
+  * `schema` prints the database tables with their columns.
+  * `list <table>` or `select <table>` optionally followed by a `where` clause returns rows from the
+    given table.
+* Filters combine a column name, an operator, and a quoted string literal. Supported operators are:
+  * `=` and `!=` for equality / inequality comparisons.
+  * `^*` (`not ^*`) for starts-with (and its negation).
+  * `*^` (`not *^`) for ends-with (and its negation).
+  * `*^*` for regular-expression matches.
+* String literals can use single (`'value'`) or double (`"value"`) straight quotes; double the quote
+  character to embed it inside the literal. Smart quotes copied from rich text, such as `“value”` or
+  `“value″`, are also accepted.
+* Logical composition uses parentheses together with `and` / `or`, e.g.
+  `(method ^* "com/example" and (owner = 'ClassName' or owner = 'OtherClass'))`.
+
+Combine `--query` with `--display-raw` to print unformatted column values when needed.
+
 Project Status
 Call‑graph server/client functionality is marked TODO and not yet implemented.
 

@@ -15,6 +15,7 @@ using infrastructure::db::Database;
 
 class Query {
 public:
+    /// Executes a query against the digest database when `--public-digest` is set, otherwise the call-graph database.
     static bool run(Context &config);
 
 private:

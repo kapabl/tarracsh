@@ -77,8 +77,11 @@ bool DbBasedCommand::runAsClient() {
 }
 
 CLI::Option *DbBasedCommand::addQueryOptions() const {
-    const auto result = _subCommand->add_option("--query",_dbBasedOptions.queryValue, "TODO Query Help - schema");
-    _subCommand->add_flag("--display-raw",_dbBasedOptions.displayRaw, "Display row value of columns")
+    const auto result = _subCommand->add_option(
+        "--query",
+        _dbBasedOptions.queryValue,
+        "Run a database query; see README → Query language. Combine with --display-raw to print raw values.");
+    _subCommand->add_flag("--display-raw",_dbBasedOptions.displayRaw, "Display raw column values")
                ->needs(result);
     return result;
 }
