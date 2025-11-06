@@ -2,6 +2,7 @@
 #define KAPA_FS_UTILS_H
 #include <string>
 #include <filesystem>
+#include <vector>
 
 
 namespace kapa::infrastructure::filesystem::utils {

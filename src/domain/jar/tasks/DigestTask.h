@@ -10,6 +10,7 @@
 #include "domain/jar/JarEntryInfo.h"
 #include "domain/digest/DigestUtils.h"
 #include "domain/stats/Results.h"
+#include <optional>
 
 
 namespace kapa::tarracsh::domain::jar::tasks {
