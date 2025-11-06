@@ -2,7 +2,7 @@
     "name": "tarracsh",
     "dependencies": [
         "fmt",
-        "catch2",
+        "gtest",
         {
             "name": "inja",
             "version>=": "3.4.0",
@@ -20,11 +20,6 @@
             "name": "libsodium",
             "version>=": "1.0.18#8",
             "$comment": "    # this is heuristically generated, and may not be correct\n\n    find_package(unofficial-sodium CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE unofficial-sodium::sodium unofficial-sodium::sodium_config_public)\n"
-        },
-        {
-            "name": "catch2",
-            "version>=": "3.3.2",
-            "$comment": "    # this is heuristically generated, and may not be correct\n\n    find_package(Catch2 CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)\n"
         },
         {
             "name": "cli11",

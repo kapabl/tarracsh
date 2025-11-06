@@ -140,7 +140,7 @@ inline std::vector<std::string> split(const std::string &value, const std::strin
         const auto index = value.find(separator, start);
         if (index != std::string::npos) {
             result.push_back(value.substr(start, index - start));
-            start += index + separatorSize;
+            start = index + separatorSize;
         } else {
             result.push_back(value.substr(start));
             start = value.size();
