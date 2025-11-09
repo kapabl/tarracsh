@@ -1,0 +1,6 @@
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "antlr_generated",
+    srcs = glob(["**/*"], allow_empty = True),
+)

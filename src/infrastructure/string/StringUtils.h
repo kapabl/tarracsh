@@ -95,8 +95,6 @@ inline wchar_t char2wchar(const char source) {
     return outString[0];
 }
 
-#pragma warning( pop )
-
 template <typename T, typename T1>
 inline T1 join(const T &parts, T1 delim) {
     T1 result;

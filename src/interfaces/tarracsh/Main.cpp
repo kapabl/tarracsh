@@ -17,13 +17,6 @@ __attribute__((weak)) void __tcmalloc();
 #endif
 
 
-#ifdef _MSC_VER
-    // #ifndef _DEBUG
-    #pragma comment(linker, "/include:__tcmalloc")
-//    #pragma comment(lib, "libtcmalloc_minimal.lib")
-    // #endif
-#endif
-
 using namespace kapa::tarracsh;
 using namespace app;
 

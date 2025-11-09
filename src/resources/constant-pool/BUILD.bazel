@@ -1,0 +1,10 @@
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "constant_pool_resources",
+    srcs = [
+        "cpool-tmpl.html",
+        "impl-index-tmpl.html",
+        "sub-templates.yaml",
+    ],
+)
