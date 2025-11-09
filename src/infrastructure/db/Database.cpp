@@ -1,4 +1,5 @@
 #include "Database.h"
+#include "query/Engine.h"
 #include "table/Table.h"
 
 #include <string>
