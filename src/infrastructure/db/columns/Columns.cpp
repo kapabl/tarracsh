@@ -5,7 +5,7 @@
 #include <ctime>
 #include <string.h>
 
-#include "src/infrastructure/db/Database.h"
+#include "infrastructure/db/Database.h"
 
 
 using namespace kapa::infrastructure::db::table::column;
@@ -171,21 +171,6 @@ static bool registerColumns() {
                 result = fmt::format("{}", stringCol);
             } else {
                 result = db.getStringPool()->getCString(stringCol);
-            }
-            return result;
-        });
-
-    Properties::registerColumn(
-        DisplayAs::AsRef,
-        [](char *pValue, const Properties &properties, kapa::infrastructure::db::Database &db,
-           bool displayRaw) -> std::string {
-            std::string result;
-            const auto ref = reinterpret_cast<uint64_t &>(*pValue);
-            if (displayRaw || ref == RefCol::InvalidRef) {
-                result = fmt::format("{}", ref);
-            } else {
-                auto table = db.getTable(properties.refColProperties.table);
-                result = fmt::format("{}", table->getColumnValue(ref, properties.refColProperties.displayColumn));
             }
             return result;
         });

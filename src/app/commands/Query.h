@@ -3,6 +3,7 @@
 
 #include "app/AppRuntime.h"
 #include "infrastructure/db/Database.h"
+#include "infrastructure/db/query/QueryApi.h"
 #include "domain/db/CallGraphDb.h"
 #include "domain/db/DigestDb.h"
 #include "domain/stats/Results.h"
@@ -49,8 +50,10 @@ inline Query::Query(Context &context)
 }
 
 inline bool Query::execute() const {
-    //_db->init();
-    const auto result = _db->executeQuery(_options.getSubCommandOptions().queryValue, _options.getSubCommandOptions().displayRaw);
+    const auto result = infrastructure::db::query::ExecuteQuery(
+        *_db,
+        _options.getSubCommandOptions().queryValue,
+        _options.getSubCommandOptions().displayRaw);
     return result;
 }
 }

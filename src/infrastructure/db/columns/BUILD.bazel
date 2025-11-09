@@ -6,8 +6,9 @@ cc_library(
     hdrs = ["Columns.h"],
     copts = ["-std=c++20"],
     defines = ["FMT_HEADER_ONLY=1"],
-    includes = ["../../../.."],
+    includes = ["../../.."],
     deps = [
         "//:vcpkg_headers",
+        "//src/infrastructure/db:db_core",
     ],
 )

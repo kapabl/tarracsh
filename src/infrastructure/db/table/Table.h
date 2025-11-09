@@ -7,6 +7,7 @@
 #include <string>
 #include <cstring>
 #include "infrastructure/db/columns/Columns.h"
+#include "infrastructure/db/StringPool.h"
 
 #pragma pack( push, 1 )
 

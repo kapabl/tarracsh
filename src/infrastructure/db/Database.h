@@ -12,9 +12,6 @@ namespace kapa::infrastructure::db {
 namespace table {
     class Table;
 }
-namespace query {
-    class Engine;
-}
 
 class Database {
 
@@ -50,7 +47,6 @@ public:
     [[nodiscard]] std::string generateTableFilename(const std::string& name) const;
     [[nodiscard]] log::Log& log() const { return _log; }
     static bool init( Database& db, const bool doClean );
-    bool executeQuery(const std::string &query, const bool displayRaw) const;
     [[nodiscard]] profiler::MillisecondDuration getReadTime() const;
 
 
@@ -58,7 +54,6 @@ protected:
 
     [[nodiscard]] std::string generateStringPoolFilename(const std::string &name) const;
     std::shared_ptr<StringPool> _stringPool;
-    std::unique_ptr<query::Engine> _queryEngine;
     log::Log& _log;
     std::unordered_map<std::string, table::Table*> _tablesByName;
     std::vector<table::Table*> _tablesReadOrder;

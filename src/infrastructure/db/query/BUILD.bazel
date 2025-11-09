@@ -2,14 +2,21 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "query_lib",
-    srcs = ["Engine.cpp"],
-    hdrs = ["Engine.h"],
+    srcs = [
+        "Engine.cpp",
+        "QueryApi.cpp",
+    ],
+    hdrs = [
+        "Engine.h",
+        "QueryApi.h",
+    ],
     copts = ["-std=c++20"],
     defines = ["FMT_HEADER_ONLY=1"],
-    includes = ["../../../.."],
+    includes = ["../../.."],
     deps = [
         "//:vcpkg_headers",
         "//src/infrastructure/db:db_core",
+        "//src/infrastructure/db/table:table_lib",
         "//src/infrastructure/db/query/grammar:grammar_lib",
         "//src/infrastructure/string:string_lib",
     ],

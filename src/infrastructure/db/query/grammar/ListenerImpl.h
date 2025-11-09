@@ -4,8 +4,8 @@
 #include <functional>
 #include <regex>
 
-#include "../../Database.h"
-#include "../../table/Table.h"
+#include "infrastructure/db/Database.h"
+#include "infrastructure/db/table/Table.h"
 #include "antlr4-runtime.h"
 #include "KapaQueryBaseListener.h"
 

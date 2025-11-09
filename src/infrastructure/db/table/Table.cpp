@@ -2,6 +2,7 @@
 #include <fmt/chrono.h>
 
 #include "Table.h"
+#include "infrastructure/db/Database.h"
 
 #include <BS_thread_pool.hpp>
 #include <map>

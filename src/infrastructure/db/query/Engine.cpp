@@ -1,8 +1,8 @@
 #include "Engine.h"
 #include <vector>
-#include "../../string/StringUtils.h"
-#include "../Database.h"
-#include "../table/Table.h"
+#include "infrastructure/string/StringUtils.h"
+#include "infrastructure/db/Database.h"
+#include "infrastructure/db/table/Table.h"
 #include <antlr4-runtime/antlr4-runtime.h>
 #include "grammar/KapaQueryLexer.h"
 #include "grammar/KapaQueryParser.h"

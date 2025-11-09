@@ -2,9 +2,9 @@
 #include <fmt/format.h>
 #include <regex>
 
-#include "../../Database.h"
-#include "../../table/Table.h"
-#include "../../../string/StringUtils.h"
+#include "infrastructure/db/Database.h"
+#include "infrastructure/db/table/Table.h"
+#include "infrastructure/string/StringUtils.h"
 
 
 using namespace kapa::infrastructure::db::query;
