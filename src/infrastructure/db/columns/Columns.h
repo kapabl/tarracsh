@@ -5,7 +5,7 @@
 #include <limits>
 #include <cstdint>
 #include <unordered_map>
-#include "../DbConsts.h"
+#include "src/infrastructure/db/DbConsts.h"
 
 #pragma pack( push, 1 )
 

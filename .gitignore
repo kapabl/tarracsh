@@ -16,4 +16,4 @@
 /out/
 /vcpkg_installed/
 /.history
-/packages/vcpkg-sources.tar.gz
+/packages/vcpkg-source.tar.gz

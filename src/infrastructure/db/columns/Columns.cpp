@@ -5,7 +5,7 @@
 #include <ctime>
 #include <string.h>
 
-#include "../Database.h"
+#include "src/infrastructure/db/Database.h"
 
 
 using namespace kapa::infrastructure::db::table::column;
