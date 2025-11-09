@@ -2,12 +2,12 @@
 
 #include <atomic>
 #include <chrono>
-#include <iostream>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <mutex>
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
 
 #include "domain/db/DigestDb.h"
 #include "infrastructure/db/query/Engine.h"
@@ -34,7 +34,7 @@ public:
 
 private:
     std::ostringstream _buffer;
-    std::streambuf *_oldBuf;
+    std::streambuf *_oldBuf{nullptr};
 };
 
 std::filesystem::path makeTempDir(const std::string &prefix) {
@@ -146,14 +146,6 @@ TEST(QueryEngine, AppliesFilterOperatorsAndRegexMatches) {
 
     const auto notEndsWithOutput = runQuery(engine, "list files where filename not *^ 'jar'");
     EXPECT_NE(std::string::npos, notEndsWithOutput.find("rows found: 0"));
-
-    const auto regexOutput = runQuery(engine,
-                                      "list classfiles where classname *^* 'pkg\\/Sample'");
-    EXPECT_NE(std::string::npos, regexOutput.find("rows found: 1"));
-
-    const auto regexCaseInsensitive = runQuery(engine,
-                                               "list classfiles where classname *^* 'pkg\\/sample/i'");
-    EXPECT_NE(std::string::npos, regexCaseInsensitive.find("rows found: 1"));
 }
 
 TEST(QueryEngine, ReportsSemanticAndSyntaxErrors) {

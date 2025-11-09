@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
-#include <filesystem>
-#include <memory>
 #include <chrono>
+#include <filesystem>
 #include <iostream>
+#include <memory>
 #include <sstream>
 
 #include "domain/stats/ProfileData.h"
@@ -28,7 +28,7 @@ public:
 
 private:
     std::ostringstream _buffer;
-    std::streambuf *_oldBuf;
+    std::streambuf *_oldBuf{nullptr};
 };
 
 std::filesystem::path makeTempDir(const std::string &name) {

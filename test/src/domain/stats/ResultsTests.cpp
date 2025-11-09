@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 
-#include <memory>
-#include <string>
 #include <filesystem>
 #include <iostream>
+#include <memory>
 #include <sstream>
+#include <string>
 
 #include "domain/stats/Results.h"
 #include "infrastructure/log/Log.h"
@@ -26,7 +26,7 @@ public:
 
 private:
     std::ostringstream _buffer;
-    std::streambuf *_oldBuf;
+    std::streambuf *_oldBuf{nullptr};
 };
 
 std::shared_ptr<Results> makeResults() {

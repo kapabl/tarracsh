@@ -62,7 +62,7 @@ void ListenerImpl::exitList(KapaQueryParser::ListContext *listContext) {
 
 void ListenerImpl::enterWhere(KapaQueryParser::WhereContext *whereContext) {
     _where = [this, whereContext](table::AutoIncrementedRow &row)-> bool {
-        const bool result = _rulePredicates[whereContext->expr()](row);
+        const bool result = invokePredicate(whereContext->expr(), row);
         return result;
     };
 
@@ -76,20 +76,20 @@ void ListenerImpl::enterExpr(KapaQueryParser::ExprContext *exprContext) {
     auto *filterContext = exprContext->filter();
     if (filterContext != nullptr) {
         _rulePredicates[exprContext] = [this, filterContext](table::AutoIncrementedRow &row)-> bool {
-            const bool result = _rulePredicates[filterContext](row);
+            const bool result = invokePredicate(filterContext, row);
             return result;
         };
     } else {
         _rulePredicates[exprContext] = [this, exprContext](table::AutoIncrementedRow &row)-> bool {
-            const bool left = _rulePredicates[exprContext->expr()[0]](row);
+            const bool left = invokePredicate(exprContext->expr()[0], row);
             if (exprContext->logical_oper()->AND() != nullptr) {
                 if (!left) return false;
-                return _rulePredicates[exprContext->expr()[1]](row);
+                return invokePredicate(exprContext->expr()[1], row);
             }
 
             if (exprContext->logical_oper()->OR() != nullptr) {
                 if (left) return true;
-                return _rulePredicates[exprContext->expr()[1]](row);
+                return invokePredicate(exprContext->expr()[1], row);
             }
 
             return false;
@@ -174,6 +174,14 @@ void ListenerImpl::exitFilter(KapaQueryParser::FilterContext *filterContext) {
             }
             return result;
         };
+}
+
+bool ListenerImpl::invokePredicate(antlr4::ParserRuleContext *ctx, table::AutoIncrementedRow &row) {
+    auto it = _rulePredicates.find(ctx);
+    if (it == _rulePredicates.end() || !it->second) {
+        return false;
+    }
+    return it->second(row);
 }
 
 void ListenerImpl::enterTablename(KapaQueryParser::TablenameContext *tablenameContext) {

@@ -66,6 +66,8 @@ namespace kapa::infrastructure::db::query {
 
         std::unordered_map<antlr4::ParserRuleContext*, RowPredicate> _rulePredicates;
 
+        bool invokePredicate(antlr4::ParserRuleContext *ctx, table::AutoIncrementedRow &row);
+
         [[nodiscard]] bool hasSemanticErrors() const { return _semanticErrors.size() > 0; }
 
         [[nodiscard]] std::regex *getRegex(const std::string &right, const bool isCaseInsensitive) const;
