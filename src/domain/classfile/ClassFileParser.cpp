@@ -61,7 +61,10 @@ void ClassFileParser::readConstPoolEntry(int &index) {
 
     switch (tag) {
         case JVM_CONSTANT_Utf8: {
-            _constantPool.addUtf8Record(_reader);
+            const u2 length = _reader.readU2();
+            std::string value(length, '\0');
+            _reader.readRaw(value.data(), length);
+            _constantPool.addUtf8Record(value);
             break;
         }
 

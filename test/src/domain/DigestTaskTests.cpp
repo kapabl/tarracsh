@@ -120,7 +120,8 @@ TEST(DigestTaskIntegration, ProcessesJarEntryAndPersistsDigest) {
     const auto entrySize = entry.getSize();
     const auto entryCrc = entry.getCRC();
     jar::JarEntry jarEntry(entry, buffer);
-    classfile::reader::MemoryReader memReader(jarEntry);
+    classfile::reader::MemoryReader memReader(jarEntry.getBuffer(),
+                                              static_cast<std::streamsize>(jarEntry.getSize()));
     classfile::ClassFileParser classParser(memReader, entry.getName(), results.log);
     ASSERT_TRUE(classParser.parse());
     const auto expectedClassname = classParser.getMainClassname();
@@ -220,7 +221,8 @@ TEST(DbBasedTaskHelpers, UniqueClassnameHandlesMultiReleaseEntries) {
         ASSERT_TRUE(baseEntry.isFile());
         auto *buffer = static_cast<char *>(baseEntry.readAsBinary());
         jar::JarEntry jarEntry(baseEntry, buffer);
-        classfile::reader::MemoryReader reader(jarEntry);
+        classfile::reader::MemoryReader reader(jarEntry.getBuffer(),
+                                               static_cast<std::streamsize>(jarEntry.getSize()));
         classfile::ClassFileParser parser(reader, baseEntry.getName(), results.log);
         ASSERT_TRUE(parser.parse());
 
@@ -233,7 +235,8 @@ TEST(DbBasedTaskHelpers, UniqueClassnameHandlesMultiReleaseEntries) {
         ASSERT_TRUE(multiEntry.isFile());
         auto *buffer = static_cast<char *>(multiEntry.readAsBinary());
         jar::JarEntry jarEntry(multiEntry, buffer);
-        classfile::reader::MemoryReader reader(jarEntry);
+        classfile::reader::MemoryReader reader(jarEntry.getBuffer(),
+                                               static_cast<std::streamsize>(jarEntry.getSize()));
         classfile::ClassFileParser parser(reader, multiEntry.getName(), results.log);
         ASSERT_TRUE(parser.parse());
 

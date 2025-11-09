@@ -1,0 +1,24 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "stats_lib",
+    srcs = glob(
+        [
+            "**/*.cpp",
+            "**/*.cc",
+        ],
+        allow_empty = True,
+    ),
+    hdrs = glob(["**/*.h"], allow_empty = True),
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../.."],
+    deps = [
+        "//:vcpkg_headers",
+        "//src/domain:options_lib",
+        "//src/domain:utils_lib",
+        "//src/domain/digest:digest_lib",
+        "//src/infrastructure/filesystem:filesystem_lib",
+        "//src/infrastructure/log:log_lib",
+    ],
+)

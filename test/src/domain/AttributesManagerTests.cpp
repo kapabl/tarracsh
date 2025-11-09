@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "domain/classfile/AttributeStructures.h"
+#include "domain/classfile/types/AttributeStructures.h"
 #include "domain/classfile/AttributesManager.h"
 #include "domain/classfile/ClassFileConstants.h"
 #include "domain/classfile/AttributeTags.h"

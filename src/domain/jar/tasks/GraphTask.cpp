@@ -63,7 +63,8 @@ void GraphTask::processClassFile(const JarEntryInfo &jarEntryInfo, db::table::Cl
     }
     const auto &jarEntry = jarEntryInfo.jarEntry;
 
-    MemoryReader reader(jarEntry);
+    MemoryReader reader(jarEntry.getBuffer(),
+                        static_cast<std::streamsize>(jarEntry.getSize()));
     ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);
 
     if (classFileParser.parse()) {
@@ -136,4 +137,3 @@ auto GraphTask::getFiles() -> std::shared_ptr<Files> {
     const auto result = _db.getFiles();
     return result;
 }
-

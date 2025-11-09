@@ -6,7 +6,7 @@
 #define TARRACSH_DESCRIPTORPARSER_H
 
 #include "signature/SignatureScanner.h"
-#include "constantpool/ConstpoolStructures.h"
+#include "types/DescriptorTypes.h"
 #include <memory>
 
 

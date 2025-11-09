@@ -1,0 +1,54 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "task_base",
+    srcs = ["Task.cpp"],
+    hdrs = ["Task.h"],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../../.."],
+    deps = [
+        "//:vcpkg_headers",
+        "//src/domain:options_lib",
+        "//src/domain:utils_lib",
+        "//src/domain/db:db_lib",
+        "//src/domain/stats:stats_lib",
+        "//src/domain/jar:jar_api",
+        "//src/infrastructure/db:db_lib",
+    ],
+)
+
+cc_library(
+    name = "tasks_lib",
+    srcs = [
+        "DbBasedTask.cpp",
+        "DigestTask.cpp",
+        "GraphTask.cpp",
+        "ParserTask.cpp",
+    ],
+    hdrs = [
+        "DbBasedTask.h",
+        "DigestTask.h",
+        "GraphTask.h",
+        "ParserTask.h",
+    ],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../../.."],
+    deps = [
+        ":task_base",
+        "//:vcpkg_headers",
+        "//src/domain:options_lib",
+        "//src/domain:utils_lib",
+        "//src/domain/classfile:classfile_lib",
+        "//src/domain/db:db_lib",
+        "//src/domain/db:callgraph_lib",
+        "//src/domain/digest:digest_lib",
+        "//src/domain/graph:graph_lib",
+        "//src/domain/stats:stats_lib",
+        "//src/domain/jar:jar_api",
+        "//src/infrastructure/db:db_lib",
+        "//src/infrastructure/filesystem:filesystem_lib",
+        "//src/infrastructure/log:log_lib",
+    ],
+)

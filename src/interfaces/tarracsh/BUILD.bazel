@@ -8,6 +8,8 @@ cc_library(
     includes = ["../../"],
     deps = [
         "//src/app:app_lib",
+        "//src/app/commands:app_commands_lib",
+        "//src/app/server:app_server_lib",
     ],
 )
 

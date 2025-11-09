@@ -1,0 +1,18 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "constantpool_lib",
+    srcs = ["ConstantPool.cpp"],
+    hdrs = [
+        "ConstantPool.h",
+        "ConstpoolStructures.h",
+    ],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../../.."],
+    deps = [
+        "//src/domain/classfile:descriptor_parsers",
+        "//src/domain/classfile/types:types_lib",
+        "//src/infrastructure/string:string_lib",
+    ],
+)

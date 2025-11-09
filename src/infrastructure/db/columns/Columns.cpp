@@ -6,7 +6,6 @@
 #include <string.h>
 
 #include "../Database.h"
-#include "../table/Table.h"
 
 
 using namespace kapa::infrastructure::db::table::column;

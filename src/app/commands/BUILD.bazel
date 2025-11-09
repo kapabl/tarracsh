@@ -1,0 +1,33 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "app_commands_lib_core",
+    srcs = [
+        "DbBasedCommand.cpp",
+        "Parse.cpp",
+    ],
+    hdrs = [
+        "DbBasedCommand.h",
+        "Parse.h",
+        "Query.h",
+    ],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../.."],
+    deps = [
+        "//:vcpkg_headers",
+        "//src/app:app_lib",
+        "//src/app/server:app_server_lib",
+        "//src/domain:domain_lib",
+        "//src/infrastructure:infrastructure_lib",
+    ],
+)
+
+cc_library(
+    name = "app_commands_lib",
+    deps = [
+        ":app_commands_lib_core",
+        "//src/app/commands/callgraph:callgraph_lib",
+        "//src/app/commands/digest:digest_lib",
+    ],
+)

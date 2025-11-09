@@ -7,7 +7,7 @@
 
 #include "ClassFileConstants.h"
 #include "infrastructure/string/StringUtils.h"
-#include "constantpool/StructsCommon.h"
+#include "src/domain/classfile/types/StructsCommon.h"
 
 namespace kapa::tarracsh::domain::classfile::accessmodifier {
 

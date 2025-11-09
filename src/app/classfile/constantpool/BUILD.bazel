@@ -1,0 +1,10 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "constantpool_lib",
+    copts = ["-std=c++20"],
+    deps = [
+        "//src/app/classfile/constantpool/printer:printer_lib",
+        "//src/app/classfile/constantpool/printer/nav:nav_lib",
+    ],
+)

@@ -11,9 +11,9 @@
 
 
 #include "parser/Parser.h"
-#include "../reader/VectorReader.h"
-#include "../constantpool/ConstantPool.h"
-#include "SignatureStructures.h"
+#include "src/domain/classfile/reader/VectorReader.h"
+#include "src/domain/classfile/constantpool/ConstantPool.h"
+#include "src/domain/classfile/types/SignatureStructures.h"
 
 namespace antlr4::tree {
     class ParseTree;

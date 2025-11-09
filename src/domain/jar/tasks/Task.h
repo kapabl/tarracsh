@@ -1,7 +1,7 @@
 #ifndef TARRACSH_JAR_TASK_H
 #define TARRACSH_JAR_TASK_H
 
-#include "../JarEntry.h"
+#include "domain/jar/JarEntry.h"
 #include "domain/Options.h"
 #include "infrastructure/db/Database.h"
 #include "domain/db/table/ClassFiles.h"

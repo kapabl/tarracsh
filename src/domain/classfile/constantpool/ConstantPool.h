@@ -1,7 +1,8 @@
 #ifndef TARRACSH_CONSTANT_POOL_H
 #define TARRACSH_CONSTANT_POOL_H
 
-#include "../reader/ClassFileReader.h"
+#include <string>
+
 #include "ConstpoolStructures.h"
 
 namespace kapa::tarracsh::domain::classfile::constantpool {
@@ -29,7 +30,7 @@ public:
     [[nodiscard]] ConstantPoolRecord& getEntry(const u2 index) const;
 
     void addEmptyIndex();
-    void addUtf8Record(reader::ClassFileReader &reader);
+    void addUtf8Record(const std::string &value);
 
     [[nodiscard]] u2 getNextIndex(u2 index) const;
 

@@ -9,7 +9,7 @@
 #include <stdexcept>
 #include <string>
 #include <unordered_set>
-#include "../nodes/Nodes.h"
+#include "src/domain/classfile/types/SignatureNodes.h"
 
 namespace kapa::tarracsh::domain::classfile::signature::parser {
 

@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <cassert>
-#include "../constantpool/StructsCommon.h"
+#include "src/domain/classfile/types/StructsCommon.h"
 #include "ClassFileReader.h"
 
 namespace kapa::tarracsh::domain::classfile::reader {

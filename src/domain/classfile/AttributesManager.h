@@ -9,7 +9,7 @@
 #include <array>
 #include <fmt/format.h>
 #include "AttributeTags.h"
-#include "AttributeStructures.h"
+#include "src/domain/classfile/types/AttributeStructures.h"
 #include "AccessModifiers.h"
 #include "reader/VectorReader.h"
 #include "AnnotationsParser.h"

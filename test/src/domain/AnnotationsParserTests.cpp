@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-#include "domain/classfile/AttributeStructures.h"
+#include "domain/classfile/types/AttributeStructures.h"
 #include "domain/classfile/AttributeTags.h"
 #include "domain/classfile/AnnotationsParser.h"
 #include "domain/classfile/constantpool/ConstantPool.h"

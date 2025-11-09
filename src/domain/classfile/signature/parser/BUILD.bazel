@@ -1,0 +1,14 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "signature_parser_core",
+    srcs = ["Parser.cpp"],
+    hdrs = ["Parser.h"],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../../../.."],
+    deps = [
+        "//:vcpkg_headers",
+        "//src/domain/classfile/types:types_lib",
+    ],
+)

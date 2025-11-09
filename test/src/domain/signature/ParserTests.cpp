@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "domain/classfile/signature/parser/Parser.h"
-#include "domain/classfile/signature/nodes/Nodes.h"
+#include "domain/classfile/types/SignatureNodes.h"
 
 using namespace kapa::tarracsh::domain::classfile::signature::parser;
 

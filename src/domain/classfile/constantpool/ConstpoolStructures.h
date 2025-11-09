@@ -1,9 +1,11 @@
 #ifndef TARRACSH_CLASSFILESTRUCTURE_H
 #define TARRACSH_CLASSFILESTRUCTURE_H
 
-#include "StructsCommon.h"
-#include "StackFrame.h"
-#include "../AttributeStructures.h"
+#include "src/domain/classfile/types/StructsCommon.h"
+#include "src/domain/classfile/types/ClassFileHeader.h"
+#include "src/domain/classfile/types/StackFrame.h"
+#include "src/domain/classfile/types/AttributeStructures.h"
+#include "src/domain/classfile/types/DescriptorTypes.h"
 #include "infrastructure/string/StringUtils.h"
 
 #pragma pack(push, 1)
@@ -13,12 +15,6 @@ namespace kapa::tarracsh::domain::classfile::constantpool {
     using constantpool::u1;
     using constantpool::u2;
     using constantpool::u4;
-
-    struct ClassFileHeader {
-        u4 magic;
-        u2 minorVersion;
-        u2 majorVersion;
-    };
 
     struct MainClassInfo {
         u2 accessFlags;
@@ -175,44 +171,6 @@ namespace kapa::tarracsh::domain::classfile::constantpool {
             DynamicInfo dynamicInfo;
             PackageInfo packageInfo;
         };
-    };
-
-    struct Descriptor {
-        bool isArray;
-        bool isClass;
-        int dimensions;
-        std::string type;
-
-        Descriptor()
-                : isArray(false), isClass(false), dimensions(0) {
-        }
-
-        [[nodiscard]] std::string toString() const {
-            std::string result(type);
-
-            for (int i = 0; i < dimensions; i++) {
-                result += "[]";
-            }
-
-            return result;
-        }
-    };
-
-    struct MethodDescriptor {
-        std::vector <Descriptor> arguments;
-        Descriptor returnType;
-
-        [[nodiscard]] std::string argumentsToString() const {
-            std::vector <std::string> parts;
-
-            for (auto &descriptor: arguments) {
-                parts.push_back(descriptor.toString());
-            }
-
-            std::string result = "(" + infrastructure::string::stringUtils::join<std::string>(parts, ", ") + ")";
-
-            return result;
-        }
     };
 
 }

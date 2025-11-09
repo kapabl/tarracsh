@@ -1,6 +1,19 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
+    name = "options_lib",
+    srcs = ["Options.cpp"],
+    hdrs = ["Options.h"],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = [".."],
+    deps = [
+        "//:vcpkg_headers",
+        "//src/infrastructure/filesystem:filesystem_lib",
+    ],
+)
+
+cc_library(
     name = "utils_lib",
     hdrs = ["Utils.h"],
     copts = ["-std=c++20"],
@@ -20,6 +33,12 @@ cc_library(
         ],
         exclude = [
             "db/**",
+            "classfile/**",
+            "digest/**",
+            "jar/**",
+            "graph/**",
+            "stats/**",
+            "Options.cpp",
         ],
         allow_empty = True,
     ),
@@ -27,6 +46,12 @@ cc_library(
         ["**/*.h"],
         exclude = [
             "db/**",
+            "classfile/**",
+            "digest/**",
+            "jar/**",
+            "graph/**",
+            "stats/**",
+            "Options.h",
         ],
         allow_empty = True,
     ),
@@ -37,6 +62,13 @@ cc_library(
         "//:vcpkg_headers",
         "//src/infrastructure:infrastructure_lib",
         "//src/domain:utils_lib",
+        "//src/domain:options_lib",
+        "//src/domain/classfile:classfile_lib",
         "//src/domain/db:db_lib",
+        "//src/domain/db:callgraph_lib",
+        "//src/domain/digest:digest_lib",
+        "//src/domain/jar:jar_lib",
+        "//src/domain/graph:graph_lib",
+        "//src/domain/stats:stats_lib",
     ],
 )

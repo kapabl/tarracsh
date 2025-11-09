@@ -1,0 +1,13 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "columns_lib",
+    srcs = ["Columns.cpp"],
+    hdrs = ["Columns.h"],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../../.."],
+    deps = [
+        "//:vcpkg_headers",
+    ],
+)

@@ -15,17 +15,15 @@ void ConstantPool::addEmptyIndex() {
      _constantPoolIndex.push_back(nullptr);
 }
 
-void ConstantPool::addUtf8Record( reader::ClassFileReader& reader) {
-    const u2 length = reader.readU2();
+void ConstantPool::addUtf8Record(const std::string &value) {
+    const auto length = static_cast<u2>(value.size());
     const auto size = sizeof(ConstantPoolRecord::utf8Info.tag) + sizeof(ConstantPoolRecord::utf8Info.length) + length + 1;
-    const auto utf8Record = static_cast<ConstantPoolRecord*>(malloc(size));
+    const auto utf8Record = static_cast<ConstantPoolRecord *>(malloc(size));
     utf8Record->utf8Info.tag = JVM_CONSTANT_Utf8;
     utf8Record->utf8Info.length = length;
-    reader.readRaw(reinterpret_cast<char *>(&(utf8Record->utf8Info.bytes[0])), length);
+    memcpy(utf8Record->utf8Info.bytes, value.data(), length);
     utf8Record->utf8Info.bytes[length] = 0;
-
     _constantPoolIndex.push_back(utf8Record);
-
 }
 
 u2 ConstantPool::getNextIndex(u2 index) const {

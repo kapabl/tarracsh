@@ -2,7 +2,7 @@
 #define JAR_ANALYZER_H
 #include "../../stats/Results.h"
 #include "../../Options.h"
-#include "../JarEntry.h"
+#include "domain/jar/JarEntry.h"
 #include "Task.h"
 #include "../../classfile/ClassFileParser.h"
 

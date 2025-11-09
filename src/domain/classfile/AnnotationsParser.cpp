@@ -1,4 +1,4 @@
-#include "AttributeStructures.h"
+#include "src/domain/classfile/types/AttributeStructures.h"
 #include "reader/VectorReader.h"
 #include "AnnotationsParser.h"
 

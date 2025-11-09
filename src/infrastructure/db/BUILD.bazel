@@ -1,15 +1,16 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
-    name = "db_lib",
-    srcs = glob(
-        [
-            "**/*.cpp",
-            "**/*.cc",
-        ],
-        allow_empty = True,
-    ),
-    hdrs = glob(["**/*.h"], allow_empty = True),
+    name = "db_core",
+    srcs = [
+        "Database.cpp",
+        "StringPool.cpp",
+    ],
+    hdrs = [
+        "Database.h",
+        "DbConsts.h",
+        "StringPool.h",
+    ],
     copts = ["-std=c++20"],
     defines = ["FMT_HEADER_ONLY=1"],
     includes = ["../.."],
@@ -18,5 +19,15 @@ cc_library(
         "//src/infrastructure/log:log_lib",
         "//src/infrastructure/profiling:profiling_lib",
         "//src/infrastructure/string:string_lib",
+    ],
+)
+
+cc_library(
+    name = "db_lib",
+    deps = [
+        ":db_core",
+        "//src/infrastructure/db/columns:columns_lib",
+        "//src/infrastructure/db/query:query_lib",
+        "//src/infrastructure/db/table:table_lib",
     ],
 )

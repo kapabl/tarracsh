@@ -1,0 +1,44 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "jar_api",
+    hdrs = [
+        "JarEntry.h",
+        "JarEntryInfo.h",
+    ],
+    copts = ["-std=c++20"],
+    includes = ["../.."],
+    deps = [
+        "//:vcpkg_headers",
+        "//src/domain:utils_lib",
+    ],
+)
+
+cc_library(
+    name = "jar_core",
+    srcs = ["Processor.cpp"],
+    hdrs = ["Processor.h"],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../.."],
+    deps = [
+        ":jar_api",
+        "//:vcpkg_headers",
+        "//src/domain:options_lib",
+        "//src/domain:utils_lib",
+        "//src/domain/classfile:classfile_lib",
+        "//src/domain/db:db_lib",
+        "//src/domain/stats:stats_lib",
+        "//src/domain/jar/tasks:task_base",
+        "//src/infrastructure/filesystem:filesystem_lib",
+        "//src/infrastructure/log:log_lib",
+    ],
+)
+
+cc_library(
+    name = "jar_lib",
+    deps = [
+        ":jar_core",
+        "//src/domain/jar/tasks:tasks_lib",
+    ],
+)

@@ -1,0 +1,66 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "classfile_constants",
+    hdrs = ["ClassFileConstants.h"],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../.."],
+)
+
+cc_library(
+    name = "descriptor_parsers",
+    hdrs = [
+        "DescriptorParser.h",
+        "MethodDescriptorParser.h",
+    ],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../.."],
+    deps = [
+        "//src/domain/classfile/signature:signature_scanner",
+        "//src/domain/classfile/types:types_lib",
+    ],
+)
+
+cc_library(
+    name = "classfile_lib",
+    srcs = glob(
+        [
+            "**/*.cpp",
+            "**/*.cc",
+        ],
+        exclude = [
+            "types/**",
+            "constantpool/**",
+            "reader/**",
+            "signature/**",
+        ],
+        allow_empty = True,
+    ),
+    hdrs = glob(
+        ["**/*.h"],
+        exclude = [
+            "types/**",
+            "constantpool/**",
+            "reader/**",
+            "signature/**",
+        ],
+        allow_empty = True,
+    ),
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../.."],
+    deps = [
+        ":descriptor_parsers",
+        "//:vcpkg_headers",
+        "//src/domain:utils_lib",
+        "//src/domain/classfile/constantpool:constantpool_lib",
+        "//src/domain/classfile/reader:reader_lib",
+        "//src/domain/classfile/signature:signature_lib",
+        "//src/domain/classfile/types:types_lib",
+        "//src/infrastructure/filesystem:filesystem_lib",
+        "//src/infrastructure/log:log_lib",
+        "//src/infrastructure/string:string_lib",
+    ],
+)

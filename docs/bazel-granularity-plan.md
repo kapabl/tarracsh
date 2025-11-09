@@ -11,6 +11,8 @@
    1. **Per-directory packages** *(in progress)* – add a `BUILD.bazel` under each major `src/...` directory plus its matching `test/...` directory. Each package exports the `cc_library` or `cc_test` that owns just that subtree.  
       - ✅ Infrastructure side now split into `app`, `filesystem`, `log`, `profiling`, `db`, and `string` packages, with matching `test/src/infrastructure/{db,filesystem}` `cc_test`s aggregated via a suite.
       - ✅ Domain `db/` now has its own `cc_library` and `test/src/domain/db` owns a dedicated `db_tests`, with the legacy `domain_tests` target converted to a suite.
+      - ✅ Domain `classfile`, `digest`, `jar`, `stats`, `db/table`, and `db/callgraph` each expose their own `cc_library`, and `graph` tests live under `//test/src/domain/graph:graph_tests`.
+      - ✅ App layer now split into `src/app/classfile`, `src/app/commands`, and `src/app/server` packages, with the top-level `app_lib` consuming them.
    2. Keep a slim `//src:tarracsh` binary target that just depends on these libraries (already implemented).
 3. **Align tests** *(started)*:
    1. Ensure each `test/src/<dir>` tree depends on the counterpart `//src/<dir>:<target>`.

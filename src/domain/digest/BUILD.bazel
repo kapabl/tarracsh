@@ -1,0 +1,22 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "digest_lib",
+    srcs = [
+        "ClassFileDigest.cpp",
+    ],
+    hdrs = [
+        "ClassFileDigest.h",
+        "DigestUtils.h",
+    ],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../.."],
+    deps = [
+        "//:vcpkg_headers",
+        "//src/domain:utils_lib",
+        "//src/domain/db:db_lib",
+        "//src/domain/classfile:classfile_lib",
+        "//src/infrastructure/string:string_lib",
+    ],
+)

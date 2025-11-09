@@ -1,0 +1,24 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "callgraph_lib",
+    srcs = [
+        "CallGraph.cpp",
+        "CallGraphAnalyzer.cpp",
+    ],
+    hdrs = [
+        "CallGraph.h",
+        "CallGraphAnalyzer.h",
+    ],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../../.."],
+    deps = [
+        "//:vcpkg_headers",
+        "//src/app:app_lib",
+        "//src/app/commands:app_commands_lib_core",
+        "//src/domain:domain_lib",
+        "//src/domain/jar:jar_lib",
+        "//src/infrastructure:infrastructure_lib",
+    ],
+)

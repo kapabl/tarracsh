@@ -4,7 +4,7 @@
 #include <libzippp/libzippp.h>
 #include <BS_thread_pool.hpp>
 
-#include "../JarEntry.h"
+#include "domain/jar/JarEntry.h"
 #include "../../classfile/ClassFileParser.h"
 #include "../../classfile/reader/MemoryReader.h"
 using namespace libzippp;
@@ -31,7 +31,8 @@ bool ParserTask::start() {
 }
 
 void ParserTask::parseEntry(const JarEntry &jarEntry) const {
-    reader::MemoryReader reader(jarEntry);
+    reader::MemoryReader reader(jarEntry.getBuffer(),
+                                static_cast<std::streamsize>(jarEntry.getSize()));
     ++_results.jarfiles.classfiles.count;
     //TODO instead of jarEntry.getName() this can be jarfile@jarEntry.getName()
     ClassFileParser classFileParser(reader, jarEntry.getName(), _results.log);

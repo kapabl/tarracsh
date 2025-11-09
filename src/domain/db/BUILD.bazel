@@ -2,14 +2,8 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "db_lib",
-    srcs = glob(
-        [
-            "**/*.cpp",
-            "**/*.cc",
-        ],
-        allow_empty = True,
-    ),
-    hdrs = glob(["**/*.h"], allow_empty = True),
+    srcs = ["DigestDb.cpp"],
+    hdrs = ["DigestDb.h"],
     copts = ["-std=c++20"],
     defines = ["FMT_HEADER_ONLY=1"],
     includes = ["../.."],
@@ -20,5 +14,24 @@ cc_library(
         "//src/infrastructure/profiling:profiling_lib",
         "//src/infrastructure/string:string_lib",
         "//src/domain:utils_lib",
+        "//src/domain/db/table:table_lib",
+    ],
+)
+
+cc_library(
+    name = "callgraph_lib",
+    srcs = ["CallGraphDb.cpp"],
+    hdrs = ["CallGraphDb.h"],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../.."],
+    deps = [
+        "//:vcpkg_headers",
+        "//src/infrastructure/db:db_lib",
+        "//src/infrastructure/log:log_lib",
+        "//src/infrastructure/profiling:profiling_lib",
+        "//src/infrastructure/string:string_lib",
+        "//src/domain:utils_lib",
+        "//src/domain/db/table:table_lib",
     ],
 )

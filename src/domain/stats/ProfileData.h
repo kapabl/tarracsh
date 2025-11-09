@@ -2,7 +2,7 @@
 #define TARRACSH_PROFILE_DATA_H
 
 #include <chrono>
-#include "../Options.h"
+#include "domain/Options.h"
 
 namespace kapa::tarracsh::domain::stats {
 struct Results;

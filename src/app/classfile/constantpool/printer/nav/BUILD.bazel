@@ -1,0 +1,18 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "nav_lib",
+    srcs = ["HtmlGen.cpp"],
+    hdrs = ["HtmlGen.h"],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../../../../.."],
+    deps = [
+        "//:vcpkg_headers",
+        "//src/app/classfile/constantpool/printer:printer_lib",
+        "//src/domain:options_lib",
+        "//src/domain/classfile:classfile_lib",
+        "//src/infrastructure/filesystem:filesystem_lib",
+        "//src/infrastructure/string:string_lib",
+    ],
+)

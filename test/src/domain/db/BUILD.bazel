@@ -10,6 +10,7 @@ cc_test(
     linkstatic = True,
     deps = [
         "//src/domain/db:db_lib",
+        "//src/domain/db:callgraph_lib",
         "//src/infrastructure/db:db_lib",
         "//src/infrastructure/log:log_lib",
         "//:vcpkg_runtime_libs",

@@ -1,0 +1,25 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "digest_lib",
+    srcs = [
+        "DigestAnalyzer.cpp",
+        "PublicDigest.cpp",
+    ],
+    hdrs = [
+        "DigestAnalyzer.h",
+        "PublicDigest.h",
+    ],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../../.."],
+    deps = [
+        "//:vcpkg_headers",
+        "//src/app:app_lib",
+        "//src/app/commands:app_commands_lib_core",
+        "//src/app/server/digest:digest_lib",
+        "//src/domain:domain_lib",
+        "//src/domain/jar:jar_lib",
+        "//src/infrastructure:infrastructure_lib",
+    ],
+)

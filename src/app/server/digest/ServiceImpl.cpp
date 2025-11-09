@@ -12,7 +12,7 @@
 
 #include "app/AppRuntime.h"
 #include "ServerCommand.h"
-#include "../RequestContext.h"
+#include "app/server/RequestContext.h"
 #include "../../Analyzer.h"
 #include "infrastructure/profiling/ScopedTimer.h"
 

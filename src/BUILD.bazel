@@ -2,7 +2,11 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "tarracsh_core",
-    deps = ["//src/app:app_lib"],
+    deps = [
+        "//src/app:app_lib",
+        "//src/app/commands:app_commands_lib",
+        "//src/app/server:app_server_lib",
+    ],
 )
 
 alias(

@@ -4,7 +4,7 @@
 #include <cstring>
 #include <vector>
 
-#include "domain/classfile/AttributeStructures.h"
+#include "domain/classfile/types/AttributeStructures.h"
 #include "domain/classfile/AttributeTags.h"
 #include "domain/classfile/constantpool/ConstantPool.h"
 #include "domain/classfile/constantpool/ConstpoolStructures.h"

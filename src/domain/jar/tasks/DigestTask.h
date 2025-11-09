@@ -2,7 +2,7 @@
 #define TARRACSH_JAR_DIGEST_H
 #include <map>
 
-#include "../JarEntry.h"
+#include "domain/jar/JarEntry.h"
 #include "DbBasedTask.h"
 #include "domain/db/DigestDb.h"
 #include "domain/db/table/ClassFiles.h"

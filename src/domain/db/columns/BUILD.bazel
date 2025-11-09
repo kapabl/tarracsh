@@ -1,0 +1,6 @@
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "columns_hdrs",
+    srcs = glob(["**/*.h"]),
+)

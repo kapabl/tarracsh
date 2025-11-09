@@ -6,11 +6,7 @@
 #include <filesystem>
 #include <string>
 #include <cstring>
-#include "../Database.h"
-#include "../StringPool.h"
-
-#include "../DbConsts.h"
-#include "../columns/Columns.h"
+#include "infrastructure/db/columns/Columns.h"
 
 #pragma pack( push, 1 )
 

@@ -6,6 +6,7 @@ cc_test(
         ["**/*.cpp"],
         exclude = [
             "db/**",
+            "graph/**",
         ],
     ),
     copts = [
@@ -26,5 +27,6 @@ test_suite(
     tests = [
         ":core_tests",
         "//test/src/domain/db:db_tests",
+        "//test/src/domain/graph:graph_tests",
     ],
 )
