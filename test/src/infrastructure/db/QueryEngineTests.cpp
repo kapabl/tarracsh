@@ -2,10 +2,12 @@
 
 #include <atomic>
 #include <chrono>
+#include <iostream>
 #include <filesystem>
 #include <fstream>
 #include <mutex>
 #include <stdexcept>
+#include <sstream>
 
 #include "domain/db/DigestDb.h"
 #include "infrastructure/db/query/Engine.h"
@@ -19,6 +21,21 @@ using namespace kapa::infrastructure::db;
 using namespace kapa::infrastructure::db::query;
 
 namespace {
+
+class ScopedStdoutCapture {
+public:
+    ScopedStdoutCapture()
+        : _oldBuf(std::cout.rdbuf(_buffer.rdbuf())) {}
+    ScopedStdoutCapture(const ScopedStdoutCapture &) = delete;
+    ScopedStdoutCapture &operator=(const ScopedStdoutCapture &) = delete;
+    ~ScopedStdoutCapture() { std::cout.rdbuf(_oldBuf); }
+
+    [[nodiscard]] std::string str() const { return _buffer.str(); }
+
+private:
+    std::ostringstream _buffer;
+    std::streambuf *_oldBuf;
+};
 
 std::filesystem::path makeTempDir(const std::string &prefix) {
     static std::atomic<uint64_t> counter{0};
@@ -88,9 +105,9 @@ std::string runQuery(const Engine &engine,
                      const std::string &query,
                      const bool displayRaw = false,
                      const bool expectSuccess = true) {
-    testing::internal::CaptureStdout();
+    ScopedStdoutCapture capture;
     const auto result = engine.execute(query, displayRaw);
-    auto output = testing::internal::GetCapturedStdout();
+    const auto output = capture.str();
     EXPECT_EQ(expectSuccess, result) << "Unexpected execution result for query: " << query;
     return output;
 }
@@ -153,8 +170,8 @@ TEST(QueryEngine, ReportsSemanticAndSyntaxErrors) {
     EXPECT_NE(std::string::npos, invalidColumnOutput.find("Invalid column name: bogus"));
     EXPECT_EQ(std::string::npos, invalidColumnOutput.find("rows found:"));
 
-    testing::internal::CaptureStdout();
+    ScopedStdoutCapture capture;
     engine.log("custom log message", true);
-    const auto logOutput = testing::internal::GetCapturedStdout();
+    const auto logOutput = capture.str();
     EXPECT_NE(std::string::npos, logOutput.find("custom log message"));
 }

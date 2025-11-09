@@ -3,6 +3,8 @@
 #include <memory>
 #include <string>
 #include <filesystem>
+#include <iostream>
+#include <sstream>
 
 #include "domain/stats/Results.h"
 #include "infrastructure/log/Log.h"
@@ -11,6 +13,21 @@ using namespace kapa::tarracsh::domain;
 using namespace stats;
 
 namespace {
+
+class ScopedStdoutCapture {
+public:
+    ScopedStdoutCapture()
+        : _oldBuf(std::cout.rdbuf(_buffer.rdbuf())) {}
+    ScopedStdoutCapture(const ScopedStdoutCapture &) = delete;
+    ScopedStdoutCapture &operator=(const ScopedStdoutCapture &) = delete;
+    ~ScopedStdoutCapture() { std::cout.rdbuf(_oldBuf); }
+
+    [[nodiscard]] std::string str() const { return _buffer.str(); }
+
+private:
+    std::ostringstream _buffer;
+    std::streambuf *_oldBuf;
+};
 
 std::shared_ptr<Results> makeResults() {
     Options options;
@@ -31,9 +48,9 @@ TEST(ResultsTests, PrintProgressEmitsCountersOnceThresholdReached) {
     results->jarfiles.classfiles.count.store(3);
     results->jarfiles.count.store(1);
 
-    testing::internal::CaptureStdout();
+    ScopedStdoutCapture capture;
     results->printProgress();
-    const auto output = testing::internal::GetCapturedStdout();
+    const auto output = capture.str();
     EXPECT_NE(output.find("classfiles: 5"), std::string::npos);
     EXPECT_NE(output.find("jars: 1"), std::string::npos);
 }

@@ -3,6 +3,8 @@
 #include <filesystem>
 #include <memory>
 #include <chrono>
+#include <iostream>
+#include <sstream>
 
 #include "domain/stats/ProfileData.h"
 #include "domain/stats/Results.h"
@@ -13,6 +15,21 @@ using namespace stats;
 using namespace stats::profiler;
 
 namespace {
+
+class ScopedStdoutCapture {
+public:
+    ScopedStdoutCapture()
+        : _oldBuf(std::cout.rdbuf(_buffer.rdbuf())) {}
+    ScopedStdoutCapture(const ScopedStdoutCapture &) = delete;
+    ScopedStdoutCapture &operator=(const ScopedStdoutCapture &) = delete;
+    ~ScopedStdoutCapture() { std::cout.rdbuf(_oldBuf); }
+
+    [[nodiscard]] std::string str() const { return _buffer.str(); }
+
+private:
+    std::ostringstream _buffer;
+    std::streambuf *_oldBuf;
+};
 
 std::filesystem::path makeTempDir(const std::string &name) {
     const auto base = std::filesystem::temp_directory_path();
@@ -68,8 +85,8 @@ TEST(ProfileDataTests, PrintsProfilerWhenFlagSet) {
     ProfileData profiler(*results);
     profiler.analyzerTime = MillisecondDuration(42);
 
-    testing::internal::CaptureStdout();
+    ScopedStdoutCapture capture;
     profiler.output(options);
-    const auto stdoutOutput = testing::internal::GetCapturedStdout();
+    const auto stdoutOutput = capture.str();
     EXPECT_NE(stdoutOutput.find("Analyzer total time"), std::string::npos);
 }

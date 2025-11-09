@@ -2,6 +2,7 @@
 /bazel-out/
 /bazel-tarracsh/
 /bazel-testlogs/
+/coverage/
 /x64/
 /.vs/
 /tarracsh.vcxproj.filters

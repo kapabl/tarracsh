@@ -5,6 +5,7 @@
 #ifndef TARRACSH_DESCRIPTORPARSER_H
 #define TARRACSH_DESCRIPTORPARSER_H
 
+#include "ClassFileConstants.h"
 #include "signature/SignatureScanner.h"
 #include "types/DescriptorTypes.h"
 #include <memory>
