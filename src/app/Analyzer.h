@@ -44,7 +44,7 @@ protected:
 
     // BS::thread_pool _fileThreadPool{std::max<unsigned int>(1u, std::thread::hardware_concurrency() * 4 / 5)};
     // BS::thread_pool _fileThreadPool{std::max<unsigned int>(1u, std::thread::hardware_concurrency() * 3 / 4)};
-    BS::thread_pool _fileThreadPool{ std::max<unsigned int>(1u, std::thread::hardware_concurrency() - 2) };
+    BS::thread_pool<> _fileThreadPool{ std::max<unsigned int>(1u, std::thread::hardware_concurrency() - 2) };
 
     bool _isValid{true};
 

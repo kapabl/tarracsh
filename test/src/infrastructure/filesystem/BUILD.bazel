@@ -1,0 +1,16 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_test(
+    name = "filesystem_tests",
+    srcs = ["UtilsTests.cpp"],
+    copts = [
+        "-std=c++20",
+        "-DPROJECT_SOURCE_DIR=\\\"__main__\\\"",
+    ],
+    linkstatic = True,
+    deps = [
+        "//src/infrastructure/filesystem:filesystem_lib",
+        "//:vcpkg_runtime_libs",
+        "//:vcpkg_gtest_main",
+    ],
+)

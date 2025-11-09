@@ -17,12 +17,6 @@ public:
         CLI::App(description, name)
     {
     }
-protected:
-#ifdef _WIN32
-    static void prepareConsoleForVT100();
-    static void prepareConsoleForUTF8();
-#endif
-
 };
 
 

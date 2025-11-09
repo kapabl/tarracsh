@@ -10,7 +10,7 @@
 
 #include <grpcpp/server_builder.h>
 
-#include "../../App.h"
+#include "app/AppRuntime.h"
 #include "ServerCommand.h"
 #include "../RequestContext.h"
 #include "../../Analyzer.h"
@@ -39,10 +39,6 @@ using grpc::ServerBuilder;
 
 bool ServiceImpl::_quickReceived = false;
 std::condition_variable ServiceImpl::_quickSignalCV;
-
-#ifdef _WIN32
-#pragma comment(lib, "Ws2_32.lib")
-#endif
 
 const char *PUBLIC_DIGEST_SERVER_MUTEX_NAME = "public-digest-grpc-server";
 

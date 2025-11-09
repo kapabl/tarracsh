@@ -5,6 +5,7 @@
 #include "infrastructure/db/Database.h"
 #include "domain/db/table/Files.h"
 #include "domain/stats/Results.h"
+#include "domain/digest/DigestUtils.h"
 #include "Task.h"
 #include "domain/classfile/ClassFileParser.h"
 

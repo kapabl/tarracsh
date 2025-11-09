@@ -10,31 +10,12 @@
 #include <vector>
 #include "Utils.h"
 
-
 namespace kapa::infrastructure::filesystem::utils {
 
-
 std::filesystem::path getUserHomeDir() {
-#ifdef _WIN32
-
-    char *homeDrive;
-    size_t homeDriveLength;
-    _dupenv_s(&homeDrive, &homeDriveLength, "HOMEDRIVE");
-    assert(homeDrive != nullptr);
-
-    char* homePath;
-    size_t homePathLength;
-    _dupenv_s(&homePath, &homePathLength, "HOMEDRIVE");
-    assert(homePath != nullptr);
-
-    auto result = std::filesystem::path(std::string(homeDrive) + homePath);
-
-#else
-        auto result = std::filesystem::path(getenv("HOME"));
-#endif
+    auto result = std::filesystem::path(getenv("HOME"));
     return result;
 }
-
 
 bool isClassfile(const std::filesystem::path &path) {
     auto const result = path.extension() == ".class";
@@ -51,7 +32,6 @@ bool isJMod(const std::filesystem::path &path) {
     return result;
 }
 
-
 long long getLastWriteTimestamp(const std::string &filename) {
     const auto lastWriteTime = std::filesystem::last_write_time(filename);
     const auto result = std::chrono::duration_cast<std::chrono::microseconds>(lastWriteTime.time_since_epoch()).count();
@@ -65,9 +45,7 @@ void backupPrevFile(const std::string &filename) {
     const auto prevFilename = std::filesystem::path(filename + ".prev");
     std::filesystem::remove(prevFilename);
 
-    std::filesystem::rename(
-        std::filesystem::path(filename),
-        prevFilename);
+    std::filesystem::rename(std::filesystem::path(filename), prevFilename);
 }
 
 void writeLines(const std::string &filename, const std::vector<std::string> &lines) {
@@ -107,42 +85,17 @@ void stdoutLines(const std::vector<std::string> &lines) {
     }
 }
 
-
 std::filesystem::path classnameToPath(const std::string &classname) {
     std::filesystem::path result;
-#ifdef _WIN32
-    std::istringstream f(classname);
-    std::string part;
-    while (getline(f, part, '/')) {
-        if (result.empty()) {
-            result = part;
-        } else {
-            result = result / part;
-        }
-    }
-#else
-    result = classname;
-#endif
-    return result;
-
+    return classname;
 }
 
-#ifdef _WIN32
-void ensureDir(const std::filesystem::path &dir) {
-    const auto win32Dir = "\\\\?\\" + dir.string();
-    if (!std::filesystem::exists(win32Dir)) {
-        std::filesystem::create_directories(win32Dir);
-    }
-}
-#else
 void ensureDir(const std::filesystem::path &dir) {
     if (!std::filesystem::exists(dir)) {
         std::filesystem::create_directories(dir.string());
     }
 }
-#endif
 
-}
-
+} // namespace kapa::infrastructure::filesystem::utils
 
 #endif

@@ -1,0 +1,18 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_test(
+    name = "app_tests",
+    srcs = glob(["**/*.cpp"]),
+    copts = [
+        "-std=c++20",
+        "-DPROJECT_SOURCE_DIR=\\\"__main__\\\"",
+    ],
+    linkstatic = True,
+    deps = [
+        "//src/app:app_lib",
+        "//src/interfaces/tarracsh:tarracsh_cli_lib",
+        "//:vcpkg_runtime_libs",
+        "//:vcpkg_gtest_main",
+    ],
+    data = ["//test-subjects:all"],
+)

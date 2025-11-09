@@ -1,0 +1,27 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "cfdiff_lib",
+    srcs = ["ClassfileDiffApp.cpp"],
+    hdrs = [
+        "CfDiff.h",
+        "ClassfileDiffApp.h",
+    ],
+    copts = ["-std=c++20"],
+    includes = ["../../"],
+    deps = ["//src/app:app_lib"],
+)
+
+cc_binary(
+    name = "cfdiff",
+    srcs = ["Main.cpp"],
+    copts = ["-std=c++20"],
+    linkopts = [
+        "-static-libstdc++",
+        "-static-libgcc",
+    ],
+    deps = [
+        ":cfdiff_lib",
+        "//:vcpkg_runtime_libs",
+    ],
+)

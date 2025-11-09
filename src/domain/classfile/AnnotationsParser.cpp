@@ -48,31 +48,30 @@ string AnnotationsParser::localVarAnnotationToString(const TypeAnnotation &typeA
 string AnnotationsParser::annotationToString(
     const attribute::TypeAnnotation &typeAnnotation) const {
 
-    string result;
-    //TODO
+    string target_description;
     switch (typeAnnotation.targetType) {
         case 0x00:
-            result = fmt::format("index: {} class/interface",
+            target_description = fmt::format("index: {} class/interface",
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
 
         case 0x01:
-            result = fmt::format("index: {} member/constructor",
+            target_description = fmt::format("index: {} member/constructor",
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
 
         case 0x10:
-            result = fmt::format("index: {} super-type", typeAnnotation.targetInfo.supertype_target);
+            target_description = fmt::format("index: {} super-type", typeAnnotation.targetInfo.supertype_target);
             break;
 
         case 0x11:
-            result = fmt::format("index, bound: {},{} class/interface",
+            target_description = fmt::format("index, bound: {},{} class/interface",
                             typeAnnotation.targetInfo.type_parameter_bound_target.type_parameter_index,
                             typeAnnotation.targetInfo.type_parameter_bound_target.bound_index);
             break;
 
         case 0x12:
-            result = fmt::format("index, bound: {},{} member/constructor",
+            target_description = fmt::format("index, bound: {},{} member/constructor",
                             typeAnnotation.targetInfo.type_parameter_bound_target.type_parameter_index,
                             typeAnnotation.targetInfo.type_parameter_bound_target.bound_index);
             break;
@@ -80,83 +79,89 @@ string AnnotationsParser::annotationToString(
         case 0x13:
         case 0x14:
         case 0x15:
-            result = fmt::format("field");
+            target_description = "field";
             break;
 
         case 0x16:
-            result = fmt::format("param index: {}",
+            target_description = fmt::format("param index: {}",
                             typeAnnotation.targetInfo.formal_parameter_target.formal_parameter_index);
             break;
 
         case 0x17:
-            result = fmt::format("exception index: {}",
+            target_description = fmt::format("exception index: {}",
                             typeAnnotation.targetInfo.throws_target.throws_type_index);
             break;
 
         case 0x40:
-            result = fmt::format("local var: {}", localVarAnnotationToString(typeAnnotation));
+            target_description = fmt::format("local var: {}", localVarAnnotationToString(typeAnnotation));
             break;
 
         case 0x41:
-            result = fmt::format("local res var: {}", localVarAnnotationToString(typeAnnotation));
+            target_description = fmt::format("local res var: {}", localVarAnnotationToString(typeAnnotation));
             break;
 
         case 0x42:
-            result = fmt::format("type exception param index: {}",
+            target_description = fmt::format("type exception param index: {}",
                             typeAnnotation.targetInfo.catch_target.exception_table_index);
             break;
 
         case 0x43:
-            result = fmt::format("instanceof bytecode offset: {}",
+            target_description = fmt::format("instanceof bytecode offset: {}",
                             typeAnnotation.targetInfo.offset_target.offset);
             break;
         case 0x44:
-            result = fmt::format("new bytecode offset: {}",
+            target_description = fmt::format("new bytecode offset: {}",
                             typeAnnotation.targetInfo.offset_target.offset);
             break;
         case 0x45:
-            result = fmt::format("methodref ::new bytecode offset: {}",
+            target_description = fmt::format("methodref ::new bytecode offset: {}",
                             typeAnnotation.targetInfo.offset_target.offset);
             break;
         case 0x46:
-            result = fmt::format("methodref ::Identifier bytecode offset: {}",
+            target_description = fmt::format("methodref ::Identifier bytecode offset: {}",
                             typeAnnotation.targetInfo.offset_target.offset);
             break;
 
         case 0x47:
-            result = fmt::format("type-cast bytecode offset: {}, index: {}",
+            target_description = fmt::format("type-cast bytecode offset: {}, index: {}",
                             typeAnnotation.targetInfo.type_argument_target.offset,
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
 
         case 0x48:
-            result = fmt::format("arg. gen constructor bytecode offset: {}, index: {}",
+            target_description = fmt::format("arg. gen constructor bytecode offset: {}, index: {}",
                             typeAnnotation.targetInfo.type_argument_target.offset,
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
 
         case 0x49:
-            result = fmt::format("arg. gen member call bytecode offset: {}, index: {}",
+            target_description = fmt::format("arg. gen member call bytecode offset: {}, index: {}",
                             typeAnnotation.targetInfo.type_argument_target.offset,
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
         case 0x4A:
-            result = fmt::format("arg. gen constructor methodref ::new bytecode offset: {}, index: {}",
+            target_description = fmt::format("arg. gen constructor methodref ::new bytecode offset: {}, index: {}",
                             typeAnnotation.targetInfo.type_argument_target.offset,
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
         case 0x4B:
-            result = fmt::format("arg. gen constructor methodref ::Identifier bytecode offset: {}, index: {}",
+            target_description = fmt::format("arg. gen constructor methodref ::Identifier bytecode offset: {}, index: {}",
                             typeAnnotation.targetInfo.type_argument_target.offset,
                             typeAnnotation.targetInfo.type_argument_target.type_argument_index);
             break;
 
         default:
-            assert(false);
-            cout << "Invalid Runtime type annotation type\n";
+            target_description = "Invalid Runtime type annotation type";
     }
 
-    return result;
+    vector<string> valuePairs;
+    for (auto &annotationValuePair : typeAnnotation.values) {
+        valuePairs.push_back(annotationToString(annotationValuePair));
+    }
+    const auto valueSuffix =
+        valuePairs.empty() ? string() : fmt::format(" [{}]", join<string>(valuePairs, ", "));
+    const auto typeString = _constantPool.getTypeString(typeAnnotation.typeIndex);
+    return fmt::format("{}: {}{}", typeString, target_description, valueSuffix);
 }
 
 std::string AnnotationsParser::annotationsToString(

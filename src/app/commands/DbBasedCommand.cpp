@@ -1,5 +1,5 @@
 #include "DbBasedCommand.h"
-#include "app/App.h"
+#include "app/AppRuntime.h"
 #include "app/Analyzer.h"
 #include "app/commands/Query.h"
 #include "app/server/digest/ServerCommand.h"
@@ -11,14 +11,15 @@ using kapa::tarracsh::domain::ServerOptions;
 using kapa::tarracsh::domain::ClientOptions;
 using kapa::infrastructure::app::cli::ExitCode;
 using kapa::infrastructure::profiler::ScopedTimer;
+namespace runtime = kapa::tarracsh::app::runtime;
 
 using namespace kapa::tarracsh::app::commands;
 
 
 DbBasedCommand::DbBasedCommand(CLI::App *parent, domain::SubCommandOptions &dbBasedOptions)
     : Command(parent),
-      _results(App::getGlobalResults()),
-      _options(App::getGlobalOptions()),
+      _results(runtime::global_results()),
+      _options(runtime::global_options()),
       _dbBasedOptions(dbBasedOptions) {
 }
 
@@ -30,7 +31,7 @@ bool DbBasedCommand::isServerMode() const {
 bool DbBasedCommand::runAsServer() {
 
     //TODO fix when server mode is implemented for call-graph
-    const auto result = ServerCommand::run(App::getContext());
+    const auto result = ServerCommand::run(runtime::context());
     return result;
 }
 
@@ -72,7 +73,7 @@ bool DbBasedCommand::isClientMode() const {
 }
 
 bool DbBasedCommand::runAsClient() {
-    const auto result = ServerCommand::run(App::getContext());
+    const auto result = ServerCommand::run(runtime::context());
     return result;
 }
 

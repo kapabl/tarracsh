@@ -1,0 +1,11 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "tarracsh_core",
+    deps = ["//src/app:app_lib"],
+)
+
+alias(
+    name = "tarracsh",
+    actual = "//src/interfaces/tarracsh:tarracsh",
+)

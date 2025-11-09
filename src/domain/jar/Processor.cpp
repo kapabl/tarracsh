@@ -53,7 +53,7 @@ void Processor::run() {
             auto buffer = static_cast<char *>(entry.readAsBinary());
             _inProgressBufferCount++;
 
-            _threadPool.push_task([
+            _threadPool.detach_task([
                 this,
                 entry,
                 &index,
@@ -73,9 +73,8 @@ void Processor::run() {
             });
         }
 
-        _threadPool.wait_for_tasks();
+        _threadPool.wait();
     }
     _task.end();
     ++_results.jarfiles.parsedCount;
 }
-

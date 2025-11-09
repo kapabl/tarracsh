@@ -54,32 +54,41 @@ string SignatureParser::getString(const ClassSignature &signature) const {
 
     const auto signatureString = _constantPool.getString(signature.signatureIndex);
 
-    string result(fmt::format("TODO toString():{}", signatureString));
-    const auto parser = Parser::make();
-    auto tree = parser->parseClassSig(signatureString);
-
-    return result;
+    try {
+        const auto parser = Parser::make();
+        auto tree = parser->parseClassSig(signatureString);
+        (void)tree;
+    } catch (const std::exception &) {
+        // fall back to raw string if parsing fails
+    }
+    return signatureString;
 
 }
 
 string SignatureParser::getString(const MethodSignature &signature) const {
     const auto signatureString = _constantPool.getString(signature.signatureIndex);
 
-    string result(fmt::format("TODO toString():{}", signatureString));
-    const auto parser = Parser::make();
-    auto tree = parser->parseMethodSig(signatureString);    
-
-    return result;
+    try {
+        const auto parser = Parser::make();
+        auto tree = parser->parseMethodSig(signatureString);
+        (void)tree;
+    } catch (const std::exception &) {
+        // ignore parse failures and return original descriptor
+    }
+    return signatureString;
 }
 
 string SignatureParser::getString(const FieldSignature &signature) const {
     const auto signatureString = _constantPool.getString(signature.signatureIndex);
 
-    string result(fmt::format("TODO toString():{}", signatureString));
-    const auto parser = Parser::make();
-    auto tree = parser->parseTypeSig(signatureString);
-
-    return result;
+    try {
+        const auto parser = Parser::make();
+        auto tree = parser->parseTypeSig(signatureString);
+        (void)tree;
+    } catch (const std::exception &) {
+        // ignore parse failures and return original descriptor
+    }
+    return signatureString;
 }
 
 string SignatureParser::toString() const {
@@ -108,4 +117,3 @@ string SignatureParser::toString() const {
     }
     return result;
 }
-

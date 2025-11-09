@@ -1,0 +1,22 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "app_lib",
+    srcs = glob(
+        [
+            "**/*.cpp",
+            "**/*.cc",
+        ],
+        exclude = ["Main.cpp"],
+        allow_empty = True,
+    ),
+    hdrs = glob(["**/*.h"], allow_empty = True),
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = [".."],
+    deps = [
+        "//:vcpkg_headers",
+        "//src/domain:domain_lib",
+        "//src/infrastructure:infrastructure_lib",
+    ],
+)

@@ -1,7 +1,7 @@
 #include "CallGraph.h"
 
 #include "CallGraphAnalyzer.h"
-#include "app/App.h"
+#include "app/AppRuntime.h"
 #include "app/Analyzer.h"
 #include "app/commands/Query.h"
 #include "domain/db/CallGraphDb.h"
@@ -23,10 +23,11 @@ using kapa::infrastructure::profiler::ScopedTimer;
 using kapa::infrastructure::db::table::column::DisplayAs;
 using kapa::infrastructure::db::table::column::Properties;
 using kapa::tarracsh::domain::classfile::constantpool::u2;
+namespace runtime = kapa::tarracsh::app::runtime;
 
 
 CallGraph::CallGraph(CLI::App *parent)
-        : DbBasedCommand(parent, App::getGlobalOptions().callGraph) {
+        : DbBasedCommand(parent, runtime::global_options().callGraph) {
 }
 
 ExitCode CallGraph::processInput() {
@@ -93,7 +94,7 @@ ExitCode CallGraph::run() {
     if (isServerMode()) {
         result = runAsServer();
     } else if (!_options.callGraph.queryValue.empty()) {
-        result = Query::run(App::getContext());
+        result = Query::run(runtime::context());
     } else {
         result = processInput();
     }
@@ -104,7 +105,7 @@ bool CallGraph::runAsStandalone() {
     const auto result = initDb();
     if (result) {
         auto db = std::dynamic_pointer_cast<CallGraphDb>(_db);
-        CallGraphAnalyzer analyzer(App::getContext(), db);
+        CallGraphAnalyzer analyzer(runtime::context(), db);
         analyzer.runWithPrint();
     } else {
         _results.log->writeln("Error initializing Db", true);
@@ -125,5 +126,4 @@ auto CallGraph::registerColumns() -> bool {
 }
 
 //static bool registerColumnsResult = registerColumns();
-
 

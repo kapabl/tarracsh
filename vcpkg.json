@@ -54,5 +54,11 @@
             "$comment": "    # this is heuristically generated, and may not be correct\n\n    find_package(libzippp CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE libzippp::libzippp)\n"
         }
     ],
-    "builtin-baseline": "d4d39d71b3e6dd7536592c36ab2f7e84a8a64942"
+    "overrides": [
+        {
+            "name": "gperftools",
+            "version": "2019-09-02#4"
+        }
+    ],
+    "builtin-baseline": "365f6444ab40ee87c73c947b475b3a267b3cb77c"
 }

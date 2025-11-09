@@ -2,6 +2,7 @@
 #include <fmt/format.h>
 #include <fmt/chrono.h>
 #include <chrono>
+#include <ctime>
 #include <string.h>
 
 #include "../Database.h"
@@ -9,6 +10,14 @@
 
 
 using namespace kapa::infrastructure::db::table::column;
+
+namespace {
+std::tm make_local_tm(std::time_t time) {
+    std::tm tm {};
+    localtime_r(&time, &tm);
+    return tm;
+}
+}  // namespace
 
 std::string kapa::infrastructure::db::table::column::displayAsToString(const DisplayAs displayAs) {
     switch (displayAs) {
@@ -95,8 +104,6 @@ DigestCol::DigestCol() {
     std::memset(buf, 0, DIGEST_LENGTH);
 }
 
-bool DigestCol::operator==(const DigestCol &right) const = default;
-
 bool DigestCol::operator==(const std::vector<unsigned char> &left) const {
     if (left.size() != DIGEST_LENGTH) return false;
     const auto result = memcmp(buf, &*left.begin(), DIGEST_LENGTH) == 0;
@@ -118,7 +125,7 @@ static bool registerColumns() {
             const auto microseconds = std::chrono::microseconds(*reinterpret_cast<uint64_t *>(pValue));
             const std::chrono::file_clock::time_point timePoint(microseconds);
             const auto timeTType = std::chrono::duration_cast<std::chrono::seconds>(timePoint.time_since_epoch()).count();
-            auto result = fmt::format("{:%F %T}", fmt::localtime(timeTType));
+            auto result = fmt::format("{:%F %T}", make_local_tm(timeTType));
             return result;
         });
 

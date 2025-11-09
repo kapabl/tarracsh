@@ -50,7 +50,7 @@ public:
     std::shared_ptr<ClassTypeSignature> parseClassTypeSignature();
     std::shared_ptr<SimpleClassTypeSignature> parsePackageNameAndSimpleClassTypeSignature();
     std::shared_ptr<SimpleClassTypeSignature> parseSimpleClassTypeSignature(bool dollar);
-    void parseClassTypeSignatureSuffix(std::vector<std::shared_ptr<SimpleClassTypeSignature>> simpleClassTypeSignatures);
+    void parseClassTypeSignatureSuffix(std::vector<std::shared_ptr<SimpleClassTypeSignature>> &simpleClassTypeSignatures);
     std::vector<std::shared_ptr<TypeArgument>> parseTypeArgumentsOpt();
     std::vector<std::shared_ptr<TypeArgument>> parseTypeArguments();
     std::shared_ptr<TypeArgument> parseTypeArgument();

@@ -10,20 +10,21 @@
 #include <grpcpp/generic/async_generic_service.h>
 #include <grpcpp/support/async_stream.h>
 #include <grpcpp/support/async_unary_call.h>
-#include <grpcpp/impl/codegen/client_callback.h>
-#include <grpcpp/impl/codegen/client_context.h>
-#include <grpcpp/impl/codegen/completion_queue.h>
-#include <grpcpp/impl/codegen/message_allocator.h>
-#include <grpcpp/impl/codegen/method_handler.h>
-#include <grpcpp/impl/codegen/proto_utils.h>
-#include <grpcpp/impl/codegen/rpc_method.h>
-#include <grpcpp/impl/codegen/server_callback.h>
-#include <grpcpp/impl/codegen/server_callback_handlers.h>
-#include <grpcpp/impl/codegen/server_context.h>
-#include <grpcpp/impl/codegen/service_type.h>
-#include <grpcpp/impl/codegen/status.h>
-#include <grpcpp/impl/codegen/stub_options.h>
-#include <grpcpp/impl/codegen/sync_stream.h>
+#include <grpcpp/support/client_callback.h>
+#include <grpcpp/client_context.h>
+#include <grpcpp/completion_queue.h>
+#include <grpcpp/support/message_allocator.h>
+#include <grpcpp/support/method_handler.h>
+#include <grpcpp/impl/proto_utils.h>
+#include <grpcpp/impl/rpc_method.h>
+#include <grpcpp/support/server_callback.h>
+#include <grpcpp/impl/server_callback_handlers.h>
+#include <grpcpp/server_context.h>
+#include <grpcpp/impl/service_type.h>
+#include <grpcpp/support/status.h>
+#include <grpcpp/support/stub_options.h>
+#include <grpcpp/support/sync_stream.h>
+#include <grpcpp/ports_def.inc>
 
 namespace kapa {
 namespace tarracsh {
@@ -132,7 +133,7 @@ class PublicDigest final {
     ~WithAsyncMethod_Quit() override {
       BaseClassMustBeDerivedFromService(this);
     }
-    // disable synchronous version of this member
+    // disable synchronous version of this method
     ::grpc::Status Quit(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::Empty* /*request*/, ::kapa::tarracsh::app::server::digest::Empty* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
@@ -152,7 +153,7 @@ class PublicDigest final {
     ~WithAsyncMethod_Diff() override {
       BaseClassMustBeDerivedFromService(this);
     }
-    // disable synchronous version of this member
+    // disable synchronous version of this method
     ::grpc::Status Diff(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DiffRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DiffResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
@@ -181,7 +182,7 @@ class PublicDigest final {
     ~WithCallbackMethod_Quit() override {
       BaseClassMustBeDerivedFromService(this);
     }
-    // disable synchronous version of this member
+    // disable synchronous version of this method
     ::grpc::Status Quit(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::Empty* /*request*/, ::kapa::tarracsh::app::server::digest::Empty* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
@@ -208,7 +209,7 @@ class PublicDigest final {
     ~WithCallbackMethod_Diff() override {
       BaseClassMustBeDerivedFromService(this);
     }
-    // disable synchronous version of this member
+    // disable synchronous version of this method
     ::grpc::Status Diff(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DiffRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DiffResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
@@ -229,7 +230,7 @@ class PublicDigest final {
     ~WithGenericMethod_Quit() override {
       BaseClassMustBeDerivedFromService(this);
     }
-    // disable synchronous version of this member
+    // disable synchronous version of this method
     ::grpc::Status Quit(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::Empty* /*request*/, ::kapa::tarracsh::app::server::digest::Empty* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
@@ -246,7 +247,7 @@ class PublicDigest final {
     ~WithGenericMethod_Diff() override {
       BaseClassMustBeDerivedFromService(this);
     }
-    // disable synchronous version of this member
+    // disable synchronous version of this method
     ::grpc::Status Diff(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DiffRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DiffResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
@@ -263,7 +264,7 @@ class PublicDigest final {
     ~WithRawMethod_Quit() override {
       BaseClassMustBeDerivedFromService(this);
     }
-    // disable synchronous version of this member
+    // disable synchronous version of this method
     ::grpc::Status Quit(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::Empty* /*request*/, ::kapa::tarracsh::app::server::digest::Empty* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
@@ -283,7 +284,7 @@ class PublicDigest final {
     ~WithRawMethod_Diff() override {
       BaseClassMustBeDerivedFromService(this);
     }
-    // disable synchronous version of this member
+    // disable synchronous version of this method
     ::grpc::Status Diff(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DiffRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DiffResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
@@ -306,7 +307,7 @@ class PublicDigest final {
     ~WithRawCallbackMethod_Quit() override {
       BaseClassMustBeDerivedFromService(this);
     }
-    // disable synchronous version of this member
+    // disable synchronous version of this method
     ::grpc::Status Quit(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::Empty* /*request*/, ::kapa::tarracsh::app::server::digest::Empty* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
@@ -328,7 +329,7 @@ class PublicDigest final {
     ~WithRawCallbackMethod_Diff() override {
       BaseClassMustBeDerivedFromService(this);
     }
-    // disable synchronous version of this member
+    // disable synchronous version of this method
     ::grpc::Status Diff(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DiffRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DiffResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
@@ -355,12 +356,12 @@ class PublicDigest final {
     ~WithStreamedUnaryMethod_Quit() override {
       BaseClassMustBeDerivedFromService(this);
     }
-    // disable regular version of this member
+    // disable regular version of this method
     ::grpc::Status Quit(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::Empty* /*request*/, ::kapa::tarracsh::app::server::digest::Empty* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    // replace default version of member with streamed unary
+    // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedQuit(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::kapa::tarracsh::app::server::digest::Empty,::kapa::tarracsh::app::server::digest::Empty>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
@@ -382,12 +383,12 @@ class PublicDigest final {
     ~WithStreamedUnaryMethod_Diff() override {
       BaseClassMustBeDerivedFromService(this);
     }
-    // disable regular version of this member
+    // disable regular version of this method
     ::grpc::Status Diff(::grpc::ServerContext* /*context*/, const ::kapa::tarracsh::app::server::digest::DiffRequest* /*request*/, ::kapa::tarracsh::app::server::digest::DiffResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    // replace default version of member with streamed unary
+    // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedDiff(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::kapa::tarracsh::app::server::digest::DiffRequest,::kapa::tarracsh::app::server::digest::DiffResponse>* server_unary_streamer) = 0;
   };
   typedef WithStreamedUnaryMethod_Quit<WithStreamedUnaryMethod_Diff<Service > > StreamedUnaryService;
@@ -402,4 +403,5 @@ class PublicDigest final {
 }  // namespace kapa
 
 
+#include <grpcpp/ports_undef.inc>
 #endif  // GRPC_Server_2eproto__INCLUDED

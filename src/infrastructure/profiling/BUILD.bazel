@@ -1,0 +1,14 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "profiling_lib",
+    srcs = ["ScopedTimer.cpp"],
+    hdrs = ["ScopedTimer.h"],
+    copts = ["-std=c++20"],
+    defines = ["FMT_HEADER_ONLY=1"],
+    includes = ["../.."],
+    deps = [
+        "//:vcpkg_headers",
+        "//src/infrastructure/filesystem:filesystem_lib",
+    ],
+)

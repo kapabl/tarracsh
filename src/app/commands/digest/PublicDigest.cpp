@@ -1,5 +1,5 @@
 #include "PublicDigest.h"
-#include "app/App.h"
+#include "app/AppRuntime.h"
 #include "app/Analyzer.h"
 #include "DigestAnalyzer.h"
 #include "app/commands/Query.h"
@@ -12,12 +12,13 @@ using kapa::tarracsh::domain::ServerOptions;
 using kapa::tarracsh::domain::ClientOptions;
 using kapa::infrastructure::app::cli::ExitCode;
 using kapa::infrastructure::profiler::ScopedTimer;
+namespace runtime = kapa::tarracsh::app::runtime;
 
 using namespace kapa::tarracsh::app::commands::digest;
 
 
 PublicDigest::PublicDigest(CLI::App *parent)
-        : DbBasedCommand(parent, App::getGlobalOptions().digest) {
+        : DbBasedCommand(parent, runtime::global_options().digest) {
 }
 
 bool PublicDigest::initDb() {
@@ -35,7 +36,7 @@ bool PublicDigest::initDb() {
 bool PublicDigest::runAsStandalone() {
     const auto result = initDb();
     if (result) {
-        DigestAnalyzer analyzer(App::getContext(), _db);
+        DigestAnalyzer analyzer(runtime::context(), _db);
         analyzer.runWithPrint();
     } else {
         _results.log->writeln("Error initializing Db", true);
@@ -68,7 +69,7 @@ ExitCode PublicDigest::digestInput() {
 }
 
 bool PublicDigest::runAsServer() {
-    const auto result = ServerCommand::run(App::getContext());
+    const auto result = ServerCommand::run(runtime::context());
     return result;
 }
 
@@ -78,7 +79,7 @@ ExitCode PublicDigest::run() {
     if (isServerMode()) {
         result = runAsServer();
     } else if (!_options.digest.queryValue.empty()) {
-        result = Query::run(App::getContext());
+        result = Query::run(runtime::context());
     } else {
         result = digestInput();
     }
@@ -87,7 +88,7 @@ ExitCode PublicDigest::run() {
 }
 
 bool PublicDigest::runAsClient() {
-    const auto result = ServerCommand::run(App::getContext());
+    const auto result = ServerCommand::run(runtime::context());
     return result;
 }
 

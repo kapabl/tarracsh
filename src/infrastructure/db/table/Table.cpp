@@ -75,34 +75,42 @@ void Table::list(const std::function<bool(AutoIncrementedRow &)> &filter, const 
     {
         ScopedTimer timer(&duration);
 
-        const auto threadCount = std::thread::hardware_concurrency() * 4 / 5;
-        BS::thread_pool threadPool{std::max<unsigned int>(1u, threadCount)};
-        outputByChuck.resize(threadCount);
+        const auto hardwareThreads = std::thread::hardware_concurrency();
+        const auto scaledThreads = hardwareThreads == 0 ? 1u : std::max(1u, hardwareThreads * 4 / 5);
+        const auto threadCount = std::max(1u, scaledThreads);
+        const auto activeThreads = rowsScanned == 0
+                                   ? 1u
+                                   : std::min<unsigned int>(threadCount, static_cast<unsigned int>(rowsScanned));
 
-        const auto chunkSize = (rowsScanned + threadCount - 1) / threadCount;
-        int chunkIndex = 0;
+        BS::thread_pool<> threadPool{activeThreads};
+        outputByChuck.resize(activeThreads);
 
-        do {
+        const auto chunkSize = activeThreads == 0
+                               ? 0ull
+                               : (rowsScanned + activeThreads - 1) / activeThreads;
 
-            threadPool.push_task(
-                    [this, chunkSize, chunkIndex, &filter, &rowsFound, &outputByChuck]() -> void {
-                        auto index = chunkIndex * chunkSize;
-                        auto end = std::min<unsigned long long>(index + chunkSize, _autoIncrementIndex.size());
-                        auto &outputById = outputByChuck[chunkIndex];
-                        outputById.reserve(end - index);
-                        while (index < end) {
-                            const auto pRow = _autoIncrementIndex[index];
-                            if (!pRow->isDeleted() && filter(*pRow)) {
-                                outputById.push_back(pRow);
-                                ++rowsFound;
-                            }
-                            index++;
+        for (unsigned int chunkIndex = 0; chunkIndex < activeThreads; ++chunkIndex) {
+            threadPool.detach_task(
+                [this, chunkSize, chunkIndex, &filter, &rowsFound, &outputByChuck]() -> void {
+                    auto index = chunkIndex * chunkSize;
+                    auto end = std::min<unsigned long long>(index + chunkSize, _autoIncrementIndex.size());
+                    if (chunkSize == 0 || index >= end) {
+                        return;
+                    }
+                    auto &outputById = outputByChuck[chunkIndex];
+                    outputById.reserve(end - index);
+                    while (index < end) {
+                        const auto pRow = _autoIncrementIndex[index];
+                        if (!pRow->isDeleted() && filter(*pRow)) {
+                            outputById.push_back(pRow);
+                            ++rowsFound;
                         }
-                    });
-            chunkIndex++;
-        } while (chunkIndex < threadCount);
+                        index++;
+                    }
+                });
+        }
 
-        threadPool.wait_for_tasks();
+        threadPool.wait();
     }
 
     std::cout << fmt::format("table: {}", _layout.header.name) << std::endl;

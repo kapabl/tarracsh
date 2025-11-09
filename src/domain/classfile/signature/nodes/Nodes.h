@@ -20,9 +20,13 @@ public: \
 
 namespace kapa::tarracsh::domain::classfile::signature::parser {
 class Tree {
+public:
+    virtual ~Tree() = default;
 };
 
 class TypeTree : public Tree {
+public:
+    virtual ~TypeTree() = default;
     void accept(/*TypeTreeVisitor< ? > v*/);
 };
 

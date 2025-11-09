@@ -2,7 +2,6 @@
 #define TARRACSH_COLUMNS_H
 #include <cassert>
 #include "infrastructure/db/columns/Columns.h"
-#include "../../digest/DigestUtils.h"
 
 #pragma pack( push, 1 )
 
@@ -19,4 +18,3 @@ enum EntryType { Classfile, Jar, Directory };
 #pragma pack(pop)
 
 #endif
-

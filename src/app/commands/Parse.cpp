@@ -1,5 +1,5 @@
 #include "Parse.h"
-#include "app/App.h"
+#include "app/AppRuntime.h"
 #include "app/Analyzer.h"
 #include "infrastructure/profiling/ScopedTimer.h"
 
@@ -7,13 +7,14 @@ using namespace kapa::tarracsh;
 using namespace app;
 using namespace commands;
 
-
 using namespace kapa::infrastructure::app::cli::command;
 using kapa::infrastructure::profiler::ScopedTimer;
+using kapa::infrastructure::app::cli::ExitCode;
 using app::Analyzer;
+namespace runtime = kapa::tarracsh::app::runtime;
 
 Parse::Parse(CLI::App *parent)
-    : Command(parent), _results(App::getGlobalResults()), _options(App::getGlobalOptions()) {
+    : Command(parent), _results(runtime::global_results()), _options(runtime::global_options()) {
 }
 
 ExitCode Parse::run() {
@@ -23,7 +24,7 @@ ExitCode Parse::run() {
         "parse-input",
         [this, &result]()-> void {
             if (_options.parse.isValidInput()) {
-                Analyzer analyzer(App::getApp());
+                Analyzer analyzer(runtime::context());
                 analyzer.runWithPrint();
             } else {
                 result = 1;

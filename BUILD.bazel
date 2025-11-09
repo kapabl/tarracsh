@@ -1,12 +1,17 @@
-load("@rules_cc//cc:defs.bzl", "cc_binary")
+package(default_visibility = ["//visibility:public"])
 
-
-cc_binary(
-    name = "tarracsh",
-    srcs = glob(["src/**/*.cpp"]),
-    includes = ["src", "src/classfile", "src/includes"],
-    copts = ["/std:c++20"],
-    deps = [
-
-    ]
+alias(
+    name = "vcpkg_headers",
+    actual = "@vcpkg//:headers",
 )
+
+alias(
+    name = "vcpkg_runtime_libs",
+    actual = "@vcpkg//:runtime_libs",
+)
+
+alias(
+    name = "vcpkg_gtest_main",
+    actual = "@vcpkg//:gtest_main",
+)
+

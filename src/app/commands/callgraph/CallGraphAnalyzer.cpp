@@ -154,7 +154,7 @@ void CallGraphAnalyzer::processStandaloneClassFile(const std::string &filename) 
 }
 
 void CallGraphAnalyzer::processJar(const std::string &filename) {
-    _fileThreadPool.push_task([this, filename] {
+    _fileThreadPool.detach_task([this, filename] {
         domain::Options jarOptions(_options);
         jarOptions.getSubCommandOptions().input = filename;
 
@@ -167,5 +167,4 @@ void CallGraphAnalyzer::processJar(const std::string &filename) {
 
     });
 }
-
 

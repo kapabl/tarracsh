@@ -1,0 +1,13 @@
+module(name = "tarracsh")
+
+vcpkg = use_extension("//:bazel/vcpkg_repository.bzl", "vcpkg_extension")
+vcpkg.config(
+    name = "vcpkg",
+    manifest = "//:vcpkg.json",
+    triplet = "x64-linux",
+    vcpkg_commit = "365f6444ab40ee87c73c947b475b3a267b3cb77c",
+    vcpkg_archive = "//packages:vcpkg-source.tar.gz",
+    strip_prefix = "vcpkg",
+)
+
+use_repo(vcpkg, "vcpkg")

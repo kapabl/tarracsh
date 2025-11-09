@@ -63,7 +63,7 @@ void Analyzer::doClassFile(const std::string &filename) {
 }
 
 void Analyzer::processStandaloneClassFile(const std::string &filename) {
-    _fileThreadPool.push_task([this, filename] {
+    _fileThreadPool.detach_task([this, filename] {
         ++_results.standaloneClassfiles.count;
         doClassFile(filename);
     });
@@ -88,7 +88,7 @@ void Analyzer::classFileParserDone(ClassFileParser &parser) const {
 }
 
 void Analyzer::processJar(const std::string &filename) {
-    _fileThreadPool.push_task([this,filename] {
+    _fileThreadPool.detach_task([this,filename] {
         Options jarOptions(_options);
         jarOptions.getSubCommandOptions().input = filename;
 
@@ -147,7 +147,7 @@ void Analyzer::analyzeInput() {
         processStandaloneClassFile(_inputOptions.input);
     }
 
-    _fileThreadPool.wait_for_tasks();
+    _fileThreadPool.wait();
 }
 
 

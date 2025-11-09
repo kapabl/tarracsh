@@ -2,6 +2,7 @@
 #define TARRACSH_CLASSFILE_DIGEST_H
 
 #include <vector>
+#include "DigestUtils.h"
 #include "../classfile/constantpool/ConstantPool.h"
 #include "../db/columns/Columns.h"
 #include "../classfile/AttributesManager.h"

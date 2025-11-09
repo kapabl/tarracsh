@@ -12,9 +12,28 @@ Call graph – build a call‑graph database from bytecode (server/client modes 
 Global options – output directory, logging, profiler output, and file timestamp checks configurable for all commands
 
 Building
-The project uses CMake with a C++20 compiler and depends on libraries such as ICU, antlr4, CLI11, gRPC, inja, libsodium, libzippp, and fmt. A helper script fetches dependencies via vcpkg and builds the executable:
+Bazel (via Bzlmod) is the supported way to build, test, and collect coverage. The first `bazel build` downloads the pinned vcpkg commit, installs everything listed in `vcpkg.json`, and caches the result inside Bazel's external workspaces—no standalone dependency bootstrap is required.
 
-./build.sh
+```
+# Build the CLI
+bazel build //src:tarracsh
+
+# Execute the GoogleTest suite
+bazel test //test:tarracsh_tests
+
+# Build the cfdiff helper
+bazel build //src/interfaces/cfdiff:cfdiff
+
+# Collect coverage (produces bazel-out/_coverage/_coverage_report.dat)
+bazel coverage //test:tarracsh_tests \
+  --combined_report=lcov \
+  --instrumentation_filter=//src/...,//test/...
+
+# Optional: turn the LCOV into HTML (requires lcov/genhtml)
+genhtml bazel-out/_coverage/_coverage_report.dat --output-directory coverage/html
+```
+
+The legacy `./build.sh` wrapper now just calls `bazel build` for compatibility. If Bazel is not installed on your machine, install [`bazelisk`](https://github.com/bazelbuild/bazelisk) or the standard Bazel binaries first.
 
 Usage
 Run tarracsh <command> [options].

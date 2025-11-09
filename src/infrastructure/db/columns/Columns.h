@@ -114,7 +114,7 @@ struct DigestCol {
     DigestCol();
 
     unsigned char buf[DIGEST_LENGTH]{};
-    bool operator==(const DigestCol& right) const;
+    bool operator==(const DigestCol& right) const = default;
 
     bool operator==(const std::vector<unsigned char>& left) const;
 

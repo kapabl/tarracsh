@@ -60,7 +60,7 @@ void DigestAnalyzer::endAnalysis() {
 }
 
 void DigestAnalyzer::processJar(const std::string &filename) {
-    _fileThreadPool.push_task([this, filename] {
+    _fileThreadPool.detach_task([this, filename] {
         Options jarOptions(_options);
         jarOptions.getSubCommandOptions().input = filename;
 

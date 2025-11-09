@@ -43,24 +43,31 @@ shared_ptr<Parser> Parser::make() {
 
 std::shared_ptr<ClassSignature> Parser::parseClassSig(const string &signature) {
     _input = signature;
+    _position = 0;
+    _errors.clear();
     return parseClassSignature();
 }
 
 std::shared_ptr<MethodTypeSignature> Parser::parseMethodSig(const string &signature) {
     _input = signature;
+    _position = 0;
+    _errors.clear();
     return parseMethodTypeSignature();
 }
 
 std::shared_ptr<TypeSignature> Parser::parseTypeSig(const string &signature) {
     _input = signature;
+    _position = 0;
+    _errors.clear();
     return parseTypeSignature();
 }
 
 std::shared_ptr<ClassSignature> Parser::parseClassSignature() {
     // parse a class signature based on the implicit input.
-    return ClassSignature::make(parseZeroOrMoreFormalTypeParameters(),
-                                parseClassTypeSignature(), // Only rule for SuperclassSignature
-                                parseSuperInterfaces());
+    auto formalTypeParameters = parseZeroOrMoreFormalTypeParameters();
+    auto superClass = parseClassTypeSignature(); // Only rule for SuperclassSignature
+    auto superInterfaces = parseSuperInterfaces();
+    return ClassSignature::make(formalTypeParameters, superClass, superInterfaces);
 }
 
 vector<shared_ptr<FormalTypeParameter>> Parser::parseZeroOrMoreFormalTypeParameters() {
@@ -98,6 +105,7 @@ string Parser::parseIdentifier() {
         switch (c) {
             case ';':
             case '.':
+            case '$':
             case '/':
             case '[':
             case ':':
@@ -158,8 +166,12 @@ shared_ptr<SimpleClassTypeSignature> Parser::parsePackageNameAndSimpleClassTypeS
             return SimpleClassTypeSignature::make(id, false, {}); // all done!
         case '<':
             return SimpleClassTypeSignature::make(id, false, parseTypeArguments());
+        case '.':
+        case '$':
+            // the outer type is complete; nested types will be parsed by the suffix handler
+            return SimpleClassTypeSignature::make(id, false, {});
         default:
-            throw runtime_error(fmt::format("expected '<' or ';' but got {}", current()));
+            throw runtime_error(fmt::format("expected '<', ';', '.' or '$' but got {}", current()));
     }
 }
 
@@ -170,6 +182,7 @@ shared_ptr<SimpleClassTypeSignature> Parser::parseSimpleClassTypeSignature(const
     switch (c) {
         case ';':
         case '.':
+        case '$':
             return SimpleClassTypeSignature::make(id, dollar, {});
         case '<':
             return SimpleClassTypeSignature::make(id, dollar, parseTypeArguments());
@@ -178,8 +191,8 @@ shared_ptr<SimpleClassTypeSignature> Parser::parseSimpleClassTypeSignature(const
     }
 }
 
-void Parser::parseClassTypeSignatureSuffix(vector<shared_ptr<SimpleClassTypeSignature>> simpleClassTypeSignatures) {
-    while (current() == '.') {
+void Parser::parseClassTypeSignatureSuffix(vector<shared_ptr<SimpleClassTypeSignature>> &simpleClassTypeSignatures) {
+    while (current() == '.' || current() == '$') {
         advance();
         simpleClassTypeSignatures.emplace_back(parseSimpleClassTypeSignature(true));
     }
@@ -385,7 +398,7 @@ shared_ptr<ReturnType> Parser::parseReturnType() {
 }
 
 vector<shared_ptr<FieldTypeSignature>> Parser::parseZeroOrMoreThrowsSignatures() {
-    vector<shared_ptr<FieldTypeSignature>> ets(3);
+    vector<shared_ptr<FieldTypeSignature>> ets;
     while (current() == '^') {
         ets.push_back(parseThrowsSignature());
     }
@@ -404,7 +417,12 @@ void Parser::reset() {
 }
 
 shared_ptr<ClassTypeSignature> Parser::parseClassTypeSignature() {
-    if (current() != 'L') { throw runtime_error("expected a class type"); }
+    if (current() != 'L') {
+        throw runtime_error(fmt::format("expected a class type but found '{}' at position {} while parsing '{}'",
+                                        current(),
+                                        _position,
+                                        _input));
+    }
     advance();
     vector<shared_ptr<SimpleClassTypeSignature>> simpleClassTypeSignatures;
     simpleClassTypeSignatures.push_back(parsePackageNameAndSimpleClassTypeSignature());

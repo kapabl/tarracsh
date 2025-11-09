@@ -1,7 +1,7 @@
 #ifndef TARRACSH_QUERY_H
 #define TARRACSH_QUERY_H
 
-#include "app/App.h"
+#include "app/AppRuntime.h"
 #include "infrastructure/db/Database.h"
 #include "domain/db/CallGraphDb.h"
 #include "domain/db/DigestDb.h"

@@ -1,0 +1,9 @@
+package(default_visibility = ["//visibility:public"])
+
+test_suite(
+    name = "infrastructure_tests",
+    tests = [
+        "//test/src/infrastructure/db:db_tests",
+        "//test/src/infrastructure/filesystem:filesystem_tests",
+    ],
+)

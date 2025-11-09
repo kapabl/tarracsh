@@ -32,6 +32,9 @@ public:
         const app::server::digest::DiffRequest* request, 
         app::server::digest::DiffResponse* response) override;
 
+protected:
+    static void reportToResponse(const std::unique_ptr<domain::stats::report::Report>& report,
+                                 app::server::digest::DiffResponse& response);
 
 private:
     std::shared_ptr<domain::db::digest::DigestDb> _db;
@@ -45,7 +48,6 @@ private:
     void startServer();
     void waitForShutDown();
     void init();
-    static void reportToResponse(const std::unique_ptr<domain::stats::report::Report>& report, app::server::digest::DiffResponse& response);
 
 };
 }

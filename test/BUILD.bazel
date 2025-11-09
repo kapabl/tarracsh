@@ -1,0 +1,11 @@
+package(default_visibility = ["//visibility:public"])
+
+test_suite(
+    name = "tarracsh_tests",
+    tests = [
+        "//test/src/app:app_tests",
+        "//test/src/domain:domain_tests",
+        "//test/src/infrastructure:infrastructure_tests",
+        "//test/src/string:string_tests",
+    ],
+)
