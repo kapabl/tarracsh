@@ -2,7 +2,10 @@ package(default_visibility = ["//visibility:public"])
 
 cc_test(
     name = "db_tests",
-    srcs = ["QueryEngineTests.cpp"],
+    srcs = [
+        "ColumnsTests.cpp",
+        "QueryEngineTests.cpp",
+    ],
     copts = [
         "-std=c++20",
         "-DPROJECT_SOURCE_DIR=\\\"__main__\\\"",

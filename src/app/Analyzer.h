@@ -33,6 +33,7 @@ public:
 
     void run();
     void runWithPrint();
+    virtual void printAllResults();
 
 protected:
     domain::Options _options;
@@ -49,7 +50,7 @@ protected:
     bool _isValid{true};
 
     void processFile(const std::filesystem::directory_entry &dirEntry);
-    [[nodiscard]] bool initAnalyzer() const;
+    [[nodiscard]] virtual bool initAnalyzer();
     void serverLog(const std::string & string, bool doStdout = false);
 
     virtual void processStandaloneClassFile(const std::string& filename);
@@ -58,7 +59,7 @@ protected:
     virtual void endAnalysis();
     virtual void doClassFile(const std::string& filename);
 
-    void analyzeInput();
+    virtual void analyzeInput();
     void parseClassFile(const std::string& filename) const;
     void classFileParserDone(ClassFileParser &parser) const;
 

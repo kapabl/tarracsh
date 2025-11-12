@@ -114,7 +114,7 @@ void Analyzer::processFile(const std::filesystem::directory_entry &dirEntry) {
     }
 }
 
-bool Analyzer::initAnalyzer() const {
+bool Analyzer::initAnalyzer() {
     ScopedTimer timer(&_results.profileData->initAnalyzer);
     _results.log->setFile(_options.logFile);
     return true;
@@ -180,6 +180,10 @@ void Analyzer::run() {
 void Analyzer::runWithPrint() {
     run();
     if (_options.canPrintProgress()) {
-        _results.printAll();
+        printAllResults();
     }
+}
+
+void Analyzer::printAllResults() {
+    _results.printAll();
 }
