@@ -9,7 +9,7 @@ namespace kapa::tarracsh::server {
 class RequestContext final : public app::Context {
 
 public:
-    RequestContext();
+    explicit RequestContext(app::Context *context = nullptr);
     [[nodiscard]] domain::stats::Results &getResults() override { return _results; }
     [[nodiscard]] domain::Options &getOptions() override { return _options; }
     [[nodiscard]] infrastructure::log::Log &getLog() override { return *_results.log; }
@@ -23,7 +23,7 @@ private:
     std::vector<std::string> _errors;
 
     std::string _errorMessage;
-    Context& _appContext;
+    Context *_appContext;
 };
 
 

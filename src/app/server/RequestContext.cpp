@@ -6,13 +6,13 @@ using namespace kapa::tarracsh::server;
 using kapa::tarracsh::app::server::digest::DiffRequest;
 namespace runtime = kapa::tarracsh::app::runtime;
 
-RequestContext::RequestContext()
+RequestContext::RequestContext(app::Context *context)
     : _results(_options),
-      _appContext(runtime::context()) {
-    _results.log = _appContext.getResults().log;
+      _appContext(context ? context : &runtime::context()) {
+    _results.log = _appContext->getResults().log;
     _options.digest.server.isServerMode = true;
     _options.isPublicDigest = true;
-    _options.logFile = _appContext.getOptions().logFile;
+    _options.logFile = _appContext->getOptions().logFile;
 }
 
 bool RequestContext::update(const DiffRequest &request) {
