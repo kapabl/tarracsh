@@ -44,3 +44,7 @@ Quick Start
 4. Generate HTML: `genhtml bazel-out/_coverage/_coverage_report.dat --output-directory coverage/html`
 
 Keep iterating on suites until the HTML report indicates ≥90% line coverage. Prioritise hot paths and bug-prone modules before expanding to low-risk code.
+
+## Notes
+
+- Do everything under the user bazel
