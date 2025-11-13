@@ -97,6 +97,7 @@ void ClassFileProcessor::recordFieldRef(const ConstantPoolRecord &entry) {
     auto &fieldRefRow = *reinterpret_cast<db::table::FieldRefRow *>(fieldRefs->allocateRow());
     new(&fieldRefRow) FieldRefRow(*_row);
 
+    fieldRefRow.classname = _db.getPoolString(_constantPool.getClassInfoName(entry.fieldrefInfo.classIndex));
     auto nameAndTypeInfo = _constantPool.getEntry(entry.fieldrefInfo.nameAndTypeIndex).nameAndTypeInfo;
     fieldRefRow.name = _db.getPoolString(_constantPool.getString(nameAndTypeInfo.nameIndex));
     fieldRefRow.descriptor = _db.getPoolString(_constantPool.getString(nameAndTypeInfo.descriptorIndex));

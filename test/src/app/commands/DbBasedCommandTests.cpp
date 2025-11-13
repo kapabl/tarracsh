@@ -164,3 +164,135 @@ TEST(DbBasedCommandTests, ServerSubcommandCannotCombineWithInput) {
     auto argv = makeArgv(args);
     EXPECT_THROW(root.parse(static_cast<int>(argv.size()), argv.data()), CLI::ParseError);
 }
+
+TEST(DbBasedCommandTests, ServerFlagRequiresDiffOption) {
+    CLI::App root{"test"};
+    Options options;
+    auto &subOptions = options.digest;
+    DummyDbCommand command(&root, subOptions);
+    command.addCommand();
+
+    std::vector<std::string> args{
+        "prog",
+        "dummy",
+        "--input",
+        "/tmp/input",
+        "--server"
+    };
+    auto argv = makeArgv(args);
+    EXPECT_THROW(root.parse(static_cast<int>(argv.size()), argv.data()), CLI::ParseError);
+}
+
+TEST(DbBasedCommandTests, DisplayRawFlagRequiresQuery) {
+    CLI::App root{"test"};
+    Options options;
+    auto &subOptions = options.digest;
+    DummyDbCommand command(&root, subOptions);
+    command.addCommand();
+
+    std::vector<std::string> args{
+        "prog",
+        "dummy",
+        "--display-raw"
+    };
+    auto argv = makeArgv(args);
+    EXPECT_THROW(root.parse(static_cast<int>(argv.size()), argv.data()), CLI::ParseError);
+}
+
+TEST(DbBasedCommandTests, RebuildFlagExcludesDryRun) {
+    CLI::App root{"test"};
+    Options options;
+    auto &subOptions = options.digest;
+    DummyDbCommand command(&root, subOptions);
+    command.addCommand();
+
+    std::vector<std::string> args{
+        "prog",
+        "dummy",
+        "--input",
+        "/tmp/input",
+        "--rebuild",
+        "--dry-run"
+    };
+    auto argv = makeArgv(args);
+    EXPECT_THROW(root.parse(static_cast<int>(argv.size()), argv.data()), CLI::ParseError);
+}
+
+TEST(DbBasedCommandTests, ServerStopCannotCombineWithPortOrAddress) {
+    CLI::App root{"test"};
+    Options options;
+    auto &subOptions = options.digest;
+    DummyDbCommand command(&root, subOptions);
+    command.addCommand();
+
+    std::vector<std::string> args{
+        "prog",
+        "dummy",
+        "server",
+        "--stop",
+        "--port",
+        "5000"
+    };
+    auto argv = makeArgv(args);
+    EXPECT_THROW(root.parse(static_cast<int>(argv.size()), argv.data()), CLI::ParseError);
+
+    std::vector<std::string> addrArgs{
+        "prog",
+        "dummy",
+        "server",
+        "--stop",
+        "--listen-addr",
+        "127.0.0.1"
+    };
+    auto addrArgv = makeArgv(addrArgs);
+    EXPECT_THROW(root.parse(static_cast<int>(addrArgv.size()), addrArgv.data()), CLI::ParseError);
+}
+
+TEST(DbBasedCommandTests, DryRunFlagRequiresInput) {
+    CLI::App root{"test"};
+    Options options;
+    auto &subOptions = options.digest;
+    DummyDbCommand command(&root, subOptions);
+    command.addCommand();
+
+    std::vector<std::string> args{
+        "prog",
+        "dummy",
+        "--dry-run"
+    };
+    auto argv = makeArgv(args);
+    EXPECT_THROW(root.parse(static_cast<int>(argv.size()), argv.data()), CLI::ParseError);
+}
+
+TEST(DbBasedCommandTests, RebuildFlagRequiresInput) {
+    CLI::App root{"test"};
+    Options options;
+    auto &subOptions = options.digest;
+    DummyDbCommand command(&root, subOptions);
+    command.addCommand();
+
+    std::vector<std::string> args{
+        "prog",
+        "dummy",
+        "--rebuild"
+    };
+    auto argv = makeArgv(args);
+    EXPECT_THROW(root.parse(static_cast<int>(argv.size()), argv.data()), CLI::ParseError);
+}
+
+TEST(DbBasedCommandTests, ServerFlagRequiresInputEvenWhenDiffProvided) {
+    CLI::App root{"test"};
+    Options options;
+    auto &subOptions = options.digest;
+    DummyDbCommand command(&root, subOptions);
+    command.addCommand();
+
+    std::vector<std::string> args{
+        "prog",
+        "dummy",
+        "--diff",
+        "--server"
+    };
+    auto argv = makeArgv(args);
+    EXPECT_THROW(root.parse(static_cast<int>(argv.size()), argv.data()), CLI::ParseError);
+}

@@ -3,6 +3,13 @@
     - replace a version of lib in jar and create a separate call-graph and check if call-graph breaks:
         -missing function call that existed before
 
+## Pending tasks
+    - populate `FieldRefRow.classname` in `src/domain/graph/ClassfileProcessor.cpp` so field references can be linked back to concrete fields and produce edges
+    - implement the `runAsClient` and `runAsServer` flows in `src/app/commands/callgraph/CallGraph.cpp` (currently just stubs that print “not implemented yet”)
+    - hook up `CallGraphAnalyzer::doClassFile` / `processStandaloneClassFile` so single-class inputs work instead of exiting early
+    - revisit persistence: `CallGraphAnalyzer::endAnalysis()` stops the DB but `write()` is still commented out, so call-graph data never reaches disk outside long-running servers
+    - emit `.dot`/GML artifacts from the computed call graph, highlighting missing/broken edges (e.g. render missing calls in red) to simplify diffing between jar versions
+
 ## Third parties (maven)
     - given maven lib, pull all versions from
 maven and save it in store

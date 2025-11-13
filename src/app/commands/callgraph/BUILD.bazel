@@ -5,10 +5,12 @@ cc_library(
     srcs = [
         "CallGraph.cpp",
         "CallGraphAnalyzer.cpp",
+        "CallGraphExporter.cpp",
     ],
     hdrs = [
         "CallGraph.h",
         "CallGraphAnalyzer.h",
+        "CallGraphExporter.h",
     ],
     copts = ["-std=c++20"],
     defines = ["FMT_HEADER_ONLY=1"],

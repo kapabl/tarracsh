@@ -134,3 +134,14 @@ TEST(ColumnsTests, PropertiesValueToStringFormatsStringRawWhenRequested) {
             reinterpret_cast<char *>(&stringIndex), db, true),
         "321");
 }
+
+TEST(ColumnsTests, PropertiesValueToStringFetchesStringFromPool) {
+    DummyDatabase db;
+    db.init();
+    auto stringId = db.getStringPool()->add("from-pool");
+    Properties strProp("str", StorageType::String, DisplayAs::AsString, 0);
+    EXPECT_EQ(
+        strProp.valueToString(
+            reinterpret_cast<char *>(&stringId), db, false),
+        "from-pool");
+}

@@ -8,12 +8,8 @@ using namespace kapa::tarracsh::app::server::digest;
 using kapa::tarracsh::server::digest::ServiceImpl;
 
 ServerCommand::ServerCommand(Context &appConfig)
-    : _appConfig(appConfig) {
-
-    const auto channel = grpc::CreateChannel(_appConfig.getOptions().digest.client.getServerAddress(),
-                                             grpc::InsecureChannelCredentials());
-
-    _stub = PublicDigest::NewStub(channel);
+    : _appConfig(appConfig),
+      _stub(stubFactory()(appConfig)) {
 }
 
 bool ServerCommand::run(Context &appConfig) {
@@ -47,7 +43,7 @@ bool ServerCommand::stop() const {
 }
 
 bool ServerCommand::start() const {
-    const auto result = ServiceImpl::start(_appConfig);
+    const auto result = serverStarter()(_appConfig);
     return result;
 }
 
@@ -101,4 +97,35 @@ bool ServerCommand::diff() const {
     }
 
     return result;
+}
+
+auto ServerCommand::stubFactory() -> StubFactory & {
+    static StubFactory factory = [](Context &context) -> std::unique_ptr<PublicDigest::StubInterface> {
+        const auto channel = grpc::CreateChannel(context.getOptions().digest.client.getServerAddress(),
+                                                 grpc::InsecureChannelCredentials());
+        auto stub = PublicDigest::NewStub(channel);
+        return std::unique_ptr<PublicDigest::StubInterface>(stub.release());
+    };
+    return factory;
+}
+
+auto ServerCommand::serverStarter() -> ServerStarter & {
+    static ServerStarter starter = [](Context &context) {
+        return ServiceImpl::start(context);
+    };
+    return starter;
+}
+
+auto ServerCommand::setStubFactoryForTests(StubFactory replacement) -> StubFactory {
+    auto &factory = stubFactory();
+    auto previous = std::move(factory);
+    factory = std::move(replacement);
+    return previous;
+}
+
+auto ServerCommand::setServerStarterForTests(ServerStarter replacement) -> ServerStarter {
+    auto &starter = serverStarter();
+    auto previous = std::move(starter);
+    starter = std::move(replacement);
+    return previous;
 }

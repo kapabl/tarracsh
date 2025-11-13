@@ -79,7 +79,7 @@ ExitCode PublicDigest::run() {
     if (isServerMode()) {
         result = runAsServer();
     } else if (!_options.digest.queryValue.empty()) {
-        result = Query::run(runtime::context());
+        result = Query::run(runtime::context()) ? 0 : 1;
     } else {
         result = digestInput();
     }

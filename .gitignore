@@ -18,3 +18,5 @@
 /vcpkg_installed/
 /.history
 /packages/vcpkg-source.tar.gz
+perf.data
+/jar-for-tests

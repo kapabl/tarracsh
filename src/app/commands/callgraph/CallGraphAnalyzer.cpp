@@ -2,6 +2,10 @@
 #include <string>
 #include <vector>
 #include "CallGraphAnalyzer.h"
+#include "domain/Utils.h"
+#include "domain/classfile/reader/FileReader.h"
+#include "domain/graph/ClassFileProcessor.h"
+#include "CallGraphExporter.h"
 #include "domain/jar/tasks/GraphTask.h"
 #include "domain/jar/Processor.h"
 #include "infrastructure/profiling/ScopedTimer.h"
@@ -16,6 +20,7 @@ using kapa::tarracsh::domain::db::callgraph::CallGraphDb;
 using kapa::tarracsh::domain::jar::tasks::GraphTask;
 using kapa::tarracsh::domain::jar::Processor;
 
+using kapa::tarracsh::domain::db::table::FileRow;
 using kapa::tarracsh::domain::db::table::ClassRefRow;
 using kapa::tarracsh::domain::db::table::ClassRefEdgeRow;
 using kapa::tarracsh::domain::db::table::ClassRefEdges;
@@ -32,6 +37,7 @@ using kapa::tarracsh::domain::db::table::FieldRow;
 using kapa::tarracsh::domain::db::table::FieldRefRow;
 using kapa::tarracsh::domain::db::table::FieldRefEdges;
 using kapa::tarracsh::domain::db::table::FieldRefEdgeRow;
+using kapa::tarracsh::domain::graph::ClassFileProcessor;
 
 CallGraphAnalyzer::CallGraphAnalyzer(Context &config, const std::shared_ptr<CallGraphDb> &db)
         : _callGraphDb(db),
@@ -135,6 +141,10 @@ void CallGraphAnalyzer::linkRefNodes() {
 
 void CallGraphAnalyzer::endAnalysis() {
     linkRefNodes();
+    if (_callGraphDb != nullptr) {
+        CallGraphExporter exporter(_callGraphDb, _results, _options.outputDir);
+        exporter.exportAll();
+    }
     if (!_options.callGraph.dryRun) {
         if (!_options.callGraph.server.isServerMode) {
             ScopedTimer timer(&_results.profileData->writeCallGraphDb);
@@ -146,11 +156,83 @@ void CallGraphAnalyzer::endAnalysis() {
 }
 
 void CallGraphAnalyzer::doClassFile(const std::string &filename) {
-    //TODO
+    if (_callGraphDb == nullptr) {
+        _results.log->writeln("Call graph database is not initialized", true);
+        return;
+    }
+
+    StandaloneClassFileInfo fileInfo(filename);
+    auto filesTable = _callGraphDb->getFiles();
+    auto classFiles = _callGraphDb->getClassFiles();
+
+    auto *existingFileRow = reinterpret_cast<FileRow *>(filesTable->findByKey(fileInfo.filename));
+    const bool fileExists = existingFileRow != nullptr;
+    const bool isUnchanged = _options.useFileTimestamp &&
+                             fileExists &&
+                             existingFileRow->fileSize == fileInfo.size &&
+                             existingFileRow->lastWriteTime == fileInfo.timestamp;
+
+    ++_results.standaloneClassfiles.taskResult.count;
+
+    if (isUnchanged) {
+        _results.report->asUnchangedClassFile(filename);
+        return;
+    }
+
+    kapa::tarracsh::domain::classfile::reader::FileReader reader(filename);
+    ClassFileParser parser(reader, filename, _results.log);
+
+    if (!parser.parse()) {
+        ++_results.standaloneClassfiles.errors;
+        _results.report->asFailedClassFile(filename);
+        return;
+    }
+
+    ++_results.standaloneClassfiles.parsedCount;
+
+    auto &fileRow = reinterpret_cast<FileRow &>(*filesTable->allocateRow());
+    new(&fileRow) FileRow();
+    fileRow.filename = _callGraphDb->getPoolString(fileInfo.filename);
+    fileRow.lastWriteTime = fileInfo.timestamp;
+    fileRow.fileSize = fileInfo.size;
+    fileRow.classfileCount = 1;
+    filesTable->addOrUpdate(&fileRow);
+
+    auto *storedFileRow = reinterpret_cast<FileRow *>(filesTable->findByKey(fileInfo.filename));
+    if (storedFileRow == nullptr) {
+        _results.log->writeln(fmt::format("Failed to upsert file row for {}", filename), true);
+        return;
+    }
+
+    const auto classname = parser.getMainClassname();
+    const auto strongClassname =
+            kapa::tarracsh::domain::utils::getStrongClassname(filename.c_str(), classname.c_str());
+
+    auto *existingClassRow = reinterpret_cast<ClassFileRow *>(classFiles->findByKey(strongClassname));
+    if (existingClassRow != nullptr) {
+        _callGraphDb->deleteClass(existingClassRow);
+    }
+
+    auto &classRow = reinterpret_cast<ClassFileRow &>(*classFiles->allocateRow());
+    new(&classRow) ClassFileRow(*storedFileRow);
+    classRow.classname = _callGraphDb->getPoolString(classname);
+    classRow.lastWriteTime = fileInfo.timestamp;
+    classRow.size = fileInfo.size;
+    classRow.crc = 0;
+    classFiles->addOrUpdate(&classRow);
+
+    ClassFileProcessor processor(&classRow, parser, *_callGraphDb);
+    processor.extractNodes();
+
+    if (existingClassRow != nullptr) {
+        _results.report->asModifiedClassFile(false, strongClassname);
+    } else {
+        _results.report->asNewClassFile(strongClassname);
+    }
 }
 
 void CallGraphAnalyzer::processStandaloneClassFile(const std::string &filename) {
-    _results.log->writeln(fmt::format("Standalone class file not supported yet: {}", filename));
+    Analyzer::processStandaloneClassFile(filename);
 }
 
 void CallGraphAnalyzer::processJar(const std::string &filename) {
@@ -167,4 +249,3 @@ void CallGraphAnalyzer::processJar(const std::string &filename) {
 
     });
 }
-
