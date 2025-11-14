@@ -16,9 +16,11 @@ class CallGraphExporter {
 public:
     CallGraphExporter(std::shared_ptr<domain::db::callgraph::CallGraphDb> db,
                       domain::stats::Results &results,
-                      std::string outputDir);
+                      std::string outputDir,
+                      bool exportDot,
+                      bool exportGml);
 
-    auto exportAll() -> bool;
+    auto run() -> bool;
 
 private:
     struct NodeRecord {
@@ -38,6 +40,8 @@ private:
     std::shared_ptr<domain::db::callgraph::CallGraphDb> _db;
     domain::stats::Results &_results;
     std::filesystem::path _outputDir;
+    bool _exportDot{false};
+    bool _exportGml{false};
 
     std::vector<NodeRecord> _nodes;
     std::unordered_map<uint64_t, int> _classNodeIds;

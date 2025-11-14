@@ -46,6 +46,7 @@ public:
     [[nodiscard]] std::string getStrongClassname(uint64_t id);
     [[nodiscard]] std::string getStrongClassname(const ClassFileRow &row) const;
 
+    void archiveRow(ClassFileRow &row, const std::string &strongClassname);
     void defineColumns() override;
     auto getClassFileRow( uint64_t rowId ) const -> ClassFileRow*;
     auto getClassname(const ClassFileRow &row) const -> std::string;

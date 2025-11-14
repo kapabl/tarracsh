@@ -1,5 +1,7 @@
 #include "ClassFiles.h"
 #include "domain/Utils.h"
+#include <fmt/format.h>
+#include <mutex>
 
 using namespace kapa::tarracsh::domain::db::table;
 using namespace kapa::infrastructure::db::table::column;
@@ -35,6 +37,16 @@ std::string ClassFiles::getClassname(const ClassFileRow &row) const {
     //TODO maybe we should use a string_view for performance
     auto result = _stringPool->getCString(row.classname);
     return result;
+}
+
+void ClassFiles::archiveRow(ClassFileRow &row, const std::string &strongClassname) {
+    const auto archivedKey = fmt::format("{}#{}", strongClassname, static_cast<uint64_t>(row.id));
+    std::unique_lock<std::shared_mutex> lock(_mutex);
+    _rows[archivedKey] = &row;
+    auto it = _rows.find(strongClassname);
+    if (it != _rows.end() && it->second == &row) {
+        _rows.erase(it);
+    }
 }
 
 std::string ClassFiles::getStrongClassname(const FileRow &fileRow, const char *classname) const {

@@ -20,6 +20,7 @@ using kapa::infrastructure::db::table::AutoIncrementedRow;
 
 
 namespace kapa::tarracsh::app::commands::callgraph {
+    namespace testhooks { class CallGraphAnalyzerAccessor; }
     class CallGraphAnalyzer : public Analyzer {
     public:
 
@@ -39,6 +40,7 @@ namespace kapa::tarracsh::app::commands::callgraph {
 
 
     private:
+        friend class testhooks::CallGraphAnalyzerAccessor;
         void endAnalysis() override;
 
         void doClassFile(const std::string &filename) override;

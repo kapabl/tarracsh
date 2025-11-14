@@ -55,8 +55,7 @@ void CallGraphAnalyzer::linkClassRefs() {
 
     auto classRefEdges = _callGraphDb->getClassRefEdges();
     classRefs->forEach([this, classRefEdges, classRefs](AutoIncrementedRow *pRow) -> void {
-
-        auto classRefRow = reinterpret_cast<ClassRefRow &>(*pRow);
+        auto &classRefRow = reinterpret_cast<ClassRefRow &>(*pRow);
         auto it = _classesByName.find(classRefRow.name);
         if (it != _classesByName.end()) {
             classRefs->updateInPlace([&classRefRow, &it]() -> ClassRefRow * {
@@ -141,9 +140,11 @@ void CallGraphAnalyzer::linkRefNodes() {
 
 void CallGraphAnalyzer::endAnalysis() {
     linkRefNodes();
-    if (_callGraphDb != nullptr) {
-        CallGraphExporter exporter(_callGraphDb, _results, _options.outputDir);
-        exporter.exportAll();
+    const bool wantsDot = _options.callGraph.exportDot;
+    const bool wantsGml = _options.callGraph.exportGml;
+    if (_callGraphDb != nullptr && (wantsDot || wantsGml)) {
+        CallGraphExporter exporter(_callGraphDb, _results, _options.outputDir, wantsDot, wantsGml);
+        exporter.run();
     }
     if (!_options.callGraph.dryRun) {
         if (!_options.callGraph.server.isServerMode) {
@@ -183,7 +184,6 @@ void CallGraphAnalyzer::doClassFile(const std::string &filename) {
     ClassFileParser parser(reader, filename, _results.log);
 
     if (!parser.parse()) {
-        ++_results.standaloneClassfiles.errors;
         _results.report->asFailedClassFile(filename);
         return;
     }
@@ -211,6 +211,8 @@ void CallGraphAnalyzer::doClassFile(const std::string &filename) {
     auto *existingClassRow = reinterpret_cast<ClassFileRow *>(classFiles->findByKey(strongClassname));
     if (existingClassRow != nullptr) {
         _callGraphDb->deleteClass(existingClassRow);
+        classFiles->archiveRow(*existingClassRow, strongClassname);
+        classFiles->deleteRow(existingClassRow->id);
     }
 
     auto &classRow = reinterpret_cast<ClassFileRow &>(*classFiles->allocateRow());
@@ -219,7 +221,7 @@ void CallGraphAnalyzer::doClassFile(const std::string &filename) {
     classRow.lastWriteTime = fileInfo.timestamp;
     classRow.size = fileInfo.size;
     classRow.crc = 0;
-    classFiles->addOrUpdate(&classRow);
+    classFiles->add(&classRow);
 
     ClassFileProcessor processor(&classRow, parser, *_callGraphDb);
     processor.extractNodes();
@@ -238,7 +240,11 @@ void CallGraphAnalyzer::processStandaloneClassFile(const std::string &filename) 
 void CallGraphAnalyzer::processJar(const std::string &filename) {
     _fileThreadPool.detach_task([this, filename] {
         domain::Options jarOptions(_options);
-        jarOptions.getSubCommandOptions().input = filename;
+        jarOptions.isCallGraph = true;
+        auto &jarInputs = jarOptions.callGraph;
+        jarInputs.input = filename;
+        jarInputs.isJar = true;
+        (void)jarInputs.processInput();
 
         ++_results.jarfiles.count;
         {

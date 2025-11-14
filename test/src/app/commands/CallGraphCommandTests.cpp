@@ -143,3 +143,60 @@ TEST_F(CallGraphCommandTest, RunFailsWhenInputIsInvalid) {
     const auto exitCode = command.run();
     EXPECT_EQ(exitCode, 1);
 }
+
+TEST_F(CallGraphCommandTest, ProcessInputRunsStandaloneWhenClientModeDisabled) {
+    CLI::App cli("tarracsh");
+    CallGraph command(&cli);
+    command.addCommand();
+
+    auto &options = App::_app->_options;
+    options.isCallGraph = true;
+    auto inputDir = tempDir / "input-dir";
+    std::filesystem::create_directories(inputDir);
+    options.callGraph.input = inputDir.string();
+    options.callGraph.client.isClientMode = false;
+
+    const auto exitCode = command.processInput();
+    EXPECT_EQ(exitCode, 0);
+}
+
+TEST_F(CallGraphCommandTest, ProcessInputFallsBackToClientModeWhenEnabled) {
+    CLI::App cli("tarracsh");
+    CallGraph command(&cli);
+    command.addCommand();
+
+    auto &options = App::_app->_options;
+    options.isCallGraph = true;
+    options.callGraph.input = tempDir.string();
+    options.callGraph.client.isClientMode = true;
+
+    const auto exitCode = command.processInput();
+    EXPECT_EQ(exitCode, 1);
+}
+
+TEST_F(CallGraphCommandTest, RunUsesServerModeWhenServerFlagSet) {
+    CLI::App cli("tarracsh");
+    CallGraph command(&cli);
+    command.addCommand();
+
+    auto &options = App::_app->_options;
+    options.isCallGraph = true;
+    options.callGraph.server.isServerMode = true;
+
+    const auto exitCode = command.run();
+    EXPECT_EQ(exitCode, 0);
+}
+
+TEST_F(CallGraphCommandTest, InitDbCreatesCallGraphDatabase) {
+    CLI::App cli("tarracsh");
+    CallGraph command(&cli);
+    command.addCommand();
+
+    auto &options = App::_app->_options;
+    options.isCallGraph = true;
+    options.outputDir = tempDir.string();
+
+    ASSERT_TRUE(command.initDb());
+    ASSERT_NE(command._db, nullptr);
+    command._db->stop();
+}

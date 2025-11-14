@@ -54,8 +54,8 @@ void Report::asNewClassFile(const std::string &strongClassname) {
     if (getBaseOptions().isDiff) {
         const auto parts = utils::splitStrongClassname(strongClassname);
         addNewFile(parts[0]);
-        addNewClass(strongClassname);
     }
+    addNewClass(strongClassname);
 }
 
 void Report::addModifiedFile(const std::string &filename, const bool isSamePublicDigest) {
@@ -91,8 +91,8 @@ void Report::asModifiedClassFile(bool isSamePublicDigest,
     if (getBaseOptions().isDiff) {
         const auto parts = utils::splitStrongClassname(strongClassname);
         addModifiedFile(parts[0], isSamePublicDigest);
-        addModifiedClass(strongClassname, isSamePublicDigest);
     }
+    addModifiedClass(strongClassname, isSamePublicDigest);
 
 }
 

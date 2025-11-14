@@ -88,6 +88,33 @@ TEST(SubCommandOptions, InvalidInputReturnsFalse) {
     EXPECT_FALSE(subOptions.isValidInput());
 }
 
+TEST(SubCommandOptions, ProcessInputClearsPreviousFlags) {
+    SubCommandOptions subOptions;
+
+    auto tempDir = std::filesystem::temp_directory_path();
+    subOptions.input = tempDir.string();
+    EXPECT_TRUE(subOptions.processInput());
+    EXPECT_TRUE(subOptions.isDir);
+    EXPECT_FALSE(subOptions.isJar);
+    EXPECT_FALSE(subOptions.isClassFile);
+
+    const auto jar = createTempFile(".jar");
+    subOptions.input = jar.string();
+    EXPECT_TRUE(subOptions.processInput());
+    EXPECT_TRUE(subOptions.isJar);
+    EXPECT_FALSE(subOptions.isDir);
+    EXPECT_FALSE(subOptions.isClassFile);
+    std::filesystem::remove(jar);
+
+    const auto classFile = createTempFile(".class");
+    subOptions.input = classFile.string();
+    EXPECT_TRUE(subOptions.processInput());
+    EXPECT_TRUE(subOptions.isClassFile);
+    EXPECT_FALSE(subOptions.isJar);
+    EXPECT_FALSE(subOptions.isDir);
+    std::filesystem::remove(classFile);
+}
+
 TEST(ServerOptions, FormatsListenAddress) {
     ServerOptions options;
     options.listenAddress = "127.0.0.1";

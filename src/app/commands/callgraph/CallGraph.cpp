@@ -73,6 +73,10 @@ bool CallGraph::runAsClient() {
 void CallGraph::addMainSubCommand() {
     _subCommand = _parent->add_subcommand("call-graph", "Creates call-graph");
     _subCommand->add_flag("--verbose, -v", _options.verbose, "Verbose output");
+    _subCommand->add_flag("--dot", _options.callGraph.exportDot,
+                          "Emit call-graph as DOT file (callgraph/callgraph.dot)");
+    _subCommand->add_flag("--gml", _options.callGraph.exportGml,
+                          "Emit call-graph as GML file (callgraph/callgraph.gml)");
 }
 
 bool CallGraph::initDb() {

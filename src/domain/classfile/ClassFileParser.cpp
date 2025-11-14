@@ -26,6 +26,9 @@ bool ClassFileParser::internalParse() {
 
     auto result = true;
     try {
+        if (!isValidHeader()) {
+            throw runtime_error(fmt::format("Invalid class file header: {}", _filename));
+        }
         processFile();
     } catch (const runtime_error &runtimeException) {
         result = false;
@@ -266,8 +269,6 @@ void ClassFileParser::readAttributes() {
 
 
 void ClassFileParser::processFile() {
-    if (!isValidHeader()) return;
-
     initialize();
     readConstantsPool();
     readMainClassInfo();

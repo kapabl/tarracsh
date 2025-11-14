@@ -40,13 +40,17 @@ constexpr const char *kMissingColor = "#C00000";
 
 CallGraphExporter::CallGraphExporter(std::shared_ptr<CallGraphDb> db,
                                      kapa::tarracsh::domain::stats::Results &results,
-                                     std::string outputDir)
+                                     std::string outputDir,
+                                     bool exportDot,
+                                     bool exportGml)
     : _db(std::move(db)),
       _results(results),
-      _outputDir(std::move(outputDir)) {
+      _outputDir(std::move(outputDir)),
+      _exportDot(exportDot),
+      _exportGml(exportGml) {
 }
 
-auto CallGraphExporter::exportAll() -> bool {
+auto CallGraphExporter::run() -> bool {
     if (_db == nullptr) {
         return false;
     }
@@ -59,9 +63,19 @@ auto CallGraphExporter::exportAll() -> bool {
     std::vector<EdgeRecord> edges;
     collectEdges(edges);
 
+    if (!_exportDot && !_exportGml) {
+        return true;
+    }
+
     const auto graphDir = ensureOutputDir();
-    const auto dotOk = writeDot(graphDir / "callgraph.dot", edges);
-    const auto gmlOk = writeGml(graphDir / "callgraph.gml", edges);
+    bool dotOk = true;
+    bool gmlOk = true;
+    if (_exportDot) {
+        dotOk = writeDot(graphDir / "callgraph.dot", edges);
+    }
+    if (_exportGml) {
+        gmlOk = writeGml(graphDir / "callgraph.gml", edges);
+    }
 
     return dotOk && gmlOk;
 }

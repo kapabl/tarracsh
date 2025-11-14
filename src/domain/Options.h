@@ -44,6 +44,8 @@ struct DigestOptions : SubCommandOptions {
 };
 
 struct CallGraphOptions : SubCommandOptions {
+    bool exportDot{false};
+    bool exportGml{false};
 };
 
 struct ParseOptions : SubCommandOptions {

@@ -4,20 +4,13 @@
 #include <chrono>
 #include <cstdlib>
 #include <filesystem>
-#include <memory>
 #include <optional>
 #include <string>
 #include <vector>
 
-#define private public
-#define protected public
 #include "interfaces/tarracsh/App.h"
-#undef private
-#undef protected
 
-#include "infrastructure/log/Log.h"
-
-using kapa::tarracsh::app::App;
+using namespace kapa::tarracsh::app;
 
 namespace {
 
@@ -39,81 +32,82 @@ std::vector<char *> makeArgv(std::vector<std::string> &args) {
     return argv;
 }
 
-class AppTestFixture : public ::testing::Test {
-protected:
-    void SetUp() override {
-        originalHome = std::getenv("HOME") ? std::optional<std::string>(std::getenv("HOME")) : std::nullopt;
-        tempHome = makeTempDir("tarracsh-app-home-");
-        setenv("HOME", tempHome.string().c_str(), 1);
-
-        log = std::make_shared<kapa::infrastructure::log::Log>();
-        log->init((tempHome / "test.log").string());
-
-        App::_app = std::make_unique<App>("", "tarracsh", log);
-    }
-
-    void TearDown() override {
-        App::_app.reset();
-        if (originalHome) {
-            setenv("HOME", originalHome->c_str(), 1);
-        } else {
-            unsetenv("HOME");
+class ScopedEnvVar {
+public:
+    ScopedEnvVar(std::string name, const std::string &value)
+        : _name(std::move(name)) {
+        const char *current = std::getenv(_name.c_str());
+        if (current != nullptr) {
+            _original = current;
         }
-        std::error_code ec;
-        std::filesystem::remove_all(tempHome, ec);
+        setenv(_name.c_str(), value.c_str(), 1);
     }
 
-    std::shared_ptr<kapa::infrastructure::log::Log> log;
-    std::optional<std::string> originalHome;
-    std::filesystem::path tempHome;
+    ~ScopedEnvVar() {
+        if (_original) {
+            setenv(_name.c_str(), _original->c_str(), 1);
+        } else {
+            unsetenv(_name.c_str());
+        }
+    }
+
+private:
+    std::string _name;
+    std::optional<std::string> _original;
 };
 
-}  // namespace
+} // namespace
 
-TEST_F(AppTestFixture, ParsesDigestQueryAndSetsDefaultPaths) {
-    ASSERT_NE(nullptr, App::_app);
-    auto &app = *App::_app;
+TEST(AppCliTests, ParseCommandSetsOptionsAndFailsOnInvalidInput) {
+    const auto tempHome = makeTempDir("tarracsh-app-parse-");
+    ScopedEnvVar homeGuard("HOME", tempHome.string());
+    const auto missingInput = tempHome / "missing.class";
 
-    std::vector<std::string> args = {"tarracsh", "public-digest", "--query", "list files"};
-    auto argv = makeArgv(args);
-
-    const auto exitCode = app.parseCli(static_cast<int>(args.size()), argv.data());
-    EXPECT_EQ(0, exitCode);
-    EXPECT_TRUE(app._options.isPublicDigest);
-    EXPECT_EQ("list files", app._options.digest.queryValue);
-
-    const auto expectedOutput = tempHome / "tarracsh" / "output";
-    EXPECT_EQ(expectedOutput, std::filesystem::path(app._options.outputDir));
-    EXPECT_EQ(expectedOutput / "output.log", std::filesystem::path(app._options.logFile));
-}
-
-TEST_F(AppTestFixture, StartFailsWhenNoSubcommandIsProvided) {
-    ASSERT_NE(nullptr, App::_app);
-    auto &app = *App::_app;
-
-    std::vector<std::string> args = {"tarracsh"};
-    auto argv = makeArgv(args);
-
-    const auto exitCode = app.start(static_cast<int>(args.size()), argv.data());
-    EXPECT_EQ(1, exitCode);
-}
-
-TEST_F(AppTestFixture, ParseSubcommandHonorsPauseFlag) {
-    ASSERT_NE(nullptr, App::_app);
-    auto &app = *App::_app;
-
-    std::vector<std::string> args = {
+    std::vector<std::string> args{
         "tarracsh",
-        "--pause",
         "parse",
-        "--input",
-        "/tmp/sample.jar",
+        "--input", missingInput.string()
     };
     auto argv = makeArgv(args);
 
-    const auto exitCode = app.parseCli(static_cast<int>(args.size()), argv.data());
-    EXPECT_EQ(0, exitCode);
-    EXPECT_TRUE(app._options.isParse);
-    EXPECT_TRUE(app._options.pause);
-    EXPECT_EQ("/tmp/sample.jar", app._options.parse.input);
+    const auto exitCode = App::run(static_cast<int>(argv.size()), argv.data());
+    EXPECT_EQ(exitCode, 1);
+
+    const auto &options = App::getGlobalOptions();
+    EXPECT_TRUE(options.isParse);
+    EXPECT_FALSE(options.isPublicDigest);
+    EXPECT_FALSE(options.isCallGraph);
+    const auto expectedOutputDir = (tempHome / "tarracsh" / "output").string();
+    EXPECT_EQ(options.outputDir, expectedOutputDir);
+    EXPECT_EQ(options.logFile, (std::filesystem::path(expectedOutputDir) / "output.log").string());
+    EXPECT_EQ(options.parse.input, missingInput.string());
+
+    std::filesystem::remove_all(tempHome);
+}
+
+TEST(AppCliTests, CallGraphCommandMarksCallGraphMode) {
+    const auto tempHome = makeTempDir("tarracsh-app-callgraph-");
+    ScopedEnvVar homeGuard("HOME", tempHome.string());
+    const auto missingInput = tempHome / "missing.jar";
+
+    std::vector<std::string> args{
+        "tarracsh",
+        "call-graph",
+        "--input", missingInput.string()
+    };
+    auto argv = makeArgv(args);
+
+    const auto exitCode = App::run(static_cast<int>(argv.size()), argv.data());
+    EXPECT_EQ(exitCode, 1);
+
+    const auto &options = App::getGlobalOptions();
+    EXPECT_TRUE(options.isCallGraph);
+    EXPECT_FALSE(options.isParse);
+    EXPECT_FALSE(options.isPublicDigest);
+    EXPECT_EQ(options.callGraph.input, missingInput.string());
+    const auto expectedOutputDir = (tempHome / "tarracsh" / "output").string();
+    EXPECT_EQ(options.outputDir, expectedOutputDir);
+    EXPECT_EQ(options.logFile, (std::filesystem::path(expectedOutputDir) / "output.log").string());
+
+    std::filesystem::remove_all(tempHome);
 }
