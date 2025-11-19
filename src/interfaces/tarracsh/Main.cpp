@@ -1,4 +1,4 @@
-#include "interfaces/tarracsh/App.h"
+#include "interfaces/tarracsh/TarracshCli.h"
 
 
 
@@ -24,6 +24,6 @@ using namespace app;
  *
  */
 int main(int argc, char *argv[]) {
-    const auto result = App::run(argc, argv);
+    const auto result = TarracshCli::run(argc, argv);
     return result;
 }   

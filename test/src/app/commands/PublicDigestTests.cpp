@@ -7,12 +7,9 @@
 #include <memory>
 #include <string>
 
-#define private public
-#define protected public
-#include "interfaces/tarracsh/App.h"
 #include "app/commands/digest/PublicDigest.h"
-#undef private
-#undef protected
+#include "app/server/digest/ServerCommand.h"
+#include "test/src/app/runtime/TestRuntime.h"
 
 #include "app/commands/Query.h"
 #include "infrastructure/db/Database.h"
@@ -20,9 +17,14 @@
 
 using kapa::infrastructure::db::Database;
 using kapa::infrastructure::log::Log;
-using kapa::tarracsh::app::App;
 using kapa::tarracsh::app::commands::digest::PublicDigest;
 using kapa::tarracsh::app::commands::Query;
+using kapa::tarracsh::app::server::digest::DiffRequest;
+using kapa::tarracsh::app::server::digest::DiffResponse;
+using kapa::tarracsh::app::server::digest::Empty;
+using ServerPublicDigest = kapa::tarracsh::app::server::digest::PublicDigest;
+using kapa::tarracsh::app::server::digest::ServerCommand;
+namespace runtime_test = kapa::tarracsh::app::runtime::test;
 
 namespace {
 
@@ -71,6 +73,65 @@ private:
     Query::QueryExecutor previous;
 };
 
+struct FakeDigestStubState {
+    grpc::Status nextDiffStatus{grpc::Status::OK};
+    DiffRequest lastDiffRequest;
+    bool diffCalled{false};
+};
+
+class FakeDigestStub : public ServerPublicDigest::StubInterface {
+public:
+    explicit FakeDigestStub(std::shared_ptr<FakeDigestStubState> sharedState)
+        : state(std::move(sharedState)) {}
+
+    grpc::Status Quit(grpc::ClientContext *context,
+                      const Empty &request,
+                      Empty *response) override {
+        return grpc::Status(grpc::StatusCode::UNIMPLEMENTED, "not used");
+    }
+
+    grpc::Status Diff(grpc::ClientContext *context,
+                      const DiffRequest &request,
+                      DiffResponse *response) override {
+        state->diffCalled = true;
+        state->lastDiffRequest = request;
+        return state->nextDiffStatus;
+    }
+
+private:
+    std::shared_ptr<FakeDigestStubState> state;
+
+    ::grpc::ClientAsyncResponseReaderInterface<Empty> *AsyncQuitRaw(
+        ::grpc::ClientContext *, const Empty &, ::grpc::CompletionQueue *) override {
+        return nullptr;
+    }
+    ::grpc::ClientAsyncResponseReaderInterface<Empty> *PrepareAsyncQuitRaw(
+        ::grpc::ClientContext *, const Empty &, ::grpc::CompletionQueue *) override {
+        return nullptr;
+    }
+    ::grpc::ClientAsyncResponseReaderInterface<DiffResponse> *AsyncDiffRaw(
+        ::grpc::ClientContext *, const DiffRequest &, ::grpc::CompletionQueue *) override {
+        return nullptr;
+    }
+    ::grpc::ClientAsyncResponseReaderInterface<DiffResponse> *PrepareAsyncDiffRaw(
+        ::grpc::ClientContext *, const DiffRequest &, ::grpc::CompletionQueue *) override {
+        return nullptr;
+    }
+};
+
+class ScopedStubFactoryOverride {
+public:
+    explicit ScopedStubFactoryOverride(ServerCommand::StubFactory replacement)
+        : previous(ServerCommand::setStubFactoryForTests(std::move(replacement))) {}
+
+    ~ScopedStubFactoryOverride() {
+        ServerCommand::setStubFactoryForTests(std::move(previous));
+    }
+
+private:
+    ServerCommand::StubFactory previous;
+};
+
 class PublicDigestTest : public ::testing::Test {
 protected:
     void SetUp() override {
@@ -78,15 +139,15 @@ protected:
         log = std::make_shared<Log>();
         const auto logFile = (tempDir / "test.log").string();
         log->init(logFile);
-        App::_app = std::make_unique<App>("", "tarracsh", log);
-        auto &options = App::_app->_options;
+        runtime_test::reset(log);
+        auto &options = runtime_test::options();
         options.outputDir = tempDir.string();
         options.logFile = (tempDir / "output.log").string();
-        App::_app->_results.log = log;
+        runtime_test::results().log = log;
     }
 
     void TearDown() override {
-        App::_app.reset();
+        runtime_test::reset();
         std::error_code ec;
         std::filesystem::remove_all(tempDir, ec);
     }
@@ -102,7 +163,7 @@ TEST_F(PublicDigestTest, RunExecutesQueryWhenQueryProvided) {
     PublicDigest command(&cli);
     command.addCommand();
 
-    auto &options = App::_app->_options;
+    auto &options = runtime_test::options();
     options.isPublicDigest = true;
     options.digest.queryValue = "list files";
     options.digest.displayRaw = true;
@@ -137,10 +198,58 @@ TEST_F(PublicDigestTest, DigestInputFailsForInvalidInputPath) {
     PublicDigest command(&cli);
     command.addCommand();
 
-    auto &options = App::_app->_options;
+    auto &options = runtime_test::options();
     options.isPublicDigest = true;
     options.digest.input = (tempDir / "missing-dir").string();
 
-    const auto exitCode = command.digestInput();
+    const auto exitCode = command.run();
     EXPECT_EQ(exitCode, 1);
+}
+
+TEST_F(PublicDigestTest, RunUsesClientModeWhenFlagEnabled) {
+    CLI::App cli("tarracsh");
+    PublicDigest command(&cli);
+    command.addCommand();
+
+    auto &options = runtime_test::options();
+    options.isPublicDigest = true;
+    options.digest.input = (tempDir / "valid-input").string();
+    std::filesystem::create_directories(options.digest.input);
+    options.digest.client.isClientMode = true;
+    options.digest.dryRun = true;
+
+    auto stubState = std::make_shared<FakeDigestStubState>();
+    ScopedStubFactoryOverride stubGuard(
+        [&](kapa::tarracsh::app::Context &) {
+            return std::make_unique<FakeDigestStub>(stubState);
+        });
+
+    const auto exitCode = command.run();
+    EXPECT_EQ(exitCode, 0);
+    EXPECT_TRUE(stubState->diffCalled);
+    EXPECT_EQ(stubState->lastDiffRequest.input(), options.digest.input);
+    EXPECT_TRUE(stubState->lastDiffRequest.dryrun());
+}
+
+TEST_F(PublicDigestTest, RunProcessesInputWithLocalAnalyzer) {
+    CLI::App cli("tarracsh");
+    PublicDigest command(&cli);
+    command.addCommand();
+
+    auto &options = runtime_test::options();
+    options.isPublicDigest = true;
+    options.digest.input = (tempDir / "AstNodeRun.jar").string();
+    std::filesystem::copy_file("test-subjects/jars/AstNode.jar",
+                               options.digest.input,
+                               std::filesystem::copy_options::overwrite_existing);
+    options.digest.isDiff = true;
+
+    auto &results = runtime_test::results();
+    const auto initialJarCount = results.jarfiles.count.load();
+
+    const auto exitCode = command.run();
+
+    EXPECT_EQ(exitCode, 0);
+    EXPECT_GT(results.jarfiles.count.load(), initialJarCount);
+    EXPECT_FALSE(results.report->getClassResults().empty());
 }

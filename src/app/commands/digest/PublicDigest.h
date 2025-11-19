@@ -14,9 +14,8 @@ public:
     explicit PublicDigest(CLI::App *parent);
 
     [[nodiscard]] infrastructure::app::cli::ExitCode run() override;
-
-
 private:
+
     [[nodiscard]] static bool runAsClient();
     void addMainSubCommand() override;
     [[nodiscard]] infrastructure::app::cli::ExitCode digestInput();

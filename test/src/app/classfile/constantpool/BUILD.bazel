@@ -1,0 +1,25 @@
+package(default_visibility = ["//visibility:public"])
+
+COMMON_COPTS = [
+    "-std=c++20",
+    "-DPROJECT_SOURCE_DIR=\\\"__main__\\\"",
+]
+
+COMMON_DEPS = [
+    "//src/app:app_lib",
+    "//src/app/commands:app_commands_lib",
+    "//src/app/server:app_server_lib_core",
+    "//src/app/server/digest:digest_lib",
+    "//test/src/app:runtime_test_lib",
+    "//:vcpkg_runtime_libs",
+    "//:vcpkg_gtest_main",
+]
+
+cc_test(
+    name = "constant_pool_printer_tests",
+    srcs = ["ConstantPoolPrinterTests.cpp"],
+    copts = COMMON_COPTS,
+    linkstatic = True,
+    deps = COMMON_DEPS,
+    data = ["//test-subjects:all"],
+)

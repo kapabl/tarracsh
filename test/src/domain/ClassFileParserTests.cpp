@@ -9,6 +9,7 @@
 #include <string_view>
 #include <vector>
 #include <cstring>
+#include <cstdint>
 
 #include "domain/classfile/reader/ClassFileReader.h"
 #include "domain/classfile/ClassFileParser.h"
@@ -57,6 +58,81 @@ void appendUtf8Entry(std::vector<char> &buffer, std::string_view text) {
 
 void appendClassEntry(std::vector<char> &buffer, uint16_t nameIndex) {
     buffer.push_back(0x07);
+    appendU2(buffer, nameIndex);
+}
+
+void appendStringEntry(std::vector<char> &buffer, uint16_t stringIndex) {
+    buffer.push_back(0x08);
+    appendU2(buffer, stringIndex);
+}
+
+void appendFloatEntry(std::vector<char> &buffer, float value) {
+    static_assert(sizeof(float) == sizeof(uint32_t));
+    uint32_t raw{};
+    std::memcpy(&raw, &value, sizeof(float));
+    buffer.push_back(0x04);
+    appendU4(buffer, raw);
+}
+
+void appendLongEntry(std::vector<char> &buffer, int64_t value) {
+    buffer.push_back(0x05);
+    const auto high = static_cast<uint32_t>((static_cast<uint64_t>(value) >> 32) & 0xFFFFFFFFULL);
+    const auto low = static_cast<uint32_t>(static_cast<uint64_t>(value) & 0xFFFFFFFFULL);
+    appendU4(buffer, high);
+    appendU4(buffer, low);
+}
+
+void appendDoubleEntry(std::vector<char> &buffer, double value) {
+    static_assert(sizeof(double) == sizeof(uint64_t));
+    uint64_t raw{};
+    std::memcpy(&raw, &value, sizeof(double));
+    buffer.push_back(0x06);
+    appendU4(buffer, static_cast<uint32_t>((raw >> 32) & 0xFFFFFFFFULL));
+    appendU4(buffer, static_cast<uint32_t>(raw & 0xFFFFFFFFULL));
+}
+
+void appendNameAndTypeEntry(std::vector<char> &buffer, uint16_t nameIndex, uint16_t descriptorIndex) {
+    buffer.push_back(0x0C);
+    appendU2(buffer, nameIndex);
+    appendU2(buffer, descriptorIndex);
+}
+
+void appendMethodrefEntry(std::vector<char> &buffer, uint16_t classIndex, uint16_t nameAndTypeIndex) {
+    buffer.push_back(0x0A);
+    appendU2(buffer, classIndex);
+    appendU2(buffer, nameAndTypeIndex);
+}
+
+void appendMethodTypeEntry(std::vector<char> &buffer, uint16_t descriptorIndex) {
+    buffer.push_back(0x10);
+    appendU2(buffer, descriptorIndex);
+}
+
+void appendMethodHandleEntry(std::vector<char> &buffer, uint8_t referenceKind, uint16_t referenceIndex) {
+    buffer.push_back(0x0F);
+    buffer.push_back(static_cast<char>(referenceKind));
+    appendU2(buffer, referenceIndex);
+}
+
+void appendDynamicEntry(std::vector<char> &buffer, uint16_t bootstrapIndex, uint16_t nameAndTypeIndex) {
+    buffer.push_back(0x11);
+    appendU2(buffer, bootstrapIndex);
+    appendU2(buffer, nameAndTypeIndex);
+}
+
+void appendInvokeDynamicEntry(std::vector<char> &buffer, uint16_t bootstrapIndex, uint16_t nameAndTypeIndex) {
+    buffer.push_back(0x12);
+    appendU2(buffer, bootstrapIndex);
+    appendU2(buffer, nameAndTypeIndex);
+}
+
+void appendModuleEntry(std::vector<char> &buffer, uint16_t nameIndex) {
+    buffer.push_back(0x13);
+    appendU2(buffer, nameIndex);
+}
+
+void appendPackageEntry(std::vector<char> &buffer, uint16_t nameIndex) {
+    buffer.push_back(0x14);
     appendU2(buffer, nameIndex);
 }
 
@@ -233,6 +309,70 @@ TEST(ClassFileParserTests, FailsOnUnknownConstantPoolTag) {
     auto log = makeLog(makeTempPath("parser-invalid.log"));
     ClassFileParser parser(reader, "Invalid.class", log);
     EXPECT_FALSE(parser.parse());
+}
+
+TEST(ClassFileParserTests, ParsesExtendedConstantPoolEntries) {
+    std::vector<char> bytes;
+    appendU4(bytes, 0xCAFEBABE);
+    appendU2(bytes, 0);
+    appendU2(bytes, 52);
+    appendU2(bytes, 26); // constant pool count
+
+    appendUtf8Entry(bytes, "Example");          // #1
+    appendClassEntry(bytes, 1);                 // #2
+    appendUtf8Entry(bytes, "java/lang/Object"); // #3
+    appendClassEntry(bytes, 3);                 // #4
+    appendUtf8Entry(bytes, "Sample.java");      // #5
+    appendUtf8Entry(bytes, "SourceFile");       // #6
+    appendUtf8Entry(bytes, "SomeString");       // #7
+    appendStringEntry(bytes, 7);                // #8
+    appendFloatEntry(bytes, 3.5F);              // #9
+    appendLongEntry(bytes, 0x0102030405060708LL); // #10 (+ #11 placeholder)
+    appendDoubleEntry(bytes, 1234.5);           // #12 (+ #13 placeholder)
+    appendUtf8Entry(bytes, "(I)V");             // #14
+    appendUtf8Entry(bytes, "methodName");       // #15
+    appendNameAndTypeEntry(bytes, 15, 14);      // #16
+    appendMethodTypeEntry(bytes, 14);           // #17
+    appendMethodrefEntry(bytes, 2, 16);         // #18
+    appendMethodHandleEntry(bytes, JVM_REF_invokeStatic, 18); // #19
+    appendDynamicEntry(bytes, 1, 16);           // #20
+    appendInvokeDynamicEntry(bytes, 1, 16);     // #21
+    appendUtf8Entry(bytes, "module/name");      // #22
+    appendModuleEntry(bytes, 22);               // #23
+    appendUtf8Entry(bytes, "pkg/name");         // #24
+    appendPackageEntry(bytes, 24);              // #25
+
+    appendU2(bytes, 0x0021); // access_flags
+    appendU2(bytes, 2);      // this_class
+    appendU2(bytes, 4);      // super_class
+    appendU2(bytes, 0);      // interfaces_count
+    appendU2(bytes, 0);      // fields_count
+    appendU2(bytes, 0);      // methods_count
+    appendU2(bytes, 1);      // attributes_count
+    appendU2(bytes, 6);      // SourceFile attribute name
+    appendU4(bytes, 2);      // attribute_length
+    appendU2(bytes, 5);      // sourcefile_index
+
+    BufferReader reader(bytes);
+    auto log = makeLog(makeTempPath("parser-extended.log"));
+    ClassFileParser parser(reader, "Extended.class", log);
+    ASSERT_TRUE(parser.parse());
+
+    auto &pool = parser.getConstantPool();
+    EXPECT_EQ(pool.getClassInfoName(2), "Example");
+    EXPECT_FLOAT_EQ(pool.getEntry(9).floatInfo.getFloat(), 3.5F);
+    EXPECT_EQ(pool.getEntry(10).longInfo.getLongLong(), 0x0102030405060708LL);
+    EXPECT_DOUBLE_EQ(pool.getEntry(12).doubleInfo.getDouble(), 1234.5);
+    EXPECT_EQ(pool.getEntry(17).methodTypeInfo.descriptorIndex, 14);
+    EXPECT_EQ(pool.getEntry(19).methodHandleInfo.referenceKind, JVM_REF_invokeStatic);
+    EXPECT_EQ(pool.getEntry(19).methodHandleInfo.referenceIndex, 18);
+    EXPECT_EQ(pool.getEntry(20).dynamicInfo.bootstrapMethodAttrIndex, 1);
+    EXPECT_EQ(pool.getEntry(20).dynamicInfo.nameAndTypeIndex, 16);
+    EXPECT_EQ(pool.getEntry(21).invokeDynamicInfo.bootstrapMethodAttrIndex, 1);
+    EXPECT_EQ(pool.getEntry(21).invokeDynamicInfo.nameAndTypeIndex, 16);
+    EXPECT_EQ(pool.getEntry(23).moduleInfo.nameIndex, 22);
+    EXPECT_EQ(pool.getEntry(25).packageInfo.nameIndex, 24);
+    EXPECT_EQ(pool.getEntry(8).stringInfo.stringIndex, 7);
 }
 
 TEST(ClassFileSignatureParser, ReadsSignatureAttribute) {

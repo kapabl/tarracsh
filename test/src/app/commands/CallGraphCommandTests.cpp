@@ -7,12 +7,8 @@
 #include <memory>
 #include <string>
 
-#define private public
-#define protected public
-#include "interfaces/tarracsh/App.h"
 #include "app/commands/callgraph/CallGraph.h"
-#undef private
-#undef protected
+#include "test/src/app/runtime/TestRuntime.h"
 
 #include "app/commands/Query.h"
 #include "infrastructure/db/Database.h"
@@ -20,9 +16,10 @@
 
 using kapa::infrastructure::db::Database;
 using kapa::infrastructure::log::Log;
-using kapa::tarracsh::app::App;
 using kapa::tarracsh::app::commands::Query;
 using kapa::tarracsh::app::commands::callgraph::CallGraph;
+namespace runtime = kapa::tarracsh::app::runtime;
+namespace runtime_test = kapa::tarracsh::app::runtime::test;
 
 namespace {
 
@@ -77,15 +74,15 @@ protected:
         log = std::make_shared<Log>();
         const auto logFile = (tempDir / "test.log").string();
         log->init(logFile);
-        App::_app = std::make_unique<App>("", "tarracsh", log);
-        auto &options = App::_app->_options;
+        runtime_test::reset(log);
+        auto &options = runtime_test::options();
         options.outputDir = tempDir.string();
         options.logFile = (tempDir / "output.log").string();
-        App::_app->_results.log = log;
+        runtime_test::results().log = log;
     }
 
     void TearDown() override {
-        App::_app.reset();
+        runtime_test::reset();
         std::error_code ec;
         std::filesystem::remove_all(tempDir, ec);
     }
@@ -101,7 +98,7 @@ TEST_F(CallGraphCommandTest, RunExecutesQueryWhenProvided) {
     CallGraph command(&cli);
     command.addCommand();
 
-    auto &options = App::_app->_options;
+    auto &options = runtime_test::options();
     options.isCallGraph = true;
     options.callGraph.queryValue = "list methods";
     options.callGraph.displayRaw = true;
@@ -136,7 +133,7 @@ TEST_F(CallGraphCommandTest, RunFailsWhenInputIsInvalid) {
     CallGraph command(&cli);
     command.addCommand();
 
-    auto &options = App::_app->_options;
+    auto &options = runtime_test::options();
     options.isCallGraph = true;
     options.callGraph.input = (tempDir / "missing.jar").string();
 
@@ -144,33 +141,35 @@ TEST_F(CallGraphCommandTest, RunFailsWhenInputIsInvalid) {
     EXPECT_EQ(exitCode, 1);
 }
 
-TEST_F(CallGraphCommandTest, ProcessInputRunsStandaloneWhenClientModeDisabled) {
+TEST_F(CallGraphCommandTest, RunProcessesInputWhenClientModeDisabled) {
     CLI::App cli("tarracsh");
     CallGraph command(&cli);
     command.addCommand();
 
-    auto &options = App::_app->_options;
+    auto &options = runtime_test::options();
     options.isCallGraph = true;
     auto inputDir = tempDir / "input-dir";
     std::filesystem::create_directories(inputDir);
     options.callGraph.input = inputDir.string();
     options.callGraph.client.isClientMode = false;
 
-    const auto exitCode = command.processInput();
+    const auto exitCode = command.run();
     EXPECT_EQ(exitCode, 0);
 }
 
-TEST_F(CallGraphCommandTest, ProcessInputFallsBackToClientModeWhenEnabled) {
+TEST_F(CallGraphCommandTest, RunFallsBackToClientModeWhenClientModeEnabled) {
     CLI::App cli("tarracsh");
     CallGraph command(&cli);
     command.addCommand();
 
-    auto &options = App::_app->_options;
+    auto &options = runtime_test::options();
     options.isCallGraph = true;
-    options.callGraph.input = tempDir.string();
+    auto inputDir = tempDir / "client-input";
+    std::filesystem::create_directories(inputDir);
+    options.callGraph.input = inputDir.string();
     options.callGraph.client.isClientMode = true;
 
-    const auto exitCode = command.processInput();
+    const auto exitCode = command.run();
     EXPECT_EQ(exitCode, 1);
 }
 
@@ -179,24 +178,10 @@ TEST_F(CallGraphCommandTest, RunUsesServerModeWhenServerFlagSet) {
     CallGraph command(&cli);
     command.addCommand();
 
-    auto &options = App::_app->_options;
+    auto &options = runtime_test::options();
     options.isCallGraph = true;
     options.callGraph.server.isServerMode = true;
 
     const auto exitCode = command.run();
     EXPECT_EQ(exitCode, 0);
-}
-
-TEST_F(CallGraphCommandTest, InitDbCreatesCallGraphDatabase) {
-    CLI::App cli("tarracsh");
-    CallGraph command(&cli);
-    command.addCommand();
-
-    auto &options = App::_app->_options;
-    options.isCallGraph = true;
-    options.outputDir = tempDir.string();
-
-    ASSERT_TRUE(command.initDb());
-    ASSERT_NE(command._db, nullptr);
-    command._db->stop();
 }

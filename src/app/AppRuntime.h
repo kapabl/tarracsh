@@ -6,7 +6,7 @@
 #include "app/Context.h"
 
 namespace kapa::tarracsh::app {
-class App;
+class TarracshCli;
 }
 
 namespace kapa::tarracsh::app::runtime {
@@ -14,7 +14,7 @@ namespace kapa::tarracsh::app::runtime {
 domain::stats::Results &global_results();
 domain::Options &global_options();
 Context &context();
-App &app();
+TarracshCli &app();
 
 }
 

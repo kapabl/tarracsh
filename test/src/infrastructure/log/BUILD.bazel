@@ -9,7 +9,6 @@ cc_test(
     ],
     linkstatic = True,
     deps = [
-        "//src/infrastructure/filesystem:filesystem_lib",
         "//src/infrastructure/log:log_lib",
         "//:vcpkg_runtime_libs",
         "//:vcpkg_gtest_main",

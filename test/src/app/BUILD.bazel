@@ -1,20 +1,33 @@
 package(default_visibility = ["//visibility:public"])
 
-cc_test(
-    name = "app_tests",
-    srcs = glob(["**/*.cpp"]) + ["commands/callgraph/CallGraphAnalyzerTestBase.h"],
-    includes = ["commands/callgraph"],
-    copts = [
-        "-std=c++20",
-        "-DPROJECT_SOURCE_DIR=\\\"__main__\\\"",
-    ],
-    linkstatic = True,
+cc_library(
+    name = "runtime_test_lib",
+    srcs = ["runtime/TestRuntime.cpp"],
+    hdrs = ["runtime/TestRuntime.h"],
+    copts = ["-std=c++20"],
     deps = [
         "//src/app:app_lib",
-        "//src/app/server:app_server_lib_core",
-        "//src/app/server/digest:digest_lib",
-        "//:vcpkg_runtime_libs",
-        "//:vcpkg_gtest_main",
+        "//src/domain:domain_lib",
+        "//src/infrastructure:infrastructure_lib",
     ],
-    data = ["//test-subjects:all"],
+)
+
+test_suite(
+    name = "app_tests",
+    tests = [
+        "//test/src/app/analyzer:analyzer_tests",
+        "//test/src/app/classfile:parser_printer_tests",
+        "//test/src/app/classfile/constantpool:constant_pool_printer_tests",
+        "//test/src/app/commands:call_graph_command_tests",
+        "//test/src/app/commands:db_based_command_tests",
+        "//test/src/app/commands:digest_analyzer_tests",
+        "//test/src/app/commands:public_digest_command_tests",
+        "//test/src/app/commands:query_command_tests",
+        "//test/src/app/commands/callgraph:callgraph_analyzer_tests",
+        "//test/src/app/commands/callgraph:callgraph_analyzer_additional_tests",
+        "//test/src/app/commands/callgraph:callgraph_exporter_tests",
+        "//test/src/app/server:request_context_tests",
+        "//test/src/app/server/digest:server_command_tests",
+        "//test/src/app/server/digest:service_impl_tests",
+    ],
 )

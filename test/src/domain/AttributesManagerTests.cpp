@@ -59,13 +59,6 @@ void appendU1(std::vector<u1> &buffer, u1 value) {
     buffer.push_back(value);
 }
 
-void appendU4(std::vector<u1> &buffer, u4 value) {
-    buffer.push_back(static_cast<u1>(value & 0xFF));
-    buffer.push_back(static_cast<u1>((value >> 8) & 0xFF));
-    buffer.push_back(static_cast<u1>((value >> 16) & 0xFF));
-    buffer.push_back(static_cast<u1>((value >> 24) & 0xFF));
-}
-
 u2 addNameAndType(const std::string &name, const std::string &descriptor, ConstantPool &pool) {
     ConstantPoolRecord record{};
     record.nameAndTypeInfo.tag = JVM_CONSTANT_NameAndType;
@@ -87,11 +80,31 @@ u2 addMethodref(const std::string &className,
     return static_cast<u2>(pool.getPoolSize() - 1);
 }
 
+u2 addFieldref(const std::string &className,
+               const std::string &memberName,
+               const std::string &descriptor,
+               ConstantPool &pool) {
+    ConstantPoolRecord record{};
+    record.fieldrefInfo.tag = JVM_CONSTANT_Fieldref;
+    record.fieldrefInfo.classIndex = addClassInfo(className, pool);
+    record.fieldrefInfo.nameAndTypeIndex = addNameAndType(memberName, descriptor, pool);
+    pool.addRecord(record);
+    return static_cast<u2>(pool.getPoolSize() - 1);
+}
+
 u2 addMethodHandle(u1 referenceKind, u2 referenceIndex, ConstantPool &pool) {
     ConstantPoolRecord record{};
     record.methodHandleInfo.tag = JVM_CONSTANT_MethodHandle;
     record.methodHandleInfo.referenceKind = static_cast<MethodHandleSubtypes>(referenceKind);
     record.methodHandleInfo.referenceIndex = referenceIndex;
+    pool.addRecord(record);
+    return static_cast<u2>(pool.getPoolSize() - 1);
+}
+
+u2 addMethodType(const std::string &descriptor, ConstantPool &pool) {
+    ConstantPoolRecord record{};
+    record.methodTypeInfo.tag = JVM_CONSTANT_MethodType;
+    record.methodTypeInfo.descriptorIndex = addUtf8(descriptor, pool);
     pool.addRecord(record);
     return static_cast<u2>(pool.getPoolSize() - 1);
 }
@@ -122,6 +135,15 @@ std::string renderAttribute(const ConstantPool &pool, const AttributeInfo &attri
 }
 
 } // namespace
+
+TEST(AttributesManagerTests, ReportsInvalidAttributeName) {
+    ConstantPool pool;
+    AttributeInfo attribute{};
+    attribute.owner = AttributeOwner::ClassFile;
+    attribute.nameIndex = addUtf8("TotallyUnknown", pool);
+    const auto output = renderAttribute(pool, attribute);
+    EXPECT_EQ(output, "Invalid Attribute:TotallyUnknown ");
+}
 
 TEST(AttributesManagerTests, RendersConstantValueAttribute) {
     ConstantPool pool;
@@ -475,6 +497,31 @@ TEST(AttributesManagerTests, RendersBootstrapMethodsAttribute) {
     EXPECT_NE(output.find("count=1"), std::string::npos);
     EXPECT_NE(output.find("invokeStatic pkg/Bootstrap::factory"), std::string::npos);
     EXPECT_NE(output.find("payload"), std::string::npos);
+}
+
+TEST(AttributesManagerTests, RendersBootstrapMethodsWithMethodTypeArgument) {
+    ConstantPool pool;
+    const auto methodRef = addMethodref("pkg/Bootstrap", "factory", "(I)Ljava/lang/Object;", pool);
+    const auto bootstrapHandle = addMethodHandle(JVM_REF_invokeStatic, methodRef, pool);
+    const auto methodTypeIndex = addMethodType("(Ljava/lang/String;)I", pool);
+    const auto fieldHandle = addMethodHandle(JVM_REF_getField,
+                                             addFieldref("", "count", "I", pool),
+                                             pool);
+
+    std::vector<u1> info;
+    appendU2(info, 1); // num bootstrap methods
+    appendU2(info, bootstrapHandle);
+    appendU2(info, 2); // argument count
+    appendU2(info, methodTypeIndex);
+    appendU2(info, fieldHandle);
+
+    auto attribute = makeAttribute(pool,
+                                   BOOTSTRAP_METHODS,
+                                   info);
+
+    const auto output = renderAttribute(pool, attribute);
+    EXPECT_NE(output.find("(java.lang.String) -> int"), std::string::npos);
+    EXPECT_NE(output.find("getField <class:"), std::string::npos);
 }
 
 TEST(AttributesManagerTests, RendersSignatureAttribute) {

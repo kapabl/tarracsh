@@ -14,7 +14,7 @@ namespace kapa::tarracsh::app {
 using ExitCode = infrastructure::app::cli::ExitCode;
 
 
-class App final : public CliApp, public Context {
+class TarracshCli final : public CliApp, public Context {
 
 public:
     [[nodiscard]] static ExitCode run(int argc, char *argv[]);
@@ -22,7 +22,7 @@ public:
 
     [[nodiscard]] static domain::stats::Results &getGlobalResults() { return _app->_results; }
     [[nodiscard]] static domain::Options &getGlobalOptions() { return _app->_options; }
-    [[nodiscard]] static App &getApp() { return *_app; }
+    [[nodiscard]] static TarracshCli &getApp() { return *_app; }
     [[nodiscard]] static Context &getContext() { return *_app; }
 
     [[nodiscard]] domain::stats::Results &getResults() override { return _results; }
@@ -41,10 +41,10 @@ private:
     std::unique_ptr<commands::Parse> _parseCommand{};
     std::unique_ptr<commands::callgraph::CallGraph> _callGraphCommand{};
     std::unique_ptr<commands::digest::PublicDigest> _digestCommand{};
-    static std::unique_ptr<App> _app;
+    static std::unique_ptr<TarracshCli> _app;
 
 
-    App(const std::string &description, const std::string &name, 
+    TarracshCli(const std::string &description, const std::string &name, 
         std::shared_ptr<infrastructure::log::Log> log);
 
 

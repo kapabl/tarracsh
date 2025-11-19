@@ -9,7 +9,7 @@ cc_test(
     ],
     linkstatic = True,
     deps = [
-        "//src/infrastructure:infrastructure_lib",
+        "//src/infrastructure/string:string_lib",
         "//:vcpkg_runtime_libs",
         "//:vcpkg_gtest_main",
     ],

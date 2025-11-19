@@ -2,8 +2,8 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "tarracsh_cli_lib",
-    srcs = ["App.cpp"],
-    hdrs = ["App.h"],
+    srcs = ["TarracshCli.cpp"],
+    hdrs = ["TarracshCli.h"],
     copts = ["-std=c++20"],
     includes = ["../../"],
     deps = [

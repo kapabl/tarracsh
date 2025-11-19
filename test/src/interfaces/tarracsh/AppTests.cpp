@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include "interfaces/tarracsh/App.h"
+#include "interfaces/tarracsh/TarracshCli.h"
 
 using namespace kapa::tarracsh::app;
 
@@ -70,10 +70,10 @@ TEST(AppCliTests, ParseCommandSetsOptionsAndFailsOnInvalidInput) {
     };
     auto argv = makeArgv(args);
 
-    const auto exitCode = App::run(static_cast<int>(argv.size()), argv.data());
+    const auto exitCode = TarracshCli::run(static_cast<int>(argv.size()), argv.data());
     EXPECT_EQ(exitCode, 1);
 
-    const auto &options = App::getGlobalOptions();
+    const auto &options = TarracshCli::getGlobalOptions();
     EXPECT_TRUE(options.isParse);
     EXPECT_FALSE(options.isPublicDigest);
     EXPECT_FALSE(options.isCallGraph);
@@ -97,10 +97,10 @@ TEST(AppCliTests, CallGraphCommandMarksCallGraphMode) {
     };
     auto argv = makeArgv(args);
 
-    const auto exitCode = App::run(static_cast<int>(argv.size()), argv.data());
+    const auto exitCode = TarracshCli::run(static_cast<int>(argv.size()), argv.data());
     EXPECT_EQ(exitCode, 1);
 
-    const auto &options = App::getGlobalOptions();
+    const auto &options = TarracshCli::getGlobalOptions();
     EXPECT_TRUE(options.isCallGraph);
     EXPECT_FALSE(options.isParse);
     EXPECT_FALSE(options.isPublicDigest);

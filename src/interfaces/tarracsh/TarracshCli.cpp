@@ -1,4 +1,4 @@
-#include "App.h"
+#include "interfaces/tarracsh/TarracshCli.h"
 #include "app/AppRuntime.h"
 #include "infrastructure/filesystem/Utils.h"
 #include "app/Tarracsh.h"
@@ -16,18 +16,18 @@ using kapa::infrastructure::filesystem::utils::ensureDir;
 using namespace kapa::tarracsh::app;
 
 
-std::unique_ptr<App> App::_app;
+std::unique_ptr<TarracshCli> TarracshCli::_app;
 
-App::App(const std::string &description, const std::string &name, const std::shared_ptr<Log> log)
+TarracshCli::TarracshCli(const std::string &description, const std::string &name, const std::shared_ptr<Log> log)
         : CliApp(description, name), _log(log), _results(_options) {
 
     _results.log = log;
 }
 
-ExitCode App::run(const int argc, char *argv[]) {
+ExitCode TarracshCli::run(const int argc, char *argv[]) {
 
     const auto log = std::make_shared<Log>();
-    _app.reset(new App("", "Tarracsh", log));
+    _app.reset(new TarracshCli("", "Tarracsh", log));
 
     const auto result = _app->start(argc, argv);
 
@@ -38,7 +38,7 @@ ExitCode App::run(const int argc, char *argv[]) {
     return result;
 }
 
-ExitCode App::start(const int argc, char *argv[]) {
+ExitCode TarracshCli::start(const int argc, char *argv[]) {
 
     auto exitCode = parseCli(argc, argv);
     if (exitCode != 0  || _isHelp) {
@@ -62,7 +62,7 @@ ExitCode App::start(const int argc, char *argv[]) {
 }
 
 
-void App::setupCliOptions() {
+void TarracshCli::setupCliOptions() {
     set_version_flag("--version", "version " TARRACSH_VERSION);
     set_help_all_flag("--help-all");
 
@@ -91,7 +91,7 @@ void App::setupCliOptions() {
 
 }
 
-int App::parseCli(int argc, char **argv) {
+int TarracshCli::parseCli(int argc, char **argv) {
     auto result = 0;
     setupCliOptions();
     try {
@@ -131,20 +131,20 @@ int App::parseCli(int argc, char **argv) {
 }
 
 
-bool App::isCPoolPrinterNeeded() const {
+bool TarracshCli::isCPoolPrinterNeeded() const {
     const auto result = _options.parse.printConstantPool || _options.parse.printCPoolHtmlNav;
     return result;
 }
 
 
 
-void App::init() const {
+void TarracshCli::init() const {
 
     ensureDir(_options.outputDir);
     _log->init(_options.logFile);
 
     if (isCPoolPrinterNeeded()) {
-        ConstantPoolPrinter::init(App::getContext());
+        ConstantPoolPrinter::init(TarracshCli::getContext());
         if (_options.parse.printCPoolHtmlNav) {
             HtmlGen::init();
         }
@@ -155,19 +155,19 @@ void App::init() const {
 namespace kapa::tarracsh::app::runtime {
 
 domain::stats::Results &global_results() {
-    return App::getGlobalResults();
+    return TarracshCli::getGlobalResults();
 }
 
 domain::Options &global_options() {
-    return App::getGlobalOptions();
+    return TarracshCli::getGlobalOptions();
 }
 
 Context &context() {
-    return App::getContext();
+    return TarracshCli::getContext();
 }
 
-App &app() {
-    return App::getApp();
+TarracshCli &app() {
+    return TarracshCli::getApp();
 }
 
 } // namespace kapa::tarracsh::app::runtime

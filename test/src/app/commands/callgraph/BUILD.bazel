@@ -1,0 +1,51 @@
+package(default_visibility = ["//visibility:public"])
+
+COMMON_COPTS = [
+    "-std=c++20",
+    "-DPROJECT_SOURCE_DIR=\\\"__main__\\\"",
+]
+
+COMMON_DEPS = [
+    "//src/app:app_lib",
+    "//src/app/commands:app_commands_lib",
+    "//src/app/server:app_server_lib_core",
+    "//src/app/server/digest:digest_lib",
+    "//test/src/app:runtime_test_lib",
+    "//:vcpkg_runtime_libs",
+    "//:vcpkg_gtest_main",
+]
+
+cc_library(
+    name = "callgraph_analyzer_test_base",
+    hdrs = ["CallGraphAnalyzerTestBase.h"],
+    deps = COMMON_DEPS,
+)
+
+cc_test(
+    name = "callgraph_analyzer_tests",
+    srcs = ["CallGraphAnalyzerTests.cpp"],
+    copts = COMMON_COPTS,
+    linkstatic = True,
+    deps = [
+        ":callgraph_analyzer_test_base",
+    ] + COMMON_DEPS,
+)
+
+cc_test(
+    name = "callgraph_analyzer_additional_tests",
+    srcs = ["CallGraphAnalyzerAdditionalTests.cpp"],
+    copts = COMMON_COPTS,
+    linkstatic = True,
+    deps = [
+        ":callgraph_analyzer_test_base",
+    ] + COMMON_DEPS,
+    data = ["//test-subjects:all"],
+)
+
+cc_test(
+    name = "callgraph_exporter_tests",
+    srcs = ["CallGraphExporterTests.cpp"],
+    copts = COMMON_COPTS,
+    linkstatic = True,
+    deps = COMMON_DEPS,
+)
