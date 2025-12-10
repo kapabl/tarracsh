@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iterator>
 #include <memory>
+#include <cstring>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -98,6 +99,63 @@ std::string capturePrinterOutput(ConstantPoolPrinter &printer) {
     return capture.str();
 }
 
+u2 addUtf8(ConstantPool &pool, const std::string &value) {
+    const auto allocSize = sizeof(ConstantPoolRecord::utf8Info.tag) +
+                           sizeof(ConstantPoolRecord::utf8Info.length) +
+                           value.size() + 1;
+    auto *record = static_cast<ConstantPoolRecord *>(std::malloc(allocSize));
+    record->utf8Info.tag = JVM_CONSTANT_Utf8;
+    record->utf8Info.length = static_cast<u2>(value.size());
+    std::memcpy(record->utf8Info.bytes, value.data(), value.size());
+    record->utf8Info.bytes[value.size()] = 0;
+    pool.addRecord(*record, allocSize);
+    std::free(record);
+    return static_cast<u2>(pool.getPoolSize() - 1);
+}
+
+u2 addNameAndType(ConstantPool &pool, u2 nameIndex, u2 descriptorIndex) {
+    ConstantPoolRecord record{};
+    record.nameAndTypeInfo.tag = JVM_CONSTANT_NameAndType;
+    record.nameAndTypeInfo.nameIndex = nameIndex;
+    record.nameAndTypeInfo.descriptorIndex = descriptorIndex;
+    pool.addRecord(record);
+    return static_cast<u2>(pool.getPoolSize() - 1);
+}
+
+void addModuleEntry(ConstantPool &pool, u2 nameIndex) {
+    ConstantPoolRecord record{};
+    record.moduleInfo.tag = JVM_CONSTANT_Module;
+    record.moduleInfo.nameIndex = nameIndex;
+    pool.addRecord(record);
+}
+
+void addPackageEntry(ConstantPool &pool, u2 nameIndex) {
+    ConstantPoolRecord record{};
+    record.packageInfo.tag = JVM_CONSTANT_Package;
+    record.packageInfo.nameIndex = nameIndex;
+    pool.addRecord(record);
+}
+
+void addDynamicEntry(ConstantPool &pool, u2 bootstrapIndex, u2 nameAndTypeIndex) {
+    ConstantPoolRecord record{};
+    record.dynamicInfo.tag = JVM_CONSTANT_Dynamic;
+    record.dynamicInfo.bootstrapMethodAttrIndex = bootstrapIndex;
+    record.dynamicInfo.nameAndTypeIndex = nameAndTypeIndex;
+    pool.addRecord(record);
+}
+
+void addUnicodeEntry(ConstantPool &pool) {
+    ConstantPoolRecord record{};
+    record.base.tag = JVM_CONSTANT_Unicode;
+    pool.addRecord(record);
+}
+
+void addEmptyEntry(ConstantPool &pool) {
+    ConstantPoolRecord record{};
+    record.base.tag = JVM_CONSTANT_Empty;
+    pool.addRecord(record);
+}
+
 } // namespace
 
 TEST(ConstantPoolPrinterTests, DescriptiveFlagControlsTagStrings) {
@@ -161,4 +219,39 @@ TEST(ConstantPoolPrinterTests, PrintOutputsMultipleEntryTypesWhenUnfiltered) {
     EXPECT_NE(output.find("Constant Pool for:"), std::string::npos);
     EXPECT_NE(output.find("Class Ref"), std::string::npos);
     EXPECT_NE(output.find("Method Ref"), std::string::npos);
+}
+
+TEST(ConstantPoolPrinterTests, PrintHandlesModulePackageDynamicAndSpecialEntries) {
+    auto parsed = parseSampleClass();
+    ASSERT_TRUE(parsed.parser);
+
+    auto &pool = parsed.parser->getConstantPool();
+    const auto moduleNameIndex = addUtf8(pool, "test.module");
+    addModuleEntry(pool, moduleNameIndex);
+
+    const auto packageNameIndex = addUtf8(pool, "org/example/pkg");
+    addPackageEntry(pool, packageNameIndex);
+
+    const auto dynNameIndex = addUtf8(pool, "dynamicName");
+    const auto dynDescIndex = addUtf8(pool, "()V");
+    const auto nameAndTypeIndex = addNameAndType(pool, dynNameIndex, dynDescIndex);
+    addDynamicEntry(pool, 1, nameAndTypeIndex);
+
+    addUnicodeEntry(pool);
+    addEmptyEntry(pool);
+
+    StubContext context;
+    context.options.parse.descriptiveCPoolEntries = true;
+    context.options.parse.cpoolFilter = {"module", "package", "dynamic", "unicode", "empty"};
+    ConstantPoolPrinterAccessor::clearFilter();
+    ConstantPoolPrinter::init(context);
+
+    ConstantPoolPrinter printer(*parsed.parser);
+    const auto output = capturePrinterOutput(printer);
+
+    EXPECT_NE(output.find("test.module"), std::string::npos);
+    EXPECT_NE(output.find("Package"), std::string::npos);
+    EXPECT_NE(output.find("Dynamic"), std::string::npos);
+    EXPECT_NE(output.find("Unused Cool Entry type"), std::string::npos);
+    EXPECT_NE(output.find("empty entry"), std::string::npos);
 }

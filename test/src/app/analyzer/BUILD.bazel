@@ -17,8 +17,12 @@ COMMON_DEPS = [
 
 cc_test(
     name = "analyzer_tests",
-    srcs = ["AnalyzerTests.cpp"],
+    srcs = [
+        "AnalyzerTests.cpp",
+        "StandAloneAnalyzerTests.cpp",
+    ],
     copts = COMMON_COPTS,
     linkstatic = True,
     deps = COMMON_DEPS,
+    data = ["//test-subjects:all"],
 )

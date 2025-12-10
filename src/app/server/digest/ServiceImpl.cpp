@@ -40,22 +40,46 @@ using grpc::ServerBuilder;
 bool ServiceImpl::_quickReceived = false;
 std::condition_variable ServiceImpl::_quickSignalCV;
 
+namespace {
+
+class GrpcServerHandle final : public ServiceImpl::ServerHandle {
+public:
+    explicit GrpcServerHandle(std::unique_ptr<grpc::Server> server)
+        : _server(std::move(server)) {}
+
+    void Shutdown() override {
+        if (_server) {
+            _server->Shutdown();
+        }
+    }
+
+private:
+    std::unique_ptr<grpc::Server> _server;
+};
+
+} // namespace
+
 const char *PUBLIC_DIGEST_SERVER_MUTEX_NAME = "public-digest-grpc-server";
 
 bool ServiceImpl::start(app::Context &config) {
     named_mutex::remove(PUBLIC_DIGEST_SERVER_MUTEX_NAME);
-    named_mutex mutex(open_or_create, PUBLIC_DIGEST_SERVER_MUTEX_NAME);
-
-    const auto result = mutex.try_lock();
-    if (result) {
-        ServiceImpl service(config);
-        service.init();
-        mutex.unlock();
-    } else {
-        cout << "Public Digest Server is already running";
+    bool acquired = false;
+    try {
+        named_mutex mutex(open_or_create, PUBLIC_DIGEST_SERVER_MUTEX_NAME);
+        acquired = mutex.try_lock();
+        if (acquired) {
+            ServiceImpl service(config);
+            service.init();
+            mutex.unlock();
+        } else {
+            cout << "Public Digest Server is already running";
+        }
+    } catch (const interprocess_exception &ex) {
+        cout << "Failed to start server: " << ex.what() << endl;
+        acquired = false;
     }
 
-    return result;
+    return acquired;
 }
 
 bool ServiceImpl::initDb() {
@@ -66,11 +90,8 @@ bool ServiceImpl::initDb() {
     MillisecondDuration duration{0};
     {
         ScopedTimer timer(&duration);
-        _db = DigestDb::create(
-            {_context.getOptions().outputDir,
-             &_context.getLog()},
-            false,
-            true);
+        const DigestDb::Config config{_context.getOptions().outputDir, &_context.getLog()};
+        _db = digestDbFactory()(config, false, true);
     }
     cout << fmt::format("Db init duration:{}", duration) << endl;
     if (_db) {
@@ -86,16 +107,18 @@ bool ServiceImpl::initDb() {
 
 void ServiceImpl::startServer() {
     const auto serverAddress = _context.getOptions().digest.server.getListenServerAddress();
-
-    ServerBuilder builder;
-    builder.AddListeningPort(serverAddress, InsecureServerCredentials())
-           .RegisterService(this);
-
-    _server = builder.BuildAndStart();
-    cout << "Server listening on " << serverAddress << endl << endl;
-    waitForShutDown();
-    _server->Shutdown();
-
+    auto factory = serverHandleFactory();
+    if (!factory) {
+        cout << "No server factory configured" << endl;
+        return;
+    }
+    _server = factory(*this, serverAddress);
+    if (_server) {
+        cout << "Server listening on " << serverAddress << endl << endl;
+        waitForShutDown();
+        _server->Shutdown();
+        _server.reset();
+    }
 }
 
 void ServiceImpl::waitForShutDown() {
@@ -145,6 +168,47 @@ ServiceImpl::ServiceImpl(app::Context &context)
 void ServiceImpl::signalQuick() {
     _quickReceived = true;
     _quickSignalCV.notify_one();
+}
+
+auto ServiceImpl::serverHandleFactory() -> ServerHandleFactory & {
+    static ServerHandleFactory factory = [](ServiceImpl &impl, const std::string &address) -> std::unique_ptr<ServerHandle> {
+        ServerBuilder builder;
+        builder.AddListeningPort(address, InsecureServerCredentials())
+               .RegisterService(&impl);
+        auto server = builder.BuildAndStart();
+        if (!server) {
+            return nullptr;
+        }
+        return std::make_unique<GrpcServerHandle>(std::move(server));
+    };
+    return factory;
+}
+
+auto ServiceImpl::setServerHandleFactoryForTests(ServerHandleFactory replacement) -> ServerHandleFactory {
+    auto &factory = serverHandleFactory();
+    auto previous = std::move(factory);
+    factory = std::move(replacement);
+    return previous;
+}
+
+auto ServiceImpl::digestDbFactory() -> DigestDbFactory & {
+    static DigestDbFactory factory = [](const DigestDb::Config &config,
+                                        bool doClean,
+                                        bool hasSaveThread) {
+        return DigestDb::create(config, doClean, hasSaveThread);
+    };
+    return factory;
+}
+
+auto ServiceImpl::setDigestDbFactoryForTests(DigestDbFactory replacement) -> DigestDbFactory {
+    auto &factory = digestDbFactory();
+    auto previous = std::move(factory);
+    factory = std::move(replacement);
+    return previous;
+}
+
+void ServiceImpl::resetQuickSignalForTests() {
+    _quickReceived = false;
 }
 
 Status ServiceImpl::Quit(ServerContext *context, const Empty *request, Empty *response) {

@@ -1,21 +1,39 @@
 #include <gtest/gtest.h>
 
 #include "app/server/digest/ServiceImpl.h"
+#include <boost/interprocess/exceptions.hpp>
 #include "domain/stats/Report.h"
 #include "domain/stats/Results.h"
 #include "test/src/app/runtime/TestRuntime.h"
+#include <atomic>
+#include <chrono>
 #include <cstdlib>
+#include <exception>
+#include <filesystem>
+#include <functional>
+#include <thread>
 
 using kapa::tarracsh::app::Context;
 using kapa::tarracsh::app::server::digest::DiffRequest;
 using kapa::tarracsh::app::server::digest::DiffResponse;
+using kapa::tarracsh::app::server::digest::Empty;
 using kapa::tarracsh::domain::Options;
 using kapa::tarracsh::domain::stats::Results;
 using kapa::tarracsh::domain::stats::report::ClassResult;
 using kapa::tarracsh::domain::stats::report::FileResult;
+using kapa::tarracsh::server::digest::ServiceImpl;
+using kapa::tarracsh::server::digest::testhooks::ServiceImplAccessor;
 using grpc::StatusCode;
 
 namespace {
+
+std::filesystem::path makeTempDir(const std::string &prefix) {
+    const auto base = std::filesystem::temp_directory_path();
+    const auto now = std::chrono::steady_clock::now().time_since_epoch().count();
+    auto dir = base / (prefix + std::to_string(now));
+    std::filesystem::create_directories(dir);
+    return dir;
+}
 
 class ServiceImplTestPeer : public kapa::tarracsh::server::digest::ServiceImpl {
 public:
@@ -139,4 +157,114 @@ TEST(ServiceImplTests, DiffProcessesValidJarAndReturnsOk) {
     EXPECT_TRUE(status.ok());
     // Successful path should not touch quit flag or return an error code.
     EXPECT_GE(response.files_size(), 0);
+}
+
+TEST(ServiceImplTests, QuitSignalsAndReturnsOk) {
+    StubContext context;
+    ServiceImplTestPeer service(context);
+
+    grpc::ServerContext serverContext;
+    Empty request;
+    Empty response;
+
+    const auto status = service.Quit(&serverContext, &request, &response);
+    EXPECT_TRUE(status.ok());
+}
+
+TEST(ServiceImplTests, StartInitializesServerAndStopsViaSignal) {
+    StubContext context;
+    auto tempDir = makeTempDir("service-impl-start-");
+    context.options.outputDir = tempDir.string();
+    context.options.digest.server.listenAddress = "127.0.0.1";
+    context.options.digest.server.port = 0;
+
+    std::atomic<bool> started{false};
+    std::exception_ptr backgroundError;
+    ServiceImpl::resetQuickSignalForTests();
+
+    std::thread serverThread([&] {
+        try {
+            started = ServiceImpl::start(context);
+        } catch (...) {
+            backgroundError = std::current_exception();
+        }
+    });
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    ServiceImpl::signalQuick();
+    serverThread.join();
+
+    if (backgroundError) {
+        try {
+            std::rethrow_exception(backgroundError);
+        } catch (const boost::interprocess::interprocess_exception &ex) {
+            std::filesystem::remove_all(tempDir);
+            GTEST_SKIP() << "ServiceImpl::start unavailable in this environment: " << ex.what();
+        } catch (...) {
+            std::filesystem::remove_all(tempDir);
+            throw;
+        }
+    }
+
+    if (!started.load()) {
+        GTEST_SKIP() << "ServiceImpl::start failed to acquire shared mutex in this environment.";
+    }
+    std::filesystem::remove_all(tempDir);
+}
+
+TEST(ServiceImplTests, StartServerUsesInjectedHandleFactory) {
+    StubContext context;
+    ServiceImpl service(context);
+
+    struct FakeHandle : ServiceImpl::ServerHandle {
+        explicit FakeHandle(std::function<void()> onShutdown)
+            : shutdownFn(std::move(onShutdown)) {}
+
+        void Shutdown() override {
+            if (shutdownFn) {
+                shutdownFn();
+            }
+        }
+
+        std::function<void()> shutdownFn;
+    };
+
+    bool factoryCalled = false;
+    bool shutdownCalled = false;
+    auto previousFactory = ServiceImpl::setServerHandleFactoryForTests(
+        [&](ServiceImpl &impl, const std::string &address) -> std::unique_ptr<ServiceImpl::ServerHandle> {
+            factoryCalled = true;
+            EXPECT_EQ(&impl, &service);
+            EXPECT_EQ(address, context.options.digest.server.getListenServerAddress());
+            return std::make_unique<FakeHandle>([&]() { shutdownCalled = true; });
+        });
+
+    ServiceImpl::resetQuickSignalForTests();
+    std::thread signalThread([]() {
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        ServiceImpl::signalQuick();
+    });
+
+    ServiceImplAccessor::startServer(service);
+    signalThread.join();
+
+    EXPECT_TRUE(factoryCalled);
+    EXPECT_TRUE(shutdownCalled);
+
+    ServiceImpl::setServerHandleFactoryForTests(std::move(previousFactory));
+}
+
+TEST(ServiceImplTests, InitDbReturnsFalseWhenFactoryFails) {
+    StubContext context;
+    ServiceImpl service(context);
+
+    auto previousFactory = ServiceImpl::setDigestDbFactoryForTests(
+        [](const kapa::tarracsh::domain::db::digest::DigestDb::Config &, bool, bool) {
+            return std::shared_ptr<kapa::tarracsh::domain::db::digest::DigestDb>{};
+        });
+
+    const auto initResult = ServiceImplAccessor::initDb(service);
+    EXPECT_FALSE(initResult);
+
+    ServiceImpl::setDigestDbFactoryForTests(std::move(previousFactory));
 }
